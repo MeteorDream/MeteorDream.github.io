@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Subspace Adversarial Training Author: Tao Li, Yingwen Wu, Sizhe Chen, Kun Fang, Xiaolin Huang Institution: 上海交通大学(sjtu.edu.cn) Year: 2022 Journal: CVPR 2022 Source: CVPR 2022 open">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SubAT">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-07/SubAT.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Subspace Adversarial Training Author: Tao Li, Yingwen Wu, Sizhe Chen, Kun Fang, Xiaolin Huang Institution: 上海交通大学(sjtu.edu.cn) Year: 2022 Journal: CVPR 2022 Source: CVPR 2022 open">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/1657097825313.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/Single-step-AT.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/1657631192805.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/Figure3.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/Algorithm.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/20220715222250.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/20220719200033.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/20220719205208.png">
+<meta property="article:published_time" content="2022-07-02T11:04:53.000Z">
+<meta property="article:modified_time" content="2022-07-21T13:33:41.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="Normalization">
+<meta property="article:tag" content="对抗训练">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-07/SubAT/1657097825313.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-07/SubAT.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>SubAT | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-07/SubAT.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SubAT
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-02 19:04:53" itemprop="dateCreated datePublished" datetime="2022-07-02T19:04:53+08:00">2022-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-21 21:33:41" itemprop="dateModified" datetime="2022-07-21T21:33:41+08:00">2022-07-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-07/SubAT.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-07/SubAT.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li>Title: Subspace Adversarial Training</li>
+<li>Author: Tao Li, Yingwen Wu, Sizhe Chen, Kun Fang, Xiaolin Huang</li>
+<li>Institution: 上海交通大学(sjtu.edu.cn)</li>
+<li>Year: 2022</li>
+<li>Journal: CVPR 2022</li>
+<li>Source: <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2022/html/Li_Subspace_Adversarial_Training_CVPR_2022_paper.html">CVPR
+2022 open access</a>, <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2022/papers/Li_Subspace_Adversarial_Training_CVPR_2022_paper.pdf">PDF</a>,
+<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2022/supplemental/Li_Subspace_Adversarial_Training_CVPR_2022_supplemental.pdf">supplemental</a></li>
+<li>Idea: Sub-AT, 即在子空间中进行 AT 来避免过拟合的问题</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Li_2022_CVPR,</span><br><span class="line">    author    = &#123;Li, Tao and Wu, Yingwen and Chen, Sizhe and Fang, Kun and Huang, Xiaolin&#125;,</span><br><span class="line">    title     = &#123;Subspace Adversarial Training&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)&#125;,</span><br><span class="line">    month     = &#123;June&#125;,</span><br><span class="line">    year      = &#123;2022&#125;,</span><br><span class="line">    pages     = &#123;13409-13418&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<ol type="1">
+<li>单步对抗训练(Single-step AT)
+非常有效并且鲁棒，但有个很严重的问题就是会出现严重的灾难过拟合现象。</li>
+<li>提出了一种新的优化方法 Subspace AT, 约束 AT
+在一个仔细选取的子空间内，不但可以解决过拟合，还能显著提高鲁棒性。</li>
+<li>揭示了快速增加的梯度和过拟合的关系。</li>
+</ol>
+<h2 id="introduction">Introduction</h2>
+<p>对抗训练 (AT)
+旨在最小化模型对对抗样本的攻击的风险，能有效提高深度神经网络的鲁棒性。给定具有参数
+<span class="math inline">\(w\)</span> 的神经网络 <span class="math inline">\(f(x, w)\)</span>, AT 的优化目标是 <span class="math display">\[
+\min_\mathbf{w} \mathbb{E}_{(\mathbf{x},y)\sim \mathcal{D}} \left[
+\max_{\delta \in \mathcal{B}(\mathbf{x}, \epsilon)} \mathcal{L}
+\left(f(\mathbf{x}+\delta, \mathbf{w}),y\right) \right]
+\]</span> 其中 <span class="math inline">\(\mathcal{B}(\mathbf{x},
+\epsilon)\)</span> 表示半径为 <span class="math inline">\(\epsilon\)</span> 的归一化球(norm ball,
+可以理解为一个单位球形空间)。AT
+的关键是通过生成对抗样本来进行训练，目前最有效的生成对抗样本的方法是<strong>快速梯度标志法(fast
+gradient sign method, FGSM)</strong> <span class="math display">\[
+\mathbf{x}^{\rm adv} = \mathbf{x} + \epsilon \cdot \mathrm{sgn}
+\left(\nabla_\mathbf{x} \mathcal{L} (f(\bf x,\bf w), y)\right).
+\]</span> 因为对抗样本是通过一步生成的，所以对应的 AT 也称为
+单步对抗训练(single-step AT).</p>
+<p><img data-src="SubAT/1657097825313.png" title="单步训练的灾难过拟合" alt="Fig. 1"></p>
+<p>图一显示了<strong>灾难过拟合(catastrophic
+overfitting)</strong>现象，即使用 FGSM 训练鲁棒性一直保持增加，但在使用
+PGD 的验证集上突然降低到 0.
+一种解决方案是使用精心设计的学习率规则和适当的正则化,
+这种方法非常依赖特殊设计的学习率规则，对于不同的任务需要小心的进行调整,
+另一种方案是生成更精细的对抗样本。</p>
+<ul>
+<li><sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Eric Wong, Leslie Rice, and J. Zico Kolter. Fast is better than free: Revisiting adversarial training. In International Conference on Learning Representations (ICLR), 2020.  
+">[1]</span></a></sup> 提出添加随机步(random step) 到 FGSM
+并引入循环学习率<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Leslie N Smith. Cyclical learning rates for training neural networks. In 2017 IEEE Winter Conference on Applications of Computer Vision (WACV), pages 464–472. IEEE, 2017.  
+">[2]</span></a></sup>.</li>
+<li><sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Maksym Andriushchenko and Nicolas Flammarion. Understanding and improving fast adversarial training. In Proceedings of the Advances In Neural Information Processing Systems 33 (NeurIPS), volume 33, pages 16048–16059, 2020.  
+">[3]</span></a></sup> 提出了一种名为 GradAlign 的正则换方法来提高单步
+AT 解法的质量</li>
+<li><sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Hoki Kim, Woojin Lee, and Jaewook Lee. Understanding catastrophic overfitting in single-step adversarial training. In AAAI, pages 8119–8127, 2020.  
+">[4]</span></a></sup>
+建议确认独立于对抗方向的内间距并搜寻合适的步长</li>
+<li>传统的多步 AT 方法 PGD AT 也能避免灾难过拟合</li>
+</ul>
+<p>接下来作者探究了<strong>灾难过拟合</strong>发生的原因：注意到在第 64
+个 epochs
+的时候发生了灾难过拟合，但训练鲁棒性仍然保存在稳定状态，考察其梯度范数
+<span class="math inline">\(\left \| \frac{1}{n} \sum_{i=1}^n
+\nabla_{\bf w} \mathcal{L} (f(\bf x_i^{\rm adv},\bf w), y) \right
+\|_{2}\)</span>，这有两种可能，一是每个样本的梯度都很小，二是样本梯度并不收敛，但彼此之间相互抵消导致最后结果相对稳定。于是作者探究了每个样本的平均梯度范数(<span class="math inline">\(\frac{1}{n} \sum_{i=1}^n \left \| \nabla_{\bf w}
+\mathcal{L} (f(\bf x_i^{\rm adv},\bf w), y) \right \|_{2}\)</span>),
+即红线所表示的，在过拟合前，平均范数都保持在稳定状态，但在发生过拟合现象的时候突然增大了，此时梯度平衡被打破了，即网络试图拟合所有样本，这是典型的过拟合。</p>
+<p>由于过拟合是因为大的梯度波动导致的，作者受到启发提出通过控制那些巨大的梯度来预防过拟合。具体方法是限制梯度下降从原本的整个参数空间限制到一个子空间，以此限制梯度的剧烈变化。但关键是如何在子空间的限制下保证网络的性能，<sup id="fnref:5"><a href="#fn:5" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Tao Li, Lei Tan, Qinghua Tao, Yipeng Liu, and Xiaolin Huang. Low dimensional landscape hypothesis is true: DNNs can be trained in tiny subspaces. arXiv preprint arXiv:2103.11154, 2021.  
+">[5]</span></a></sup>
+指出在一个子空间中优化是可以保持网络性能不下降的，基于上述观点，作者提出了
+Sub-AT (Subspace Adversarial Training)
+即如何确定一个有效的子空间并在其中进行对抗训练。</p>
+<p><img data-src="SubAT/Single-step-AT.png" title="Single-step AT" alt="Single-step AT"></p>
+<p><img data-src="SubAT/1657631192805.png" title="Multi-step AT" alt="multi-step AT"></p>
+<p>上面两幅图分别展示了 Sub-AT 在
+单步和多步对抗攻击下的训练过程，从图中可以看到梯度范数被限制在了一个很低的范围，鲁棒性有显著提高，成功解决了灾难过拟合的问题。</p>
+<p>总的来说：</p>
+<ul>
+<li>从优化的角度研究了单步对抗训练中的 <em>灾难过拟合</em>
+并首次提出了每个样本快速增加的梯度与过拟合的联系，这种联系也可以拓展到多步对抗训练的
+<em>鲁棒过拟合</em>.</li>
+<li>提出了 Sub-AT, 将 AT
+限制在一个仔细选择的子空间以此控制梯度的增加。该方法解决了多种过拟合问题，显著提高了鲁棒性，并克服了学习率敏感的问题。同时还很容易联合其他
+AT 方法一起使用。</li>
+<li>Sub-AT 效果很好，在单步 AT 达到了 SOTA.</li>
+</ul>
+<h2 id="related-word">Related Word</h2>
+<h3 id="对抗训练">对抗训练</h3>
+<p>对抗训练是指在训练时添加对抗扰动来提高神经网络对抗对抗样本的鲁棒性。根据生成对抗样本时梯度传播次数，对抗训练分为单步对抗训练(Single-step
+AT)和多步对抗训练(Multi-step AT).
+单步对抗训练更简单，多步对抗训练因为生成的对抗样本更强所以效果更好些，但多步的计算代价更高。</p>
+<h3 id="对抗训练中的过拟合">对抗训练中的过拟合</h3>
+<p>两种对抗训练的方法都存在过拟合的问题，例如灾难过拟合(catastrophic
+overfitting) <sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Eric Wong, Leslie Rice, and J. Zico Kolter. Fast is better than free: Revisiting adversarial training. In International Conference on Learning Representations (ICLR), 2020.  
+">[1]</span></a></sup>和鲁棒过拟合(robust overfitting)
+<sup id="fnref:6"><a href="#fn:6" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Leslie Rice, Eric Wong, and Zico Kolter. Overfitting in adversarially robust deep learning. In International Conference on Machine Learning (ICML), pages 8093–8104. PMLR, 2020.  
+">[6]</span></a></sup>.
+其表现就是在训练过程中验证集的鲁棒性突然急剧下降，很多研究者通过设计精妙的学习率计划(lr_scheduler)或适当的正则化系列来解决这个问题。</p>
+<h3 id="在子空间中训练">在子空间中训练</h3>
+<p>已经有许多工作探究了神经网络训练中的低维度特征。<sup id="fnref:7"><a href="#fn:7" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Chunyuan Li, Heerad Farkhoor, Rosanne Liu, and Jason Yosinski. Measuring the intrinsic dimension of objective landscapes. In International Conference on Learning Representations (ICLR), 2018.  
+">[7]</span></a></sup> 开创性的提出通过随机投影的方法获得 90%
+性能所需维度远远低于原始参数维度。<sup id="fnref:8"><a href="#fn:8" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Tao Li, Lei Tan, Qinghua Tao, Yipeng Liu, and Xiaolin Huang. Low dimensional landscape hypothesis is true: DNNs can be trained in tiny subspaces. arXiv preprint arXiv:2103.11154, 2021.  ">[8]</span></a></sup>
+提出动态的提取低维子空间进行训练，该论文使用了类似的方法。</p>
+<blockquote>
+<p>原文中注释掉的部分大概说了下原理：所谓动态提取是指找最有效的方向进行投影而不是随机投影，以此在最大程度保留性能的基础上大大降低了维度，从而有效控制梯度范数</p>
+</blockquote>
+<h2 id="method">Method</h2>
+<h3 id="分析灾难过拟合">分析灾难过拟合</h3>
+<p><img data-src="SubAT/Figure3.png" alt="Figure3"></p>
+<p>作者认为灾难过拟合发生的原因是网络在不断在训练样本中捕获对抗信息，但对抗信息是使用
+PGD
+攻击生成的，是不断变化的，所以很难捕获，所以导致了网络不断大幅度波动并且鲁棒性和准确率都大幅度降低。</p>
+<p>作者研究了 Fast AT 对抗 PGD-20
+攻击时的鲁棒准确率并记录了每个样本的梯度平均范数，结果如图 1
+所示。过拟合的发生与梯度的突增时机一致，说明正是梯度突然增加导致
+了训练的巨大波动。在后续的研究中，作者发现</p>
+<ul>
+<li>过拟合与与平均梯度范数增加高度相关，巧妙的选择学习率能有效抑制梯度增加，这种方法拓展就是自适应启发式学习率</li>
+<li>想要避免灾难过拟合，就要控制平均梯度范数的增长</li>
+</ul>
+<h3 id="控制梯度爆炸">控制梯度爆炸</h3>
+<p>作者的主要想法是将对抗训练时梯度下降从整个参数空间限制到一个低维子空间，以此来抑制梯度的增加。首先要考虑的是如何获得这样的一个能保持
+AT 性能的子空间：<sup id="fnref:8"><a href="#fn:8" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Tao Li, Lei Tan, Qinghua Tao, Yipeng Liu, and Xiaolin Huang. Low dimensional landscape hypothesis is true: DNNs can be trained in tiny subspaces. arXiv preprint arXiv:2103.11154, 2021.  ">[8]</span></a></sup>
+提出了一种算法 DLDR,
+能有效的从训练路径中提取一个低维的子空间，其包含了两步：</p>
+<ol type="1">
+<li>在常规训练中采集模型检测点 <span class="math inline">\(\{\mathbf{w}_1,\mathbf{w}_2,\dots,\mathbf{w}_t\}\)</span>,
+要求将模型参数与长度为 <span class="math inline">\(N\)</span> 的向量
+<span class="math inline">\(\mathbf{w}_i\)</span> 对齐</li>
+<li>对对齐的参数矩阵 <span class="math inline">\(\left [
+\mathbf{w}_1,\mathbf{w}_2,\dots,\mathbf{w}_t\right ]\)</span>
+执行奇异值分解(SVD)获取维度为 <span class="math inline">\(d\)</span>
+的正交子空间 <span class="math inline">\([\mathbf{u}_1,\mathbf{u}_2,\dots,\mathbf{u}_d]\)</span></li>
+</ol>
+<p>Sub-AT 采用 DLDR
+的方法在出现过拟合现象前采样，随后回滚到初始化的检查点将梯度投影到子空间。</p>
+<p><img data-src="SubAT/Algorithm.png" title="Algorithm" alt="Algorithm"></p>
+<p>一些细节：</p>
+<ul>
+<li>采样策略：每个 epoch
+均匀采样两次，并且尽量在过拟合之前的效果最好的一些epoch进行采样</li>
+<li>Sub-AT 在实验中证明了对学习率不敏感，所以可以不需要 lr
+scheduler，将学习率设定为常数即可, 并且可以将 lr
+设置为大一点的数值来让训练更快收敛</li>
+</ul>
+<p><img data-src="SubAT/20220715222250.png" alt="lr robust and detail time"></p>
+<p><strong>计算分析</strong>: Sub-AT 包含两个部分，DLDR 和
+子空间训练。其中 DLDR
+也包括两个部分——采样和分解，分解的时间复杂度相对采样而言不值一提。而子空间训练的复杂度与表征的
+AT 是一样的</p>
+<h2 id="experiment">Experiment</h2>
+<p>通过实验，先证明了在单步 AT 中能解决过拟合的问题并达到了 SOTA,
+其次在更大的步数和更大的半径都能提高鲁棒性。</p>
+<blockquote>
+<p>一篇很不错的关于对抗攻击和防御的综述：<a target="_blank" rel="noopener" href="https://www.huxiu.com/article/434080.html" class="uri">https://www.huxiu.com/article/434080.html</a></p>
+</blockquote>
+<ul>
+<li>数据集：CIFAR10/100, Tiny-ImageNet, 训练集按 9:1
+的比例划分为训练集和验证集</li>
+<li>对抗攻击：使用了两种经典的对抗扰动, 半径 <span class="math inline">\(\epsilon=8/255\)</span> 的 <span class="math inline">\(\ell_\infty\)</span> 范数和 半径 <span class="math inline">\(\epsilon=128/255\)</span> 的 <span class="math inline">\(\ell_2\)</span> 范数。</li>
+<li>lr_scheduler 使用了三种
+<ul>
+<li>cyclic</li>
+<li>piecewise</li>
+<li>constant</li>
+</ul></li>
+<li>batch size 为 128, SGD optimizer, 附带 0.9 动量和 <span class="math inline">\(10^{-4}\)</span> 权重衰减</li>
+<li>数据增强：4像素填充，随机裁剪，水平翻转</li>
+<li>测试独立重复五次，记录误差范围（很小）</li>
+</ul>
+<p><img data-src="SubAT/20220719200033.png" alt="experiment"></p>
+<p><img data-src="SubAT/20220719205208.png" alt="t3t4"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>为了控制 AT 中梯度的增加，提出了 Sub-AT 限制 AT
+在一个仔细选择的子空间。该方法成功解决了过拟合的问题并显著提高了鲁棒性。</p>
+<h2 id="references">References</h2>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记
+<div id="footnotes">
+<hr>
+<div id="footnotelist">
+<ol style="list-style: none; padding-left: 0; margin-left: 40px">
+<li id="fn:1">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Eric
+Wong, Leslie Rice, and J. Zico Kolter. Fast is better than free:
+Revisiting adversarial training. In International Conference on Learning
+Representations (ICLR), 2020.<a href="#fnref:1" rev="footnote">
+↩︎</a></span>
+</li>
+<li id="fn:2">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Leslie
+N Smith. Cyclical learning rates for training neural networks. In 2017
+IEEE Winter Conference on Applications of Computer Vision (WACV), pages
+464–472. IEEE, 2017.<a href="#fnref:2" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:3">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Maksym
+Andriushchenko and Nicolas Flammarion. Understanding and improving fast
+adversarial training. In Proceedings of the Advances In Neural
+Information Processing Systems 33 (NeurIPS), volume 33, pages
+16048–16059, 2020.<a href="#fnref:3" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:4">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Hoki
+Kim, Woojin Lee, and Jaewook Lee. Understanding catastrophic overfitting
+in single-step adversarial training. In AAAI, pages 8119–8127,
+2020.<a href="#fnref:4" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:5">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">5.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Tao
+Li, Lei Tan, Qinghua Tao, Yipeng Liu, and Xiaolin Huang. Low dimensional
+landscape hypothesis is true: DNNs can be trained in tiny subspaces.
+arXiv preprint arXiv:2103.11154, 2021.<a href="#fnref:5" rev="footnote">
+↩︎</a></span>
+</li>
+<li id="fn:6">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">6.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Leslie
+Rice, Eric Wong, and Zico Kolter. Overfitting in adversarially robust
+deep learning. In International Conference on Machine Learning (ICML),
+pages 8093–8104. PMLR, 2020.<a href="#fnref:6" rev="footnote">
+↩︎</a></span>
+</li>
+<li id="fn:7">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">7.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Chunyuan
+Li, Heerad Farkhoor, Rosanne Liu, and Jason Yosinski. Measuring the
+intrinsic dimension of objective landscapes. In International Conference
+on Learning Representations (ICLR),
+2018.<a href="#fnref:7" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:8">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">8.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Tao
+Li, Lei Tan, Qinghua Tao, Yipeng Liu, and Xiaolin Huang. Low dimensional
+landscape hypothesis is true: DNNs can be trained in tiny subspaces.
+arXiv preprint arXiv:2103.11154, 2021.<a href="#fnref:8" rev="footnote">
+↩︎</a></span>
+</li>
+</ol>
+</div>
+</div>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-07/SubAT.html" title="SubAT">https://meteordream.github.io/Paper/2022-07/SubAT.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/Normalization/" rel="tag"><i class="fa fa-tag"></i> Normalization</a>
+              <a href="/tags/%E5%AF%B9%E6%8A%97%E8%AE%AD%E7%BB%83/" rel="tag"><i class="fa fa-tag"></i> 对抗训练</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Log/2022-06/%E5%8D%9A%E5%AE%A2%E6%8A%A5%E9%94%99%E8%AE%B0%E5%BD%95.html" rel="prev" title="博客报错记录">
+      <i class="fa fa-chevron-left"></i> 博客报错记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/%E5%AD%97%E5%85%B8%E6%A0%91/2022-07/648_%E5%8D%95%E8%AF%8D%E6%9B%BF%E6%8D%A2(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』648 单词替换">
+      『LeetCode』648 单词替换 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-word"><span class="nav-number">4.</span> <span class="nav-text">Related Word</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%8A%97%E8%AE%AD%E7%BB%83"><span class="nav-number">4.1.</span> <span class="nav-text">对抗训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%8A%97%E8%AE%AD%E7%BB%83%E4%B8%AD%E7%9A%84%E8%BF%87%E6%8B%9F%E5%90%88"><span class="nav-number">4.2.</span> <span class="nav-text">对抗训练中的过拟合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%AD%90%E7%A9%BA%E9%97%B4%E4%B8%AD%E8%AE%AD%E7%BB%83"><span class="nav-number">4.3.</span> <span class="nav-text">在子空间中训练</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">5.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E7%81%BE%E9%9A%BE%E8%BF%87%E6%8B%9F%E5%90%88"><span class="nav-number">5.1.</span> <span class="nav-text">分析灾难过拟合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%A2%AF%E5%BA%A6%E7%88%86%E7%82%B8"><span class="nav-number">5.2.</span> <span class="nav-text">控制梯度爆炸</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">6.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">8.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">86</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">456k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">6:54</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>
