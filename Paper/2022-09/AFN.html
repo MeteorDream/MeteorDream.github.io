@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Larger Norm More Transferable: An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation Author: Ruijia Xu, Guanbin Li, Jihan Yang, Liang Lin Institution: 中山大学 Year: 201">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Larger Norm More Transferable - An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-09/AFN.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Larger Norm More Transferable: An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation Author: Ruijia Xu, Guanbin Li, Jihan Yang, Liang Lin Institution: 中山大学 Year: 201">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-09/AFN/norm.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-09/AFN/visda_crop.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-09/AFN/net_framework.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-09/AFN/image-20220923164209473.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-09/AFN/pipeline.svg">
+<meta property="article:published_time" content="2022-09-20T05:39:09.000Z">
+<meta property="article:modified_time" content="2022-09-23T11:55:19.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="域迁移">
+<meta property="article:tag" content="Norm">
+<meta property="article:tag" content="ICCV">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-09/AFN/norm.svg">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-09/AFN.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Larger Norm More Transferable - An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-09/AFN.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Larger Norm More Transferable - An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-20 13:39:09" itemprop="dateCreated datePublished" datetime="2022-09-20T13:39:09+08:00">2022-09-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-23 19:55:19" itemprop="dateModified" datetime="2022-09-23T19:55:19+08:00">2022-09-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-09/AFN.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-09/AFN.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Larger Norm More Transferable: An Adaptive
+Feature Norm Approach for Unsupervised Domain Adaptation</li>
+<li><strong>Author</strong>: Ruijia Xu, Guanbin Li, Jihan Yang, Liang
+Lin</li>
+<li><strong>Institution</strong>: 中山大学</li>
+<li><strong>Year</strong>: 2019</li>
+<li><strong>Journal</strong>: ICCV</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1811.07456v2">arxiv</a>, <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_ICCV_2019/html/Xu_Larger_Norm_More_Transferable_An_Adaptive_Feature_Norm_Approach_for_ICCV_2019_paper.html">open
+access</a>, <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_ICCV_2019/papers/Xu_Larger_Norm_More_Transferable_An_Adaptive_Feature_Norm_Approach_for_ICCV_2019_paper.pdf">PDF</a>,
+<a target="_blank" rel="noopener" href="https://github.com/jihanyang/AFN">official code</a></li>
+<li><strong>Idea</strong>:
+将源域和目标域的特征范数对齐到一个大的标量来提高模型的迁移性</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Xu_2019_ICCV,</span><br><span class="line">author = &#123;Xu, Ruijia and Li, Guanbin and Yang, Jihan and Lin, Liang&#125;,</span><br><span class="line">title = &#123;Larger Norm More Transferable: An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation&#125;,</span><br><span class="line">booktitle = &#123;Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)&#125;,</span><br><span class="line">month = &#123;October&#125;,</span><br><span class="line">year = &#123;2019&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>揭示了分类器在目标域不稳定的原因是其特征范数比对应源域要小。提出了一种无参数的自适应特征范数方法。证明了大范数对于与提高迁移性能有显著效果。</p>
+<blockquote>
+<p>来自中大官网<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="&lt;https://cse.sysu.edu.cn/content/5129&gt;">[1]</span></a></sup>：</p>
+<p>数据科学与计算机学院2017级硕士生许瑞嘉发表的论文《Larger Norm More
+Transferable: An Adaptive Feature Norm Approach for Unsupervised Domain
+Adaptation》被录用为大会口头报告论文，并荣获大会最佳论文提名奖，也是唯一一篇来自中国的最佳提名论文。该论文的指导老师为我院李冠彬副教授和林倞教授，论文的全部作者均来自中山大学数据科学与计算机学院。</p>
+<p>论文提出了一种基于特征范数适配的无监督领域自适应方法，该方法将目标域特征范数逐渐增大，结合源域的分类损失，实现了从源域到目标域的无监督迁移。该方法揭示了特征范数适配操作可以避免显式的领域特征对齐，同时针对源域和目标域中的不相交类别具有更强的鲁棒性，相比一类启发式加权算法在性能上有了显著提升。此外，该方法在大规模和领域间差异较显著的迁移任务中也获得了很好的性能。</p>
+</blockquote>
+<h2 id="introduction">Introduction</h2>
+<p>所谓域适应就是在有标签的数据集上训练的模型中的知识迁移到无标签的目标域中，已有的方法主要是限制分类器不单单学习任务相关的特征，还要学习带不变的特征，对抗域适应是一种常用的方法，通过对抗的方式来使得模型学习到域不变的特征。</p>
+<p>虽然很早就发现了模型在目标域的性能会下降，但很少有深入研究这种现象产生的原因，下图展示了目标样本倾向于小范数（小半径）区域使得决策边界的轻微的角度变化并导致不稳定的分类。</p>
+<p><img data-src="AFN/norm.svg" alt="norm"></p>
+<p><img data-src="AFN/visda_crop.svg" alt="visda_crop"></p>
+<p>对于这种情况有两种可能的解释：</p>
+<ol type="1">
+<li>特征范数未对齐假说：源域和目标域的域偏移依赖错误对齐的特征范数。将两个域的平均特征范数对齐到一个共有的值使得具有相似的转移收益。</li>
+<li>小特征范数假说：域偏移依赖目标任务的少量信息带来的小的范数，即使不完全对齐，但将目标特征远离小的特征区域可能导致安全的迁移。</li>
+</ol>
+<p>考虑这两个假说，作者提出了 AFN
+方法，首先，提出了一种统计距离表征跨域平均特征范数差异的方法，其次设计了
+Hard AFN
+通过限制两个域的期望特征范数为一个共同的值来小于域偏差。结果表明范数对齐的特征能具有有效的迁移性能，同时结果显示范数提升为一个较大的标量。随后作者又提出了
+stepwise AFN
+以稳定的方法逐步提高特征范数到一个足够大的值，该方法的关键是在严格对齐的条件下逐渐的将特征范数向大范数的区域转移。</p>
+<p>作者认为特征范数的大小与参数的重要性和蕴含的信息是相关的，通过增大特征的范数能提高特征所包含的信息以及使特征更具有迁移性。</p>
+<p>作者的贡献如下：</p>
+<ol type="1">
+<li>经验的解释了一般模型性能在目标域性能不好的原因是太小的特征范数导致分类器不稳定</li>
+<li>提出了用于无监督域泛化的方法 AFN
+逐步将两个域的特征范数调整到一个较大范围的标量，该方法简单但有效。</li>
+<li>特征范数自适应能有效防御负迁移（即一些无关样本或离群样本导致的迁移性能下降）</li>
+<li>实验证明方法是有效的</li>
+</ol>
+<p>自己测试了一下作者提出的 motivation：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Source</th>
+<th style="text-align: center;">FER2013+</th>
+<th style="text-align: center;">RAF</th>
+<th style="text-align: center;">ExpW</th>
+<th style="text-align: center;">AFEW</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">FER2013+</td>
+<td style="text-align: center;">5.12</td>
+<td style="text-align: center;">0.65</td>
+<td style="text-align: center;">0.62</td>
+<td style="text-align: center;">0.62</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">AFEW</td>
+<td style="text-align: center;">8.18</td>
+<td style="text-align: center;">1.00</td>
+<td style="text-align: center;">1.01</td>
+<td style="text-align: center;">0.84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ExpW</td>
+<td style="text-align: center;">4.74</td>
+<td style="text-align: center;">0.64</td>
+<td style="text-align: center;">0.59</td>
+<td style="text-align: center;">0.56</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="method">Method</h2>
+<p>用 <span class="math inline">\(\mathcal{D}_s =
+\{(x_i^s,y_i^s)\}_{i=1}^{n_s}\)</span> 表示源域，其包含 <span class="math inline">\(n_s\)</span> 类，记为 <span class="math inline">\(|\mathcal{C}_s|\)</span> ，用 <span class="math inline">\(\mathcal{D}_t = \{x_i^t\}_{i=1}^{n_t}\)</span>
+表示目标域，其中包含 <span class="math inline">\(n_t\)</span>
+个无标签类，记为 <span class="math inline">\(|\mathcal{C}_t|\)</span>。</p>
+<ul>
+<li>一般设置：源域和目标域共享标签空间，即 <span class="math inline">\(\mathcal{C}_s = \mathcal{C}_t\)</span>.</li>
+<li>部分设置：源域包含目标域 <span class="math inline">\(\mathcal{C}_s
+\supset \mathcal{C}_t\)</span>，有部分源域类别 <span class="math inline">\(\mathcal{C}_s \backslash \mathcal{C}_t\)</span>
+与目标域无关。</li>
+</ul>
+<h3 id="l2-preserved-dropout">L2-preserved Dropout</h3>
+<p>作者将证明标准的 dropout 操作是 <span class="math inline">\(L_1\)</span>-保留的，而作者提出的方法是基于 <span class="math inline">\(L_2\)</span>-保留的 dropout 操作。</p>
+<p>标准的 Dropout 操作是将给定的 <span class="math inline">\(d\)</span>
+维向量 <span class="math inline">\(\textbf{x}\)</span> 以概率 <span class="math inline">\(p\)</span> 随机采样一些点 <span class="math inline">\(x_k,k = 1,2,\ldots,d\)</span> 即采样 <span class="math inline">\(a_k \sim P\)</span> 满足伯努利分布： <span class="math display">\[
+P(a_k)=
+    \begin{cases}
+    \quad p, &amp; a_k=0\\
+    1-p, &amp; a_k=1
+    \end{cases}
+\]</span> 在验证阶段为了计算恒等函数，输出用 <span class="math inline">\(\dfrac{1}{1-p}\)</span> 进行放大，即： <span class="math display">\[
+\hat{x}_{k}=a_k\frac{1}{1-p}x_k
+\]</span> 这意味着在训练和验证阶段 <span class="math inline">\(x_k\)</span> and <span class="math inline">\(a_k\)</span> 的 <span class="math inline">\(L_1\)</span> 范数是独立的： <span class="math display">\[
+\mathbb{E}[|\hat{x}_k|]=\mathbb{E}[|a_k\frac{1}{1-p}x_k|]=
+\frac{1}{1-p}\mathbb{E}[a_k]\mathbb{E}[|x_k|]=\mathbb{E}[|x_k|]
+\]</span> 但作者追求的是自适应的 <span class="math inline">\(L_2\)</span> 特征范数，所以用 <span class="math inline">\(\dfrac{1}{\sqrt{1-p}}\)</span>
+代替原来的放大因子，得到： <span class="math display">\[
+\hat{x}_k=a_k\frac{1}{\sqrt{1-p}}x_k
+\]</span> 这满足： <span class="math display">\[
+\mathbb{E}[|\hat{x}_k|^2]=\mathbb{E}[|a_k\frac{1}{\sqrt{1-p}}x_k|^2]=\frac{1}{1-p}\mathbb{E}[a_k^2]\mathbb{E}[|x_k|^2]=\mathbb{E}[|x_k|^2]
+\]</span></p>
+<h3 id="framework">Framework</h3>
+<p><img data-src="AFN/net_framework.svg" alt="net_framework"></p>
+<p>如图所示，作者提出的框架有骨架网络 <span class="math inline">\(G\)</span> 和分类器 <span class="math inline">\(F\)</span>
+组成。现有发现说明网络中越深层的特征越不具备泛化性越与特定任务相关，其迁移性也显著降低。<span class="math inline">\(G\)</span> 是常用的特征提取网络例如 ResNet. 而
+<span class="math inline">\(F\)</span> 是任务相关的分类器，一般是一个
+<span class="math inline">\(l\)</span> 层的全连接层。记 <span class="math inline">\(l-1\)</span> 层为 <span class="math inline">\(F_f\)</span>，产生的特征记为 <span class="math inline">\(\textbf{f}\)</span>，由 <span class="math inline">\(F_f\)</span>
+计算得到的特征值针对特定域任务的，不具备良好的迁移性。因此独立最后一层
+<span class="math inline">\(F_y\)</span> 计算分类概率。<span class="math inline">\(G\)</span>, <span class="math inline">\(F_f\)</span>, <span class="math inline">\(F_y\)</span> 对于的参数为 <span class="math inline">\(\theta_g\)</span>, <span class="math inline">\(\theta_f\)</span>, <span class="math inline">\(\theta_y\)</span>. 作者的目标是使特征 <span class="math inline">\(\textbf{f}\)</span> 具备域迁移性。</p>
+<h3 id="hard-afn">Hard AFN</h3>
+<p>基于未对齐特征范数假说，作者提出了最大平均特征范数差异（MMFND）来表示两个分布之间的平均特征范数距离并验证连接统计域间隙是否可以获得显著迁移性。MMFND由下式定义，其中函数类
+<span class="math inline">\(\mathcal{H}\)</span> 是有 <span class="math inline">\(L_2\)</span>
+范数操作与深度表达模块组合的所有可能函数的组合。例如 <span class="math inline">\(h(x) = (\left \| \cdot \right \|_2 \circ F_f \circ
+G)(x)\)</span>. <span class="math display">\[
+\begin{aligned}
+    \text{MMFND}[\mathcal{H},\mathcal{D}_s,\mathcal{D}_t] :=
+    \sup_{h \in \mathcal{H}}(\frac{1}{n_s}\sum_{x_i\in
+\mathcal{D}_s}h(x_i)
+    - \frac{1}{n_t}\sum_{x_i\in \mathcal{D}_t}h(x_i))\,.
+    \end{aligned}
+\]</span> <span class="math inline">\(\mathcal{H}\)</span>
+如果没有限制上界可能远远大于0，为了避免这种情况，作者设置了约束尺度
+<span class="math inline">\(R\)</span>
+来匹配对应的平均特征范数。通过对两个域平均特征范数限制并达到平衡状态，MMFND表示的域间隙就会消失。作者通过
+Hard Adaptive Feature Norm(HAFN) 算法实现，如下面的公式所示 <span class="math display">\[
+\begin{aligned}
+    C_1(\theta_g,\theta_f,\theta_y)=\frac{1}{n_s}\sum_{(x_i,y_i) \in
+D_s}L_y(x_i, y_i)
+    + \lambda(L_d(\frac{1}{n_s}\sum_{x_i \in D_s} h(x_i), R) +
+L_d(\frac{1}{n_t}\sum_{x_i \in D_t} h(x_i), R))
+    \end{aligned}
+\]</span> 优化器包含两项：源分类损失 <span class="math inline">\(L_y\)</span>
+用于在源域最小化交叉熵损失得到任务相关的特征： <span class="math display">\[
+L_y(x_i^s,y_i^s;\theta_g,\theta_f,\theta_y)=-\sum_{k=1}^{|\mathcal{C}_s|}\mathbb{1}_{[k=y_i^s]}\log
+p_k
+\]</span> 其中 <span class="math inline">\(p=\left[ p_1, \ldots,
+p_{|\mathcal{C}_s|} \right]\)</span> 是 softmax 对分类的预测 <span class="math inline">\(p=softmax(F(G(x)))\)</span>，而特征范数惩罚目的是通过最小化两个域直接的特征范数差异来获得具有域迁移性能的特征。<span class="math inline">\(L_d(\cdot, \cdot)\)</span> 是 <span class="math inline">\(L_2\)</span> 距离， <span class="math inline">\(\lambda\)</span> 是超参数。</p>
+<p>MMFND是一个简单有效的表征了域偏移，然后通过 HAFN
+的方法连接了源域的特征范数差异，最后得到了同时具备特征相关和域迁移的特征。</p>
+<p>但是理论上很合理，但 <span class="math inline">\(R\)</span>
+的设置是一个问题，根据假说里面推荐的，将两个域的特征范数期望对齐能提高域迁移性能，但实验结果表示即使将两个域的特征范数限制为一个很小的值依然能在目标域中取得较好的效果，所以值得考虑将特征范数期望对齐为一个大值是否是有必要的。事实上
+HAFN 是失败很可能 会导致梯度爆炸。</p>
+<h3 id="stepwise-afn">Stepwise AFN</h3>
+<p>为了解决上面的问题，作者提出了一种改进方法
+SAFN，为了鼓励模型以渐进的方式学习具有更大范数的任务相关的特征，SAFN
+如下： <span class="math display">\[
+C_2(\theta_g,\theta_f,\theta_y)=\frac{1}{n_s}\sum_{(x_i, y_i) \in
+D_s}L_y(x_i, y_i)
+    + \frac{\lambda}{n_s+n_t}\sum_{x_i \in D_s \cup D_t}
+L_d(h(x_i;\theta_0)+\Delta r, h(x_i; \theta))
+\]</span> 其中 <span class="math inline">\(\theta = \theta_g \cup
+\theta_f\)</span>. <span class="math inline">\(\theta_0\)</span> 和
+<span class="math inline">\(\theta\)</span>
+表示前一轮和当前迭代的模型参数。<span class="math inline">\(\Delta
+r\)</span> 表示正的残差尺度用于控制特征范数变大。在每次迭代期间，SAFN
+中的第二个惩罚项鼓励相对于单个样本的 <span class="math inline">\(\Delta
+r\)</span>
+步骤大小的特征标记扩大，这是基于其在上次迭代中过去模型参数计算得出的特征范数。相比指定一个大的值，SAFN使得优化器更稳定标签易于在两个目标直接平衡。SAFN
+不会严格减小平均特征范数差异，但可以选择性的设置终点 <span class="math inline">\(R\)</span> 以现在无限制的增大，如下式所示 <span class="math display">\[
+L_d(\max(h(x_i;\theta_0)+\Delta r, R), h(x_i; \theta))
+\]</span>
+就如小特征范数假说所说，只有将特征样本移到大的范数区域，那么严格的范数对齐就不是必要的了。</p>
+<h3 id="model-robustness-evaluation">Model Robustness Evaluation</h3>
+<p>作者针对 <strong>迁移源域的知识到目标域可能会有负面影响</strong>
+提出了一些测试指标，首先有三个定义：</p>
+<ul>
+<li><span class="math inline">\(A_{\mathcal{T}_{|\mathcal{C}_t|}}^{l\%}\)</span>:
+使用 <span class="math inline">\(l\%\)</span>
+的目标标签数据下的准确率</li>
+<li><span class="math inline">\(A_{\mathcal{S}_{|\mathcal{C}_t|}
+\rightarrow \mathcal{T}_{|\mathcal{C}_t|}}\)</span>:
+分类完全对应的迁移</li>
+<li><span class="math inline">\(A_{\mathcal{S}_{|\mathcal{C}_s|}
+\rightarrow \mathcal{T}_{|\mathcal{C}_t|}}\)</span>:
+分类不完全对应的迁移</li>
+</ul>
+<p>随后定义了一些测试指标</p>
+<ul>
+<li><strong>CNG</strong>(Closed Negative Gap): <span class="math inline">\(A_{\mathcal{T}_{|\mathcal{C}_t|}}^{l\%} -
+A_{\mathcal{S}_{|\mathcal{C}_t|} \rightarrow
+\mathcal{T}_{|\mathcal{C}_t|}}\)</span>，表示算法的迁移效果与负面影响的收益</li>
+<li><strong>ONG</strong>(Outlier Negative Gap): <span class="math inline">\(A_{\mathcal{S}_{|\mathcal{C}_t|} \rightarrow
+\mathcal{T}_{|\mathcal{C}_t|}}- A_{\mathcal{S}_{|\mathcal{C}_s|}
+\rightarrow \mathcal{T}_{|\mathcal{C}_t|}}\)</span>
+,表示源域中那些在目标域中没有的分类带来的负面影响</li>
+<li><strong>PNG</strong>(Partial Negative Gap): <span class="math inline">\(A_{\mathcal{T}_{|\mathcal{C}_t|}}^{l\%} -
+A_{\mathcal{S}_{|\mathcal{C}_s|} \rightarrow
+\mathcal{T}_{|\mathcal{C}_t|}}\)</span>
+揭示算法从具有CNG和ONG潜在风险的可用大型域中访问和转移是否有价值。我们说，一旦差距值为正，负面影响就超过了正增长，反之亦然。较大的绝对值表明，更迫切的负面影响或更具鼓励的积极收益。</li>
+</ul>
+<h2 id="detail">Detail</h2>
+<p>实验参数：</p>
+<ul>
+<li><em>Offoice-Home, Office-31, ImageCLEF-DA</em>: <span class="math inline">\(\lambda = 0.05, R = 25, \Delta r =
+1.0\)</span>.</li>
+<li><em>VisDA2017</em>: <span class="math inline">\(\lambda = 0.01,
+\Delta r = 0.3\)</span>.</li>
+<li>学习率 <span class="math inline">\(1.0 \times 10 ^
+{-3}\)</span>.</li>
+</ul>
+<h2 id="experiment">Experiment</h2>
+<p>可以看看论文，表格很多这里就不展示了，就展示一个结果图吧：</p>
+<p><img data-src="AFN/image-20220923164209473.png" alt="image-20220923164209473"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>展示了在无监督域适应的发现，主要是模型在目标域性能下降的主要是因为范数比源域要小。作者证明了大范数对于与提高迁移性能有显著效果。提出了一种无参数的自适应特征范数方法</p>
+<h2 id="others">Others</h2>
+<h3 id="流程图">流程图</h3>
+<blockquote>
+<p>根据开源代码简单画的网络流程图</p>
+</blockquote>
+<p><img data-src="AFN/pipeline.svg" alt="pipeline"></p>
+<h3 id="代码分析">代码分析</h3>
+<h4 id="hafn">HAFN</h4>
+<p>模型部分：简单来说就是直接把 resnet50
+的特征提取（即处理最后的全连接层）和分类器分成两个部分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> models</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ResBase50</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(ResBase50, self).__init__()</span><br><span class="line">        model_resnet50 = models.resnet50(pretrained=<span class="literal">True</span>)</span><br><span class="line">        self.conv1 = model_resnet50.conv1</span><br><span class="line">        self.bn1 = model_resnet50.bn1</span><br><span class="line">        self.relu = model_resnet50.relu</span><br><span class="line">        self.maxpool = model_resnet50.maxpool</span><br><span class="line">        self.layer1 = model_resnet50.layer1</span><br><span class="line">        self.layer2 = model_resnet50.layer2</span><br><span class="line">        self.layer3 = model_resnet50.layer3</span><br><span class="line">        self.layer4 = model_resnet50.layer4</span><br><span class="line">        self.avgpool = model_resnet50.avgpool</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ResClassifier</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, class_num=<span class="number">65</span>, extract=<span class="literal">True</span>, dropout_p=<span class="number">0.5</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(ResClassifier, self).__init__()</span><br><span class="line">        self.fc1 = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">2048</span>, <span class="number">1000</span>),</span><br><span class="line">            nn.BatchNorm1d(<span class="number">1000</span>, affine=<span class="literal">True</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Dropout(p=dropout_p)</span><br><span class="line">            )</span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">1000</span>, class_num)</span><br><span class="line">        self.extract = extract</span><br><span class="line">        self.dropout_p = dropout_p</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        fc1_emb = self.fc1(x)</span><br><span class="line">        <span class="keyword">if</span> self.training:</span><br><span class="line">            fc1_emb.mul_(math.sqrt(<span class="number">1</span> - self.dropout_p))            </span><br><span class="line">        logit = self.fc2(fc1_emb)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.extract:</span><br><span class="line">            <span class="keyword">return</span> fc1_emb, logit         </span><br><span class="line">        <span class="keyword">return</span> logit</span><br><span class="line">netG = ResBase50().cuda()</span><br><span class="line">netF = ResClassifier(class_num=args.class_num, extract=args.extract, dropout_p=args.dropout_p).cuda()</span><br></pre></td></tr></table></figure>
+<p>HAFN损失函数：实际上分类损失就是交叉熵损失，而后面的是将输入的范数均值与所给值的差的平方，即让特征范数靠近指定值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_cls_loss</span>(<span class="params">pred, gt</span>):</span><br><span class="line">    cls_loss = F.nll_loss(F.log_softmax(pred), gt)</span><br><span class="line">    <span class="keyword">return</span> cls_loss</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_L2norm_loss_self_driven</span>(<span class="params">x</span>):</span><br><span class="line">    l = (x.norm(p=<span class="number">2</span>, dim=<span class="number">1</span>).mean() - args.radius) ** <span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> args.weight_L2norm * l</span><br></pre></td></tr></table></figure>
+<p>SAFN损失函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_cls_loss</span>(<span class="params">pred, gt</span>):</span><br><span class="line">    cls_loss = F.nll_loss(F.log_softmax(pred), gt)</span><br><span class="line">    <span class="keyword">return</span> cls_loss</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_L2norm_loss_self_driven</span>(<span class="params">x</span>):</span><br><span class="line">    radius = x.norm(p=<span class="number">2</span>, dim=<span class="number">1</span>).detach()</span><br><span class="line">    <span class="keyword">assert</span> radius.requires_grad == <span class="literal">False</span></span><br><span class="line">    radius = radius + <span class="number">1.0</span></span><br><span class="line">    l = ((x.norm(p=<span class="number">2</span>, dim=<span class="number">1</span>) - radius) ** <span class="number">2</span>).mean()</span><br><span class="line">    <span class="keyword">return</span> args.weight_L2norm * l</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>所谓自适应就是让目标永远在前面比原来的大
+1，所以第二个损失其实是固定值，但又能约束特征范数变大</p>
+</blockquote>
+<p>训练流程的一些关键代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">opt_g = optim.SGD(netG.parameters(), lr=args.lr, weight_decay=<span class="number">0.0005</span>)</span><br><span class="line">opt_f = optim.SGD(netF.parameters(), lr=args.lr, momentum=<span class="number">0.9</span>, weight_decay=<span class="number">0.0005</span>)</span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, args.pre_epoches + <span class="number">1</span>):</span><br><span class="line">    <span class="keyword">for</span> i, (s_imgs, s_labels) <span class="keyword">in</span> tqdm.tqdm(<span class="built_in">enumerate</span>(source_loader)):</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        s_bottleneck = netG(s_imgs)</span><br><span class="line">        s_fc2_emb, s_logit = netF(s_bottleneck)</span><br><span class="line"></span><br><span class="line">        s_fc2_ring_loss = get_L2norm_loss_self_driven(s_fc2_emb)</span><br><span class="line">        s_cls_loss = get_cls_loss(s_logit, s_labels)</span><br><span class="line"></span><br><span class="line">        loss = s_cls_loss + s_fc2_ring_loss </span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        ... </span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, args.epoch + <span class="number">1</span>):</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i, (t_imgs, _) <span class="keyword">in</span> tqdm.tqdm(<span class="built_in">enumerate</span>(target_loader_iter)):</span><br><span class="line">        s_imgs, s_labels = source_loader_iter.<span class="built_in">next</span>()</span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        s_bottleneck = netG(s_imgs)</span><br><span class="line">        t_bottleneck = netG(t_imgs)</span><br><span class="line">        s_fc2_emb, s_logit = netF(s_bottleneck)</span><br><span class="line">        t_fc2_emb, t_logit = netF(t_bottleneck)</span><br><span class="line"></span><br><span class="line">        s_cls_loss = get_cls_loss(s_logit, s_labels)</span><br><span class="line">        s_fc2_L2norm_loss = get_L2norm_loss_self_driven(s_fc2_emb)</span><br><span class="line">        t_fc2_L2norm_loss = get_L2norm_loss_self_driven(t_fc2_emb)</span><br><span class="line"></span><br><span class="line">        loss = s_cls_loss + s_fc2_L2norm_loss + t_fc2_L2norm_loss</span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        opt_g.step()</span><br><span class="line">        opt_f.step()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>简单来看训练分成了两部分，第一部分只在源域训练，最后 fc
+的前一层的范数计算 loss 然后计算分类loss</p>
+</blockquote>
+<h3 id="改进">改进</h3>
+<p>老师和师兄给出的一些建议是：</p>
+<ul>
+<li>范数变大了以后虽然类间距变大了，分类更容易了，但类内距离也变大了，从实验结果的来看确实如此，所以可以考虑约束让类内距离也减小</li>
+<li>让范数变成可学习的参数</li>
+<li>不是对于所有的样本都一视同仁的将范数调大，对于困难样本，我们将其调整大一下，使其具有更高的激活值，对于简单样本，我们将其抑制。</li>
+</ul>
+<h3 id="结果复现">结果复现</h3>
+<h4 id="office-home">Office-Home</h4>
+<p>基于 ResNet50 的复现结果，括号中标注了 <strong>paper</strong>
+的为论文中的结果</p>
+<table>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 2%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">Ar<span class="math inline">\(\rightarrow\)</span>Cl</th>
+<th style="text-align: center;">Ar<span class="math inline">\(\rightarrow\)</span>Pr</th>
+<th style="text-align: center;">Ar<span class="math inline">\(\rightarrow\)</span>Rw</th>
+<th style="text-align: center;">Cl<span class="math inline">\(\rightarrow\)</span>Ar</th>
+<th style="text-align: center;">Cl<span class="math inline">\(\rightarrow\)</span>Pr</th>
+<th style="text-align: center;">Cl<span class="math inline">\(\rightarrow\)</span>Rw</th>
+<th style="text-align: center;">Pr<span class="math inline">\(\rightarrow\)</span>Ar</th>
+<th style="text-align: center;">Pr<span class="math inline">\(\rightarrow\)</span>Cl</th>
+<th style="text-align: center;">Pr<span class="math inline">\(\rightarrow\)</span>Rw</th>
+<th style="text-align: center;">Rw<span class="math inline">\(\rightarrow\)</span>Ar</th>
+<th style="text-align: center;">Rw<span class="math inline">\(\rightarrow\)</span>Cl</th>
+<th style="text-align: center;">Rw<span class="math inline">\(\rightarrow\)</span>Pr</th>
+<th style="text-align: center;">Avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">ResNet50</td>
+<td style="text-align: center;">43.14</td>
+<td style="text-align: center;">59.32</td>
+<td style="text-align: center;">69.80</td>
+<td style="text-align: center;">44.17</td>
+<td style="text-align: center;">57.94</td>
+<td style="text-align: center;">58.30</td>
+<td style="text-align: center;">40.38</td>
+<td style="text-align: center;">36.40</td>
+<td style="text-align: center;">65.48</td>
+<td style="text-align: center;">59.33</td>
+<td style="text-align: center;">47.24</td>
+<td style="text-align: center;">76.23</td>
+<td style="text-align: center;">54.81</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>ResNet50(paper)</strong></td>
+<td style="text-align: center;">34.9</td>
+<td style="text-align: center;">50.0</td>
+<td style="text-align: center;">58.0</td>
+<td style="text-align: center;">37.4</td>
+<td style="text-align: center;">41.9</td>
+<td style="text-align: center;">46.2</td>
+<td style="text-align: center;">38.5</td>
+<td style="text-align: center;">31.2</td>
+<td style="text-align: center;">60.4</td>
+<td style="text-align: center;">53.9</td>
+<td style="text-align: center;">41.2</td>
+<td style="text-align: center;">59.9</td>
+<td style="text-align: center;">46.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>HAFN(paper)</strong></td>
+<td style="text-align: center;">50.2</td>
+<td style="text-align: center;">70.1</td>
+<td style="text-align: center;">76.6</td>
+<td style="text-align: center;">61.1</td>
+<td style="text-align: center;">68.0</td>
+<td style="text-align: center;">70.7</td>
+<td style="text-align: center;">59.5</td>
+<td style="text-align: center;">48.4</td>
+<td style="text-align: center;">77.3</td>
+<td style="text-align: center;">69.4</td>
+<td style="text-align: center;">53.0</td>
+<td style="text-align: center;">80.2</td>
+<td style="text-align: center;">65.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>SAFN(paper)</strong></td>
+<td style="text-align: center;">52.0</td>
+<td style="text-align: center;">71.1</td>
+<td style="text-align: center;">76.3</td>
+<td style="text-align: center;">64.2</td>
+<td style="text-align: center;">69.9</td>
+<td style="text-align: center;">71.9</td>
+<td style="text-align: center;">63.7</td>
+<td style="text-align: center;">51.4</td>
+<td style="text-align: center;">77.1</td>
+<td style="text-align: center;">70.9</td>
+<td style="text-align: center;">57.1</td>
+<td style="text-align: center;">81.5</td>
+<td style="text-align: center;">67.3</td>
+</tr>
+</tbody>
+</table>
+<h4 id="office-31">Office-31</h4>
+<p>基于 ResNet50 的复现结果，括号中标注了 <strong>paper</strong>
+的为论文中的结果</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">A<span class="math inline">\(\rightarrow\)</span>D</th>
+<th style="text-align: center;">A<span class="math inline">\(\rightarrow\)</span>W</th>
+<th style="text-align: center;">D<span class="math inline">\(\rightarrow\)</span>A</th>
+<th style="text-align: center;">D<span class="math inline">\(\rightarrow\)</span>W</th>
+<th style="text-align: center;">W<span class="math inline">\(\rightarrow\)</span>A</th>
+<th style="text-align: center;">W<span class="math inline">\(\rightarrow\)</span>D</th>
+<th style="text-align: center;">Avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">ResNet-50</td>
+<td style="text-align: center;">72.49</td>
+<td style="text-align: center;">67.80</td>
+<td style="text-align: center;">54.60</td>
+<td style="text-align: center;">95.97</td>
+<td style="text-align: center;">52.72</td>
+<td style="text-align: center;">100.00</td>
+<td style="text-align: center;">73.93</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>ResNet-50(paper)</strong></td>
+<td style="text-align: center;">68.9</td>
+<td style="text-align: center;">68.4</td>
+<td style="text-align: center;">62.5</td>
+<td style="text-align: center;">96.7</td>
+<td style="text-align: center;">60.7</td>
+<td style="text-align: center;">99.3</td>
+<td style="text-align: center;">76.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">HAFN</td>
+<td style="text-align: center;">84.94</td>
+<td style="text-align: center;">84.15</td>
+<td style="text-align: center;">69.47</td>
+<td style="text-align: center;">98.36</td>
+<td style="text-align: center;">68.51</td>
+<td style="text-align: center;">99.59</td>
+<td style="text-align: center;">84.17</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>HAFN(paper)</strong></td>
+<td style="text-align: center;">84.4</td>
+<td style="text-align: center;">83.4</td>
+<td style="text-align: center;">69.4</td>
+<td style="text-align: center;">98.3</td>
+<td style="text-align: center;">68.5</td>
+<td style="text-align: center;">99.7</td>
+<td style="text-align: center;">83.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">SAFN</td>
+<td style="text-align: center;">88.76</td>
+<td style="text-align: center;">88.05</td>
+<td style="text-align: center;">71.03</td>
+<td style="text-align: center;">97.98</td>
+<td style="text-align: center;">69.89</td>
+<td style="text-align: center;">99.79</td>
+<td style="text-align: center;">85.91</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>SAFN(paper)</strong></td>
+<td style="text-align: center;">87.7</td>
+<td style="text-align: center;">88.8</td>
+<td style="text-align: center;">69.8</td>
+<td style="text-align: center;">98.4</td>
+<td style="text-align: center;">69.7</td>
+<td style="text-align: center;">99.8</td>
+<td style="text-align: center;">85.7</td>
+</tr>
+</tbody>
+</table>
+<h4 id="visda2017">VisDA2017</h4>
+<p>基于 ResNet50 的复现结果(但论文中使用的是 ResNet101,
+所以结果稍差一些)，括号中标注了 <strong>paper</strong>
+的为论文中的结果</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">plane</th>
+<th style="text-align: center;">bcycl</th>
+<th style="text-align: center;">bus</th>
+<th style="text-align: center;">car</th>
+<th style="text-align: center;">horse</th>
+<th style="text-align: center;">knife</th>
+<th style="text-align: center;">mcycl</th>
+<th style="text-align: center;">person</th>
+<th style="text-align: center;">plant</th>
+<th style="text-align: center;">sktbrd</th>
+<th style="text-align: center;">train</th>
+<th style="text-align: center;">truck</th>
+<th style="text-align: center;">Per-class</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>ResNet(paper)</strong></td>
+<td style="text-align: center;">55.1</td>
+<td style="text-align: center;">53.3</td>
+<td style="text-align: center;">61.9</td>
+<td style="text-align: center;">59.1</td>
+<td style="text-align: center;">80.6</td>
+<td style="text-align: center;">17.9</td>
+<td style="text-align: center;">79.7</td>
+<td style="text-align: center;">31.2</td>
+<td style="text-align: center;">81.0</td>
+<td style="text-align: center;">26.5</td>
+<td style="text-align: center;">73.5</td>
+<td style="text-align: center;">8.5</td>
+<td style="text-align: center;">52.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">HAFN</td>
+<td style="text-align: center;">89.06</td>
+<td style="text-align: center;">50.16</td>
+<td style="text-align: center;">80.36</td>
+<td style="text-align: center;">66.35</td>
+<td style="text-align: center;">90.02</td>
+<td style="text-align: center;">40.86</td>
+<td style="text-align: center;">91.36</td>
+<td style="text-align: center;">70.42</td>
+<td style="text-align: center;">86.22</td>
+<td style="text-align: center;">51.99</td>
+<td style="text-align: center;">88.62</td>
+<td style="text-align: center;">18.24</td>
+<td style="text-align: center;">68.64</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>HAFN(paper)</strong></td>
+<td style="text-align: center;">92.7</td>
+<td style="text-align: center;">55.4</td>
+<td style="text-align: center;">82.4</td>
+<td style="text-align: center;">70.9</td>
+<td style="text-align: center;">93.2</td>
+<td style="text-align: center;">71.2</td>
+<td style="text-align: center;">90.8</td>
+<td style="text-align: center;">78.2</td>
+<td style="text-align: center;">89.1</td>
+<td style="text-align: center;">50.2</td>
+<td style="text-align: center;">88.9</td>
+<td style="text-align: center;">24.5</td>
+<td style="text-align: center;">73.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">SAFN</td>
+<td style="text-align: center;">87.98</td>
+<td style="text-align: center;">54.39</td>
+<td style="text-align: center;">79.08</td>
+<td style="text-align: center;">66.90</td>
+<td style="text-align: center;">90.83</td>
+<td style="text-align: center;">39.13</td>
+<td style="text-align: center;">91.10</td>
+<td style="text-align: center;">71.58</td>
+<td style="text-align: center;">89.99</td>
+<td style="text-align: center;">53.66</td>
+<td style="text-align: center;">89.57</td>
+<td style="text-align: center;">16.73</td>
+<td style="text-align: center;">69.24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>SAFN(paper)</strong></td>
+<td style="text-align: center;">93.6</td>
+<td style="text-align: center;">61.3</td>
+<td style="text-align: center;">84.1</td>
+<td style="text-align: center;">70.6</td>
+<td style="text-align: center;">94.1</td>
+<td style="text-align: center;">79.0</td>
+<td style="text-align: center;">91.8</td>
+<td style="text-align: center;">79.6</td>
+<td style="text-align: center;">89.9</td>
+<td style="text-align: center;">55.6</td>
+<td style="text-align: center;">89.0</td>
+<td style="text-align: center;">24.4</td>
+<td style="text-align: center;">76.1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="references">References</h2>
+<hr>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+<div id="footnotes">
+<hr>
+<div id="footnotelist">
+<ol style="list-style: none; padding-left: 0; margin-left: 40px">
+<li id="fn:1">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://cse.sysu.edu.cn/content/5129">https://cse.sysu.edu.cn/content/5129</a><a href="#fnref:1" rev="footnote">
+↩︎</a></span>
+</li>
+</ol>
+</div>
+</div>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-09/AFN.html" title="『论文笔记』Larger Norm More Transferable - An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation">https://meteordream.github.io/Paper/2022-09/AFN.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E5%9F%9F%E8%BF%81%E7%A7%BB/" rel="tag"><i class="fa fa-tag"></i> 域迁移</a>
+              <a href="/tags/Norm/" rel="tag"><i class="fa fa-tag"></i> Norm</a>
+              <a href="/tags/ICCV/" rel="tag"><i class="fa fa-tag"></i> ICCV</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Paper/2022-09/DACL.html" rel="prev" title="『论文笔记』Facial Expression Recognition in the Wild via Deep Attentive Center Loss">
+      <i class="fa fa-chevron-left"></i> 『论文笔记』Facial Expression Recognition in the Wild via Deep Attentive Center Loss
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-09/707_%E8%AE%BE%E8%AE%A1%E9%93%BE%E8%A1%A8(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』707 设计链表">
+      『LeetCode』707 设计链表 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#l2-preserved-dropout"><span class="nav-number">4.1.</span> <span class="nav-text">L2-preserved Dropout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#framework"><span class="nav-number">4.2.</span> <span class="nav-text">Framework</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hard-afn"><span class="nav-number">4.3.</span> <span class="nav-text">Hard AFN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stepwise-afn"><span class="nav-number">4.4.</span> <span class="nav-text">Stepwise AFN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#model-robustness-evaluation"><span class="nav-number">4.5.</span> <span class="nav-text">Model Robustness Evaluation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#detail"><span class="nav-number">5.</span> <span class="nav-text">Detail</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">6.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">8.</span> <span class="nav-text">Others</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">8.1.</span> <span class="nav-text">流程图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">8.2.</span> <span class="nav-text">代码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hafn"><span class="nav-number">8.2.1.</span> <span class="nav-text">HAFN</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B"><span class="nav-number">8.3.</span> <span class="nav-text">改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%8E%B0"><span class="nav-number">8.4.</span> <span class="nav-text">结果复现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#office-home"><span class="nav-number">8.4.1.</span> <span class="nav-text">Office-Home</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#office-31"><span class="nav-number">8.4.2.</span> <span class="nav-text">Office-31</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#visda2017"><span class="nav-number">8.4.3.</span> <span class="nav-text">VisDA2017</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">9.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">230</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">20:10</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>
