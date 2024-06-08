@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: PNP: Robust Learning from Noisy Labels by Probabilistic Noise Prediction  Author: Zeren Sun, Fumin Shen, Dan Huang, Qiong Wang, Xiangbo Shu, Yazhou Yao, and Jinhui Tang(姚亚洲老师团队工作)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』PNP - Robust Learning from Noisy Labels by Probabilistic Noise Prediction">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2023-03/PNP.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: PNP: Robust Learning from Noisy Labels by Probabilistic Noise Prediction  Author: Zeren Sun, Fumin Shen, Dan Huang, Qiong Wang, Xiangbo Shu, Yazhou Yao, and Jinhui Tang(姚亚洲老师团队工作)">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304154710237.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304164139595.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304170513515.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304170645312.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304170719354.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304170736932.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304170749113.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304170756007.png">
+<meta property="article:published_time" content="2023-03-04T06:43:06.000Z">
+<meta property="article:modified_time" content="2023-03-04T06:43:06.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="CVPR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2023-03/PNP/image-20230304154710237.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2023-03/PNP.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』PNP - Robust Learning from Noisy Labels by Probabilistic Noise Prediction | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2023-03/PNP.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』PNP - Robust Learning from Noisy Labels by Probabilistic Noise Prediction
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-04 14:43:06" itemprop="dateCreated datePublished" datetime="2023-03-04T14:43:06+08:00">2023-03-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2023-03/PNP.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2023-03/PNP.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: PNP: Robust Learning from Noisy Labels by
+Probabilistic Noise Prediction<br>
+</li>
+<li><strong>Author</strong>: Zeren Sun, Fumin Shen, Dan Huang, Qiong
+Wang, Xiangbo Shu, <strong>Yazhou Yao</strong>, and Jinhui
+Tang(姚亚洲老师团队工作)</li>
+<li><strong>Institution</strong>: 南京理工大学，成都科技大学</li>
+<li><strong>Year</strong>: 2022</li>
+<li><strong>Journal</strong>: CVPR</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2022/html/Sun_PNP_Robust_Learning_From_Noisy_Labels_by_Probabilistic_Noise_Prediction_CVPR_2022_paper.html">OpenAccess</a>,
+<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2022/papers/Sun_PNP_Robust_Learning_From_Noisy_Labels_by_Probabilistic_Noise_Prediction_CVPR_2022_paper.pdf">PDF</a>,
+<a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/9879051">IEEE</a>, <a target="_blank" rel="noopener" href="https://github.com/NUST-Machine-Intelligence-Laboratory/PNP">Github</a></li>
+<li><strong>Cite</strong>: <strong><em>Zeren Sun, Fumin Shen, Dan Huang,
+Qiong Wang, Xiangbo Shu, Yazhou Yao, Jinhui Tang</em></strong>;
+Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern
+Recognition (CVPR), 2022, pp. 5311-5320</li>
+<li><strong>Idea</strong>:
+通过网络以端到端的方法预测噪声类型从而选择性的对网络进行训练优化</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Sun_2022_CVPR,</span><br><span class="line">    author    = &#123;Sun, Zeren and Shen, Fumin and Huang, Dan and Wang, Qiong and Shu, Xiangbo and Yao, Yazhou and Tang, Jinhui&#125;,</span><br><span class="line">    title     = &#123;PNP: Robust Learning From Noisy Labels by Probabilistic Noise Prediction&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)&#125;,</span><br><span class="line">    month     = &#123;June&#125;,</span><br><span class="line">    year      = &#123;2022&#125;,</span><br><span class="line">    pages     = &#123;5311-5320&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>噪声标签是深度学习中的一个问题，因为神经网络通常具备很强的拟合训练数据的问题，以往的方法通常通过样本选择的方法来划分样本，例如排序或阈值。该文章提出了一种称为<strong>概率噪声预测</strong>(PNP,
+Probabilistic Noise Prediction)的方法来建模噪声标签。总的来说，PNP
+同时训练两个网络，一个预测类别标签，一个预测噪声类型，通过预测的标签噪声概率可以识别噪声样本并使用对应的优化目标，最终的优化目标是联合损失，包括分类损失，辅助约束损失，分布内一致性损失。</p>
+<h2 id="introduction">Introduction</h2>
+<p>在大规模数据集中因为各种原因总是不可避免的会有一些噪声标签，这对深度学习的模型性能会有影响，所以建立对噪声标签具有鲁棒性的模型是有意义的。</p>
+<p>噪声标签通常有两种：开集和闭集。闭集噪声主要是已知的标签空间的的噪声标签，而开集则是已知标签空间之外的。简单理解就是，闭集是数据集的标签标错了，而开集则是一些不是训练集内类别的样本。闭集噪声样本是
+ID (in-distribution)，开集噪声样本为 OOD(out-of-distribution)。</p>
+<p>作者提出 PNP
+的方法，同时训练两个网络，一个标签预测网络，一个噪声预测网络，噪声预测网络可以识别干净样本，ID样本、OOD样本。对噪声预测网络使用回归的方式进行优化，在预测-标签对和预测-预测对使用JS散度计算。最后对
+ID 数据添加一致性约束。</p>
+<p><img data-src="PNP/image-20230304154710237.png" alt="image-20230304154710237"></p>
+<p>上图 (a) 是早期的方法，只将样本分为干净样本和噪声样本，(b)
+将噪声样本分为干净样本、ID样本、OOD样本，而 (c)
+作者提出通过网络预测样本噪声概率。</p>
+<p>该文章的贡献：</p>
+<ol type="1">
+<li>提出了对抗噪声的方法 PNP，可以在有噪声的数据中进行鲁棒学习</li>
+<li>PNP
+采用辅助损失使得模型能预测样本的噪声类型，采用预测-标签对和预测-预测对之间的JS散度来近似真实噪声类型。此外，对分布内数据的不同视图之间的一致性进行约束，以增强识别能力</li>
+<li>给出了两种样本寻找范式：PNP-Hard 和 PNP-soft，实验表明效果很好</li>
+</ol>
+<h2 id="method">Method</h2>
+<p>首先是常规的优化目标 <span class="math display">\[
+\mathcal{L}=\mathbb{E}_{\mathcal{D}}\left[l_{c e}\left(x_{i},
+y_{i}\right)\right]=\frac{1}{N} \sum_{i=1}^{N} l_{c e}\left(x_{i},
+y_{i}\right)
+\]</span> 其中 <span class="math inline">\(x_i\)</span> 是样本，<span class="math inline">\(y_i\)</span>
+是对应的标签（假设标签没有噪声都是对的），数据集有 <span class="math inline">\(N\)</span> 样本 <span class="math inline">\(C\)</span> 类，通过最下化经验损失优化： <span class="math display">\[
+l_{c e}\left(x_{i}, y_{i}\right)=-\sum_{c=1}^{C} y_{i}^{c} \log
+\left(p^{c}\left(x_{i}, \Theta\right)\right)
+\]</span> <span class="math inline">\(\Theta\)</span> 表示模型参数。</p>
+<p>作者提出以端到端概率的方式直接对标签噪声建模，其中包含两个网络，一个是标签预测网络(LPN)，用于预测类别标签：
+<span class="math display">\[
+p\left(x_i\right)=\sigma\left(h\left(f\left(x_i, \Psi\right),
+\Phi_L\right)\right) \in \mathbb{R}^C
+\]</span> 其中 <span class="math inline">\(\Phi_L\)</span> 表示 LPN
+预测头的参数，<span class="math inline">\(\Psi\)</span> 表示 backbone
+的参数， <span class="math inline">\(f(\cdot, \Psi)\)</span> 和 <span class="math inline">\(h\left(\cdot, \Phi_L\right)\)</span>
+是二者的映射函数. <span class="math inline">\(\sigma(\cdot)\)</span> 是
+softmax 函数。另一个网络是噪声预测网络(noise predictor network,
+<strong>NPN</strong>)，用于识别噪声类型： <span class="math display">\[
+t\left(x_i\right)=\sigma\left(g\left(f\left(x_i, \Psi\right),
+\Phi_N\right)\right) \in \mathbb{R}^3,
+\]</span> <span class="math inline">\(\Phi_N\)</span> 是NPN的预测头，
+<span class="math inline">\(g\left(\cdot, \Phi_N \right)\)</span>
+是其映射函数，具体实现未是一个带有一个隐藏层的MLP网络，而 NPN 和 LPN
+是共享 backbone 的。</p>
+<p>对于干净样本使用交叉熵损失优化： <span class="math display">\[
+l_{\text {clean }}\left(x_i, y_i\right)=-\sum_{c=1}^C y_i^c \log
+\left(p_i^c\right)-\sum_{c=1}^C p_i^c \log \left(p_i^c\right)
+\]</span> 对于 ID
+样本，借鉴无监督一致性训练的方法，将强增强和弱增强输入网络然后对输出计算交叉熵损失：
+<span class="math display">\[
+l_{i d}\left(x_i\right)=l_{c e}\left(p\left(v_i^s\right),
+\varepsilon\left(p\left(v_i^w\right), \tau\right)\right)
+\]</span> 其中 <span class="math display">\[
+\varepsilon(z, T)=\frac{\exp (z / T)}{\sum_{z^*} \exp \left(z^* /
+T\right)} .
+\]</span> 对 OOD 样本也采用同样的处理方法 <span class="math display">\[
+l_{\text {ood }}\left(x_i\right)=l_{c e}\left(p\left(v_i^s\right),
+\varepsilon\left(p\left(v_i^w\right), 1 / \tau\right)\right) .
+\]</span> 经验的设置 <span class="math inline">\(\tau = 0.1\)</span> 使
+ID 中的 <span class="math inline">\(\varepsilon\)</span> 是锐化操作而
+OOD 是扁平操作。 这么做的原因是对于 ID
+样本，训练好的模型的预测结果比给定的结果更可靠一些，而对于 OOD
+噪声因为是给定任务外的类别模型更容易混淆，所以将预测拟合到一个近似均匀分布，从而提高鲁棒性和泛化性。</p>
+<p>但因为不知道标签是不是准确的，所以训练 NPN
+网络是困难的，在这篇文章中，作者提出估计每个样本的噪声类型并用于训练 NPN
+网络，具体来说，使用 JS 散度来估计每个样本是干净样本的概率： <span class="math display">\[
+\mathcal{Q}_i^{\text {clean }}=\mathcal{Q}^{\text {clean
+}}\left(x_i\right)=1-D_{J S}\left(p\left(v_i^w\right) \| y_i\right)
+\]</span> 其中 <span class="math inline">\(D_{J S}(\cdot \|
+\cdot)\)</span> 是 JS 散度函数。同样的，使用预测散度来估计样本是 OOD
+的可能性 <span class="math inline">\(\mathcal{Q}^{\text {ood
+}}\)</span>： <span class="math display">\[
+\mathcal{Q}_i^{\text {ood }}=\mathcal{Q}^{\text {ood
+}}\left(x_i\right)=D_{J S}\left(p\left(v_i^w\right) \|
+p\left(v_i^{w^{\prime}}\right)\right),
+\]</span> 其中 <span class="math inline">\(v_i^{w^{\prime}}\)</span>
+表示 <span class="math inline">\(x_i\)</span> 的另一个弱增强视图。
+随后采用下面的辅助约束损失来优化 NPN： <span class="math display">\[
+l_{\text {aux }}\left(x_i\right)=\left|\mathcal{P}_i^{\text {clean
+}}-\mathcal{Q}_i^{\text {clean }}\right|+\left|\mathcal{P}_i^{\text {ood
+}}-\mathcal{Q}_i^{\text {ood }}\right|
+\]</span> 因为对 OOD 样本使用了预测散度，作者提对 ID
+样本添加一致性正则化约束： <span class="math display">\[
+l_{\text {cons }}\left(x_i\right)=D\left(p\left(v_i^w\right) \|
+p\left(v_i^{w^{\prime}}\right)\right)+D\left(p\left(v_i^{w^{\prime}}\right)
+\| p\left(v_i^w\right)\right)
+\]</span> <span class="math inline">\(D\)</span> 表示 KL
+散度。一致性正则化不仅增强了表征学习，而且使模型能够更好地区分 ID 噪声和
+OOD 噪声。</p>
+<p><img data-src="PNP/image-20230304164139595.png" alt="image-20230304164139595"></p>
+<p>PNP 的整体框架示意图：输入样本并行的输入到两个网络 LPN
+和NPN，NPN预测样本是干净样本、ID 样本、OOD 样本的概率，而输入 LPN
+网络的是两个强增强和一个弱增强的视图，从而得到三个标签预测。随后根据噪声类型和选择范式计算分类损失。在辅助模块通过近似噪声类型计算约束损失。一致性损失通过不同视图之间的预测一致性计算得到。</p>
+<p>NPN
+的训练分两步。预热期先使用原始标签训练一小段时间，随后使用端到端的方法进行训练：
+<span class="math display">\[
+\mathcal{L}=\mathcal{L}_{\text {cls }}+\gamma \mathcal{L}_{a u x}+\omega
+\mathcal{L}_{\text {cons }}
+\]</span> <span class="math inline">\(\gamma\)</span> 和 <span class="math inline">\(\omega\)</span> 是平衡损失项。</p>
+<p>在该文章中给出了两种选择范式：软选择和硬选择，不同的范式有不同的损失函数，对于硬选择：
+<span class="math display">\[
+\left\{\begin{aligned}
+\mathcal{L}_{\text {cls }} &amp;
+=\mathbb{E}_{\mathcal{D}}\left[\mathbb{1}_{\mathcal{P}_i^{\text {clean
+}} \geq \max \left(\mathcal{P}_i^{i d}, \mathcal{P}_i^{\text {ood
+}}\right)} l_{\text {clean }}\left(x_i, y_i\right)\right. \\
+&amp; +\mathbb{1}_{\mathcal{P}_i^{i d}&gt;\max
+\left(\mathcal{P}_i^{\text {clean }}, \mathcal{P}_i^{\text {ood
+}}\right)} l_{i d}\left(x_i\right) \\
+&amp; \left.+\mathbb{1}_{\mathcal{P}_i^{\text {ood }}&gt;\max
+\left(\mathcal{P}_i^{i d}, \mathcal{P}_i^{\text {clean }}\right)}
+l_{\text {ood }}\left(x_i\right)\right] \\
+\mathcal{L}_{\text {cons }} &amp;
+=\mathbb{E}_{\mathcal{D}}\left[\mathbb{1}_{\mathcal{P}_i^{\text {ood
+}}&lt;\max \left(\mathcal{P}_i^{i d}, \mathcal{P}_i^{\text {clean
+}}\right)} l_{\text {cons }}\left(x_i\right)\right]
+\end{aligned}\right.
+\]</span> <span class="math inline">\(\mathbb{1}_A\)</span>
+是指标函数如果 <span class="math inline">\(\mathrm{A}\)</span> 是 true
+为 1，否则为 0。</p>
+<p>而软选择是对样本损失进行加权得到最终损失： <span class="math display">\[
+\left\{\begin{aligned}
+\mathcal{L}_{\text {cls }}= &amp;
+\mathbb{E}_{\mathcal{D}}\left[\mathcal{P}_i^{\text {clean }} l_{\text
+{clean }}\left(x_i, y_i\right)\right. \\
+&amp; \left.+\mathcal{P}_i^{i d} l_{i
+d}\left(x_i\right)+\mathcal{P}_i^{\text {ood }} l_{\text {ood
+}}\left(x_i\right)\right] \\
+\mathcal{L}_{\text {cons }}= &amp;
+\mathbb{E}_{\mathcal{D}}\left[\left(\mathcal{P}_i^{\text {clean
+}}+\mathcal{P}_i^{i d}\right) l_{\text {cons }}\left(x_i\right)\right]
+\end{aligned}\right.
+\]</span>
+硬选择相对更信任噪声预测结果，导致过拟合，而软选择可能更会出现欠拟合的问题。经验来看，噪声不显著时硬选择好一些，而噪声严重时软选择好一些。</p>
+<h2 id="experiment">Experiment</h2>
+<p>简单看看论文中的一些实验结果叭：</p>
+<p>首先是合成噪声数据集的结果</p>
+<p><img data-src="PNP/image-20230304170513515.png" alt="image-20230304170513515"></p>
+<p>接下来是真实世界噪声数据集</p>
+<p><img data-src="PNP/image-20230304170645312.png" alt="image-20230304170645312"></p>
+<p><img data-src="PNP/image-20230304170719354.png" alt="image-20230304170719354"></p>
+<p>最后是一些消融实验</p>
+<p><img data-src="PNP/image-20230304170736932.png" alt="image-20230304170736932"></p>
+<p><img data-src="PNP/image-20230304170749113.png" alt="image-20230304170749113"></p>
+<p><img data-src="PNP/image-20230304170756007.png" alt="image-20230304170756007"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>在该文章中，作者专注于从现实世界(开集)噪声标签中学习的挑战。为了减轻它们的负面影响，作者提出了一种简单而有效的方法，称为PNP，以端到端概率的方式对标签噪声建模。PNP遵循样本选择范式，但绕过了选择阈值的要求，这是难以调优和依赖于数据集的。具体来说，PNP并行训练两个网络，能够同时预测类别标签(即LPN)和噪声类型(即NPN)。此外，采用回归任务优化NPN，采用一致性正则化增强识别能力。最后，作者评估了PNP的两种选择范式(即PNP-硬和PNP-软)。在合成数据集和真实数据集上的一系列实验结果证明了方法的有效性和优越性。</p>
+<hr>
+<p><strong>如有错漏，欢迎指正！如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2023-03/PNP.html" title="『论文笔记』PNP - Robust Learning from Noisy Labels by Probabilistic Noise Prediction">https://meteordream.github.io/Paper/2023-03/PNP.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/CVPR/" rel="tag"><i class="fa fa-tag"></i> CVPR</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Paper/2023-02/MetaCNN.html" rel="prev" title="『论文笔记』Meta Convolutional Neural Networks for Single Domain Generalization">
+      <i class="fa fa-chevron-left"></i> 『论文笔记』Meta Convolutional Neural Networks for Single Domain Generalization
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/ReadingNote/2023-03/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E6%B1%87%E6%80%BB.html" rel="next" title="读书笔记汇总">
+      读书笔记汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">231</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">20:14</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>
