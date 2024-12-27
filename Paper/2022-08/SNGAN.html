@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Spectral Normalization for Generative Adversarial Networks Author: Takeru Miyato, Toshiki Kataoka, Masanori Koyama, Yuichi Yoshida Institution: Preferred Networks, Inc.(PFN， 日本最大人工">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Spectral Normalization for Generative Adversarial Networks">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-08/SNGAN.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Spectral Normalization for Generative Adversarial Networks Author: Takeru Miyato, Toshiki Kataoka, Masanori Koyama, Yuichi Yoshida Institution: Preferred Networks, Inc.(PFN， 日本最大人工">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-08/SNGAN/image-20220912163217401.png">
+<meta property="article:published_time" content="2022-08-30T08:16:48.000Z">
+<meta property="article:modified_time" content="2022-09-12T09:16:01.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Normalization">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="GAN">
+<meta property="article:tag" content="ICLR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-08/SNGAN/image-20220912163217401.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-08/SNGAN.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Spectral Normalization for Generative Adversarial Networks | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-08/SNGAN.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Spectral Normalization for Generative Adversarial Networks
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-30 16:16:48" itemprop="dateCreated datePublished" datetime="2022-08-30T16:16:48+08:00">2022-08-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-09-12 17:16:01" itemprop="dateModified" datetime="2022-09-12T17:16:01+08:00">2022-09-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-08/SNGAN.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-08/SNGAN.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Spectral Normalization for Generative
+Adversarial Networks</li>
+<li><strong>Author</strong>: Takeru Miyato, Toshiki Kataoka, Masanori
+Koyama, Yuichi Yoshida</li>
+<li><strong>Institution</strong>: Preferred Networks, Inc.(PFN，
+日本最大人工智能企业)</li>
+<li><strong>Year</strong>: 2018</li>
+<li><strong>Journal</strong>: ICLR</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.05957">Arxiv</a>, <a target="_blank" rel="noopener" href="https://github.com/pfnet-research/sngan_projection">Official
+code</a>, <a target="_blank" rel="noopener" href="https://openreview.net/forum?id=B1QRgziT-">OpenReview</a>, <a target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1GnDuF02F3a_zNEwiA74DnaG7OQ3-Co3N">Other
+materials</a></li>
+<li><strong>Idea</strong>: 利用 SN 约束鉴别器的 Lipschitz 常数稳定 GAN
+的训练</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@inproceedings&#123;miyato2018spectral,</span><br><span class="line">title=&#123;Spectral Normalization for Generative Adversarial Networks&#125;,</span><br><span class="line">author=&#123;Takeru Miyato and Toshiki Kataoka and Masanori Koyama and Yuichi Yoshida&#125;,</span><br><span class="line">booktitle=&#123;International Conference on Learning Representations&#125;,</span><br><span class="line">year=&#123;2018&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>提出了一种新的权重归一化方法，谱归一化(Spectral normalization),
+用于在训练过程稳定鉴别器。这种方法很轻量而且很容易添加到已有的实现方法中，效果和一些已有的方法一样好甚至犹有过之。</p>
+<h2 id="introduction">Introduction</h2>
+<p>训练 GAN
+网络的一个难点是控制鉴别器的性能，设想一下，如果鉴别器太优秀了，那么分类器的训练就会陷入停滞，因为其导数变成
+0 了，这启示着我们要对鉴别器做一些限制。</p>
+<p>这篇文章提出了称为 <em>Spectral normalization</em>
+的权重归一化方法，用于在训练中稳定鉴别器。其优点是</p>
+<ul>
+<li>仅 Lipschitz 常数一个超参数，而且这个超参数也不怎么需要调整</li>
+<li>实现简单计算代价小</li>
+</ul>
+<h2 id="method">Method</h2>
+<p>鉴别器可以表示为 <span class="math display">\[
+D(x, \theta) =  {\rm \mathcal{A}}(f(x, \theta))
+\]</span> <span class="math inline">\(\mathcal{A}\)</span>
+表示激活函数，而 GAN 的目标函数为: <span class="math display">\[
+\min_{G} \max_{D} V(G, D)
+\]</span> 而 <span class="math inline">\(V\)</span> 由下式给出 <span class="math display">\[
+\mathrm{E}_{x\sim q_{\rm data}} [\log D(x)] + \mathrm{E}_{x&#39;\sim
+p_G} [\log(1-D(x&#39;))]
+\]</span> 其中 $ q_{}$ 是数据分布而 <span class="math inline">\(p_G\)</span> 是生成分布，那么对于固定的生成器
+<span class="math inline">\(G\)</span> , 鉴别器的优化目标为 <span class="math display">\[
+D^*_G(x) := \dfrac{q_{\rm data}(x)}{(q_{\rm data}(x) + p_{G}(x))}
+\]</span> 最近一些工作指出鉴别器的函数空间对于 GAN
+的性能至关重要，有许多工作也提出 Lipschitz
+连续在统计有界的重要性。，例如： <span class="math display">\[
+D_{G}^*(x)  = \frac{q_{\rm data}(x)}{q_{\rm data}(x)+p_G(x)} = {\rm
+sigmoid}(f^*(x)), \text{where }f^*(x) = \log q_{\rm data}(x) - \log
+p_G(x)
+\]</span> 其导数 <span class="math display">\[
+\nabla_x f^*(x) = \frac{1}{q_{\rm data}(x)}\nabla_{x}q_{\rm data}(x) -
+\frac{1}{p_G(x)}\nabla_{x}p_G(x)
+\]</span> 可能是无穷大或无法计算，这启示着我们对 <span class="math inline">\(f(x)\)</span> 的导数引入一些正则化条件。</p>
+<h3 id="spectral-normalization">Spectral Normalization</h3>
+<p>谱归一化(Spectral Normalization) 通过约束每层 <span class="math inline">\(g: h_{in} \mapsto h_{out}\)</span>
+的谱范数来控制鉴别器函数 <span class="math inline">\(f\)</span> 的
+Lipschitz 常数。Lipschitz 范数 <span class="math inline">\(\|g\|_{\rm
+Lip}\)</span> 等价于 <span class="math inline">\(\sup_h \sigma(\nabla
+g(h))\)</span>，其中 <span class="math inline">\(\sigma(A)\)</span>
+是矩阵 <span class="math inline">\(A\)</span> 的谱范数（<span class="math inline">\(A\)</span> 的 <span class="math inline">\(L_2\)</span> 矩阵范数）： <span class="math display">\[
+\sigma(A) := \max_{h: h \neq { 0}} \frac{\|Ah\|_2}{\|h\|_2} =
+\max_{\|h\|_2\leq 1} \|Ah\|_2
+\]</span> 同样等于 <span class="math inline">\(A\)</span>
+的最大奇异值。对于线性层 <span class="math inline">\(g(h) = Wh\)</span>
+其范数为 $|g|_{} = _h (g(h)) = _h (W) = (W) $. 如果激活函数的 <span class="math inline">\(\|a_l\|_{\rm Lip}\)</span> 等于
+1，那么可以根据不等式 <span class="math inline">\(\|g_1\circ g_2\|_{\rm
+Lip}\leq\|g_1\|_{\rm Lip}\cdot\|g_2\|_{\rm Lip}\)</span> 得到 <span class="math inline">\(\|f\|_{\rm Lip}\)</span> 的上界： <span class="math display">\[
+\begin{align}
+    \|f\|_{\rm Lip} \leq &amp; \|(h_{L}\mapsto W^{L+1}h_{L})\|_{\rm
+Lip}\cdot \|a_L\|_{\rm Lip}\cdot\|(h_{L-1}\mapsto W^ Lh_{L-1})\|_{\rm
+Lip} \nonumber \\
+    &amp;\cdots \|a_1\|_{\rm Lip}\cdot\|(h_0\mapsto W^ 1h_0)\|_{\rm Lip}
+      = \prod_{l=1}^{L+1} \|(h_{l-1}\mapsto W^lh_{l-1})\|_{\rm Lip} =
+\prod_{l=1}^{L+1} \sigma(W^l).
+\end{align}
+\]</span> Spectral Normalization 对权重矩阵 <span class="math inline">\(W\)</span> 的谱范数做归一化使其满足 Lipschitz 约束
+<span class="math inline">\(\sigma(W) = 1\)</span>: <span class="math display">\[
+\bar{W}_{\rm SN}(W) := W / \sigma(W)
+\]</span></p>
+<h3 id="fast-approximation">Fast Approximation</h3>
+<p>简单来说就是计算奇异值的计算开销太大了，所以作者借鉴另一篇文章提出使用迭代的方法来估算奇异值</p>
+<p><img data-src="SNGAN/image-20220912163217401.png" alt="image-20220912163217401"></p>
+<h3 id="gradient-analysis">Gradient Analysis</h3>
+<p><span class="math inline">\(\bar{W}_{\rm SN}(W)\)</span> 的梯度是：
+<span class="math display">\[
+\frac{\partial \bar{W}_{\rm SN}(W)}{\partial W_{ij}} =
+\frac{1}{\sigma(W)}E_{ij} - \frac{1}{\sigma(W)^2} \frac{\partial
+\sigma(W)}{\partial W_{ij}} W =\frac{1}{\sigma(W)}E_{ij} -
+\frac{[u_{1}v_{1}^{\rm T}]_{ij}} {\sigma(W)^2} W =
+\frac{1}{\sigma(W)}\left(E_{ij} - [u_{1}v_{1}^{\rm T}]_{ij} \bar{W}_{\rm
+SN}\right)
+\]</span> 鉴别器的梯度为： <span class="math display">\[
+\begin{align}
+\frac{\partial V(G,D)}{\partial W} &amp;= \frac{1}{\sigma(W)}
+\left(\hat{\rm E}\left[\delta h^{\rm T}\right] - \left(\hat{\rm
+E}\left[\delta^{\rm T} \bar{W}_{\rm SN}h \right] \right) u_1 v_1^{\rm T}
+\right) \\
+&amp;=\frac{1}{\sigma(W)} \left(\hat{\rm E}\left[\delta h^{\rm T}\right]
+- \lambda u_1 v_1^{\rm T} \right) \label{eq:grad_sn}
+\end{align}
+\]</span> 其中 <span class="math inline">\(\delta := \left(\partial
+V(G,D) / \partial \left(\bar{W}_{\rm SN} h\right)\right)^{\rm
+T}\)</span>, <span class="math inline">\(\lambda:=\hat{\rm
+E}\left[\delta^{\rm T} \left( \bar{W}_{\rm SN}h \right)\right]\)</span>​.
+<span class="math inline">\(\hat{\rm E}[\cdot]\)</span> represents
+empirical expectation over the mini-batch. <span class="math inline">\(\frac{\partial V}{\partial W}=0\)</span> when
+<span class="math inline">\(\hat{\rm E}[\delta h^{\rm T}] = ku_1
+v_1^T\)</span> for some <span class="math inline">\(k\in
+\mathbb{R}\)</span>.</p>
+<blockquote>
+<p>这段没太看懂</p>
+</blockquote>
+<h3 id="compare">Compare</h3>
+<p>主要是与 Weight Normalization 的对比，大意是 WN
+抑制了鉴别器的性能，其约束太强了。因为 WN 等价于 <span class="math display">\[
+    \sigma_1(\bar{W}_{\rm WN})^2 + \sigma_2(\bar{W}_{\rm WN})^2 + \cdots
++ \sigma_T(\bar{W}_{\rm WN})^2 = d_o,~{\rm where}~T=\min(d_i,d_o)
+\]</span> 而 Lipschitz 常数值取决于最大的奇异值。</p>
+<p>orthonormal regularization 通过 <span class="math display">\[
+\|W^{\rm T} W-I\|_F^2
+\]</span> 将所有奇异值设置为1而 SN 只是将最大特征值设置为1</p>
+<h2 id="experiment">Experiment</h2>
+<p>注意到对于卷积核的处理是将 <span class="math inline">\(W \in
+\mathbb{R}^{d_{\rm out}\times d_{\rm in} \times h \times w}\)</span>
+的卷积核化为 <span class="math inline">\(d_{\rm out}\times (d_{\rm in} h
+w)\)</span> 形状进行处理。</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>首先，提出了 Spectral normalization 的方法，该方法用于稳定 GANs
+的训练，该方法比传统的 Weight normalization
+的方法生成的图像更加多样化，并且IS比先前的工作要更优。该方法使用了全局正则化的方法，但也可以和局部正则化的方法联合使用。作者后续的工作将进一步研究更多的理论基础，已经在更大更复杂的数据集上使用。</p>
+<blockquote>
+<p>文章大意是基本上看明白了，但为什么这么做和这么做有什么用其实还是一知半解，主要原因还是对
+GAN 了解不是很深入，GAN 的一些问题和关键都不太了解导致的。</p>
+</blockquote>
+<h2 id="references">References</h2>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-08/SNGAN.html" title="『论文笔记』Spectral Normalization for Generative Adversarial Networks">https://meteordream.github.io/Paper/2022-08/SNGAN.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Normalization/" rel="tag"><i class="fa fa-tag"></i> Normalization</a>
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/GAN/" rel="tag"><i class="fa fa-tag"></i> GAN</a>
+              <a href="/tags/ICLR/" rel="tag"><i class="fa fa-tag"></i> ICLR</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-08/998_%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91_II(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』998 最大二叉树 II">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』998 最大二叉树 II
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-08/946_%E9%AA%8C%E8%AF%81%E6%A0%88%E5%BA%8F%E5%88%97(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』946 验证栈序列">
+      『LeetCode』946 验证栈序列 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#spectral-normalization"><span class="nav-number">4.1.</span> <span class="nav-text">Spectral Normalization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fast-approximation"><span class="nav-number">4.2.</span> <span class="nav-text">Fast Approximation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gradient-analysis"><span class="nav-number">4.3.</span> <span class="nav-text">Gradient Analysis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#compare"><span class="nav-number">4.4.</span> <span class="nav-text">Compare</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">7.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">232</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">20:16</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

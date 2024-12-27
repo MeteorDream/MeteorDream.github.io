@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Understanding the Effective Receptive Field in Deep Convolutional Neural Networks Author: Wenjie Luo, Yujia Li, Raquel Urtasun, Richard Zemel Institution: Department of Computer Sc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Understanding the Effective Receptive Field in Deep Convolutional Neural Networks">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-11/ERF.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Understanding the Effective Receptive Field in Deep Convolutional Neural Networks Author: Wenjie Luo, Yujia Li, Raquel Urtasun, Richard Zemel Institution: Department of Computer Sc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-29T07:40:51.000Z">
+<meta property="article:modified_time" content="2022-11-29T07:40:51.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="可解释">
+<meta property="article:tag" content="NIPS">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-11/ERF.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Understanding the Effective Receptive Field in Deep Convolutional Neural Networks | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-11/ERF.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Understanding the Effective Receptive Field in Deep Convolutional Neural Networks
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-29 15:40:51" itemprop="dateCreated datePublished" datetime="2022-11-29T15:40:51+08:00">2022-11-29</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-11/ERF.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-11/ERF.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Understanding the Effective Receptive Field
+in Deep Convolutional Neural Networks</li>
+<li><strong>Author</strong>: Wenjie Luo, Yujia Li, Raquel Urtasun,
+Richard Zemel</li>
+<li><strong>Institution</strong>: Department of Computer Science,
+University of Toronto</li>
+<li><strong>Year</strong>: 2016</li>
+<li><strong>Journal</strong>: NIPS</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper/2016/hash/c8067ad1937f728f51288b3eb986afaa-Abstract.html">NeurIPS
+Proceedings</a>, <a target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper/2016/file/c8067ad1937f728f51288b3eb986afaa-Paper.pdf">PDF</a>,
+<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1701.04128">Arxiv</a></li>
+<li><strong>Cite</strong>: Luo W, Li Y, Urtasun R, et al. Understanding
+the effective receptive field in deep convolutional neural networks[J].
+Advances in neural information processing systems, 2016, 29.</li>
+<li><strong>Idea</strong>:
+提出了感受野(ERF)理论，作者认为感受野是近似高斯分布的，且有效感受野远远小于理论感受野</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@inproceedings&#123;NIPS2016_c8067ad1,</span><br><span class="line"> author = &#123;Luo, Wenjie and Li, Yujia and Urtasun, Raquel and Zemel, Richard&#125;,</span><br><span class="line"> booktitle = &#123;Advances in Neural Information Processing Systems&#125;,</span><br><span class="line"> editor = &#123;D. Lee and M. Sugiyama and U. Luxburg and I. Guyon and R. Garnett&#125;,</span><br><span class="line"> pages = &#123;4905-4913&#125;,</span><br><span class="line"> publisher = &#123;Curran Associates, Inc.&#125;,</span><br><span class="line"> title = &#123;Understanding the Effective Receptive Field in Deep Convolutional Neural Networks&#125;,</span><br><span class="line"> url = &#123;https://proceedings.neurips.cc/paper/2016/file/c8067ad1937f728f51288b3eb986afaa-Paper.pdf&#125;,</span><br><span class="line"> volume = &#123;29&#125;,</span><br><span class="line"> year = &#123;2016&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>这篇文章主要对深度卷积网络的单元感受野特征进行了研究。感受野的大小对于许多视觉任务来说很重要，输出的感受野要足够大才能捕捉到比较大的目标对象的信息。在此基础上，作者还引入了有效感受野，并说明了两者都符合高斯分布，作者对许多结构的有效感受野进行了分析，也给出了一些对于有效感受野太小的改进建议。</p>
+<h2 id="introduction">Introduction</h2>
+<p>在卷积网络中，输出单元取决于输入的一个区域，这个区域就被称为该单元的感受野。因为在感受野外的任意扰动都不会影响单元的值，所以在很多任务中我们需要确保感受野能覆盖整个图像以保证不会遗漏重要信息。</p>
+<p>扩大单元的感受野的常见方法有：堆叠更多的层理论上能线性的增加感受野，增加大小为卷积核大小。下采样能成倍的增加感受野。</p>
+<p>在感受野中并不是所有像素对于单元有同等的贡献的，位于中间的像素显然是更重要的，因为中间的像素能有很多路径到达输出单元，而外围的像素能影响到输出单元的路径比较少，在反向传播中，中心像素同样会有较大的梯度。</p>
+<p>作者观察到，感受野的影响是满足高斯分布的，而感受野中的有效面积，作者称为<strong>有效感受野(<em>effective
+receptive field</em>, ERF)</strong>
+通常只占理论感受野的一小部分，因为高斯分布是从中心迅速衰减的。</p>
+<h2 id="method">Method</h2>
+<h3 id="define">Define</h3>
+<p>首先考虑如何用数学表征第 <span class="math inline">\(n\)</span>
+层单元的感受野。</p>
+<p>假设每层的像素用 <span class="math inline">\((i, j)\)</span>
+进行索引，其中心为 <span class="math inline">\((0, 0)\)</span>, 第 <span class="math inline">\(p\)</span> 层的 <span class="math inline">\((i,
+j)\)</span> 像素记为 <span class="math inline">\(x_{i, j}^p\)</span>,
+则输入为 <span class="math inline">\(x_{i, j}^0\)</span>, 记 <span class="math inline">\(y_{i, j}= x_{i, j}^n\)</span> 是第 <span class="math inline">\(n\)</span> 层的输出。则我们的目标是衡量每一个
+<span class="math inline">\(x_{i, j}^0\)</span> 对 <span class="math inline">\(y_{0, 0}\)</span>
+的贡献。有效感受野的具体定义为包含对中心输出单元具有不可忽视的影响的所有输入像素的区域。</p>
+<p>这篇文章中使用偏导数 <span class="math inline">\(\partial y_{0,0} /
+\partial x_{i, j}^{0}\)</span> 表示有效感受野，这衡量的是 <span class="math inline">\(y_{0, 0}\)</span> 的变化受到 <span class="math inline">\(x_{i, j}^0\)</span>
+的影响，但这种方法对于输入有依赖，所以在此基础上取其期望作为最终衡量指标。</p>
+<p>偏导数由损失通过反向传播计算得到，根据链式法则： <span class="math display">\[
+\frac{\partial l}{\partial x_{i, j}^{0}}=\sum_{i^{\prime}, j^{\prime}}
+\frac{\partial l}{\partial y_{i^{\prime}, j^{\prime}}} \frac{\partial
+y_{i^{\prime}, j^{\prime}}}{\partial x_{i, j}^{0}}
+\]</span> 为了计算 <span class="math inline">\(\partial y_{0,0} /
+\partial x_{i, j}^{0}\)</span> ，对 <span class="math inline">\(\forall
+i \neq 0 , j \neq 0\)</span> 将损失梯度设为 <span class="math inline">\(\partial l / \partial y_{0, 0} = 1\)</span> 和
+<span class="math inline">\(\partial l / \partial y_{i, j} =
+0\)</span>，这样就能方便的计算反向传播的梯度了。此时 <span class="math inline">\(\partial l / \partial x_{i, j}^0\)</span> 等价于
+<span class="math inline">\(\partial y_{0, 0} / \partial x_{i,
+j}^0\)</span>.</p>
+<h3 id="convolutional-layers">convolutional layers</h3>
+<p>简单起见，考虑步长为1，卷积核为 <span class="math inline">\(k \times
+k\)</span> 的连续 <span class="math inline">\(n\)</span>
+个单通道的卷积，并忽略偏移项，堆叠形成线性深度卷积神经网络。假设卷积核初始化全为
+1。</p>
+<p>用 <span class="math inline">\(g(i, j, p)=\partial l / \partial x_{i,
+j}^{p}\)</span> 表示第 <span class="math inline">\(p\)</span>
+层的梯度，则 <span class="math inline">\(g(i, j, n)=\partial l /
+\partial y_{i, j}\)</span> , <span class="math inline">\(g(,,0)\)</span>
+是输入需要的梯度图。</p>
+<blockquote>
+<p>。。。下面开始懵了 &gt;^&lt;</p>
+</blockquote>
+<p>因为卷积核是值为 1 的 <span class="math inline">\(k \times k\)</span>
+的矩阵，所以二维卷积可以拆分为两个一维卷积的乘积，因此只需关注一维卷积。定义初始梯度信号
+<span class="math inline">\(u(t)\)</span> 和核 <span class="math inline">\(v(t)\)</span> 为： <span class="math display">\[
+u(t)=\delta(t), \quad v(t)=\sum_{m=0}^{k-1} \delta(t-m), \quad \text {
+where } \delta(t)=\left\{\begin{array}{ll}
+1, &amp; t=0 \\
+0, &amp; t \neq 0
+\end{array}\right.
+\]</span> 其中 <span class="math inline">\(t = 0, 1, -1, 2, -2,
+\dots\)</span> 表示像素的索引，输入像素的梯度信号为 <span class="math inline">\(o=u*v*\cdots*v\)</span>, 对 <span class="math inline">\(v\)</span> 进行 <span class="math inline">\(n\)</span> 次卷积 <span class="math inline">\(u\)</span>. 然后使用离散时间傅里叶变换(Discrete
+Time Fourier Transform) 将信号转换到傅里叶域进行计算，得到： <span class="math display">\[
+U(\omega)=\sum_{t=-\infty}^{\infty} u(t) e^{-j \omega t}=1, \quad
+V(\omega)=\sum_{t=-\infty}^{\infty} v(t) e^{-j \omega
+t}=\sum_{m=0}^{k-1} e^{-j \omega m}
+\]</span> 然后应用卷积理论，<span class="math inline">\(o\)</span>
+的傅里叶变换为： <span class="math display">\[
+\mathcal{F}(o)=\mathcal{F}(u * v * \cdots * v)(\omega)=U(\omega) \cdot
+V(\omega)^{n}=\left(\sum_{m=0}^{k-1} e^{-j \omega m}\right)^{n}
+\]</span> 然后使用逆傅里叶变换得到 <span class="math inline">\(O(t)\)</span>： <span class="math display">\[
+o(t)=\frac{1}{2 \pi} \int_{-\pi}^{\pi}\left(\sum_{m=0}^{k-1} e^{-j
+\omega m}\right)^{n} e^{j \omega t} \mathrm{~d} \omega
+\]</span> 有 <span class="math display">\[
+\frac{1}{2 \pi} \int_{-\pi}^{\pi} e^{-j \omega s} e^{j \omega t}
+\mathrm{~d} \omega=\left\{\begin{array}{ll}
+1, &amp; s=t \\
+0, &amp; s \neq t
+\end{array}\right.
+\]</span> 可以看到 <span class="math inline">\(o(t)\)</span> 是 <span class="math inline">\(e^{-j \omega t}\)</span> 在 <span class="math inline">\(\left(\sum_{m=0}^{k-1} e^{-j \omega
+m}\right)^{n}\)</span> 的系数。</p>
+<p><strong><span class="math inline">\(k=2\)</span> 的情况</strong>：有
+<span class="math inline">\(\left(\sum_{m=0}^{k-1} e^{-j \omega
+m}\right)^{n} = \left(1 + e^{-j \omega} \right )^n\)</span>. 系数 <span class="math inline">\(e^{-j \omega t}\)</span> 是标准二项分布 <span class="math inline">\(\begin{pmatrix}n\\t\end{pmatrix}\)</span> 所以有
+<span class="math inline">\(o(t)=\begin{pmatrix}n\\t\end{pmatrix}\)</span>.这种情况就类似与高斯分布，两个高斯分布相乘得到二维高斯分布</p>
+<p><strong><span class="math inline">\(k&gt;2\)</span>
+的情况</strong>：在这种情况系数被称为“扩展二项式系数”或“多项式系数”，也类似高斯分布。</p>
+<p>下面考虑随机权重的情况，有 <span class="math display">\[
+g(i, j, p-1)=\sum_{a=0}^{k-1} \sum_{b=0}^{k-1} w_{a, b}^{p} g(i+a, i+b,
+p)
+\]</span> 其中 <span class="math inline">\(w_{a, b}^{p}\)</span> 是第
+<span class="math inline">\(p\)</span> 层在 <span class="math inline">\((a, b)\)</span> 位置卷积的权重，我们假设梯度 <span class="math inline">\(g\)</span> 与权重相互独立，当 <span class="math inline">\(\mathbb{E}_w[w_{a,
+b}^p]=0\)</span>,可以计算期望为： <span class="math display">\[
+\mathbb{E}_{w, \text { input }}[g(i, j, p-1)]=\sum_{a=0}^{k-1}
+\sum_{b=0}^{k-1} \mathbb{E}_{w}\left[w_{a, b}^{p}\right]
+\mathbb{E}_{\text {input }}[g(i+a, i+b, p)]=0, \quad \forall p
+\]</span> 可以看到期望与 <span class="math inline">\(w\)</span>
+的分布相关，考虑方差： <span class="math display">\[
+\operatorname{Var}[g(i, j, p-1)]=\sum_{a=0}^{k-1} \sum_{b=0}^{k-1}
+\operatorname{Var}\left[w_{a, b}^{p}\right] \operatorname{Var}[g(i+a,
+i+b, p)]=C \sum_{a=0}^{k-1} \sum_{b=0}^{k-1} \operatorname{Var}[g(i+a,
+i+b, p)]
+\]</span> 这和权重为 1 的情况是等价的，仅需乘一个常数 <span class="math inline">\(C\)</span>.</p>
+<p>基于上述分析很容易得出的结论是，<span class="math inline">\(\operatorname{Var}[g(., ., p-1)]\)</span>
+具有高斯形状，在方差梯度图像上仅具有额外的 <span class="math inline">\(C^n\)</span>
+常数因子乘数的轻微变化，这不会影响感受野内的相对分布。</p>
+<blockquote>
+<p>后面还有非均匀分布核、非线性激活函数、dropout，下采样，空洞卷积、跳层链接的分析，但看不太懂就不浪费时间了。简单说下结论</p>
+<ul>
+<li>在诸多假设下是收敛于高斯分布的，但具体到任何一定是有可能偏移高斯分布的，所以只能说分布总体是呈高斯分布</li>
+<li>非线性激活函数很难分析</li>
+<li>dropout 不影响</li>
+<li>下采样和空洞卷积大大增大了感受野</li>
+<li>跳层链接会减小ERF</li>
+</ul>
+</blockquote>
+<h2 id="experiment">Experiment</h2>
+<p>有兴趣可以看论文去</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>两点结论：</p>
+<ol type="1">
+<li>感受野是近似服从高斯分布的</li>
+<li>有效感受野只占理论感受野的一小部分</li>
+</ol>
+<h2 id="references">References</h2>
+<hr>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-11/ERF.html" title="『论文笔记』Understanding the Effective Receptive Field in Deep Convolutional Neural Networks">https://meteordream.github.io/Paper/2022-11/ERF.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E5%8F%AF%E8%A7%A3%E9%87%8A/" rel="tag"><i class="fa fa-tag"></i> 可解释</a>
+              <a href="/tags/NIPS/" rel="tag"><i class="fa fa-tag"></i> NIPS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-11/809_%E6%83%85%E6%84%9F%E4%B8%B0%E5%AF%8C%E7%9A%84%E6%96%87%E5%AD%97(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』809 情感丰富的文字">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』809 情感丰富的文字
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Paper/2022-12/ASR_Norm.html" rel="next" title="『论文笔记』Adversarially Adaptive Normalization for Single Domain Generalization">
+      『论文笔记』Adversarially Adaptive Normalization for Single Domain Generalization <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#define"><span class="nav-number">4.1.</span> <span class="nav-text">Define</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#convolutional-layers"><span class="nav-number">4.2.</span> <span class="nav-text">convolutional layers</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">7.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">232</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">20:16</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

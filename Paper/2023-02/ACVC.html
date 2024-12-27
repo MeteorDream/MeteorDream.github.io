@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Attention Consistency on Visual Corruptions for Single-Source Domain Generalization Author: Ilke Cugu, Massimiliano Mancini, Yanbei Chen, Zeynep Akata Institution: 作者单位不知道 Year: 20">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Attention Consistency on Visual Corruptions for Single-Source Domain Generalization">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2023-02/ACVC.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Attention Consistency on Visual Corruptions for Single-Source Domain Generalization Author: Ilke Cugu, Massimiliano Mancini, Yanbei Chen, Zeynep Akata Institution: 作者单位不知道 Year: 20">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/VisCo_teaser.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/VisCo_flow.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/image-20230214171132279.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/image-20230214171511182.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/image-20230214171529651.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/image-20230214171601580.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/image-20230214171642594.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/image-20230214171705208.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/ablation_T.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/VisCo_CAM.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/phase_scaling.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/constant_amplitude.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/high_pass_filter.svg">
+<meta property="article:published_time" content="2023-02-14T05:55:44.000Z">
+<meta property="article:modified_time" content="2023-02-14T05:55:44.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="域迁移">
+<meta property="article:tag" content="CVPR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2023-02/ACVC/VisCo_teaser.svg">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2023-02/ACVC.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Attention Consistency on Visual Corruptions for Single-Source Domain Generalization | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2023-02/ACVC.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Attention Consistency on Visual Corruptions for Single-Source Domain Generalization
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-02-14 13:55:44" itemprop="dateCreated datePublished" datetime="2023-02-14T13:55:44+08:00">2023-02-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2023-02/ACVC.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2023-02/ACVC.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Attention Consistency on Visual Corruptions
+for Single-Source Domain Generalization</li>
+<li><strong>Author</strong>: Ilke Cugu, Massimiliano Mancini, Yanbei
+Chen, Zeynep Akata</li>
+<li><strong>Institution</strong>: 作者单位不知道</li>
+<li><strong>Year</strong>: 2022</li>
+<li><strong>Journal</strong>: <em>IEEE Computer Vision and Pattern
+Recognition Workshops (CVPRW), 2022</em></li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2022W/L3D-IVU/html/Cugu_Attention_Consistency_on_Visual_Corruptions_for_Single-Source_Domain_Generalization_CVPRW_2022_paper.html">OpenAccess</a>,
+<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2204.13091">Arxiv</a>, <a target="_blank" rel="noopener" href="https://github.com/ExplainableML/ACVC">OfficialCode</a></li>
+<li><strong>Cite</strong>: Ilke Cugu, Massimiliano Mancini, Yanbei Chen,
+Zeynep Akata; Proceedings of the IEEE/CVF Conference on Computer Vision
+and Pattern Recognition (CVPR) Workshops, 2022, pp. 4165-4174</li>
+<li><strong>Idea</strong>: 原图与腐蚀图像的 CAM
+图应该一致，即注意力集中在相同区域</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Cugu_2022_CVPR,</span><br><span class="line">    author    = &#123;Cugu, Ilke and Mancini, Massimiliano and Chen, Yanbei and Akata, Zeynep&#125;,</span><br><span class="line">    title     = &#123;Attention Consistency on Visual Corruptions for Single-Source Domain Generalization&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops&#125;,</span><br><span class="line">    month     = &#123;June&#125;,</span><br><span class="line">    year      = &#123;2022&#125;,</span><br><span class="line">    pages     = &#123;4165-4174&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>通过改变训练图像来模拟新的域，并对同一样本的不同视图添加一致性注意力。作者将该方法命名为视觉腐蚀的注意力一致性(Attention
+Consistency on Visual Corruptions, ACVC)</p>
+<h2 id="introduction">Introduction</h2>
+<p>通过使用多个合成的域进行训练使得模型能更好的分离域相关和语义相关的信息，消除模型预测与图像之间不正确的相关性，作者在此基础上提出，鲁棒的模型对于相同训练图像的不同数据增强视图应该有相同的语义表达，作者对原始样本和增强样本计算类激活映射(Class
+Activation Maps)，并施加一致性约束，使其在特征空间的位置保持一致。</p>
+<p><img data-src="ACVC/VisCo_teaser.svg" alt="VisCo_teaser"></p>
+<p>另一方面，数据增强也很重要，上述任务要求数据增强能极大地改变输入图像但不会影响语义的空间位置，这篇文章中作者选择了天气、模糊、噪声、数字、傅里叶变换（去除低频、修改振幅、缩放相位）对样本进行增强。</p>
+<p>该文章的贡献有：</p>
+<ol type="1">
+<li>分析视觉腐蚀作为单源域泛化的应用，包含 ImageNet-C 的19 种变换和 3
+种基于傅里叶变换</li>
+<li>提出了一种新的基于类激活映射的一致性损失来强制模型对于原样本和腐蚀样本查看相同区域</li>
+<li>提出了新的单源域泛化基准测试，用在三个数据集</li>
+<li>效果很好</li>
+</ol>
+<h2 id="method">Method</h2>
+<p><img data-src="ACVC/VisCo_flow.svg" alt="VisCo_flow"></p>
+<ol type="1">
+<li>随机从 22 种增强（来自 ImageNet-C 和基于傅里叶变换）中采样</li>
+<li>训练使得腐蚀图像和原图像 CAM 具有视觉一致性</li>
+<li>通过负 CAM 损失最小化对 CAMs 进行正规化</li>
+</ol>
+<p>整体目标函数为： <span class="math display">\[
+\mathcal{L}=\sum_{(X, y) \in \mathcal{D}} \mathcal{L}_{\mathrm{CE}}(X,
+\phi(X), y)+\lambda \mathcal{L}_{\mathrm{CON}}(X, \phi(X), y)
+\]</span> 其中 <span class="math inline">\(\phi\)</span>
+是数据增强函数，<span class="math inline">\(\mathcal{L}_{\mathrm{CE}}\)</span>
+是交叉熵损失，<span class="math inline">\(\mathcal{L}_{\mathrm{CON}}\)</span> 是一致性约束
+<span class="math display">\[
+\mathcal{L}_{\mathrm{CE}}(X, \hat{X}, y)=-\log f_{\theta}^{y}(X)-\log
+f_{\theta}^{y}(\hat{X}),
+\]</span></p>
+<h3 id="visual-corruptions">Visual Corruptions</h3>
+<p>视觉腐蚀有两个来源：ImageNet-C 和 基于傅里叶的视觉腐蚀</p>
+<h4 id="imagenet-c视觉腐蚀">ImageNet-C视觉腐蚀</h4>
+<p>包含 4 类 19 种 5 个级别的视觉腐蚀，4
+中类型分别是：天气、模糊、噪音和数字，如上图所示</p>
+<p>天气模拟气象障碍，如雾，雪，霜冻和飞溅，而模糊平滑图像像素的强度使用不同的功能，如高斯，玻璃，运动，散焦和缩放。噪声随机扰动像素值，使用不同的函数，即射击，脉冲，高斯和散斑，而数字收集由修改图像分辨率(即JPEG压缩，像素化，弹性)或像素强度(即饱和度，亮度和对比度)引起的各种损坏。</p>
+<h4 id="基于傅里叶的视觉腐蚀">基于傅里叶的视觉腐蚀</h4>
+<p>已有的研究表明，图像的傅里叶变换中的相位保留了大部分语义信息，振幅主要保留了纹理信息。下面用
+<span class="math inline">\(\mathcal{F}(X)\)</span>
+表示对图像进行傅里叶变换, <span class="math inline">\(\mathcal{F}^{-1}\)</span> 表示逆傅里叶变换， <span class="math inline">\(\mathcal{F}^A(X)\)</span> 表示振幅、 <span class="math inline">\(\mathcal{F}^P(X)\)</span> 表示相位。</p>
+<p><strong>相位缩放</strong>：使用 <span class="math inline">\(\alpha
+\in (0, 1]\)</span> 对相位进行缩放（上图第一个） <span class="math display">\[
+\phi_\text{P-scaling}(X) = \mathcal{F}^{-1}([\mathcal{F}^A(X),\alpha
+\mathcal{F}^P(X)])
+\]</span> <strong>常数振幅</strong>：将振幅固定为 <span class="math inline">\(\beta \in (0, 1]\)</span> 的常数（上图第二个）
+<span class="math display">\[
+\phi_\text{constant-A}(X) = \mathcal{F}^{-1}([\beta, \mathcal{F}^P(X)])
+\]</span> <strong>高通滤波</strong>：通过在频谱图调整直径 <span class="math inline">\(d\)</span> 过滤掉低频成分（上图第三个） <span class="math display">\[
+\phi_\text{high-pass}(X) = \mathcal{F}^{-1}(H^d(\mathcal{F}(X)) \circ
+\mathcal{F}(X)))
+\]</span> 其中 <span class="math inline">\(H^d(F)\)</span> 是滤波掩码
+<span class="math display">\[
+H_{u,v}^d(F) = \begin{cases} 1, &amp; \text{if} \;\;\; F_{u,v}\geq d\\
+     0, &amp; \text{otherwise.}\end{cases}
+\]</span></p>
+<h3 id="注意力一致性">注意力一致性</h3>
+<p>基本出发点是无论图像如何变换，模型都应该关注图像的相同区域</p>
+<p>CAMs 可视化特征图中对输出贡献最大的区域： <span class="math display">\[
+M = \sigma(W^\intercal g(X))
+\]</span> 其中 <span class="math inline">\(M\)</span> 表示 CAM 图，<span class="math inline">\(g\)</span> 表示特征提取器，<span class="math inline">\(W\)</span> 是线性分类器，<span class="math inline">\(\sigma\)</span> 表示 softmax 操作 <span class="math display">\[
+\sigma(x)^c_i = \frac{exp(x^c_i / T)}{\sum_{j=1}^{s}exp(x^c_j / T))}
+\]</span> 作者提出的注意力一致性约束为： <span class="math display">\[
+\mathcal{L}_{\text{CAM}}(M,\hat{M},y) = D_{JS}(M_y || \hat{M}_y)
+\]</span> 其中 <span class="math inline">\(\hat{M_y}\)</span>
+表示腐蚀图像对于分类标签 <span class="math inline">\(y\)</span> 对应的
+CAM 图，JS 散度也可以换成其他的目标函数，但实验中作者发现 JS 散度 (JSD)
+比 MSE 损失更好。此外还能定义 softmax 的温度 <span class="math inline">\(T\)</span> 来控制更灵活的目标， <span class="math inline">\(T &lt; 1\)</span> 只保留极端注意力区域，$T &gt; 1
+$ 是 CAM 图更平滑。</p>
+<p><strong>负 CAM 损失</strong>：由于这种方法高度依赖 CAM ，而 CAM
+存在的一个问题是倾向于产生错误激活，所以提出使用负 CAM
+损失来减少对错误类的注意力映射： <span class="math display">\[
+\mathcal{L}_{\text{NEG}}(M,C_k) =
+\sum_{c \in C_k} D_{KL}(U || M_c) + D_{KL}(U || \hat{M}_c),
+\]</span> 其中 <span class="math inline">\(U\)</span> 是均匀分布，<span class="math inline">\(C_k\)</span> 是在干净图像 <span class="math inline">\(X\)</span> 的置信度分数方面的前 <span class="math inline">\(k\)</span> 负类的集合。</p>
+<p>最终的目标函数为： <span class="math display">\[
+\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda
+(\mathcal{L}_{\text{CAM}} + \mathcal{L}_{\text{NEG}})
+\]</span> 算法流程图如下：</p>
+<p><img data-src="ACVC/image-20230214171132279.png" alt="image-20230214171132279"></p>
+<h2 id="experiment">Experiment</h2>
+<p>三个数据集：PACS, COCO, DomainNet</p>
+<p>训练细节请参考原文，这里仅展示文中的实验结果</p>
+<h3 id="pacs">PACS</h3>
+<p><img data-src="ACVC/image-20230214171511182.png" alt="image-20230214171511182"></p>
+<h3 id="coco">COCO</h3>
+<p><img data-src="ACVC/image-20230214171529651.png" alt="image-20230214171529651"></p>
+<h3 id="domainnet">DomainNet</h3>
+<p><img data-src="ACVC/image-20230214171601580.png" alt="image-20230214171601580"></p>
+<h3 id="消融实验">消融实验</h3>
+<p>关于腐蚀类型</p>
+<p><img data-src="ACVC/image-20230214171642594.png" alt="image-20230214171642594"></p>
+<p>关于损失项</p>
+<p><img data-src="ACVC/image-20230214171705208.png" alt="image-20230214171705208"></p>
+<p><span class="math inline">\(\mathcal{L}_{\text{CAM}}\)</span> 的温度
+<span class="math inline">\(T\)</span>:</p>
+<p><img data-src="ACVC/ablation_T.svg" alt="ablation_T"></p>
+<p>CAM 分析：</p>
+<p><img data-src="ACVC/VisCo_CAM.svg" alt="VisCo_CAM"></p>
+<blockquote>
+<p>(1)基线模型的类激活映射，(2)两组不同的数据增强技术，即RandAugment和提出的VC模型，(3)注意一致性引导VC，即ACVC。我们的ACVC方法在未见域上获得更细粒度的注意力映射。</p>
+</blockquote>
+<h3 id="附录">附录</h3>
+<p>附录对于基于傅里叶变换的腐蚀图像的一些展示：</p>
+<p>相位缩放</p>
+<p><img data-src="ACVC/phase_scaling.svg" alt="phase_scaling"></p>
+<p>常数振幅</p>
+<p><img data-src="ACVC/constant_amplitude.svg" alt="constant_amplitude"></p>
+<p>高通滤波</p>
+<p><img data-src="ACVC/high_pass_filter.svg" alt="high_pass_filter"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>对于单源域泛化作者给出的解决方案是：将原图进行腐蚀，然后在训练过程中要求模型对于原图和腐蚀图像要有同样的注意力区域，这里通过对
+CAM 的一致性约束来实现</p>
+<blockquote>
+<p>在这项工作中，我们解决了单源域泛化(single
+DG)的问题，其目标是对任意未见分布的图像进行分类，在训练时给定单个域。与以前的工作类似，我们通过综合多个训练域来解决这个问题。然而，与以前的方法不同，我们建议通过在训练数据上应用随机采样的视觉损坏来生成新的域。具体来说，我们考虑了一组转换，它们以22种不同的方式破坏原始内容，属于5类转换(即天气、模糊、噪声、数字和傅里叶)。由于这些转换保持了对象位置的完整性，我们提出了模型的类激活映射之间的视觉注意力一致性损失，用于输入图像的原始版本和损坏版本。这种损失确保了模型聚焦于相同的图像区域，而忽略了输入的特定风格。实验表明，我们的方法ACVC，在PACS,
+COCO和DomainNet基准测试中始终优于最先进的状态。</p>
+</blockquote>
+<h2 id="others">Others</h2>
+<h3 id="关于图像增强的实现">关于图像增强的实现</h3>
+<p>从开源代码中学习一下关于图像增强的实现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ACVCGenerator</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">acvc</span>(<span class="params">self, x</span>):</span><br><span class="line">        i = np.random.randint(<span class="number">0</span>, <span class="number">22</span>)</span><br><span class="line">        corruption_func = &#123;<span class="number">0</span>: <span class="string">&quot;fog&quot;</span>,</span><br><span class="line">                           <span class="number">1</span>: <span class="string">&quot;snow&quot;</span>,</span><br><span class="line">                           <span class="number">2</span>: <span class="string">&quot;frost&quot;</span>,</span><br><span class="line">                           <span class="number">3</span>: <span class="string">&quot;spatter&quot;</span>,</span><br><span class="line">                           <span class="number">4</span>: <span class="string">&quot;zoom_blur&quot;</span>,</span><br><span class="line">                           <span class="number">5</span>: <span class="string">&quot;defocus_blur&quot;</span>,</span><br><span class="line">                           <span class="number">6</span>: <span class="string">&quot;glass_blur&quot;</span>,</span><br><span class="line">                           <span class="number">7</span>: <span class="string">&quot;gaussian_blur&quot;</span>,</span><br><span class="line">                           <span class="number">8</span>: <span class="string">&quot;motion_blur&quot;</span>,</span><br><span class="line">                           <span class="number">9</span>: <span class="string">&quot;speckle_noise&quot;</span>,</span><br><span class="line">                           <span class="number">10</span>: <span class="string">&quot;shot_noise&quot;</span>,</span><br><span class="line">                           <span class="number">11</span>: <span class="string">&quot;impulse_noise&quot;</span>,</span><br><span class="line">                           <span class="number">12</span>: <span class="string">&quot;gaussian_noise&quot;</span>,</span><br><span class="line">                           <span class="number">13</span>: <span class="string">&quot;jpeg_compression&quot;</span>,</span><br><span class="line">                           <span class="number">14</span>: <span class="string">&quot;pixelate&quot;</span>,</span><br><span class="line">                           <span class="number">15</span>: <span class="string">&quot;elastic_transform&quot;</span>,</span><br><span class="line">                           <span class="number">16</span>: <span class="string">&quot;brightness&quot;</span>,</span><br><span class="line">                           <span class="number">17</span>: <span class="string">&quot;saturate&quot;</span>,</span><br><span class="line">                           <span class="number">18</span>: <span class="string">&quot;contrast&quot;</span>,</span><br><span class="line">                           <span class="number">19</span>: <span class="string">&quot;high_pass_filter&quot;</span>,</span><br><span class="line">                           <span class="number">20</span>: <span class="string">&quot;constant_amplitude&quot;</span>,</span><br><span class="line">                           <span class="number">21</span>: <span class="string">&quot;phase_scaling&quot;</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.apply_corruption(x, corruption_func[i])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 下面是分类的方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">weather</span>(<span class="params">self, x</span>):</span><br><span class="line">        i = np.random.randint(<span class="number">0</span>, <span class="number">4</span>)</span><br><span class="line">        corruption_func = &#123;<span class="number">0</span>: <span class="string">&quot;fog&quot;</span>,</span><br><span class="line">                           <span class="number">1</span>: <span class="string">&quot;snow&quot;</span>,</span><br><span class="line">                           <span class="number">2</span>: <span class="string">&quot;frost&quot;</span>,</span><br><span class="line">                           <span class="number">3</span>: <span class="string">&quot;spatter&quot;</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.apply_corruption(x, corruption_func[i])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">blur</span>(<span class="params">self, x</span>):</span><br><span class="line">        i = np.random.randint(<span class="number">0</span>, <span class="number">5</span>)</span><br><span class="line">        corruption_func = &#123;<span class="number">0</span>: <span class="string">&quot;zoom_blur&quot;</span>,</span><br><span class="line">                           <span class="number">1</span>: <span class="string">&quot;defocus_blur&quot;</span>,</span><br><span class="line">                           <span class="number">2</span>: <span class="string">&quot;glass_blur&quot;</span>,</span><br><span class="line">                           <span class="number">3</span>: <span class="string">&quot;gaussian_blur&quot;</span>,</span><br><span class="line">                           <span class="number">4</span>: <span class="string">&quot;motion_blur&quot;</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.apply_corruption(x, corruption_func[i])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">noise</span>(<span class="params">self, x</span>):</span><br><span class="line">        i = np.random.randint(<span class="number">0</span>, <span class="number">4</span>)</span><br><span class="line">        corruption_func = &#123;<span class="number">0</span>: <span class="string">&quot;speckle_noise&quot;</span>,</span><br><span class="line">                           <span class="number">1</span>: <span class="string">&quot;shot_noise&quot;</span>,</span><br><span class="line">                           <span class="number">2</span>: <span class="string">&quot;impulse_noise&quot;</span>,</span><br><span class="line">                           <span class="number">3</span>: <span class="string">&quot;gaussian_noise&quot;</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.apply_corruption(x, corruption_func[i])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">digital</span>(<span class="params">self, x</span>):</span><br><span class="line">        i = np.random.randint(<span class="number">0</span>, <span class="number">6</span>)</span><br><span class="line">        corruption_func = &#123;<span class="number">0</span>: <span class="string">&quot;jpeg_compression&quot;</span>,</span><br><span class="line">                           <span class="number">1</span>: <span class="string">&quot;pixelate&quot;</span>,</span><br><span class="line">                           <span class="number">2</span>: <span class="string">&quot;elastic_transform&quot;</span>,</span><br><span class="line">                           <span class="number">3</span>: <span class="string">&quot;brightness&quot;</span>,</span><br><span class="line">                           <span class="number">4</span>: <span class="string">&quot;saturate&quot;</span>,</span><br><span class="line">                           <span class="number">5</span>: <span class="string">&quot;contrast&quot;</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.apply_corruption(x, corruption_func[i])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fourier</span>(<span class="params">self, x</span>):</span><br><span class="line">        i = np.random.randint(<span class="number">0</span>, <span class="number">3</span>)</span><br><span class="line">        corruption_func = &#123;<span class="number">0</span>: <span class="string">&quot;high_pass_filter&quot;</span>,</span><br><span class="line">                           <span class="number">1</span>: <span class="string">&quot;constant_amplitude&quot;</span>,</span><br><span class="line">                           <span class="number">2</span>: <span class="string">&quot;phase_scaling&quot;</span>&#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.apply_corruption(x, corruption_func[i])</span><br></pre></td></tr></table></figure>
+<p>首先是与 ImageNet 相关的 19 中图像腐蚀操作，这个很简单，就是调用了
+<code>imagecorruptions</code> 库实现的, 也就是上面代码中的
+<code>0-18</code> 所代表的数据增强。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> imagecorruptions <span class="keyword">import</span> corrupt, get_corruption_names</span><br><span class="line"><span class="comment"># 还是上面那个类的一个方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">apply_corruption</span>(<span class="params">self, x, corruption_name</span>):</span><br><span class="line">        severity = <span class="variable language_">self</span>.get_severity()</span><br><span class="line"></span><br><span class="line">        custom_corruptions = &#123;<span class="string">&quot;high_pass_filter&quot;</span>: <span class="variable language_">self</span>.high_pass_filter,</span><br><span class="line">                              <span class="string">&quot;constant_amplitude&quot;</span>: <span class="variable language_">self</span>.constant_amplitude,</span><br><span class="line">                              <span class="string">&quot;phase_scaling&quot;</span>: <span class="variable language_">self</span>.phase_scaling&#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 0-18 ImageNet-C 的 19 中数据增强</span></span><br><span class="line">        <span class="keyword">if</span> corruption_name <span class="keyword">in</span> get_corruption_names(<span class="string">&#x27;all&#x27;</span>):</span><br><span class="line">            x = corrupt(x, corruption_name=corruption_name, severity=severity)</span><br><span class="line">            x = PILImage.fromarray(x)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 基于傅里叶变换的 3 中数据增强</span></span><br><span class="line">        <span class="keyword">elif</span> corruption_name <span class="keyword">in</span> custom_corruptions:</span><br><span class="line">            x = custom_corruptions[corruption_name](x, severity=severity)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">assert</span> <span class="literal">True</span>, <span class="string">&quot;%s is not a supported corruption!&quot;</span> % corruption_name</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p>这个没啥好说的，调库也没必要深究其具体是怎么实现的。</p>
+<p>接下来看看基于傅里叶变换的三种数据增强,
+函数名就能看出来具体是什么用了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">filter_circle</span>(<span class="params">self, TFcircle, fft_img_channel</span>):</span><br><span class="line">    temp = np.zeros(fft_img_channel.shape[:<span class="number">2</span>], dtype=<span class="built_in">complex</span>)</span><br><span class="line">    temp[TFcircle] = fft_img_channel[TFcircle]</span><br><span class="line">    <span class="keyword">return</span> temp</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inv_FFT_all_channel</span>(<span class="params">self, fft_img</span>):</span><br><span class="line">    img_reco = []</span><br><span class="line">    <span class="keyword">for</span> ichannel <span class="keyword">in</span> <span class="built_in">range</span>(fft_img.shape[<span class="number">2</span>]):</span><br><span class="line">        img_reco.append(np.fft.ifft2(np.fft.ifftshift(fft_img[:, :, ichannel])))</span><br><span class="line">    img_reco = np.array(img_reco)</span><br><span class="line">    img_reco = np.transpose(img_reco, (<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>))</span><br><span class="line">    <span class="keyword">return</span> img_reco</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">high_pass_filter</span>(<span class="params">self, x, severity</span>):</span><br><span class="line">    x = x.astype(<span class="string">&quot;float32&quot;</span>) / <span class="number">255.</span></span><br><span class="line">    c = [<span class="number">.01</span>, <span class="number">.02</span>, <span class="number">.03</span>, <span class="number">.04</span>, <span class="number">.05</span>][severity - <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    d = <span class="built_in">int</span>(c * x.shape[<span class="number">0</span>])</span><br><span class="line">    TFcircle = <span class="variable language_">self</span>.draw_cicle(shape=x.shape[:<span class="number">2</span>], diamiter=d)</span><br><span class="line">    TFcircle = ~TFcircle</span><br><span class="line"></span><br><span class="line">    fft_img = np.zeros_like(x, dtype=<span class="built_in">complex</span>)</span><br><span class="line">    <span class="keyword">for</span> ichannel <span class="keyword">in</span> <span class="built_in">range</span>(fft_img.shape[<span class="number">2</span>]):</span><br><span class="line">        fft_img[:, :, ichannel] = np.fft.fftshift(np.fft.fft2(x[:, :, ichannel]))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># For each channel, pass filter</span></span><br><span class="line">    fft_img_filtered = []</span><br><span class="line">    <span class="keyword">for</span> ichannel <span class="keyword">in</span> <span class="built_in">range</span>(fft_img.shape[<span class="number">2</span>]):</span><br><span class="line">        fft_img_channel = fft_img[:, :, ichannel]</span><br><span class="line">        temp = <span class="variable language_">self</span>.filter_circle(TFcircle, fft_img_channel)</span><br><span class="line">        fft_img_filtered.append(temp)</span><br><span class="line">    fft_img_filtered = np.array(fft_img_filtered)</span><br><span class="line">    fft_img_filtered = np.transpose(fft_img_filtered, (<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>))</span><br><span class="line">    x = np.clip(np.<span class="built_in">abs</span>(<span class="variable language_">self</span>.inv_FFT_all_channel(fft_img_filtered)), a_min=<span class="number">0</span>, a_max=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    x = PILImage.fromarray((x * <span class="number">255.</span>).astype(<span class="string">&quot;uint8&quot;</span>))</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">constant_amplitude</span>(<span class="params">self, x, severity</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A visual corruption based on amplitude information of a Fourier-transformed image</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Adopted from: https://github.com/MediaBrain-SJTU/FACT</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    x = x.astype(<span class="string">&quot;float32&quot;</span>) / <span class="number">255.</span></span><br><span class="line">    c = [<span class="number">.05</span>, <span class="number">.1</span>, <span class="number">.15</span>, <span class="number">.2</span>, <span class="number">.25</span>][severity - <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># FFT</span></span><br><span class="line">    x_fft = np.fft.fft2(x, axes=(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">    x_abs, x_pha = np.fft.fftshift(np.<span class="built_in">abs</span>(x_fft), axes=(<span class="number">0</span>, <span class="number">1</span>)), np.angle(x_fft)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Amplitude replacement</span></span><br><span class="line">    beta = <span class="number">1.0</span> - c</span><br><span class="line">    x_abs = np.ones_like(x_abs) * <span class="built_in">max</span>(<span class="number">0</span>, beta)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Inverse FFT</span></span><br><span class="line">    x_abs = np.fft.ifftshift(x_abs, axes=(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">    x = x_abs * (np.e ** (<span class="number">1j</span> * x_pha))</span><br><span class="line">    x = np.real(np.fft.ifft2(x, axes=(<span class="number">0</span>, <span class="number">1</span>)))</span><br><span class="line"></span><br><span class="line">    x = PILImage.fromarray((x * <span class="number">255.</span>).astype(<span class="string">&quot;uint8&quot;</span>))</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">phase_scaling</span>(<span class="params">self, x, severity</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A visual corruption based on phase information of a Fourier-transformed image</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Adopted from: https://github.com/MediaBrain-SJTU/FACT</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    x = x.astype(<span class="string">&quot;float32&quot;</span>) / <span class="number">255.</span></span><br><span class="line">    c = [<span class="number">.1</span>, <span class="number">.2</span>, <span class="number">.3</span>, <span class="number">.4</span>, <span class="number">.5</span>][severity - <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># FFT</span></span><br><span class="line">    x_fft = np.fft.fft2(x, axes=(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">    x_abs, x_pha = np.fft.fftshift(np.<span class="built_in">abs</span>(x_fft), axes=(<span class="number">0</span>, <span class="number">1</span>)), np.angle(x_fft)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Phase scaling</span></span><br><span class="line">    alpha = <span class="number">1.0</span> - c</span><br><span class="line">    x_pha = x_pha * <span class="built_in">max</span>(<span class="number">0</span>, alpha)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Inverse FFT</span></span><br><span class="line">    x_abs = np.fft.ifftshift(x_abs, axes=(<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">    x = x_abs * (np.e ** (<span class="number">1j</span> * x_pha))</span><br><span class="line">    x = np.real(np.fft.ifft2(x, axes=(<span class="number">0</span>, <span class="number">1</span>)))</span><br><span class="line"></span><br><span class="line">    x = PILImage.fromarray((x * <span class="number">255.</span>).astype(<span class="string">&quot;uint8&quot;</span>))</span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p>最后再看看 CAM
+的实现吧，模型的具体内容就略去了，只看看前向传播函数就能看出核心的东西了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ResNet</span>(nn.Module):</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">_forward_impl</span>(<span class="params">self, x</span>):</span><br><span class="line">        end_points = &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># See note [TorchScript super()]</span></span><br><span class="line">        x = <span class="variable language_">self</span>.conv1(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.bn1(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.relu(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.maxpool(x)</span><br><span class="line"></span><br><span class="line">        x = <span class="variable language_">self</span>.layer1(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.layer2(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.layer3(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.layer4(x)</span><br><span class="line">        end_points[<span class="string">&#x27;Feature&#x27;</span>] = x</span><br><span class="line"></span><br><span class="line">        x = <span class="variable language_">self</span>.avgpool(x)</span><br><span class="line">        x = torch.flatten(x, <span class="number">1</span>)</span><br><span class="line">        end_points[<span class="string">&#x27;Embedding&#x27;</span>] = x</span><br><span class="line"></span><br><span class="line">        x = <span class="variable language_">self</span>.fc(x)</span><br><span class="line">        end_points[<span class="string">&#x27;Predictions&#x27;</span>] = F.softmax(<span class="built_in">input</span>=x, dim=-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Taken from: https://github.com/GuoleiSun/HNC_loss</span></span><br><span class="line">        end_points[<span class="string">&#x27;CAM&#x27;</span>] = F.conv2d(end_points[<span class="string">&#x27;Feature&#x27;</span>], <span class="variable language_">self</span>.fc.weight.view(<span class="variable language_">self</span>.fc.out_features, end_points[<span class="string">&#x27;Feature&#x27;</span>].size(<span class="number">1</span>), <span class="number">1</span>, <span class="number">1</span>)) + <span class="variable language_">self</span>.fc.bias.unsqueeze(<span class="number">0</span>).unsqueeze(<span class="number">2</span>).unsqueeze(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> x, end_points</span><br></pre></td></tr></table></figure>
+<p>上面的 forward 函数保存到 CAM 下的会作为下面损失函数的输入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.autograd <span class="keyword">import</span> Variable</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AttentionConsistency</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, lambd=<span class="number">6e-2</span>, T=<span class="number">1.0</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.name = <span class="string">&quot;AttentionConsistency&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.T = T</span><br><span class="line">        <span class="variable language_">self</span>.lambd = lambd</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">CAM_neg</span>(<span class="params">self, c</span>):</span><br><span class="line">        result = c.reshape(c.size(<span class="number">0</span>), c.size(<span class="number">1</span>), -<span class="number">1</span>)</span><br><span class="line">        result = -nn.functional.log_softmax(result / <span class="variable language_">self</span>.T, dim=<span class="number">2</span>) / result.size(<span class="number">2</span>)</span><br><span class="line">        result = result.<span class="built_in">sum</span>(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">CAM_pos</span>(<span class="params">self, c</span>):</span><br><span class="line">        result = c.reshape(c.size(<span class="number">0</span>), c.size(<span class="number">1</span>), -<span class="number">1</span>)</span><br><span class="line">        result = nn.functional.softmax(result / <span class="variable language_">self</span>.T, dim=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, c, ci_list, y, segmentation_masks=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        CAM (batch_size, num_classes, feature_map.shpae[0], feature_map.shpae[1]) based loss</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Argumens:</span></span><br><span class="line"><span class="string">            :param c: (Torch.tensor) clean image&#x27;s CAM</span></span><br><span class="line"><span class="string">            :param ci_list: (Torch.tensor) list of augmented image&#x27;s CAMs</span></span><br><span class="line"><span class="string">            :param y: (Torch.tensor) ground truth labels</span></span><br><span class="line"><span class="string">            :param segmentation_masks: (numpy.array)</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        c1 = c.clone()</span><br><span class="line">        c1 = Variable(c1)</span><br><span class="line">        c0 = <span class="variable language_">self</span>.CAM_neg(c)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Top-k negative classes</span></span><br><span class="line">        c1 = c1.<span class="built_in">sum</span>(<span class="number">2</span>).<span class="built_in">sum</span>(<span class="number">2</span>)</span><br><span class="line">        index = torch.zeros(c1.size())</span><br><span class="line">        c1[<span class="built_in">range</span>(c0.size(<span class="number">0</span>)), y] = - <span class="built_in">float</span>(<span class="string">&quot;Inf&quot;</span>)</span><br><span class="line">        topk_ind = torch.topk(c1, <span class="number">3</span>, dim=<span class="number">1</span>)[<span class="number">1</span>]</span><br><span class="line">        index[torch.tensor(<span class="built_in">range</span>(c1.size(<span class="number">0</span>))).unsqueeze(<span class="number">1</span>), topk_ind] = <span class="number">1</span></span><br><span class="line">        index = index &gt; <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Negative CAM loss</span></span><br><span class="line">        neg_loss = c0[index].<span class="built_in">sum</span>() / c0.size(<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">for</span> ci <span class="keyword">in</span> ci_list:</span><br><span class="line">            ci = <span class="variable language_">self</span>.CAM_neg(ci)</span><br><span class="line">            neg_loss += ci[index].<span class="built_in">sum</span>() / ci.size(<span class="number">0</span>)</span><br><span class="line">        neg_loss /= <span class="built_in">len</span>(ci_list) + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Positive CAM loss</span></span><br><span class="line">        index = torch.zeros(c1.size())</span><br><span class="line">        true_ind = [[i] <span class="keyword">for</span> i <span class="keyword">in</span> y]</span><br><span class="line">        index[torch.tensor(<span class="built_in">range</span>(c1.size(<span class="number">0</span>))).unsqueeze(<span class="number">1</span>), true_ind] = <span class="number">1</span></span><br><span class="line">        index = index &gt; <span class="number">0.5</span></span><br><span class="line">        p0 = <span class="variable language_">self</span>.CAM_pos(c)[index]</span><br><span class="line">        pi_list = [<span class="variable language_">self</span>.CAM_pos(ci)[index] <span class="keyword">for</span> ci <span class="keyword">in</span> ci_list]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Middle ground for Jensen-Shannon divergence</span></span><br><span class="line">        p_count = <span class="number">1</span> + <span class="built_in">len</span>(pi_list)</span><br><span class="line">        <span class="keyword">if</span> segmentation_masks <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            p_mixture = p0.detach().clone()</span><br><span class="line">            <span class="keyword">for</span> pi <span class="keyword">in</span> pi_list:</span><br><span class="line">                p_mixture += pi</span><br><span class="line">            p_mixture = torch.clamp(p_mixture / p_count, <span class="number">1e-7</span>, <span class="number">1</span>).log()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            mask = np.interp(segmentation_masks, (segmentation_masks.<span class="built_in">min</span>(), segmentation_masks.<span class="built_in">max</span>()), (<span class="number">0</span>, <span class="number">1</span>))</span><br><span class="line">            p_mixture = torch.from_numpy(mask).cuda()</span><br><span class="line">            p_mixture = p_mixture.reshape(p_mixture.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">            p_mixture = torch.nn.functional.normalize(p_mixture, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        pos_loss = nn.functional.kl_div(p_mixture, p0, reduction=<span class="string">&#x27;batchmean&#x27;</span>)</span><br><span class="line">        <span class="keyword">for</span> pi <span class="keyword">in</span> pi_list:</span><br><span class="line">            pos_loss += nn.functional.kl_div(p_mixture, pi, reduction=<span class="string">&#x27;batchmean&#x27;</span>)</span><br><span class="line">        pos_loss /= p_count</span><br><span class="line"></span><br><span class="line">        loss = pos_loss + neg_loss</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.lambd * loss</span><br></pre></td></tr></table></figure>
+<p>这个前向传播过程其实没太看懂</p>
+<hr>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2023-02/ACVC.html" title="『论文笔记』Attention Consistency on Visual Corruptions for Single-Source Domain Generalization">https://meteordream.github.io/Paper/2023-02/ACVC.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E5%9F%9F%E8%BF%81%E7%A7%BB/" rel="tag"><i class="fa fa-tag"></i> 域迁移</a>
+              <a href="/tags/CVPR/" rel="tag"><i class="fa fa-tag"></i> CVPR</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Paper/2023-02/%E5%A6%82%E4%BD%95%E6%9B%B4%E5%A5%BD%E5%BA%94%E5%AF%B9%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE.html" rel="prev" title="『转载』如何更好应对小样本图像数据">
+      <i class="fa fa-chevron-left"></i> 『转载』如何更好应对小样本图像数据
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/ReadingNote/2023-02/%E5%86%A5%E6%83%B3.html" rel="next" title="冥想">
+      冥想 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#visual-corruptions"><span class="nav-number">4.1.</span> <span class="nav-text">Visual Corruptions</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#imagenet-c%E8%A7%86%E8%A7%89%E8%85%90%E8%9A%80"><span class="nav-number">4.1.1.</span> <span class="nav-text">ImageNet-C视觉腐蚀</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%82%85%E9%87%8C%E5%8F%B6%E7%9A%84%E8%A7%86%E8%A7%89%E8%85%90%E8%9A%80"><span class="nav-number">4.1.2.</span> <span class="nav-text">基于傅里叶的视觉腐蚀</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E5%8A%9B%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">4.2.</span> <span class="nav-text">注意力一致性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pacs"><span class="nav-number">5.1.</span> <span class="nav-text">PACS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#coco"><span class="nav-number">5.2.</span> <span class="nav-text">COCO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#domainnet"><span class="nav-number">5.3.</span> <span class="nav-text">DomainNet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="nav-number">5.4.</span> <span class="nav-text">消融实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%84%E5%BD%95"><span class="nav-number">5.5.</span> <span class="nav-text">附录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">7.</span> <span class="nav-text">Others</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%9B%BE%E5%83%8F%E5%A2%9E%E5%BC%BA%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">7.1.</span> <span class="nav-text">关于图像增强的实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">232</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">20:16</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>
