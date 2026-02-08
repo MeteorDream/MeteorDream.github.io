@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Facial Expression Recognition in the Wild via Deep Attentive Center Loss Author: Amir Hossein Farzaneh and Xiaojun Qi  Institution: Department of Computer Science Utah State Univer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Facial Expression Recognition in the Wild via Deep Attentive Center Loss">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-09/DACL.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Facial Expression Recognition in the Wild via Deep Attentive Center Loss Author: Amir Hossein Farzaneh and Xiaojun Qi  Institution: Department of Computer Science Utah State Univer">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-09/DACL/image-20221006210739333.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-09/DACL/image-20221006212750652.png">
+<meta property="article:published_time" content="2022-09-19T12:30:09.000Z">
+<meta property="article:modified_time" content="2022-10-07T04:59:23.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="表情识别">
+<meta property="article:tag" content="注意力">
+<meta property="article:tag" content="WACV">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-09/DACL/image-20221006210739333.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-09/DACL.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Facial Expression Recognition in the Wild via Deep Attentive Center Loss | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-09/DACL.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Facial Expression Recognition in the Wild via Deep Attentive Center Loss
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-19 20:30:09" itemprop="dateCreated datePublished" datetime="2022-09-19T20:30:09+08:00">2022-09-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-07 12:59:23" itemprop="dateModified" datetime="2022-10-07T12:59:23+08:00">2022-10-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-09/DACL.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-09/DACL.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Facial Expression Recognition in the Wild
+via Deep Attentive Center Loss</li>
+<li><strong>Author</strong>: Amir Hossein Farzaneh and Xiaojun Qi<br>
+</li>
+<li><strong>Institution</strong>: Department of Computer Science Utah
+State University Logan, UT 84322, USA (美国犹他州立大学)</li>
+<li><strong>Year</strong>: 2021</li>
+<li><strong>Journal</strong>: WACV</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/WACV2021/papers/Farzaneh_Facial_Expression_Recognition_in_the_Wild_via_Deep_Attentive_Center_WACV_2021_paper.pdf">PDF</a>,
+<a target="_blank" rel="noopener" href="https://github.com/amirhfarzaneh/dacl">Offical code</a></li>
+<li><strong>Idea</strong>: 利用注意力机制给稀疏中心损失加权</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Farzaneh_2021_WACV,</span><br><span class="line">    author    = &#123;Farzaneh, Amir Hossein and Qi, Xiaojun&#125;,</span><br><span class="line">    title     = &#123;Facial Expression Recognition in the Wild via Deep Attentive Center Loss&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)&#125;,</span><br><span class="line">    month     = &#123;January&#125;,</span><br><span class="line">    year      = &#123;2021&#125;,</span><br><span class="line">    pages     = &#123;2402-2411&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>针对的问题：度量学习中平等的监督包括一些不相关的特征在内的所有特征会降低模型的泛化性能。</p>
+<p>给出的解决方案：提出 DACL(Deep Attentive Center Loss)
+自适应选择显著的特征元素</p>
+<h2 id="introduction">Introduction</h2>
+<figure>
+<img data-src="DACL/image-20221006210739333.png" alt="image-20221006210739333">
+<figcaption aria-hidden="true">image-20221006210739333</figcaption>
+</figure>
+<p>利用卷积层提取的特征估计注意力权重，用于指导稀疏中心损失模块使类内靠近和类间远离。</p>
+<h2 id="method">Method</h2>
+<p>（这篇文章没有paper源码，就不敲公式了，简单总结一下）所谓中心损失就是每个样本到聚类中心的聚类之和(WCSS,
+Within Cluster Sum of
+Squares)，作者认为这其中有些特征对于我们的目标来说是不重要的，所以对样本通过
+CNN 提取的 <span class="math inline"><em>d</em></span>
+维特征与中心的距离进行一个加权操作，而权重是由注意力机制得到的。</p>
+<figure>
+<img data-src="DACL/image-20221006212750652.png" alt="image-20221006212750652">
+<figcaption aria-hidden="true">image-20221006212750652</figcaption>
+</figure>
+<p>如图，<span class="math inline">ℒ<sub><em>s</em></sub></span>
+是一个常规的分类损失，而上面虚线框中的就是作者提出的方法，其中 <span class="math inline"><em>x</em><sub><em>i</em></sub><sup>*</sup></span>
+是通过 CNN 网络提取的一个 <span class="math inline"><em>d</em></span>
+维的特征，在 CE-Unit 中提取相关信息 <span class="math inline"><em>e</em><sub><em>i</em></sub></span>，然后在多头分类器中计算权重，最后对稀疏中心损失进行加权操作。思路其实不是很复杂，但这里还有一个很关键的点就是这个注意力网络
+<span class="math inline">𝒜</span> 是怎么设计的。</p>
+<p>注意力网络 <span class="math inline">𝒜</span> 包含了两个模块</p>
+<ol type="1">
+<li>上下文编码单元(Context Encoder Unit, CE-Unit)，以 CNN
+提取的特征图作为上下文生成隐含特征，主要是三个全连接层：<span class="math inline"><em>f</em><em>l</em><em>a</em><em>t</em><em>t</em><em>e</em><em>n</em> → <em>f</em><em>c</em> → <em>B</em><em>N</em> → <em>r</em><em>e</em><em>l</em><em>u</em> → <em>f</em><em>c</em> → <em>B</em><em>N</em> → <em>r</em><em>e</em><em>l</em><em>u</em> → <em>f</em><em>c</em> → <em>B</em><em>N</em> → <em>t</em><em>a</em><em>n</em><em>h</em></span>.</li>
+<li>多头二元分类器，将 CE-Unit
+的隐含特征作为输入估计注意力权重，每个头会输出两个分数，一个是包含重要特征的分数，一个是不包含；然后取包含的softmax
+计算结果作为最终的权重。</li>
+</ol>
+<h2 id="experiment">Experiment</h2>
+<p>用了 RAF-DB 和 AffectNet 两个数据集，和在 MS-CELEB-1M 上预训练的
+Resnet18
+作为backbone。具体结果可以看原文，其实对比中心损失的方法改进只是有一点改进，改进不是特别大，两个数据集上都是提升了
+<span class="math inline">1%</span> 的样子。</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>DACL
+是一种通过注意力机制来自适应控制在深度度量学习中特征表达的强度的方法。此外，由可自定义的神经网络完全参数化的注意力机制通过为稀疏中心损失提供注意力权重来估计所有维度的贡献概率。</p>
+<blockquote>
+<p>确实是有效果的，但感觉这附加的参数量和提高的效果有点得不偿失，因为显然注意力网络不算小，但提升有限，但思路还是值得参考的。</p>
+</blockquote>
+<h2 id="others">Others</h2>
+<h3 id="代码解析">代码解析</h3>
+<p>模型部分 可见确实是计算量极大，第一个 fc 层有千万级别的参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ResNet</span>(nn.Module):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, block, layers, num_classes=<span class="number">1000</span>, zero_init_residual=<span class="literal">False</span>,</span></span><br><span class="line"><span class="params">                 groups=<span class="number">1</span>, width_per_group=<span class="number">64</span>, replace_stride_with_dilation=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 norm_layer=<span class="literal">None</span></span>):</span><br><span class="line">    	...</span><br><span class="line">        <span class="comment"># DACL attention network</span></span><br><span class="line">        <span class="variable language_">self</span>.nb_head = <span class="number">512</span></span><br><span class="line">        <span class="variable language_">self</span>.attention = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">512</span> * <span class="number">7</span> * <span class="number">7</span>, <span class="number">3584</span>),</span><br><span class="line">            nn.BatchNorm1d(<span class="number">3584</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Linear(<span class="number">3584</span>, <span class="number">512</span>),</span><br><span class="line">            nn.BatchNorm1d(<span class="number">512</span>),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Linear(<span class="number">512</span>, <span class="number">64</span>),</span><br><span class="line">            nn.BatchNorm1d(<span class="number">64</span>),</span><br><span class="line">            nn.Tanh(),</span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.attention_heads = nn.Linear(<span class="number">64</span>, <span class="number">2</span> * <span class="variable language_">self</span>.nb_head)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        ...</span><br><span class="line">        <span class="comment"># DACL attention</span></span><br><span class="line">        x_flat = torch.flatten(x, <span class="number">1</span>)</span><br><span class="line">        E = <span class="variable language_">self</span>.attention(x_flat)</span><br><span class="line">        A = <span class="variable language_">self</span>.attention_heads(E).reshape(-<span class="number">1</span>, <span class="number">512</span>, <span class="number">2</span>).softmax(dim=-<span class="number">1</span>)[:, :, <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">        x = <span class="variable language_">self</span>.avgpool(x)</span><br><span class="line">        f = torch.flatten(x, <span class="number">1</span>)</span><br><span class="line">        out = <span class="variable language_">self</span>.fc(f)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> f, out, A    </span><br></pre></td></tr></table></figure>
+<p>损失函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">criterion = &#123;</span><br><span class="line">    <span class="string">&#x27;softmax&#x27;</span>: nn.CrossEntropyLoss().to(device),</span><br><span class="line">    <span class="string">&#x27;center&#x27;</span>: SparseCenterLoss(<span class="number">7</span>, feat_size).to(device)</span><br><span class="line">&#125;</span><br><span class="line">optimizer = &#123;</span><br><span class="line">    <span class="string">&#x27;softmax&#x27;</span>: torch.optim.SGD(model.parameters(), cfg[<span class="string">&#x27;lr&#x27;</span>],</span><br><span class="line">                               momentum=cfg[<span class="string">&#x27;momentum&#x27;</span>],</span><br><span class="line">                               weight_decay=cfg[<span class="string">&#x27;weight_decay&#x27;</span>]),</span><br><span class="line">    <span class="string">&#x27;center&#x27;</span>: torch.optim.SGD(criterion[<span class="string">&#x27;center&#x27;</span>].parameters(), cfg[<span class="string">&#x27;alpha&#x27;</span>])</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment"># ---- train ----</span></span><br><span class="line"><span class="comment"># compute output</span></span><br><span class="line">feat, output, A = model(images)</span><br><span class="line">l_softmax = criterion[<span class="string">&#x27;softmax&#x27;</span>](output, target)</span><br><span class="line">l_center = criterion[<span class="string">&#x27;center&#x27;</span>](feat, A, target)</span><br><span class="line">l_total = l_softmax + cfg[<span class="string">&#x27;lamb&#x27;</span>] * l_center</span><br></pre></td></tr></table></figure>
+<p>所以关键在这个损失函数这里，但下面的代码不算特别懂</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.autograd.function <span class="keyword">import</span> Function</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SparseCenterLoss</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_classes, feat_dim, size_average=<span class="literal">True</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(SparseCenterLoss, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.centers = nn.Parameter(torch.FloatTensor(num_classes, feat_dim))</span><br><span class="line">        <span class="variable language_">self</span>.sparse_centerloss = SparseCenterLossFunction.apply</span><br><span class="line">        <span class="variable language_">self</span>.feat_dim = feat_dim</span><br><span class="line">        <span class="variable language_">self</span>.size_average = size_average</span><br><span class="line">        <span class="variable language_">self</span>.reset_params()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reset_params</span>(<span class="params">self</span>):</span><br><span class="line">        nn.init.kaiming_normal_(<span class="variable language_">self</span>.centers.data.t())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, feat, A, label</span>):</span><br><span class="line">        batch_size = feat.size(<span class="number">0</span>)</span><br><span class="line">        feat = feat.view(batch_size, -<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># To check the dim of centers and features</span></span><br><span class="line">        <span class="keyword">if</span> feat.size(<span class="number">1</span>) != <span class="variable language_">self</span>.feat_dim:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;Center&#x27;s dim: &#123;0&#125; should be equal to input feature&#x27;s \</span></span><br><span class="line"><span class="string">                            dim: &#123;1&#125;&quot;</span>.<span class="built_in">format</span>(<span class="variable language_">self</span>.feat_dim, feat.size(<span class="number">1</span>)))</span><br><span class="line">        batch_size_tensor = feat.new_empty(<span class="number">1</span>).fill_(batch_size <span class="keyword">if</span> <span class="variable language_">self</span>.size_average <span class="keyword">else</span> <span class="number">1</span>)</span><br><span class="line">        loss = <span class="variable language_">self</span>.sparse_centerloss(feat, A, label, <span class="variable language_">self</span>.centers, batch_size_tensor)</span><br><span class="line">        <span class="keyword">return</span> loss</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SparseCenterLossFunction</span>(<span class="title class_ inherited__">Function</span>):</span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">ctx, feature, A, label, centers, batch_size</span>):</span><br><span class="line">        ctx.save_for_backward(feature, A, label, centers, batch_size)</span><br><span class="line">        centers_batch = centers.index_select(<span class="number">0</span>, label.long())</span><br><span class="line">        <span class="keyword">return</span> (A * (feature - centers_batch).<span class="built_in">pow</span>(<span class="number">2</span>)).<span class="built_in">sum</span>() / <span class="number">2.0</span> / batch_size</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backward</span>(<span class="params">ctx, grad_output</span>):</span><br><span class="line">        feature, A, label, centers, batch_size = ctx.saved_tensors</span><br><span class="line">        centers_batch = centers.index_select(<span class="number">0</span>, label.long())</span><br><span class="line">        diff = feature - centers_batch</span><br><span class="line">        <span class="comment"># init every iteration</span></span><br><span class="line">        counts = centers.new_ones(centers.size(<span class="number">0</span>))</span><br><span class="line">        ones = centers.new_ones(label.size(<span class="number">0</span>))</span><br><span class="line">        grad_centers = centers.new_zeros(centers.size())</span><br><span class="line"></span><br><span class="line">        <span class="comment"># A gradient</span></span><br><span class="line">        grad_A = diff.<span class="built_in">pow</span>(<span class="number">2</span>) / <span class="number">2.0</span> / batch_size</span><br><span class="line"></span><br><span class="line">        counts.scatter_add_(<span class="number">0</span>, label.long(), ones)</span><br><span class="line">        grad_centers.scatter_add_(<span class="number">0</span>, label.unsqueeze(<span class="number">1</span>).expand(feature.size()).long(), - A * diff)</span><br><span class="line">        grad_centers = grad_centers / counts.view(-<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> grad_output * A * diff / batch_size, grad_output * grad_A, <span class="literal">None</span>, grad_centers, <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<h2 id="references">References</h2>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-09/DACL.html" title="『论文笔记』Facial Expression Recognition in the Wild via Deep Attentive Center Loss">https://meteordream.github.io/Paper/2022-09/DACL.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E8%A1%A8%E6%83%85%E8%AF%86%E5%88%AB/" rel="tag"><i class="fa fa-tag"></i> 表情识别</a>
+              <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B/" rel="tag"><i class="fa fa-tag"></i> 注意力</a>
+              <a href="/tags/WACV/" rel="tag"><i class="fa fa-tag"></i> WACV</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-09/1636_%E6%8C%89%E7%85%A7%E9%A2%91%E7%8E%87%E5%B0%86%E6%95%B0%E7%BB%84%E5%8D%87%E5%BA%8F%E6%8E%92%E5%BA%8F(%E7%AE%80%E5%8D%95).html" rel="prev" title="『LeetCode』1636 按照频率将数组升序排序">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』1636 按照频率将数组升序排序
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Paper/2022-09/AFN.html" rel="next" title="『论文笔记』Larger Norm More Transferable - An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation">
+      『论文笔记』Larger Norm More Transferable - An Adaptive Feature Norm Approach for Unsupervised Domain Adaptation <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">7.</span> <span class="nav-text">Others</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="nav-number">7.1.</span> <span class="nav-text">代码解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">8.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

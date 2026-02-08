@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言 简单介绍一下基于 Pytorch 训练网络的基本框架流程，这部分几乎所有都是类似的，在这基础上可以加入一些其他的内容，例如搭建复杂网络，测试网络性能等，以及增加其他功能，例如 Tensorboard 训练过程可视化，记录训练日志等等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pytorch训练基本框架">
+<meta property="og:url" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-08/Pytorch%E8%AE%AD%E7%BB%83%E5%9F%BA%E6%9C%AC%E6%A1%86%E6%9E%B6.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="前言 简单介绍一下基于 Pytorch 训练网络的基本框架流程，这部分几乎所有都是类似的，在这基础上可以加入一些其他的内容，例如搭建复杂网络，测试网络性能等，以及增加其他功能，例如 Tensorboard 训练过程可视化，记录训练日志等等">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-01T07:31:58.000Z">
+<meta property="article:modified_time" content="2022-08-01T07:31:58.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Pytorch">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-08/Pytorch%E8%AE%AD%E7%BB%83%E5%9F%BA%E6%9C%AC%E6%A1%86%E6%9E%B6.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Pytorch训练基本框架 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-08/Pytorch%E8%AE%AD%E7%BB%83%E5%9F%BA%E6%9C%AC%E6%A1%86%E6%9E%B6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pytorch训练基本框架
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-01 15:31:58" itemprop="dateCreated datePublished" datetime="2022-08-01T15:31:58+08:00">2022-08-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">编程基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-08/Pytorch%E8%AE%AD%E7%BB%83%E5%9F%BA%E6%9C%AC%E6%A1%86%E6%9E%B6.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-08/Pytorch%E8%AE%AD%E7%BB%83%E5%9F%BA%E6%9C%AC%E6%A1%86%E6%9E%B6.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="前言">前言</h2>
+<p>简单介绍一下基于 <strong>Pytorch</strong>
+训练网络的基本框架流程，这部分几乎所有都是类似的，在这基础上可以加入一些其他的内容，例如搭建复杂网络，测试网络性能等，以及增加其他功能，例如
+Tensorboard 训练过程可视化，记录训练日志等等</p>
+<span id="more"></span>
+<hr>
+<h2 id="流程">流程</h2>
+<p>训练一个网络，模型和数据是最基本的</p>
+<ol type="1">
+<li>前期准备，包括载入参数、创建日志，创建 tensorboard 等等</li>
+<li>准备数据，包括载入数据集、(可选: 加入数据增强策略, )将数据转换为
+<code>tensor</code>、构建 <code>dataloader</code></li>
+<li>建立模型, 可能需要加载断点(checkpoint) 或 预训练模型 (pretrain)</li>
+<li>(使用 GPU) 将模型和数据迁移到 GPU</li>
+<li>优化器，典型的是梯度下降 <code>SGD</code>, 学习率策略(lr_scheduler,
+optional 可选项)</li>
+<li>确定损失函数，即模型的优化目标，典型如交叉熵损失
+<code>nn.CrossEntropyLoss</code></li>
+<li>开始训练，从 <code>dataloader</code> 取得数据(迁移到
+GPU)，前向传播，计算损失，反向传播，优化器更新网络</li>
+</ol>
+<hr>
+<h2 id="gpu训练">GPU训练</h2>
+<p>关于使用 GPU 进行训练的基本框架</p>
+<h3 id="单机单卡">单机单卡</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">device = torch.device(<span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span>)</span><br><span class="line">train_dataset = ...</span><br><span class="line">train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=...)</span><br><span class="line"></span><br><span class="line">model = ...</span><br><span class="line">optimizer = optim.SGD(model.parameters())</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(opt.num_epoch):</span><br><span class="line">   <span class="keyword">for</span> i, (<span class="built_in">input</span>, target) <span class="keyword">in</span> <span class="built_in">enumerate</span>(train_loader):</span><br><span class="line">      <span class="built_in">input</span>= <span class="built_in">input</span>.to(device)</span><br><span class="line">      target = target.to(device)</span><br><span class="line">      ...</span><br><span class="line">      output = model(<span class="built_in">input</span>)</span><br><span class="line">      loss = criterion(output, target)</span><br><span class="line">      ...</span><br><span class="line">      optimizer.zero_grad()</span><br><span class="line">      loss.backward()</span><br><span class="line">      optimizer.step()</span><br></pre></td></tr></table></figure>
+<h3 id="单机多卡">单机多卡</h3>
+<h4 id="dp模式">DP模式</h4>
+<p>在原来的模型上套上 <code>nn.DataParallel</code> 即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">train_dataset = ...</span><br><span class="line">train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=...)</span><br><span class="line"></span><br><span class="line">model = ...</span><br><span class="line">model = nn.DataParallel(model.to(device), device_ids=<span class="literal">None</span>, output_device=<span class="literal">None</span>)</span><br><span class="line">optimizer = optim.SGD(model.parameters())</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(opt.num_epoch):</span><br><span class="line"><span class="keyword">for</span> i, (<span class="built_in">input</span>, target) <span class="keyword">in</span> <span class="built_in">enumerate</span>(train_loader):</span><br><span class="line"><span class="built_in">input</span>= <span class="built_in">input</span>.cuda()</span><br><span class="line">target = target.cuda()</span><br><span class="line">...</span><br><span class="line">output = model(<span class="built_in">input</span>)</span><br><span class="line">loss = criterion(output, target)</span><br><span class="line">...</span><br><span class="line">optimizer.zero_grad()</span><br><span class="line">loss.backward()</span><br><span class="line">optimizer.step()</span><br></pre></td></tr></table></figure>
+<h4 id="ddp模式">DDP模式</h4>
+<p>步骤如下：</p>
+<ol type="1">
+<li>设置local_rank参数，可以把这个参数理解为进程编号。该参数在运行上面这条指令时就会确定，每块GPU上的该参数都会不一样。</li>
+<li>配置初始化方式，一般有tcp方式和env方式。上面是用的env，下面是用tcp方式用法:
+<code>dist.init_process_group(backend='nccl', init_method='tcp://localhost:23456'</code></li>
+<li>通过local_rank
+来确定该进程的设备：<code>torch.cuda.set_device(opt.local_rank)</code></li>
+<li>数据加载部分我们在该教程的第一篇里介绍过，主要时通过
+<code>torch.utils.data.distributed.DistributedSampler</code>
+来获取每个gpu上的数据索引，每个gpu根据索引加载对应的数据，组合成一个batch，与此同时Dataloader里的shuffle必须设置为None</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> torch.distributed <span class="keyword">as</span> dist</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">&#x27;--local_rank&#x27;</span>, default=-<span class="number">1</span>, <span class="built_in">type</span>=<span class="built_in">int</span>,</span><br><span class="line"><span class="built_in">help</span>=<span class="string">&#x27;node rank for distributed training&#x27;</span>)</span><br><span class="line">opt = parser.parse_args()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化GPU通信方式（NCCL）和参数的获取方式（env代表通过环境变量）。</span></span><br><span class="line">dist.init_process_group(backend=<span class="string">&#x27;nccl&#x27;</span>， init_method=<span class="string">&#x27;env://&#x27;</span>)</span><br><span class="line"></span><br><span class="line">torch.cuda.set_device(opt.local_rank)</span><br><span class="line"></span><br><span class="line">train_dataset = ...</span><br><span class="line">train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)</span><br><span class="line">train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=..., sampler=train_sampler)</span><br><span class="line"></span><br><span class="line"><span class="comment">#使用 DistributedDataParallel 包装模型，</span></span><br><span class="line"><span class="comment">#它能帮助我们为不同 GPU 上求得的梯度进行 all reduce</span></span><br><span class="line"><span class="comment">#(即汇总不同 GPU 计算所得的梯度，并同步计算结果)。</span></span><br><span class="line"><span class="comment">#all reduce 后不同 GPU 中模型的梯度均为 all reduce 之前各 GPU 梯度的均值。</span></span><br><span class="line">model = ...</span><br><span class="line">model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank])</span><br><span class="line"></span><br><span class="line">optimizer = optim.SGD(model.parameters())</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(opt.num_epoch):</span><br><span class="line">    <span class="keyword">for</span> i, (<span class="built_in">input</span>, target) <span class="keyword">in</span> <span class="built_in">enumerate</span>(train_loader):</span><br><span class="line">        <span class="built_in">input</span>= <span class="built_in">input</span>.cuda()</span><br><span class="line">        target = target.cuda()</span><br><span class="line">        ...</span><br><span class="line">        output = model(<span class="built_in">input</span>)</span><br><span class="line">        loss = criterion(output, target)</span><br><span class="line">        ...</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line"><span class="comment">#运行命令</span></span><br><span class="line">CUDA_VISIBLE_DEVICES=<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> python -m torch.distributed.launch --nproc_per_node=<span class="number">4</span> train.py</span><br></pre></td></tr></table></figure>
+<h3 id="多机多卡">多机多卡</h3>
+<p>没这方面需求，略</p>
+<h3 id="参考资料">参考资料</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/XZ9ZyTlTQZWdAuMYIzcWJQ">从零搭建Pytorch模型教程单机多卡和多机多卡训练</a></li>
+</ul>
+<hr>
+<h2 id="简单示例">简单示例</h2>
+<p>以 resnet18 在 CIFAR10 上为例</p>
+<h3 id="代码">代码</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># File    : base_train.py</span></span><br><span class="line"><span class="comment"># Author  : MeteorDream</span></span><br><span class="line"><span class="comment"># Time    : 2022/08/01 17:18:38</span></span><br><span class="line"><span class="comment"># language: Python</span></span><br><span class="line"><span class="comment"># Software: Visual Studio Code</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.utils.data <span class="keyword">as</span> data</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> torchvision.models <span class="keyword">import</span> resnet18</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">build_dataloader</span>(<span class="params">batch_size</span>):</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Build dataset CIFAR-10&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># CIFAR-10 constants</span></span><br><span class="line">    CIFAR10_MEAN = [<span class="number">0.4914</span>, <span class="number">0.4822</span>, <span class="number">0.4465</span>]</span><br><span class="line">    CIFAR10_STD = [<span class="number">0.2023</span>, <span class="number">0.1994</span>, <span class="number">0.2010</span>]</span><br><span class="line"></span><br><span class="line">    transform = transforms.Compose([</span><br><span class="line">            transforms.Resize((<span class="number">112</span>, <span class="number">112</span>)),</span><br><span class="line">            transforms.ToTensor(),</span><br><span class="line">            transforms.Normalize(CIFAR10_MEAN, CIFAR10_STD)</span><br><span class="line">        ])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># CIFAR10 dataset</span></span><br><span class="line">    train_data = datasets.CIFAR10(<span class="string">&#x27;../data/cifar-10-python&#x27;</span>, train=<span class="literal">True</span>, transform=transform)</span><br><span class="line">    test_data = datasets.CIFAR10(<span class="string">&#x27;../data/cifar-10-python&#x27;</span>, train=<span class="literal">False</span>, transform=transform)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    train_dataloader = data.DataLoader(</span><br><span class="line">        train_data, sampler=data.RandomSampler(train_data),</span><br><span class="line">        batch_size=batch_size,</span><br><span class="line">        num_workers=<span class="number">8</span>,</span><br><span class="line">        pin_memory=<span class="literal">True</span>,</span><br><span class="line">        drop_last=<span class="literal">False</span>,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    test_dataloader = data.DataLoader(</span><br><span class="line">        test_data, sampler=data.SequentialSampler(test_data),</span><br><span class="line">        batch_size=batch_size,</span><br><span class="line">        num_workers=<span class="number">8</span>,</span><br><span class="line">        pin_memory=<span class="literal">True</span>,</span><br><span class="line">        drop_last=<span class="literal">False</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Finish: Build dataset CIFAR-10&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> train_dataloader, test_dataloader</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line"></span><br><span class="line">    use_cuda = <span class="literal">True</span></span><br><span class="line">    epochs = <span class="number">30</span></span><br><span class="line">    lr = <span class="number">0.01</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Prepare training data</span></span><br><span class="line">    train_data, test_data = build_dataloader(<span class="number">256</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># model</span></span><br><span class="line">    model = resnet18(num_classes=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> use_cuda:</span><br><span class="line">        model = model.cuda()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># optimizer and lr_scheduler</span></span><br><span class="line">    optimizer = optim.SGD(model.parameters(), lr=lr, momentum=<span class="number">0.9</span>, weight_decay=<span class="number">0.05</span>)</span><br><span class="line">    lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs, <span class="number">1e-4</span>)</span><br><span class="line"></span><br><span class="line">    criterion = nn.CrossEntropyLoss()</span><br><span class="line"></span><br><span class="line">    best_acc = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, epochs + <span class="number">1</span>):</span><br><span class="line">        <span class="comment"># training</span></span><br><span class="line">        train_acc, train_bs = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> img, labels <span class="keyword">in</span> train_data:</span><br><span class="line">            <span class="keyword">if</span> use_cuda:</span><br><span class="line">                img = img.cuda()</span><br><span class="line">                labels = labels.cuda()</span><br><span class="line">            </span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            out = model(img)</span><br><span class="line">            loss = criterion(out, labels)</span><br><span class="line">            loss.backward()</span><br><span class="line">            optimizer.step()</span><br><span class="line"></span><br><span class="line">            train_acc += out.argmax(dim=<span class="number">1</span>).eq(labels).<span class="built_in">sum</span>()</span><br><span class="line">            train_bs += labels.size(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        lr_scheduler.step()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># test</span></span><br><span class="line">        test_acc, test_bs = <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">        <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">            <span class="keyword">for</span> img, labels <span class="keyword">in</span> test_data:</span><br><span class="line">                <span class="keyword">if</span> use_cuda:</span><br><span class="line">                    img = img.cuda()</span><br><span class="line">                    labels = labels.cuda()</span><br><span class="line">                </span><br><span class="line">                out = model(img)</span><br><span class="line">                test_acc += out.argmax(dim=<span class="number">1</span>).eq(labels).<span class="built_in">sum</span>()</span><br><span class="line">                test_bs += labels.size(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> test_acc &gt; best_acc:</span><br><span class="line">            best_acc = test_acc</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;epoch &#123;:^3&#125;: train accuracy &#123;:.2f&#125;% \t test accuracy &#123;:.2f&#125;%&quot;</span>.<span class="built_in">format</span>(epoch, train_acc / train_bs * <span class="number">100</span>, test_acc / test_bs * <span class="number">100</span>))</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Finish training, best accuracy is &#123;:.2f&#125;&quot;</span>.<span class="built_in">format</span>(best_acc / test_bs * <span class="number">100</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>多卡并行仅需加一行代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> use_cuda:</span><br><span class="line">    model = nn.DataParallel(model)</span><br><span class="line">    model = model.cuda()</span><br></pre></td></tr></table></figure>
+<h3 id="运行日志">运行日志</h3>
+<p>运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CUDA_VISIBLE_DEVICES=0 python base_train.py</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">Build dataset CIFAR-10</span><br><span class="line">Finish: Build dataset CIFAR-10</span><br><span class="line">epoch  1 : train accuracy 42.42%         test accuracy 51.48%</span><br><span class="line">epoch  2 : train accuracy 59.89%         test accuracy 61.70%</span><br><span class="line">epoch  3 : train accuracy 66.25%         test accuracy 66.88%</span><br><span class="line">epoch  4 : train accuracy 70.40%         test accuracy 68.71%</span><br><span class="line">epoch  5 : train accuracy 72.80%         test accuracy 67.77%</span><br><span class="line">epoch  6 : train accuracy 74.11%         test accuracy 71.70%</span><br><span class="line">epoch  7 : train accuracy 74.91%         test accuracy 74.28%</span><br><span class="line">epoch  8 : train accuracy 76.14%         test accuracy 72.74%</span><br><span class="line">epoch  9 : train accuracy 77.14%         test accuracy 76.21%</span><br><span class="line">epoch 10 : train accuracy 77.88%         test accuracy 76.52%</span><br><span class="line">epoch 11 : train accuracy 78.33%         test accuracy 75.22%</span><br><span class="line">epoch 12 : train accuracy 79.57%         test accuracy 76.96%</span><br><span class="line">epoch 13 : train accuracy 80.43%         test accuracy 78.86%</span><br><span class="line">epoch 14 : train accuracy 81.07%         test accuracy 78.41%</span><br><span class="line">epoch 15 : train accuracy 82.38%         test accuracy 78.82%</span><br><span class="line">epoch 16 : train accuracy 83.43%         test accuracy 79.09%</span><br><span class="line">epoch 17 : train accuracy 84.36%         test accuracy 80.42%</span><br><span class="line">epoch 18 : train accuracy 85.67%         test accuracy 80.70%</span><br><span class="line">epoch 19 : train accuracy 87.30%         test accuracy 81.80%</span><br><span class="line">epoch 20 : train accuracy 88.73%         test accuracy 82.55%</span><br><span class="line">epoch 21 : train accuracy 90.69%         test accuracy 83.60%</span><br><span class="line">epoch 22 : train accuracy 92.77%         test accuracy 83.92%</span><br><span class="line">epoch 23 : train accuracy 94.76%         test accuracy 84.79%</span><br><span class="line">epoch 24 : train accuracy 97.13%         test accuracy 85.81%</span><br><span class="line">epoch 25 : train accuracy 98.78%         test accuracy 87.30%</span><br><span class="line">epoch 26 : train accuracy 99.61%         test accuracy 88.14%</span><br><span class="line">epoch 27 : train accuracy 99.85%         test accuracy 88.44%</span><br><span class="line">epoch 28 : train accuracy 99.89%         test accuracy 88.36%</span><br><span class="line">epoch 29 : train accuracy 99.91%         test accuracy 88.36%</span><br><span class="line">epoch 30 : train accuracy 99.92%         test accuracy 88.40%</span><br><span class="line">Finish training, best accuracy is 88.44</span><br></pre></td></tr></table></figure>
+<p>多卡并行输出</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">Build dataset CIFAR-10</span><br><span class="line">Finish: Build dataset CIFAR-10</span><br><span class="line">epoch  1 : train accuracy 28.95%         test accuracy 40.68%</span><br><span class="line">epoch  2 : train accuracy 46.05%         test accuracy 49.88%</span><br><span class="line">epoch  3 : train accuracy 54.92%         test accuracy 57.35%</span><br><span class="line">epoch  4 : train accuracy 61.06%         test accuracy 62.65%</span><br><span class="line">epoch  5 : train accuracy 66.66%         test accuracy 67.10%</span><br><span class="line">epoch  6 : train accuracy 70.87%         test accuracy 69.61%</span><br><span class="line">epoch  7 : train accuracy 75.06%         test accuracy 73.85%</span><br><span class="line">epoch  8 : train accuracy 78.62%         test accuracy 74.51%</span><br><span class="line">epoch  9 : train accuracy 81.11%         test accuracy 77.26%</span><br><span class="line">epoch 10 : train accuracy 83.26%         test accuracy 79.15%</span><br><span class="line">epoch 11 : train accuracy 85.32%         test accuracy 79.54%</span><br><span class="line">epoch 12 : train accuracy 86.53%         test accuracy 79.82%</span><br><span class="line">epoch 13 : train accuracy 88.45%         test accuracy 81.70%</span><br><span class="line">epoch 14 : train accuracy 90.27%         test accuracy 82.01%</span><br><span class="line">epoch 15 : train accuracy 91.94%         test accuracy 82.84%</span><br><span class="line">epoch 16 : train accuracy 93.86%         test accuracy 82.54%</span><br><span class="line">epoch 17 : train accuracy 95.61%         test accuracy 83.89%</span><br><span class="line">epoch 18 : train accuracy 97.23%         test accuracy 84.05%</span><br><span class="line">epoch 19 : train accuracy 98.45%         test accuracy 85.64%</span><br><span class="line">epoch 20 : train accuracy 99.31%         test accuracy 86.10%</span><br><span class="line">epoch 21 : train accuracy 99.78%         test accuracy 86.65%</span><br><span class="line">epoch 22 : train accuracy 99.91%         test accuracy 87.39%</span><br><span class="line">epoch 23 : train accuracy 99.94%         test accuracy 87.34%</span><br><span class="line">epoch 24 : train accuracy 99.96%         test accuracy 87.56%</span><br><span class="line">epoch 25 : train accuracy 99.97%         test accuracy 87.56%</span><br><span class="line">epoch 26 : train accuracy 99.97%         test accuracy 87.67%</span><br><span class="line">epoch 27 : train accuracy 99.97%         test accuracy 87.74%</span><br><span class="line">epoch 28 : train accuracy 99.97%         test accuracy 87.77%</span><br><span class="line">epoch 29 : train accuracy 99.97%         test accuracy 87.71%</span><br><span class="line">epoch 30 : train accuracy 99.97%         test accuracy 87.71%</span><br><span class="line">Finish training, best accuracy is 87.77</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-08/Pytorch%E8%AE%AD%E7%BB%83%E5%9F%BA%E6%9C%AC%E6%A1%86%E6%9E%B6.html" title="Pytorch训练基本框架">https://meteordream.github.io/编程基础/2022-08/Pytorch训练基本框架.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+              <a href="/tags/Pytorch/" rel="tag"><i class="fa fa-tag"></i> Pytorch</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E5%B0%8F%E6%8A%80%E5%B7%A7/2022-07/pdf%E4%B8%8E%E5%9B%BE%E7%89%87%E8%BD%AC%E6%8D%A2.html" rel="prev" title="pdf与图片转换">
+      <i class="fa fa-chevron-left"></i> pdf与图片转换
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-08/622_%E8%AE%BE%E8%AE%A1%E5%BE%AA%E7%8E%AF%E9%98%9F%E5%88%97(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』622 设计循环队列">
+      『LeetCode』622 设计循环队列 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gpu%E8%AE%AD%E7%BB%83"><span class="nav-number">3.</span> <span class="nav-text">GPU训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E5%8D%95%E5%8D%A1"><span class="nav-number">3.1.</span> <span class="nav-text">单机单卡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%8D%A1"><span class="nav-number">3.2.</span> <span class="nav-text">单机多卡</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dp%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.1.</span> <span class="nav-text">DP模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ddp%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.2.</span> <span class="nav-text">DDP模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%9C%BA%E5%A4%9A%E5%8D%A1"><span class="nav-number">3.3.</span> <span class="nav-text">多机多卡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">简单示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">4.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%A5%E5%BF%97"><span class="nav-number">4.2.</span> <span class="nav-text">运行日志</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

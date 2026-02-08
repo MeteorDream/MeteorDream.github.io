@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="摘要 蒙特卡洛方法是一种通过随机重复采样获取存在确切数值解的求解方法，马尔可夫链是一类具有无后效性的随机过程，在较高维度的随机变量采样过程中，蒙特卡洛方法和其他传统的方法都遇到了维度灾难的问题，而马尔可夫链蒙特卡洛方法将蒙特卡洛方法和马尔可夫链的性质进行了结合，可以有效的避免维度灾难的问题，是高维度采样中一种有效的解决方案。本文简单介绍了蒙特卡洛方法和马尔可夫链的基本定义，随后以经典的 Metro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="马尔可夫链蒙特卡洛方法">
+<meta property="og:url" content="https://meteordream.github.io/Note/2022-06/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="摘要 蒙特卡洛方法是一种通过随机重复采样获取存在确切数值解的求解方法，马尔可夫链是一类具有无后效性的随机过程，在较高维度的随机变量采样过程中，蒙特卡洛方法和其他传统的方法都遇到了维度灾难的问题，而马尔可夫链蒙特卡洛方法将蒙特卡洛方法和马尔可夫链的性质进行了结合，可以有效的避免维度灾难的问题，是高维度采样中一种有效的解决方案。本文简单介绍了蒙特卡洛方法和马尔可夫链的基本定义，随后以经典的 Metro">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-06/马尔可夫链蒙特卡洛方法/PI.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-06/马尔可夫链蒙特卡洛方法/1656508627013.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-06/马尔可夫链蒙特卡洛方法/1656506221373.png">
+<meta property="article:published_time" content="2022-06-28T05:14:54.000Z">
+<meta property="article:modified_time" content="2022-06-30T05:44:53.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="概率论">
+<meta property="article:tag" content="随机过程">
+<meta property="article:tag" content="蒙特卡洛">
+<meta property="article:tag" content="马尔可夫链">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Note/2022-06/马尔可夫链蒙特卡洛方法/PI.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Note/2022-06/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>马尔可夫链蒙特卡洛方法 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Note/2022-06/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          马尔可夫链蒙特卡洛方法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-28 13:14:54" itemprop="dateCreated datePublished" datetime="2022-06-28T13:14:54+08:00">2022-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-06-30 13:44:53" itemprop="dateModified" datetime="2022-06-30T13:44:53+08:00">2022-06-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Note/2022-06/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Note/2022-06/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="摘要">摘要</h2>
+<p>蒙特卡洛方法是一种通过随机重复采样获取存在确切数值解的求解方法，马尔可夫链是一类具有无后效性的随机过程，在较高维度的随机变量采样过程中，蒙特卡洛方法和其他传统的方法都遇到了维度灾难的问题，而马尔可夫链蒙特卡洛方法将蒙特卡洛方法和马尔可夫链的性质进行了结合，可以有效的避免维度灾难的问题，是高维度采样中一种有效的解决方案。本文简单介绍了蒙特卡洛方法和马尔可夫链的基本定义，随后以经典的
+Metropolis–Hastings
+方法为例详细介绍了马尔可夫链蒙特卡洛方法的思路及其形式推导，并给出了简单的例子和实验验证了算法的有效性。</p>
+<span id="more"></span>
+<h2 id="蒙特卡洛方法">蒙特卡洛方法</h2>
+<p>蒙特卡洛方法(Monte Carlo method/experiments)
+是一种通过随机重复采样获取存在确切数值解的求解方法。蒙特卡洛方法通常可以用在如下三类问题的求解：</p>
+<ul>
+<li>数值优化问题</li>
+<li>数值积分问题</li>
+<li>概率分布的一般化采样</li>
+</ul>
+<p>例如对圆周率的估计就可以采用蒙特卡洛方法进行模拟，考虑单位长度的正方形中绘制一个
+<span class="math inline">$\dfrac{1}{4}$</span> 圆，其面积为 <span class="math inline">$\dfrac{\pi}{4}$</span>,
+根据几何概型，在正方形中随机投点的情况下，点落入圆中的概率为 <span class="math inline">$\dfrac{\text{圆的面积} }{\text{正方形的面积}
+}$</span>，即 <span class="math inline">$\dfrac{\pi / 4}{1}$</span>,
+由此我们可以推算出圆周率的估计值为 <span class="math inline"><em>π</em> = 4<em>p</em></span>, 其中 <span class="math inline"><em>p</em></span>
+表示在正方形中随机投点落在圆内的概率，根据蒙特卡洛模拟可以获得其近似值，如下图所示，模拟次数越多，越接近真实值。</p>
+<figure>
+<img data-src="马尔可夫链蒙特卡洛方法/PI.png" alt="PI - from wikipedia">
+<figcaption aria-hidden="true">PI - from wikipedia</figcaption>
+</figure>
+<p>同样也可以使用数值积分的方法计算，即</p>
+<p><span class="math display">$$
+\int_0^1 \sqrt{1 - x^2} dx = \dfrac{\pi}{4}
+$$</span></p>
+<p>模拟计算代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">f</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> math.sqrt(<span class="number">1</span> - x ** <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">MC</span>(<span class="params">mid=<span class="number">1000</span></span>):</span><br><span class="line">    left, right = <span class="number">0</span>, <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    sep = (right - left) / (mid - <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(f(left + x * sep) <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(mid)) / mid * <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> mid <span class="keyword">in</span> [<span class="number">100</span>, <span class="number">10000</span>, <span class="number">1000000</span>, <span class="number">10000000</span>]:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;蒙特卡洛方法模拟 &#123;:&gt;10,&#125; 次的结果为 &#123;:.10f&#125;&quot;</span>.<span class="built_in">format</span>(mid, MC(mid)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;                     真实的 PI 值为 &#123;:.10f&#125;&quot;</span>.<span class="built_in">format</span>(math.pi))</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">蒙特卡洛方法模拟        100 次的结果为 3.1289951863</span><br><span class="line">蒙特卡洛方法模拟     10,000 次的结果为 3.1414773183</span><br><span class="line">蒙特卡洛方法模拟  1,000,000 次的结果为 3.1415915108</span><br><span class="line">蒙特卡洛方法模拟 10,000,000 次的结果为 3.1415925394</span><br><span class="line">                       真实的 PI 值为 3.1415926536</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="马尔可夫链">马尔可夫链</h2>
+<h3 id="简介">简介</h3>
+<p><strong>马尔可夫链</strong>(或马尔可夫过程, Markov
+chainprocess)是描述一系列可能事件的随机模型,其中每个事件的概率仅取决于前一个事件中获得的状态。</p>
+<p><strong>转移</strong>：马尔可夫状态改变的过程称为状态的转移，与各种状态变化相关的概率称为转移概率。马尔可夫过程的特征在于<strong>状态空间</strong>、描述特定转移概率的转移矩阵以及整个状态空间的初始状态（或初始分布）</p>
+<h3 id="示例">示例</h3>
+<p>举个例子：一种只吃奶酪、葡萄或生菜的高度理论动物的饮食习惯，其饮食习惯符合以下规则：</p>
+<ul>
+<li>它每天只吃一次。</li>
+<li>如果它今天吃奶酪，明天它会以相同的概率吃生菜或葡萄。</li>
+<li>如果它今天吃葡萄，明天它将以 1/10 的概率吃葡萄，以 4/10
+的概率吃奶酪，以 5/10 的概率吃生菜。</li>
+<li>如果它今天吃生菜，明天它将以 4/10 的概率吃葡萄或以 6/10
+的概率吃奶酪。明天它不会再吃生菜了。</li>
+</ul>
+<p>可以写出其转移概率矩阵为</p>
+<p><span class="math display">$$
+\begin{bmatrix}
+  0 &amp; 0.5 &amp; 0.5 \\
+  0.4 &amp; 0.1 &amp; 0.5 \\
+  0.6 &amp; 0.4 &amp; 0
+\end{bmatrix}
+$$</span></p>
+<p>考虑第一天吃不同的食物，通过计算发现，一段时间后吃三种食物的都趋于
+<span class="math inline">$\dfrac{1}{3}$</span>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">food = [<span class="string">&quot;奶酪&quot;</span>, <span class="string">&quot;葡萄&quot;</span>, <span class="string">&quot;生菜&quot;</span>]</span><br><span class="line">day = <span class="number">10</span></span><br><span class="line">p = [</span><br><span class="line">    [<span class="number">0</span>, <span class="number">0.5</span>, <span class="number">0.5</span>],</span><br><span class="line">    [<span class="number">0.4</span>, <span class="number">0.1</span>, <span class="number">0.5</span>],</span><br><span class="line">    [<span class="number">0.6</span>, <span class="number">0.4</span>, <span class="number">0</span>]</span><br><span class="line">]</span><br><span class="line">p = np.array(p)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, cur_food <span class="keyword">in</span> <span class="built_in">enumerate</span>(food):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;第一天吃&quot;</span>, cur_food, end=<span class="string">&#x27;, &#x27;</span>)</span><br><span class="line">    state = np.zeros((<span class="number">3</span>,))</span><br><span class="line">    state[idx] = <span class="number">1.</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(day):</span><br><span class="line">        state = np.matmul(state, p)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;&#123;&#125; 天后吃 &#123;&#125;, &#123;&#125;, &#123;&#125; 的概率分别为 &#123;:.5f&#125;, &#123;:.5f&#125;, &#123;:.5f&#125;&quot;</span>.<span class="built_in">format</span>(day, *food, *state))</span><br></pre></td></tr></table></figure>
+<p>两次输出结果如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">第一天吃 奶酪, 10 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33398, 0.33301, 0.33301</span><br><span class="line">第一天吃 葡萄, 10 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33388, 0.33311, 0.33301</span><br><span class="line">第一天吃 生菜, 10 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33214, 0.33388, 0.33398</span><br><span class="line"></span><br><span class="line">第一天吃 奶酪, 1000 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33333, 0.33333, 0.33333</span><br><span class="line">第一天吃 葡萄, 1000 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33333, 0.33333, 0.33333</span><br><span class="line">第一天吃 生菜, 1000 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33333, 0.33333, 0.33333</span><br></pre></td></tr></table></figure>
+<p><span class="math inline">$\left(\dfrac{1}{3}, \dfrac{1}{3},
+\dfrac{1}{3}\right)$</span> 是该例子下的一个稳态分布。</p>
+<p>我们可以使用蒙特卡洛的方法来验证一下上述结论的正确性</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line">food = [<span class="string">&quot;奶酪&quot;</span>, <span class="string">&quot;葡萄&quot;</span>, <span class="string">&quot;生菜&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">transfer</span>(<span class="params">idx</span>):</span><br><span class="line">    r = random.random()</span><br><span class="line">    <span class="keyword">if</span> idx == <span class="number">0</span>:    <span class="comment"># 今天吃的是奶酪</span></span><br><span class="line">        <span class="comment"># 明天等概率吃葡萄，生菜</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> <span class="keyword">if</span> r &lt; <span class="number">0.5</span> <span class="keyword">else</span> <span class="number">2</span></span><br><span class="line">    <span class="keyword">elif</span> idx == <span class="number">1</span>:  <span class="comment"># 今天吃的是葡萄</span></span><br><span class="line">        <span class="keyword">if</span> r &lt; <span class="number">0.4</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">elif</span> r &lt; <span class="number">0.5</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">2</span></span><br><span class="line">    <span class="keyword">else</span>:           <span class="comment"># 今天吃的是生菜</span></span><br><span class="line">        <span class="keyword">if</span> r &lt; <span class="number">0.6</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> idx, cur_food <span class="keyword">in</span> <span class="built_in">enumerate</span>(food):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;第一天吃&quot;</span>, cur_food, end=<span class="string">&#x27;, &#x27;</span>)</span><br><span class="line">    cnt = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line">    <span class="comment"># 模拟 100,000 次</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100000</span>):</span><br><span class="line">        state = idx</span><br><span class="line">        <span class="comment"># 100 天后吃什么？</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">            state = transfer(state)</span><br><span class="line">        cnt[state] += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;100 天后吃 &#123;&#125;, &#123;&#125;, &#123;&#125; 的概率分别为 &#123;:.5f&#125;, &#123;:.5f&#125;, &#123;:.5f&#125;&quot;</span>.<span class="built_in">format</span>(*food, *<span class="built_in">map</span>((<span class="keyword">lambda</span> x: x / <span class="number">100000</span>), cnt)))</span><br></pre></td></tr></table></figure>
+<p>模拟结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">第一天吃 奶酪, 100 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33132, 0.33420, 0.33448</span><br><span class="line">第一天吃 葡萄, 100 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33299, 0.33176, 0.33525</span><br><span class="line">第一天吃 生菜, 100 天后吃 奶酪, 葡萄, 生菜 的概率分别为 0.33305, 0.33340, 0.33355</span><br></pre></td></tr></table></figure>
+<p>显然模拟的结果与计算结果基本一致，说明了无论第一天吃什么食物，在一定次数的转移（过去一定时间）后吃三种食物的事件的是等概率事件。</p>
+<h3 id="数学定义">数学定义</h3>
+<p>马尔可夫链的数学定义为：</p>
+<p><span class="math display">Pr(<em>X</em><sub><em>n</em> + 1</sub> = <em>x</em> ∣ <em>X</em><sub>1</sub> = <em>x</em><sub>1</sub>, <em>X</em><sub>2</sub> = <em>x</em><sub>2</sub>, …, <em>X</em><sub><em>n</em></sub> = <em>x</em><sub><em>n</em></sub>) = Pr(<em>X</em><sub><em>n</em> + 1</sub> = <em>x</em> ∣ <em>X</em><sub><em>n</em></sub> = <em>x</em><sub><em>n</em></sub>)</span></p>
+<p>即转移到下一个状态的概率仅取决于当前状态而不取决于之前的状态。</p>
+<hr>
+<h2 id="马尔可夫链蒙特卡洛方法">马尔可夫链蒙特卡洛方法</h2>
+<p><strong>马尔可夫链蒙特卡洛</strong>(Markov chain Monte Carlo,
+<strong>MCMC</strong>)
+是一种通用的从给定概率分布中采样的随机采样方法，即使是对于一些其他方法很难采样的概率分布，MCMC
+都能使用。MCMC
+方法构造具有马尔可夫性质的随机变量序列，其概率分布极限为<em>目标分布</em>。因为符合要求的序列构造比较容易，而目标分布范围很广，因此
+MCMC 得到了广泛的应用。MCMC
+通常用于从多维分布中采样，尤其是在维数很高的情况下，许多采样算法都有“维度灾难”的问题，此时
+MCMC 是一种较好的解决方案。</p>
+<p>MCMC 有两种比较经典的算法：Metropolis–Hastings (M-H) 算法和 Gibbs
+sampling. 这里主要介绍 M-H 算法。</p>
+<h3 id="metropolishastings">Metropolis–Hastings</h3>
+<h4 id="基本思想">基本思想</h4>
+<p>Metropolis-Hastings 算法可以从任何任意具有概率密度 <span class="math inline"><em>P</em>(<em>x</em>)</span> 的概率分布中抽取样本,
+前提是我们知道一个与概率密度 <span class="math inline"><em>P</em></span>
+成正比的函数 <span class="math inline"><em>f</em>(<em>x</em>)</span>
+并且 <span class="math inline"><em>f</em>(<em>x</em>)</span>
+的值可以计算。Metropolis-Hastings 算法只 <span class="math inline"><em>f</em>(<em>x</em>)</span>
+与概率密度成正比，而不是完全等于它，这使得 Metropolis-Hastings
+算法特别有用，因为在实践中计算归一化因子通常非常困难。</p>
+<p>Metropolis-Hastings
+算法的工作原理是生成一系列样本值，随着生成的样本值越来越多，值的分布更接近于所需的分布。这些样本值是迭代生成的，下一个样本的分布仅取决于当前样本值（从而使样本序列成为马尔可夫链）。具体来说，在每次迭代中，算法都会根据当前样本值选择下一个样本值的候选者。然后，以某种概率，候选被接受（在这种情况下，候选值在下一次迭代中使用）或被拒绝（在这种情况下，候选值被丢弃，当前值在下一次迭代中被重用）</p>
+<h4 id="形式推导">形式推导</h4>
+<p>Metropolis-Hastings 算法根据期望分布 <span class="math inline"><em>P</em>(<em>x</em>)</span> 生成状态集合.
+在具体实现中使用了马尔可夫链，即在生成过程中渐近地达到一个唯一的平稳分布
+<span class="math inline"><em>π</em>(<em>x</em>)</span> 满足 <span class="math inline"><em>π</em>(<em>x</em>) = <em>P</em>(<em>x</em>)</span>.</p>
+<p>马尔可夫链由其转移概率 <span class="math inline"><em>P</em>(<em>x</em><sup>′</sup> ∣ <em>x</em>)</span>
+唯一确定，表示由任意给定的状态 <span class="math inline"><em>x</em></span> 转移到任意其他给定的状态 <span class="math inline"><em>x</em><sup>′</sup></span>,
+当满足下面两个条件的时候马尔可夫链具有唯一的平稳分布：</p>
+<ol type="1">
+<li><strong>存在平稳分布</strong> <span class="math inline"><em>π</em>(<em>x</em>)</span>,
+一个充分不必要条件是细微平衡(detailed balance), 即要求每次的转移 <span class="math inline"><em>x</em> → <em>x</em><sup>′</sup></span>
+都是可逆的：给定一对状态 <span class="math inline"><em>x</em>, <em>x</em><sup>′</sup></span>, 满足
+<span class="math inline"><em>π</em>(<em>x</em>)<em>P</em>(<em>x</em><sup>′</sup> ∣ <em>x</em>) = <em>π</em>(<em>x</em><sup>′</sup>)<em>P</em>(<em>x</em> ∣ <em>x</em><sup>′</sup>)</span>,
+即 <span class="math inline"><em>x</em> → <em>x</em><sup>′</sup></span>
+与 <span class="math inline"><em>x</em><sup>′</sup> → <em>x</em></span>
+的转移概率要相等</li>
+<li><strong>平稳分布唯一</strong>
+平稳分布的唯一性由马尔可夫链的遍历性保证，这要求
+<ol type="1">
+<li>马尔可夫链的所有状态都是非周期的，即不会再固定的间隔返回同一个状态</li>
+<li>马尔可夫链的所有状态都是正循环的，即能在有限步返回同一个状态</li>
+</ol></li>
+</ol>
+<p>M-H
+算法需要通过构建转移概率设计出满足上面两个条件的马尔可夫链，使其平稳分布
+<span class="math inline"><em>π</em>(<em>x</em>)</span> 满足 <span class="math inline"><em>P</em>(<em>x</em>)</span>, 我们先考虑细微平衡：
+<span class="math display"><em>P</em>(<em>x</em>)<em>P</em>(<em>x</em><sup>′</sup> ∣ <em>x</em>) = <em>P</em>(<em>x</em><sup>′</sup>)<em>P</em>(<em>x</em> ∣ <em>x</em><sup>′</sup>)</span>
+整理一下 <span class="math display">$$
+\dfrac{P(x' \mid x)}{P(x \mid x')} = \dfrac{P(x')}{P(x)}
+$$</span></p>
+<p>M-H 算法将 <span class="math inline"><em>P</em></span>
+分成两个子步骤：提议和接受-拒绝。</p>
+<ul>
+<li>提议分布 <span class="math inline"><em>g</em>(<em>x</em><sup>′</sup> ∣ <em>x</em>)</span>
+是在给定 <span class="math inline"><em>x</em></span> 的情况下提议状态
+<span class="math inline"><em>x</em><sup>′</sup></span> 的条件概率</li>
+<li>接受分布 <span class="math inline"><em>A</em>(<em>x</em><sup>′</sup>, <em>x</em>)</span>
+是接受提议状态 <span class="math inline"><em>x</em><sup>′</sup></span>
+的概率</li>
+</ul>
+<p>所以有： <span class="math display"><em>P</em>(<em>x</em><sup>′</sup> ∣ <em>x</em>) = <em>g</em>(<em>x</em><sup>′</sup> ∣ <em>x</em>)<em>A</em>(<em>x</em><sup>′</sup>, <em>x</em>)</span>
+代入前面的方程，得到： <span class="math display">$$
+\dfrac{g(x'\mid x)A(x', x)}{g(x\mid x')A(x, x')} = \dfrac{P(x')}{P(x)}
+$$</span> 即 <span class="math display">$$
+\dfrac{A(x', x)}{A(x, x')} = \dfrac{P(x')}{P(x)} \dfrac{g(x\mid
+x')}{g(x'\mid x)}
+$$</span></p>
+<p>下一步是选择满足上述条件的接受率。一种常见的选择是 Metropolis 选择：
+<span class="math display">$$
+A(x', x) = \min \left(1, \dfrac{P(x')}{P(x)} \dfrac{g(x\mid
+x')}{g(x'\mid x)}\right)
+$$</span></p>
+<p>对 Metropolis 接受率 <span class="math inline"><em>A</em></span>，有
+<span class="math inline"><em>A</em>(<em>x</em><sup>′</sup>, <em>x</em>) = 1</span>
+或 <span class="math inline"><em>A</em>(<em>x</em>, <em>x</em><sup>′</sup>) = 1</span>,
+满足条件</p>
+<h4 id="基本流程">基本流程</h4>
+<p>M-H 算法基于两个阶段：</p>
+<ol type="1">
+<li>从提议分布（也叫候选生成分布）生成候选随机值</li>
+<li>根据 Metropolis 规则接受或拒绝候选值</li>
+</ol>
+<p>给定当前状态值 <span class="math inline"><strong>x</strong></span>,
+Metropolis 规则根据如下概率接受候选值 <span class="math inline"><em>w</em></span></p>
+<p><span class="math display">$$
+{\rho}({x},{w}) = \min\left\{\frac{ {p}({w}){q}({x}\,{\vert}\,{w})}{
+{p}({x}){q}({w}\,{\vert}\,{x})},{1}\right\},\quad{x},{w}\,\in\,{\cal{X}
+}, \tag{1}
+$$</span></p>
+<p>其中 <span class="math inline"><em>q</em>(⋅ | <strong>x</strong>)</span>
+是提议密度函数。对每个 <span class="math inline"><strong>x</strong></span>, 由 <span class="math inline"><em>q</em>(⋅ | <strong>x</strong>)</span>
+确定的概率分布被假定为连续分布（但不是一般要求）。</p>
+<p>为了确保这个接受概率是明确定义的，当 <span class="math inline"><em>p</em>(<strong>x</strong>)<em>q</em>(<strong>w</strong> | <strong>x</strong>) = 0</span>
+时令 <span class="math inline"><em>ρ</em>(<strong>x</strong>, <strong>w</strong>) = 1</span>.</p>
+<p>Metropolis-Hastings 算法流程为</p>
+<ol type="1">
+<li>（初始化）为 <span class="math inline"><strong>X</strong><sub>0</sub></span> 选择初始状态
+<span class="math inline"><strong>x</strong><sub>0</sub></span>. 设置
+<span class="math inline"><em>k</em> = 0</span>.</li>
+<li>给定 <span class="math inline"><strong>X</strong><sub><em>k</em></sub></span>,
+根据提议密度 <span class="math inline"><em>q</em>(⋅ | <strong>X</strong><sub><em>k</em></sub>)</span>
+生成候选点 <span class="math inline"><strong>W</strong></span>.</li>
+<li>对给定 <span class="math inline"><strong>W</strong></span> 令 <span class="math display">$$
+{\boldsymbol{X} }_{k + 1} = \begin{cases}
+\begin{array}{ll}{\boldsymbol{W} },&amp;{\text{概率为 }
+}{\rho}({\boldsymbol{X} }_{k},{\boldsymbol{W} }),\\
+{\boldsymbol{X} }_{k},&amp;{\text{概率为 } }{1} - {\rho}({\boldsymbol{X}
+}_{k},{\boldsymbol{W} }).
+\end{array}
+\end{cases}
+$$</span> 更新计数器 <span class="math inline"><em>k</em> → <em>k</em> + 1</span></li>
+<li>重复 2,3 知道得到合法的终值 <span class="math inline"><strong>X</strong><sub><em>n</em></sub></span></li>
+</ol>
+<h4 id="一个例子">一个例子</h4>
+<p>举个例子，给定目标概率密度函数为： <span class="math display">$$
+\begin{equation*}
+    {p}({x_1},{x_2}) = \begin{cases}
+        \begin{array}{ll}
+            {\beta}{e}^{-{x_1}{x_2} }&amp;{\text{if }
+}{0}\,{&lt;}\,{x}_{j}\,{&lt;}\,{B},{j} = {1},{2},\\
+            {0}&amp;{\text{other wise,} }
+        \end{array}
+    \end{cases}
+    \tag{2}
+\end{equation*}
+$$</span> 其中 <span class="math inline"><em>β</em></span>
+是正则化常数，提议密度设为二维均匀分布： <span class="math display">$$
+{q}({\boldsymbol{y} }) = \frac{1}{B^2}{\boldsymbol{I} }_{\cal{X}
+}({\boldsymbol{y} }),\quad{\boldsymbol{y} } = ({\boldsymbol{y}
+}_{1},{\boldsymbol{y} }_{2})\,\in\,{\cal{X} }. \tag{3}
+$$</span> 则 Metropolis 规则为 <span class="math display">$$
+\begin{equation*}
+    {\rho}({\boldsymbol{x} },{\boldsymbol{y} }) =
+    \begin{cases}
+        \begin{array}{ll}
+            {1},&amp;{\text{if } }{y_1}{y_2}\,{&lt;}\,{x_1}{x_2},\\
+            {e}^{-({y_1}{y_2} - {x_1}{x_2})},&amp;{\text{if }
+}{y_1}{y_2}\,≥\,{x_1}{x_2},
+        \end{array}
+    \end{cases}
+    \tag{4}
+\end{equation*}
+$$</span></p>
+<p>马尔可夫链从一个状态值转移到另一个状态值的概率由 M-H 算法的步骤 2 和
+3 确定。因此，给定 <span class="math inline"><strong>X</strong><sub><em>k</em></sub> = <strong>x</strong></span>
+转移到 <span class="math inline"><strong>X</strong><sub><em>k</em> + 1</sub> = <strong>y</strong></span>
+的概率仅取决于 Metropolis 接受概率 <span class="math inline"><em>ρ</em>(⋅, ⋅)</span> 和提案密度 <span class="math inline"><em>q</em>(⋅ | ⋅)</span>，两者都不依赖于索引 <span class="math inline"><em>k</em></span>。由此可见，从一个状态值转移到另一个状态值的条件概率密度与
+<span class="math inline"><em>k</em></span> 无关。这种由 <span class="math inline"><em>K</em>(<strong>y</strong> | <strong>y</strong>)</span>
+表示的条件概率密度称为转移核，类似于离散马尔可夫链中的转移矩阵 <span class="math inline"><strong>P</strong></span>。当在 <span class="math inline">${\cal{X} }$</span>
+的子集上积分时，转移核产生马尔可夫链的一步转移概率，这是给定 <span class="math inline"><strong>X</strong><sub><em>k</em></sub></span>
+转移到 <span class="math inline"><strong>X</strong><sub><em>k</em> + 1</sub></span>
+的条件概率。具体来说，给定点 <span class="math inline">${x}\,\in\,{\cal{X} }$</span>，集合 <span class="math inline">${A}\,\subseteq\,{\cal{X} }$</span> 的转移概率由积分
+<span class="math inline">∫<sub><em>A</em></sub><em>K</em>(<strong>y</strong> | <strong>x</strong>)<em>d</em><strong>y</strong></span>
+确定。这个条件概率记为 <span class="math inline"><em>P</em>(<strong>X</strong><sub><em>k</em> + 1</sub> ∈ <em>A</em> | <strong>X</strong><sub><em>k</em></sub> = <em>x</em>)</span>。对于每个
+<span class="math inline">${\boldsymbol{x} }\,\in\,{\cal{X} }$</span>,
+<span class="math display"><em>P</em>(<strong>X</strong><sub><em>k</em> + 1</sub> ∈ <em>A</em> | <strong>X</strong><sub><em>k</em></sub> = <strong>x</strong>) = ∫<sub><em>A</em></sub><em>K</em>(<strong>y</strong> | <strong>x</strong>)<em>d</em><strong>y</strong>,  <em>k</em> = 0, 1, 2, ….</span></p>
+<p><span class="math inline"><em>k</em></span>-步转移概率密度函数 <span class="math inline"><em>K</em><sup>(<em>k</em>)</sup>(⋅ | ⋅)</span>
+可以由 CK 方程 (Chapman–Kolmogorov) 计算得到: <span class="math display"><em>K</em><sup>(<em>k</em> + 1)</sup>(<strong>y</strong> | <strong>x</strong>) = ∫<em>K</em><sup>(<em>k</em>)</sup>(<strong>y</strong> | <strong>v</strong>)<em>K</em>(<strong>v</strong> | <strong>x</strong>)<em>d</em><strong>v</strong> = ∫<em>K</em>(<strong>y</strong> | <strong>v</strong>)<em>K</em><sup>(<em>k</em>)</sup>(<strong>v</strong> | <strong>x</strong>)<em>d</em><strong>v</strong>,</span></p>
+<p>当 <span class="math inline"><em>k</em> = 1</span> 时 <span class="math inline"><em>K</em><sup>(1)</sup>(⋅ | ⋅)</span>
+是转移核本身。由此可以计算出 <span class="math inline"><em>k</em></span>-步转移概率为 <span class="math display"><em>P</em>(<strong>X</strong><sub><em>k</em></sub> ∈ <em>A</em> | <strong>X</strong><sub>0</sub> = <strong>x</strong>) = ∫<sub><em>A</em></sub><em>K</em><sup>(<em>k</em>)</sup>(<strong>y</strong> | <strong>x</strong>)<em>d</em><strong>y</strong>.</span></p>
+<h4 id="提议密度的选择">提议密度的选择</h4>
+<p>用于生成候选值的提议密度 <span class="math inline"><em>q</em>(⋅ | <strong>x</strong>)</span>
+可以非常灵活选择，但也有些要求。为了使 M-H 算法收敛到 (28) 或 (29) ,
+要求提议密度能够生成从 <span class="math inline">${\cal{X} }$</span>
+的任意状态值开始在有限步内能以非零概率到达 <span class="math inline"><em>S</em></span>
+任意子集的随机样本。除此之外，提议密度还必须能够生成不可约的 M-H
+马尔可夫链 <span class="math inline">{<strong>X</strong><sub><em>k</em></sub>}</span>。</p>
+<p>提议密度的必要条件是 <span class="math inline">∃ <em>η</em> &gt; 0</span>, 对 <span class="math inline">$\forall \, {\boldsymbol{x} },{\boldsymbol{y}
+}\,\in\,{\cal{X} }$</span> 有 <span class="math inline"><em>q</em>(<strong>y</strong> | <strong>x</strong>) &gt; 0</span>
+且 <span class="math inline">‖<strong>y</strong> − <strong>x</strong>‖ &lt; <em>η</em></span>。</p>
+<p>另一个需要注意的方面是提议密度的接受率，接受率定义为马尔可夫链在平稳状态下接受提议转移的概率，即
+<span class="math display">∫<em>ρ</em>(<strong>x</strong>, <strong>y</strong>)<em>q</em>(<strong>y</strong> | <strong>x</strong>)<em>p</em>(<strong>x</strong>)<em>d</em><strong>x</strong><em>d</em><strong>y</strong>.</span></p>
+<p>最佳接受率定义为最小化 <span class="math inline"><strong>∫</strong><strong>f</strong><strong>(</strong><strong>x</strong><strong>)</strong><strong>d</strong><strong>x</strong></span>
+的估计 <span class="math inline"><strong>∑</strong><sub><strong>K</strong> <strong>=</strong> <strong>1</strong><sup><strong>n</strong></sup></sub><strong>f</strong><strong>(</strong><strong>X</strong><sub><strong>k</strong></sub><strong>)</strong><strong>/</strong><strong>n</strong></span>
+的渐进方差的比例。[6]
+中指出，假设来自目标密度的随机向量具有相同的独立分布，在高维状态空间中，对于具有对角协方差矩阵的高斯提议密度，最佳接受率约为
+<span class="math inline">23.4%</span>。</p>
+<h4 id="转移核">转移核</h4>
+<p>对于转移核 <span class="math inline"><em>K</em>(⋅ | ⋅)</span>, 给定
+<span class="math inline"><strong>x</strong></span> 和 <span class="math inline"><strong>w</strong></span>, 输出 <span class="math inline"><strong>y</strong></span> 满足 <span class="math display">$$
+\begin{equation*}{\boldsymbol{y} } =
+\begin{cases}\begin{array}{l}{\boldsymbol{w} }\quad{\text{with
+probability } }{\rho}({\boldsymbol{x} },{\boldsymbol{w} }),\\
+{\boldsymbol{x} }\quad{\text{with probability } }{1} -
+{\rho}({\boldsymbol{x} },{\boldsymbol{w} }).\end{array}\end{cases}
+\tag{8} \end{equation*}
+$$</span></p>
+<p>因此 <span class="math inline"><strong>y</strong></span>
+的条件概率密度是两个质点的概率密度函数的混合，一个集中在 <span class="math inline"><strong>w</strong></span>, 权重为 <span class="math inline"><em>ρ</em>(<strong>x</strong>, <strong>w</strong>)</span>;
+另一个集中在 <span class="math inline"><strong>x</strong></span>, 权重为
+<span class="math inline">1 − <em>ρ</em>(<strong>x</strong>, <strong>w</strong>)</span>,
+即</p>
+<p><span class="math display"><em>δ</em>(<strong>y</strong> − <strong>w</strong>)<em>ρ</em>(<strong>x</strong>, <strong>w</strong>) + <em>δ</em>(<strong>y</strong> − <strong>x</strong>)[1 − <em>ρ</em>(<strong>x</strong>, <strong>w</strong>)].</span></p>
+<p><span class="math inline"><em>δ</em>(⋅)</span> 是 Dirac delta
+函数，当且仅当 <span class="math inline"><em>A</em></span> 包含 <span class="math inline">$\bf{0}$</span> 的时候有 <span class="math inline">∫<sub><em>A</em></sub><em>δ</em>(<strong>x</strong><sup>′</sup>)<em>d</em><strong>x</strong><sup>′</sup> = 1</span>,
+其他时候 <span class="math inline">∫<sub><em>A</em></sub><em>δ</em>(<strong>x</strong><sup>′</sup>)<em>d</em><strong>x</strong><sup>′</sup> = 0</span>.</p>
+<p>其积分即 <span class="math inline"><em>x</em></span> 通过 <span class="math inline"><em>q</em>(⋅ | <strong>x</strong>)</span> 转移到
+<span class="math inline"><em>y</em></span> 的条件概率密度，即</p>
+<p><span class="math display">$$
+\begin{align*}{K}({\boldsymbol{y} }\,{\vert}\,{\boldsymbol{x} }) &amp; =
+{\int}\left\{ {\delta}({\boldsymbol{y} } - {\boldsymbol{w}
+}){\rho}({\boldsymbol{x} },{\boldsymbol{w} }) + {\delta}({\boldsymbol{y}
+} - {\boldsymbol{x} })({1} - {\rho}({\boldsymbol{x} },{\boldsymbol{w}
+})\right\}\times{q}({\boldsymbol{w} }\,{\vert}\,{\boldsymbol{x}
+}){d}{\boldsymbol{w} }\\ &amp; = {\rho}({\boldsymbol{x}
+},{\boldsymbol{y} }){q}({\boldsymbol{y} }\,{\vert}\,{\boldsymbol{x} }) +
+{\delta}({\boldsymbol{y} } - {\boldsymbol{x} })\left({1} -
+{r}({\boldsymbol{x} })\right), \tag{10} \end{align*}
+$$</span> 其中 <span class="math display"><em>r</em>(<strong>x</strong>) = ∫<em>ρ</em>(<strong>x</strong>, <strong>w</strong>)<em>q</em>(<strong>w</strong> | <strong>x</strong>)<em>d</em><strong>w</strong>.</span></p>
+<ol start="10" type="1">
+<li>右边的第一个乘积表示当候选值被接受时的转移概率（即<span class="math inline"><strong>y</strong> = <strong>w</strong>)</span>），第二个乘积表示在拒绝候选值
+<span class="math inline"><strong>w</strong></span> 的情况下从 <span class="math inline"><strong>x</strong></span> 到 <span class="math inline"><strong>x</strong></span>
+的转移概率。因此，转移概率密度既有连续又有离散部分，并且对于每个集合
+<span class="math inline"><em>A</em></span> 满足 <span class="math display">∫<sub><em>A</em></sub><em>K</em>(<strong>y</strong> | <strong>x</strong>)<em>d</em><strong>y</strong> = ∫<sub><em>A</em></sub><em>ρ</em>(<strong>x</strong>, <strong>y</strong>)<em>q</em>(<strong>y</strong> | <strong>x</strong>)<em>d</em><strong>y</strong> + <em>I</em><sub><em>A</em></sub>(<strong>x</strong>)[1 − <em>r</em>(<strong>x</strong>)],</span>
+其中 <span class="math inline"><em>I</em><sub><em>A</em></sub></span> 是
+<span class="math inline"><em>A</em></span> 的指示函数，由下式给出 <span class="math display">$$
+\begin{equation*}{I}_{A}({\boldsymbol{x} }) =
+\mathop{\int}\nolimits_{A}{\delta}({\boldsymbol{y} } - {\boldsymbol{x}
+}){d}{\boldsymbol{y} } =
+\begin{cases}\begin{array}{ll}{1,}&amp;{\text{if } }{\boldsymbol{x}
+}\,\in\,{A},\\{0,}&amp;{\text{if } }{\boldsymbol{x} } \notin
+{A}.\end{array}\end{cases} \tag{13} \end{equation*}
+$$</span></li>
+</ol>
+<p>可以看出，通过将(12)中的 <span class="math inline"><em>A</em></span>
+取为 <span class="math inline">${\cal{X} }$</span>，<span class="math inline"><em>K</em>(⋅ | <strong>x</strong>)</span> 对每个
+<span class="math inline">${\boldsymbol{x} }\,\in\,{\cal{X} }$</span>
+积分为 1。即当 <span class="math inline">${A} = {\cal{X} }$</span>
+时，(12) 右边的积分 (关于 <span class="math inline"><em>y</em></span>)
+的公式变为 <span class="math inline"><em>r</em>(<em>x</em>)</span>
+并且指标 <span class="math inline">${I}_{\cal{X} }({\boldsymbol{x} }) =
+{1}$</span>，因此 <span class="math inline">∫<em>K</em>(<strong>y</strong> | <strong>x</strong>)<em>d</em><strong>y</strong> = 1</span>。</p>
+<h4 id="收敛性">收敛性</h4>
+<p>如果马尔可夫链的概率是 <span class="math inline"><em>k</em></span>-步转移概率的极限，则马尔可夫链的概率密度
+<span class="math inline"><em>p̃</em>(⋅)</span>
+是平稳的，而与马尔可夫链的起点无关，也就是说，如果对于每个独立于集合
+<span class="math inline"><em>A</em></span> 的 <span class="math inline"><em>x</em><sub>0</sub></span> 有 <span class="math inline"><em>P</em>(<strong>X</strong><sub><em>k</em></sub> ∈ <em>A</em> | <strong>X</strong><sub>0</sub> = <strong>x</strong><sub>0</sub>) → ∫<sub><em>A</em></sub><em>p̃</em>(<strong>y</strong>)<em>d</em><strong>y</strong></span>.
+此外，<strong>如果马尔可夫链的转移核是不可约的，则马尔可夫链的平稳密度是唯一的</strong>。因此，如果
+M-H
+算法收敛（在适当的意义上）并且其核是不可约的，那么极限分布就是目标分布。因此，在为
+M-H
+算法选择提议密度时，该密度必须是相关转换核不可约的密度。下图说明了马尔可夫链的收敛性、不可约性和稳态密度之间的关系。</p>
+<figure>
+<img data-src="马尔可夫链蒙特卡洛方法/1656508627013.png" alt="1656508627013">
+<figcaption aria-hidden="true">1656508627013</figcaption>
+</figure>
+<p>图：平稳性、收敛性和不可约性之间关系的说明。如果马尔可夫链不可约且具有平稳分布，则马尔可夫链具有唯一的平稳分布。目标分布是
+Metropolis-Hastings 马尔可夫链的平稳分布。如果条件 (C1’) 和 (C2’)
+成立，则 <span class="math inline"><em>k</em></span>
+步转移概率收敛于到目标分布的总变化距离，其中初始状态是 <span class="math inline"><em>S</em></span> 中的任意点.</p>
+<h4 id="实验">实验</h4>
+<ul>
+<li>目标分布：标准柯西分布</li>
+<li>提议分布：标准正态分布</li>
+<li>马尔可夫链长度：10000</li>
+<li>老化期(burn-in): 1000</li>
+</ul>
+<h5 id="实验过程">实验过程</h5>
+<p>导入所需的库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> scipy.stats <span class="keyword">as</span> st</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
+<p>实现 M-H 算法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Metropolis</span>(<span class="params">step, target, proposal</span>):</span><br><span class="line">    k = <span class="number">0</span></span><br><span class="line">    x = np.zeros(step)</span><br><span class="line">    u = np.random.rand(step)</span><br><span class="line">    x[<span class="number">0</span>] = proposal.rvs(<span class="number">0</span>, scale=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, step):</span><br><span class="line">        xt = x[i-<span class="number">1</span>]</span><br><span class="line">        y = proposal.rvs(loc=xt, scale=<span class="number">1</span>)</span><br><span class="line">        num = target.pdf(y) * proposal.pdf(xt, loc=y, scale=<span class="number">1</span>)</span><br><span class="line">        den = target.pdf(xt) * proposal.pdf(y, loc=xt, scale=<span class="number">1</span>)                       </span><br><span class="line">        <span class="keyword">if</span> u[i] &lt;= num / den:</span><br><span class="line">            x[i] = y</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            x[i] = xt</span><br><span class="line">            k += <span class="number">1</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;reject probablity: &#x27;</span> + <span class="built_in">str</span>(k / step))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>  x</span><br><span class="line">x = Metropolis(step=<span class="number">100000</span>, target=st.cauchy, proposal=st.norm)</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reject probablity: 0.22671</span><br></pre></td></tr></table></figure>
+<p>即拒绝概率为 <span class="math inline">22.67%</span>,
+是合理的，将结果进行可视化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">DrawDistribution</span>(<span class="params">x, burn, target</span>):</span><br><span class="line">    x = x[burn:]</span><br><span class="line">    tick = np.arange(x.<span class="built_in">min</span>(), x.<span class="built_in">max</span>(), <span class="number">0.001</span>)</span><br><span class="line">    plt.figure(dpi=<span class="number">180</span>)</span><br><span class="line">    plt.plot(tick, target.pdf(tick), color=<span class="string">&quot;red&quot;</span>)</span><br><span class="line">    p, y = np.histogram(x, bins=<span class="number">100</span>, normed=<span class="literal">True</span>)</span><br><span class="line">    y = (y[:-<span class="number">1</span>] + y[<span class="number">1</span>:])/<span class="number">2</span></span><br><span class="line">    plt.plot(y, p, <span class="string">&#x27;--b&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&#x27;Distribution&#x27;</span>)</span><br><span class="line">    plt.legend([<span class="string">&#x27;target distribution&#x27;</span>, <span class="string">&#x27;fitted distribution&#x27;</span>])</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;Observed Values&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;Distribution Density&#x27;</span>)</span><br><span class="line">    plt.show()</span><br><span class="line">DrawDistribution(x, <span class="number">1000</span>, st.cauchy)</span><br></pre></td></tr></table></figure>
+<p>如下图所示</p>
+<figure>
+<img data-src="马尔可夫链蒙特卡洛方法/1656506221373.png" alt="1656506221373">
+<figcaption aria-hidden="true">1656506221373</figcaption>
+</figure>
+<p>可见采样结果与目标分布基本一致</p>
+<hr>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] 蒙特卡洛方法：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Monte_Carlo_method" class="uri">https://en.wikipedia.org/wiki/Monte_Carlo_method</a><br>
+[2] 马尔可夫链：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Markov_chain" class="uri">https://en.wikipedia.org/wiki/Markov_chain</a><br>
+[3] S. D. Hill and J. C. Spall, “Stationarity and Convergence of the
+Metropolis-Hastings Algorithm: Insights into Theoretical Aspects,” in
+IEEE Control Systems Magazine, vol. 39, no. 1, pp. 56-67, Feb. 2019,
+doi: <a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/8616920">10.1109/MCS.2018.2876959</a>.<br>
+[4] <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/143016455" class="uri">https://zhuanlan.zhihu.com/p/143016455</a><br>
+[5] <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/37121528" class="uri">https://zhuanlan.zhihu.com/p/37121528</a><br>
+[6] G. O. Roberts and J. S. Rosenthal , “Optimal scaling for various
+Metropolis-Hastings algorithms,” Statist. Sci, vol. 16, no. 4,
+pp. 351–367, 2001. doi: 10.1214/ss/1015346320.<br>
+[7] Robert, Christian; Casella, George (2004). Monte Carlo Statistical
+Methods. Springer. ISBN 978-0387212395.</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Note/2022-06/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95.html" title="马尔可夫链蒙特卡洛方法">https://meteordream.github.io/Note/2022-06/马尔可夫链蒙特卡洛方法.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" rel="tag"><i class="fa fa-tag"></i> 概率论</a>
+              <a href="/tags/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i> 随机过程</a>
+              <a href="/tags/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B/" rel="tag"><i class="fa fa-tag"></i> 蒙特卡洛</a>
+              <a href="/tags/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE/" rel="tag"><i class="fa fa-tag"></i> 马尔可夫链</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Github%E5%B0%8F%E6%8A%80%E5%B7%A7.html" rel="prev" title="Github小技巧">
+      <i class="fa fa-chevron-left"></i> Github小技巧
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-06/1175_%E8%B4%A8%E6%95%B0%E6%8E%92%E5%88%97(%E7%AE%80%E5%8D%95).html" rel="next" title="『LeetCode』1175 质数排列">
+      『LeetCode』1175 质数排列 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">蒙特卡洛方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE"><span class="nav-number">3.</span> <span class="nav-text">马尔可夫链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">3.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.2.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%AE%9A%E4%B9%89"><span class="nav-number">3.3.</span> <span class="nav-text">数学定义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">马尔可夫链蒙特卡洛方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#metropolishastings"><span class="nav-number">4.1.</span> <span class="nav-text">Metropolis–Hastings</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">4.1.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%A2%E5%BC%8F%E6%8E%A8%E5%AF%BC"><span class="nav-number">4.1.2.</span> <span class="nav-text">形式推导</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="nav-number">4.1.3.</span> <span class="nav-text">基本流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E4%BE%8B%E5%AD%90"><span class="nav-number">4.1.4.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E8%AE%AE%E5%AF%86%E5%BA%A6%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">4.1.5.</span> <span class="nav-text">提议密度的选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E7%A7%BB%E6%A0%B8"><span class="nav-number">4.1.6.</span> <span class="nav-text">转移核</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%B6%E6%95%9B%E6%80%A7"><span class="nav-number">4.1.7.</span> <span class="nav-text">收敛性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-number">4.1.8.</span> <span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">4.1.8.1.</span> <span class="nav-text">实验过程</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

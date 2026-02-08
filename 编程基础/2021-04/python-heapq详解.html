@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="优先队列 - Priority queue 优先队列是一种特殊的队列，用于找出、返回并删除优先队列中最小(大)的元素。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『Python基础』heapq详解">
+<meta property="og:url" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq%E8%AF%A6%E8%A7%A3.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="优先队列 - Priority queue 优先队列是一种特殊的队列，用于找出、返回并删除优先队列中最小(大)的元素。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree1.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree2.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree3.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree4.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree5.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree6.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree7.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree8.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree9.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree10.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree11.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree12.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree13.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree14.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/LCP-30-魔塔游戏-力扣（LeetCode）.png">
+<meta property="article:published_time" content="2021-04-11T15:51:58.000Z">
+<meta property="article:modified_time" content="2021-05-11T20:42:18.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="优先队列">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq详解/Tree1.png">
+
+<link rel="canonical" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq%E8%AF%A6%E8%A7%A3.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『Python基础』heapq详解 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq%E8%AF%A6%E8%A7%A3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『Python基础』heapq详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-11 23:51:58" itemprop="dateCreated datePublished" datetime="2021-04-11T23:51:58+08:00">2021-04-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-12 04:42:18" itemprop="dateModified" datetime="2021-05-12T04:42:18+08:00">2021-05-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">编程基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq%E8%AF%A6%E8%A7%A3.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq%E8%AF%A6%E8%A7%A3.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="优先队列---priority-queue">优先队列 - Priority queue</h2>
+<p><strong>优先队列</strong>是一种特殊的队列，用于找出、返回并删除优先队列中最小(大)的元素。</p>
+<span id="more"></span>
+<p><strong>优先队列</strong>的最简单实现就是二叉堆(binary heap),
+简称<strong>堆</strong>(heap),
+虽然优先队列还有其他一些更多功能、更复杂的实现，例如d-堆、左式堆(leftist
+heap)、斜堆(skew heap)、二项队列(binomial
+queue)等，但实践中最常用的还是堆，因此通常所说的堆和优先队列几乎是等同的，所以优先队列也可以称为最小(大)堆、小(大)根堆。</p>
+<p>优先队列基本模型如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph RL</span><br><span class="line">    A[num] --Insert--&gt; B((Priority Queue H))</span><br><span class="line">    B[Priority Queue H] --DeleteMin--&gt; C[ ]</span><br><span class="line">    style A stroke-width:0px,fill-opacity:0</span><br><span class="line">    style C stroke-width:0px,fill-opacity:0</span><br></pre></td></tr></table></figure>
+<h3 id="堆---heap">堆 - heap</h3>
+<h4 id="堆的两个性质">堆的两个性质</h4>
+<ul>
+<li><strong>结构性</strong>:
+堆是一颗完全二叉树，因此可以使用线性的数组来实现而无需指针</li>
+<li><strong>堆序性</strong>: 对于最小堆，要求根节点的值小于等于(<span class="math inline">≤</span>)其左右节点的值</li>
+</ul>
+<p><span class="math inline">   </span>需要注意的是，堆序性是一种要求不太高的性质，蕴含的序的信息也不多，对于最小堆，仅有的信息是由根节点往页节点是非递减的，而对于堆中最大值或某个特定值的信息是没有的，唯一能确定的是，最大值位于叶结点，但半数的结点是叶结点，，因此该信息是无效的。</p>
+<h4 id="堆的操作小根堆">堆的操作(小根堆)</h4>
+<h5 id="insert插入">Insert(插入)</h5>
+<p>将元素X插入到堆, 为维持堆的堆序性，需要对新插入元素进行上滤(percolate
+up).</p>
+<ol type="1">
+<li>在堆的末尾插入X</li>
+<li>检查X与其parent结点的值,
+若X小于其parent结点，则交换parent结点与X，否则结束插入</li>
+<li>重复执行step 2直到X成为根节点或不满足交换条件</li>
+</ol>
+<p><span class="math inline">   </span>在实现时，我们并不直接插入待插入元素在末尾，而是先在堆中查找待插入元素的插入位置，而在移动过程中可以直接将parent结点的值下移而无需执行交换，在一定程度上减少了赋值操作的次数。<br>
+<span class="math inline">   </span>最坏的情况，新插入的元素是最小值，并经过上滤到推到根节点的位置，其时间复杂度为<span class="math inline">$O(log\\;n)$</span></p>
+<p>C代码如下:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C */</span></span><br><span class="line"><span class="comment">/* H-&gt;Element[0] is a sentinel(哨兵/标记) */</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Insert</span><span class="params">(ElementType X, PriorityQueue H)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">IsFull</span>(H))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">Error</span>(<span class="string">&quot;Priority queue is full&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(i = ++H-&gt;Size; H-&gt;Elements[i / <span class="number">2</span>] &gt; X; i /= <span class="number">2</span>)</span><br><span class="line">        H-&gt;Elements[i] = H-&gt;Elements[i / <span class="number">2</span>];</span><br><span class="line">    H-&gt;Elements[i] = X;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="deletemin删除最小值">DeleteMin(删除最小值)</h5>
+<p><span class="math inline">   </span>由于堆的堆序性，很容易能找到堆的最小值是位于堆的第一个位置，但在删除后堆产生了一个空位，通常的做法是，将最末尾的元素移到空位然后执行下滤(percolate
+down).</p>
+<ol type="1">
+<li>设临时变量保存第一个位置的值(即最小值)</li>
+<li>将最后一个位置的值移动到第一个位置</li>
+<li>检查结点的值与其左右子节点的值，若结点值大于左右子节点值，那么选择值小的子节点进行交换</li>
+<li>重复step 3直到结点成为叶子节点或不满足交换条件</li>
+</ol>
+<p><span class="math inline">   </span>同样的，下滤过程中也可以使用与上滤类似的技巧减少赋值次数。</p>
+<p><span class="math inline">   </span>取最小值的操作是<span class="math inline"><em>O</em>(1)</span>时间复杂度的，而下滤操作最坏情况会下滤到叶子节点(事实上由于填补删除结点的结点来自叶子节点，下滤到叶子节点的可能性是相当大的),
+其时间复杂度为<span class="math inline">$O(log\\;n)$</span></p>
+<p>C代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C */</span></span><br><span class="line"><span class="function">ElementType <span class="title">DeleteMin</span><span class="params">(PriorityQueue H)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> i, Child;</span><br><span class="line">    ElementType MinElement, LastElement;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">IsEmpty</span>(H))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">Error</span>(<span class="string">&quot;Priority queue is empty&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> H-&gt;Elements[<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    MinElement = H-&gt;Elements[<span class="number">1</span>];</span><br><span class="line">    LastElement = H-&gt;Elements[H-&gt;Size--];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i * <span class="number">2</span> &lt;= H-&gt;Size; i = Child)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* Find smaller child */</span></span><br><span class="line">        Child = i * <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (Child != H-&gt;Size &amp;&amp; H-&gt;Elements[Child + <span class="number">1</span>] &lt; H-&gt;Elements[Child])</span><br><span class="line">            Child++;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Percolate one level */</span></span><br><span class="line">        <span class="keyword">if</span> (LastElement &gt; H-&gt;Elements[Child])</span><br><span class="line">            H-&gt;Elements[i] = H-&gt;Elements[Child];</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    H-&gt;Elements[i] = LastElement;</span><br><span class="line">    <span class="keyword">return</span> MinElement;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="build建堆">Build(建堆)</h5>
+<p><span class="math inline">   </span>这里所说的建堆是指将一个完全无序的数组改造成堆，这在堆排序中进行了实现，其基本思想是:
+由后往前遍历，对数组的每一个元素都执行上滤操作，原理是：每次上滤操作，都能使得当前遍历元素满足堆序性，当遍历完成即使得整个数组实现了堆序性。</p>
+<hr>
+<h2 id="python中的优先队列---heapq模块">python中的优先队列 -
+heapq模块</h2>
+<p><span class="math inline">   </span>在python中，heapq模块提供了优先队列算法的实现，且堆的实现是建立在list的基础之上的。</p>
+<h3 id="函数原型">函数原型</h3>
+<p>函数列表如下:</p>
+<table>
+<colgroup>
+<col style="width: 21%">
+<col style="width: 64%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">函数原型</th>
+<th style="text-align: center;">作用</th>
+<th style="text-align: center;">返回值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em>.<em>h</em><em>e</em><em>a</em><em>p</em><em>p</em><em>u</em><em>s</em><em>h</em>(<em>h</em><em>e</em><em>a</em><em>p</em>, <em>i</em><em>t</em><em>e</em><em>m</em>)</span></td>
+<td style="text-align: center;">将 <span class="math inline"><em>i</em><em>t</em><em>e</em><em>m</em></span> 加入
+<span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em></span>
+中</td>
+<td style="text-align: center;"><span class="math inline"><em>v</em><em>o</em><em>i</em><em>d</em></span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em>.<em>h</em><em>e</em><em>a</em><em>p</em><em>p</em><em>o</em><em>p</em>(<em>h</em><em>e</em><em>a</em><em>p</em>)</span></td>
+<td style="text-align: center;">弹出并返回 <span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em></span>
+的最小的元素。如果堆空抛出 <span class="math inline"><em>I</em><em>n</em><em>d</em><em>e</em><em>x</em><em>E</em><em>r</em><em>r</em><em>o</em><em>r</em></span></td>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em>[0]</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em>.<em>h</em><em>e</em><em>a</em><em>p</em><em>p</em><em>u</em><em>s</em><em>h</em><em>p</em><em>o</em><em>p</em>(<em>h</em><em>e</em><em>a</em><em>p</em>, <em>i</em><em>t</em><em>e</em><em>m</em>)</span></td>
+<td style="text-align: center;">将 <span class="math inline"><em>i</em><em>t</em><em>e</em><em>m</em></span>
+加入堆中，然后弹出并返回 <span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em></span>
+的最小元素<br>等效于先调用 <span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>p</em><em>u</em><em>s</em><em>h</em>()</span>
+再调用 <span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>p</em><em>o</em><em>p</em>()</span>
+<br></td>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em>[0]</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em>.<em>h</em><em>e</em><em>a</em><em>p</em><em>i</em><em>f</em><em>y</em>(<em>x</em>)</span></td>
+<td style="text-align: center;">将<span class="math inline">$list\\;x$</span> 转换成堆</td>
+<td style="text-align: center;"><span class="math inline"><em>v</em><em>o</em><em>i</em><em>d</em></span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em>.<em>h</em><em>e</em><em>a</em><em>p</em><em>r</em><em>e</em><em>p</em><em>l</em><em>a</em><em>c</em><em>e</em>(<em>h</em><em>e</em><em>a</em><em>p</em>, <em>i</em><em>t</em><em>e</em><em>m</em>)</span></td>
+<td style="text-align: center;">弹出并返回 <span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em></span>
+的最小的元素，同时将 <span class="math inline"><em>i</em><em>t</em><em>e</em><em>m</em></span>
+加入堆中, 如果堆空抛出 <span class="math inline"><em>I</em><em>n</em><em>d</em><em>e</em><em>x</em><em>E</em><em>r</em><em>r</em><em>o</em><em>r</em></span>
+<br>等效于先调用 <span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>p</em><em>o</em><em>p</em>()</span>
+再调用 <span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>p</em><em>u</em><em>s</em><em>h</em>()</span><br></td>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em>[0]</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em>.<em>m</em><em>e</em><em>r</em><em>g</em><em>e</em>(*<em>i</em><em>t</em><em>e</em><em>r</em><em>a</em><em>b</em><em>l</em><em>e</em><em>s</em>, <em>k</em><em>e</em><em>y</em> = <em>N</em><em>o</em><em>n</em><em>e</em>, <em>r</em><em>e</em><em>v</em><em>e</em><em>r</em><em>s</em><em>e</em> = <em>F</em><em>a</em><em>l</em><em>s</em><em>e</em>)</span></td>
+<td style="text-align: center;">将多个已排序的输入合并为一个已排序的输出<br>
+<span class="math inline"><em>k</em><em>e</em><em>y</em></span>
+指定带有单个参数的 <span class="math inline"><em>k</em><em>e</em><em>y</em><em>f</em><em>u</em><em>n</em><em>c</em><em>t</em><em>i</em><em>o</em><em>n</em></span>，用于从每个输入元素中提取比较键,
+reverse 为一个布尔值<br></td>
+<td style="text-align: center;">已排序值的 <span class="math inline"><em>i</em><em>t</em><em>e</em><em>r</em><em>a</em><em>t</em><em>o</em><em>r</em></span>可迭代对象</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em>.<em>n</em><em>l</em><em>a</em><em>r</em><em>g</em><em>e</em><em>s</em><em>t</em>(<em>n</em>, <em>i</em><em>t</em><em>e</em><em>r</em><em>a</em><em>b</em><em>l</em><em>e</em>, <em>k</em><em>e</em><em>y</em> = <em>N</em><em>o</em><em>n</em><em>e</em>)</span></td>
+<td style="text-align: center;">等价于<span class="math inline"><em>s</em><em>o</em><em>r</em><em>t</em><em>e</em><em>d</em>(<em>i</em><em>t</em><em>e</em><em>r</em><em>a</em><em>b</em><em>l</em><em>e</em>, <em>k</em><em>e</em><em>y</em> = <em>k</em><em>e</em><em>y</em>, <em>r</em><em>e</em><em>v</em><em>e</em><em>r</em><em>s</em><em>e</em> = <em>T</em><em>r</em><em>u</em><em>e</em>)[ : <em>n</em>]</span></td>
+<td style="text-align: center;">前 <span class="math inline"><em>n</em></span> 个最大元素组成的列表</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em>.<em>n</em><em>s</em><em>m</em><em>a</em><em>l</em><em>l</em><em>e</em><em>s</em><em>t</em>(<em>n</em>, <em>i</em><em>t</em><em>e</em><em>r</em><em>a</em><em>b</em><em>l</em><em>e</em>, <em>k</em><em>e</em><em>y</em> = <em>N</em><em>o</em><em>n</em><em>e</em>)</span></td>
+<td style="text-align: center;">等价于 <span class="math inline"><em>s</em><em>o</em><em>r</em><em>t</em><em>e</em><em>d</em>(<em>i</em><em>t</em><em>e</em><em>r</em><em>a</em><em>b</em><em>l</em><em>e</em>, <em>k</em><em>e</em><em>y</em> = <em>k</em><em>e</em><em>y</em>)[ : <em>n</em>]</span></td>
+<td style="text-align: center;">前 <span class="math inline"><em>n</em></span> 个最小元素组成的列表</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">   </span>在 <span class="math inline"><em>h</em><em>e</em><em>a</em><em>p</em><em>q</em></span>
+的文档中有提示：后两个函数在 <span class="math inline"><em>n</em></span>
+较小的时候会性能比较好，对于更大的值使用<span class="math inline"><em>s</em><em>o</em><em>r</em><em>t</em></span>会更好。</p>
+<h3 id="小根堆---大根堆">小根堆 -&gt; 大根堆</h3>
+<p><span class="math inline">   <em>h</em><em>e</em><em>a</em><em>p</em><em>q</em></span>是不提供大根堆的，具体原因就不去深究了，那么如果要使用大根堆要怎么办呢？<br>
+<span class="math inline">   </span>一个可行的方案是，入堆时将数取相反数，出堆时再取相反数，效果便等同于大根堆了。</p>
+<h3 id="使用示例">使用示例</h3>
+<h4 id="示例1">示例1</h4>
+<h5 id="从list建堆-heapq.heapifylist">从List建堆:
+heapq.heapify(List)</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line">heap = [<span class="number">67</span>, <span class="number">71</span>, <span class="number">65</span>, <span class="number">18</span>, <span class="number">75</span>, <span class="number">34</span>, <span class="number">78</span>, <span class="number">59</span>, <span class="number">45</span>, <span class="number">2</span>, <span class="number">38</span>, <span class="number">92</span>, <span class="number">26</span>, <span class="number">89</span>, <span class="number">80</span>]</span><br></pre></td></tr></table></figure>
+<p>(待建立)堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree1.png" alt="heap1">
+<figcaption aria-hidden="true">heap1</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line">heapq.heapify(heap)</span><br><span class="line"><span class="comment"># heap: [2, 18, 26, 45, 38, 34, 78, 59, 67, 75, 71, 92, 65, 89, 80]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree2.png" alt="heap2">
+<figcaption aria-hidden="true">heap2</figcaption>
+</figure>
+<h5 id="取堆中最小元素-heapq.heappopheap">取堆中最小元素:
+heapq.heappop(heap)</h5>
+<p>取堆中最小元素、将堆底元素补到堆顶，堆顶元素下滤</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.heappop(heap))</span><br><span class="line"><span class="comment"># output: 2</span></span><br><span class="line"><span class="comment"># heap: [18, 38, 26, 45, 71, 34, 78, 59, 67, 75, 80, 92, 65, 89]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree3.png" alt="heap3">
+<figcaption aria-hidden="true">heap3</figcaption>
+</figure>
+<p>取堆中最小元素、将堆底元素补到堆顶，堆顶元素下滤</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.heappop(heap))</span><br><span class="line"><span class="comment"># output: 18</span></span><br><span class="line"><span class="comment"># heap: [26, 38, 34, 45, 71, 65, 78, 59, 67, 75, 80, 92, 89]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree4.png" alt="heap4">
+<figcaption aria-hidden="true">heap4</figcaption>
+</figure>
+<p>取堆中最小元素、将堆底元素补到堆顶，堆顶元素下滤</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.heappop(heap))</span><br><span class="line"><span class="comment"># output: 26</span></span><br><span class="line"><span class="comment"># heap: [34, 38, 65, 45, 71, 89, 78, 59, 67, 75, 80, 92]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree5.png" alt="heap5">
+<figcaption aria-hidden="true">heap5</figcaption>
+</figure>
+<h5 id="元素插入堆中-heapq.heappushheap-item">元素插入堆中:
+heapq.heappush(heap, item)</h5>
+<p>插入元素15:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line">heapq.heappush(heap, <span class="number">15</span>)</span><br><span class="line"><span class="comment"># heap: [15, 38, 34, 45, 71, 65, 78, 59, 67, 75, 80, 92, 89]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree6.png" alt="heap6">
+<figcaption aria-hidden="true">heap6</figcaption>
+</figure>
+<p>插入元素55:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line">heapq.heappush(heap, <span class="number">55</span>)</span><br><span class="line"><span class="comment"># heap: [15, 38, 34, 45, 71, 65, 55, 59, 67, 75, 80, 92, 89, 78]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree7.png" alt="heap7">
+<figcaption aria-hidden="true">heap7</figcaption>
+</figure>
+<p>插入元素95:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line">heapq.heappush(heap, <span class="number">95</span>)</span><br><span class="line"><span class="comment"># heap: [15, 38, 34, 45, 71, 65, 55, 59, 67, 75, 80, 92, 89, 78, 95]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree8.png" alt="heap8">
+<figcaption aria-hidden="true">heap8</figcaption>
+</figure>
+<h5 id="先插入元素到堆中再将最小元素取出-heapq.heappushpopheap-item">先插入元素到堆中再将最小元素取出:
+heapq.heappushpop(heap, item)</h5>
+<p>新加入元素可以先与堆顶元素做比较，若新元素不大于堆顶元素，什么堆中所有元素都不大于新加入元素，那么就无需执行插入操作直接返回新加入元素即可，若新元素大于于堆顶元素，那么问题就转换为了先取最小元素，再插入元素:
+heapq.heapreplace(heap, item)</p>
+<p>插入元素1，取得元素1</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.heappushpop(heap, <span class="number">1</span>))</span><br><span class="line"><span class="comment"># output: 1</span></span><br><span class="line"><span class="comment"># heap: [15, 38, 34, 45, 71, 65, 55, 59, 67, 75, 80, 92, 89, 78, 95]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree9.png" alt="heap9">
+<figcaption aria-hidden="true">heap9</figcaption>
+</figure>
+<p>插入元素66，取得元素15</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.heappushpop(heap, <span class="number">66</span>))</span><br><span class="line"><span class="comment"># output: 15</span></span><br><span class="line"><span class="comment"># heap: [34, 38, 55, 45, 71, 65, 66, 59, 67, 75, 80, 92, 89, 78, 95]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree10.png" alt="heap10">
+<figcaption aria-hidden="true">heap10</figcaption>
+</figure>
+<h5 id="先取最小元素再插入元素-heapq.heapreplaceheap-item">先取最小元素，再插入元素:
+heapq.heapreplace(heap, item)</h5>
+<p>新加入元素可以直接放在取走元素位置再执行下滤，减少了一轮下滤操作</p>
+<p>插入元素1，取得元素34(区别heapq.heappushpop(heap, 1))</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.heapreplace(heap, <span class="number">1</span>))</span><br><span class="line"><span class="comment"># output: 34</span></span><br><span class="line"><span class="comment"># heap: [1, 38, 55, 45, 71, 65, 66, 59, 67, 75, 80, 92, 89, 78, 95]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree11.png" alt="heap11">
+<figcaption aria-hidden="true">heap11</figcaption>
+</figure>
+<p>插入元素4，取得元素1</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.heapreplace(heap, <span class="number">4</span>))</span><br><span class="line"><span class="comment"># output: 1</span></span><br><span class="line"><span class="comment"># heap: [4, 38, 55, 45, 71, 65, 66, 59, 67, 75, 80, 92, 89, 78, 95]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree12.png" alt="heap12">
+<figcaption aria-hidden="true">heap12</figcaption>
+</figure>
+<h5 id="取n个最大的数-heapq.nlargestn-iterable-keynone">取n个最大的数:
+heapq.nlargest(n, iterable, key=None)</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.nlargest(<span class="number">5</span>, heap))</span><br><span class="line"><span class="comment"># output: [95, 92, 89, 80, 78]</span></span><br><span class="line"><span class="comment"># heap: [4, 38, 55, 45, 71, 65, 66, 59, 67, 75, 80, 92, 89, 78, 95]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree13.png" alt="heap13">
+<figcaption aria-hidden="true">heap13</figcaption>
+</figure>
+<h5 id="取n个最小的数-heapq.nsmallestn-iterable-keynone">取n个最小的数:
+heapq.nsmallest(n, iterable, key=None)</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="built_in">print</span>(heapq.nsmallest(<span class="number">5</span>, heap))</span><br><span class="line"><span class="comment"># output: [4, 38, 45, 55, 59]</span></span><br><span class="line"><span class="comment"># heap: [4, 38, 55, 45, 71, 65, 66, 59, 67, 75, 80, 92, 89, 78, 95]</span></span><br></pre></td></tr></table></figure>
+<p>堆示意图:</p>
+<figure>
+<img data-src="python-heapq详解/Tree14.png" alt="heap14">
+<figcaption aria-hidden="true">heap14</figcaption>
+</figure>
+<h4 id="示例二">示例二</h4>
+<p>来看个算法问题吧：</p>
+<h5 id="魔塔游戏来源leetcode"><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/p0NxJO/">魔塔游戏</a>(来源<a target="_blank" rel="noopener" href="https://leetcode-cn.com/">LeetCode</a>)</h5>
+<p><span class="math inline">   </span>小扣当前位于魔塔游戏第一层，共有
+<span class="math inline"><em>N</em></span> 个房间，编号为 <span class="math inline">$0\\;-\\;N-1$</span>。每个房间的补血道具/怪物对于血量影响记于数组
+<span class="math inline"><em>n</em><em>u</em><em>m</em><em>s</em></span>，其中正数表示道具补血数值，即血量增加对应数值；负数表示怪物造成伤害值，即血量减少对应数值；<span class="math inline">0</span> 表示房间对血量无影响。</p>
+<p><span class="math inline">   </span><strong>小扣初始血量为
+1，且无上限</strong>。假定小扣原计划按房间编号升序访问所有房间补血/打怪，<strong>为保证血量始终为正值</strong>，小扣需对房间访问顺序进行调整，<strong>每次仅能将一个怪物房间（负数的房间）调整至访问顺序末尾</strong>。请返回小扣最少需要调整几次，才能顺利访问所有房间。若调整顺序也无法访问完全部房间，请返回
+-1。</p>
+<p><strong>示例1：</strong></p>
+<blockquote>
+<p>输入：nums = [100,100,100,-250,-60,-140,-50,-50,100,150] 输出：1
+解释：初始血量为 1。至少需要将 nums[3]
+调整至访问顺序末尾以满足要求。</p>
+</blockquote>
+<p><strong>示例2：</strong></p>
+<blockquote>
+<p>输入：nums = [-200,-300,400,0] 输出：-1
+解释：调整访问顺序也无法完成全部房间的访问。</p>
+</blockquote>
+<p><strong>补充示例(非官方示例，仅说明特殊情况)：</strong></p>
+<blockquote>
+<p>输入：nums = [-2,1] 输出：1 解释：该示例运行<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/p0NxJO/">LeetCode</a>测试结果为1,
+说明允许结束时血量为0，但不允许游戏过程中血量为0。</p>
+</blockquote>
+<p><strong>提示：</strong></p>
+<ul>
+<li><span class="math inline">$1\\;&lt;=\\;nums.length\\;&lt;=\\;10^5$</span></li>
+<li><span class="math inline">$-10^5\\;&lt;=\\;nums[i]\\;&lt;=\\;10^5$</span></li>
+</ul>
+<h5 id="解题思路">解题思路</h5>
+<p><span class="math inline">   </span>不难想到，这题是使用贪心算法。在游戏中，无论是否调整，走到最后的血量都是固定的，也就是说调整并不会影响结果。<br>
+<span class="math inline">   </span>在访问过程中，每次调整都可以理解为回复一定的血量，将扣血的时间调整到最后。想要使得调整的次数最小，那么就要将已经访问过的怪物房间中扣血最多的那个调整到最后，所以在这个地方就要用到优先队列了。</p>
+<p>解题步骤如下：</p>
+<ul>
+<li>顺序访问房间</li>
+<li>若遇到恢复房间，则正常通过，血量增加</li>
+<li>若遇到怪物房间，考察当前血量是否能通过
+<ul>
+<li>血量足够，则正常通过，血量减少，怪物房间入队(heapq.heappush)</li>
+<li>血量不足,
+则将怪物房间先入队，再出队扣血最多的怪物房间(调整到最后)(heapq.heappushpop)，最后正常通过</li>
+</ul></li>
+<li>访问结束，还剩下调整过的房间，只需考察剩余血量能否通过这些房间即可</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">magicTower</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="comment"># 当前血量、房间数、调整次数、调整过的房间伤害总和</span></span><br><span class="line">        cur, n, ans, s = <span class="number">1</span>, <span class="built_in">len</span>(nums), <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设优先队列存放路过的怪物房间</span></span><br><span class="line">        heap = <span class="built_in">list</span>()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 开始闯关~</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">            <span class="comment"># 拿到补血道具啦~</span></span><br><span class="line">            <span class="keyword">if</span> nums[i] &gt;= <span class="number">0</span>:</span><br><span class="line">                cur += nums[i]</span><br><span class="line">            <span class="comment"># 哎呀，遇到怪物了</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># 打不过了啦，只能发动技能惹 &gt;_&lt;</span></span><br><span class="line">                <span class="keyword">if</span> cur &lt;= -nums[i]:</span><br><span class="line">                    <span class="comment"># 将当前房间加入怪物房间队列再将最强的怪物出队调整到最后</span></span><br><span class="line">                    tmp = heapq.heappushpop(heap, nums[i])</span><br><span class="line">                    cur += nums[i] - tmp <span class="comment"># 注意怪物伤害是负数</span></span><br><span class="line">                    s += tmp</span><br><span class="line">                    ans += <span class="number">1</span></span><br><span class="line">                    <span class="comment"># 需要判断血量是否为负吗？不需要哦，因为可以将当前房间调整到最后</span></span><br><span class="line">                <span class="comment"># 可以通过哦，痛击怪物吧~</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    cur += nums[i]</span><br><span class="line">                    heapq.heappush(heap, nums[i])</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 只剩下调整到最后的怪物房间了，看看剩余血量能不能支撑通过呢？</span></span><br><span class="line">        <span class="keyword">if</span> cur + s &lt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> - <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">        <span class="comment"># 胜利啦</span></span><br><span class="line">        <span class="keyword">return</span> ans</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure>
+<img data-src="python-heapq详解/LCP-30-魔塔游戏-力扣（LeetCode）.png" alt="魔塔游戏运行结果">
+<figcaption aria-hidden="true">魔塔游戏运行结果</figcaption>
+</figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq%E8%AF%A6%E8%A7%A3.html" title="『Python基础』heapq详解">https://meteordream.github.io/编程基础/2021-04/python-heapq详解.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PriorityQueue/" rel="tag"><i class="fa fa-tag"></i> 优先队列</a>
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/about/2021-04/welcome.html" rel="prev" title="欢迎来到小鲸鱼的梦境">
+      <i class="fa fa-chevron-left"></i> 欢迎来到小鲸鱼的梦境
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle%E7%BB%98%E5%88%B6%E4%BA%8C%E5%8F%89%E6%A0%91.html" rel="next" title="『Python』Turtle绘制二叉树">
+      『Python』Turtle绘制二叉树 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97---priority-queue"><span class="nav-number">1.</span> <span class="nav-text">优先队列 - Priority queue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86---heap"><span class="nav-number">1.1.</span> <span class="nav-text">堆 - heap</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A0%86%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%80%A7%E8%B4%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">堆的两个性质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A0%86%E7%9A%84%E6%93%8D%E4%BD%9C%E5%B0%8F%E6%A0%B9%E5%A0%86"><span class="nav-number">1.1.2.</span> <span class="nav-text">堆的操作(小根堆)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#insert%E6%8F%92%E5%85%A5"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">Insert(插入)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#deletemin%E5%88%A0%E9%99%A4%E6%9C%80%E5%B0%8F%E5%80%BC"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">DeleteMin(删除最小值)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#build%E5%BB%BA%E5%A0%86"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">Build(建堆)</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E4%B8%AD%E7%9A%84%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97---heapq%E6%A8%A1%E5%9D%97"><span class="nav-number">2.</span> <span class="nav-text">python中的优先队列 -
+heapq模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%8E%9F%E5%9E%8B"><span class="nav-number">2.1.</span> <span class="nav-text">函数原型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E6%A0%B9%E5%A0%86---%E5%A4%A7%E6%A0%B9%E5%A0%86"><span class="nav-number">2.2.</span> <span class="nav-text">小根堆 -&gt; 大根堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.3.</span> <span class="nav-text">使用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1"><span class="nav-number">2.3.1.</span> <span class="nav-text">示例1</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%8Elist%E5%BB%BA%E5%A0%86-heapq.heapifylist"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">从List建堆:
+heapq.heapify(List)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%96%E5%A0%86%E4%B8%AD%E6%9C%80%E5%B0%8F%E5%85%83%E7%B4%A0-heapq.heappopheap"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">取堆中最小元素:
+heapq.heappop(heap)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%83%E7%B4%A0%E6%8F%92%E5%85%A5%E5%A0%86%E4%B8%AD-heapq.heappushheap-item"><span class="nav-number">2.3.1.3.</span> <span class="nav-text">元素插入堆中:
+heapq.heappush(heap, item)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%88%E6%8F%92%E5%85%A5%E5%85%83%E7%B4%A0%E5%88%B0%E5%A0%86%E4%B8%AD%E5%86%8D%E5%B0%86%E6%9C%80%E5%B0%8F%E5%85%83%E7%B4%A0%E5%8F%96%E5%87%BA-heapq.heappushpopheap-item"><span class="nav-number">2.3.1.4.</span> <span class="nav-text">先插入元素到堆中再将最小元素取出:
+heapq.heappushpop(heap, item)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%88%E5%8F%96%E6%9C%80%E5%B0%8F%E5%85%83%E7%B4%A0%E5%86%8D%E6%8F%92%E5%85%A5%E5%85%83%E7%B4%A0-heapq.heapreplaceheap-item"><span class="nav-number">2.3.1.5.</span> <span class="nav-text">先取最小元素，再插入元素:
+heapq.heapreplace(heap, item)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%96n%E4%B8%AA%E6%9C%80%E5%A4%A7%E7%9A%84%E6%95%B0-heapq.nlargestn-iterable-keynone"><span class="nav-number">2.3.1.6.</span> <span class="nav-text">取n个最大的数:
+heapq.nlargest(n, iterable, key&#x3D;None)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%96n%E4%B8%AA%E6%9C%80%E5%B0%8F%E7%9A%84%E6%95%B0-heapq.nsmallestn-iterable-keynone"><span class="nav-number">2.3.1.7.</span> <span class="nav-text">取n个最小的数:
+heapq.nsmallest(n, iterable, key&#x3D;None)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BA%8C"><span class="nav-number">2.3.2.</span> <span class="nav-text">示例二</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%AD%94%E5%A1%94%E6%B8%B8%E6%88%8F%E6%9D%A5%E6%BA%90leetcode"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">魔塔游戏(来源LeetCode)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-number">2.3.2.2.</span> <span class="nav-text">解题思路</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

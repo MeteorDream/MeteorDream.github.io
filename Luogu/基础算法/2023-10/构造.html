@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="构造  构造题是一种形式灵活多样的题型。正是因为这个特点，使得构造题没有一种通用的方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『洛谷』构造">
+<meta property="og:url" content="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2023-10/%E6%9E%84%E9%80%A0.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="构造  构造题是一种形式灵活多样的题型。正是因为这个特点，使得构造题没有一种通用的方法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.luogu.com.cn/upload/pic/60711.png">
+<meta property="article:published_time" content="2023-10-05T08:39:11.000Z">
+<meta property="article:modified_time" content="2023-10-05T08:39:11.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Luogu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.luogu.com.cn/upload/pic/60711.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2023-10/%E6%9E%84%E9%80%A0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『洛谷』构造 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2023-10/%E6%9E%84%E9%80%A0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『洛谷』构造
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-10-05 16:39:11" itemprop="dateCreated datePublished" datetime="2023-10-05T16:39:11+08:00">2023-10-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Luogu/" itemprop="url" rel="index"><span itemprop="name">Luogu</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">基础算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2023-10/%E6%9E%84%E9%80%A0.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2023-10/%E6%9E%84%E9%80%A0.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="构造">构造</h2>
+<blockquote>
+<p>构造题是一种形式灵活多样的题型。正是因为这个特点，使得构造题没有一种通用的方法。</p>
+</blockquote>
+<hr>
+<span id="more"></span>
+<h2 id="p3599-koishi-loves-construction">P3599 Koishi Loves
+Construction</h2>
+<h3 id="题目描述">题目描述</h3>
+<p>Koishi 决定走出幻想乡成为数学大师！</p>
+<p>Flandre 听说她数学学的很好，就给 Koishi 出了这样一道构造题：</p>
+<p>Task1：试判断能否构造并构造一个长度为 <span class="math inline"><em>n</em></span> 的 <span class="math inline">1…<em>n</em></span> 的排列，满足其 <span class="math inline"><em>n</em></span> 个前缀和在模 <span class="math inline"><em>n</em></span> 的意义下互不相同。</p>
+<p>Task2：试判断能否构造并构造一个长度为 <span class="math inline"><em>n</em></span> 的 <span class="math inline">1…<em>n</em></span> 的排列，满足其 <span class="math inline"><em>n</em></span> 个前缀积在模 <span class="math inline"><em>n</em></span> 的意义下互不相同。</p>
+<p>按照套路，Koishi 假装自己根本不会捉，就来找你帮忙辣。</p>
+<h3 id="输入格式">输入格式</h3>
+<p>第一行两个整数 <span class="math inline"><em>X</em></span> 和 <span class="math inline"><em>T</em></span>，分别表示 Task
+类型和测试点内的数据组数。</p>
+<p>接下来 <span class="math inline"><em>T</em></span>
+行，每行一个整数表示每组数据中的 <span class="math inline"><em>n</em></span>。</p>
+<h3 id="输出格式">输出格式</h3>
+<p>为了方便 SPJ 的编写，您需要<strong>遵从以下格式</strong>输出。</p>
+<p>对于每组数据仅包含<strong>一行</strong>输出：</p>
+<ol type="1">
+<li>如果您认为当前数据不存在符合题意的构造，只需输出一个整数 <span class="math inline">0</span>。</li>
+<li>如果您认为当前数据存在符合题意的构造却不会构造，只需输出一个整数
+<span class="math inline">1</span>。</li>
+<li>如果您认为当前数据存在符合题意的构造并成功构造，则需要先输出一个整数
+<span class="math inline">2</span>，再输出 <span class="math inline"><em>n</em></span> 个整数表示构造的方案。</li>
+</ol>
+<p><strong>每两个整数之间需要有空格作为分隔符</strong>。</p>
+<h3 id="样例-1">样例 #1</h3>
+<h4 id="样例输入-1">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 1</span><br><span class="line">8</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 8 7 6 5 4 3 2 1</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2">样例 #2</h3>
+<h4 id="样例输入-2">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2 1</span><br><span class="line">11</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 1 2 3 5 10 6 7 4 9 8 11</span><br></pre></td></tr></table></figure>
+<h3 id="提示">提示</h3>
+<p>对于每组数据：</p>
+<ol type="1">
+<li>如果您对于构造的存在性判断正确，您将会得到 <span class="math inline">30%</span>
+的分数，若您的构造符合题意或者确实不存在符合题意的构造，您将会得到剩余的
+<span class="math inline">70%</span> 的分数。</li>
+<li>如果您对于构造的存在性判断不正确，您将不会得到任何分数。</li>
+</ol>
+<p>对于每组测试点，您的得分将是本组数据点中得分的最小值。</p>
+<p>测试点类型 <span class="math inline">1</span>：<span class="math inline">10</span> 分，满足 <span class="math inline"><em>X</em> = 1</span>，<span class="math inline">1 ≤ <em>n</em> ≤ 10</span>。<br>
+测试点类型 <span class="math inline">2</span>：<span class="math inline">40</span> 分，满足 <span class="math inline"><em>X</em> = 1</span>，<span class="math inline">1 ≤ <em>n</em> ≤ 10<sup>5</sup></span>。<br>
+测试点类型 <span class="math inline">3</span>：<span class="math inline">10</span> 分，满足 <span class="math inline"><em>X</em> = 2</span>，<span class="math inline">1 ≤ <em>n</em> ≤ 10</span>。<br>
+测试点类型 <span class="math inline">4</span>：<span class="math inline">40</span> 分，满足 <span class="math inline"><em>X</em> = 2</span>，<span class="math inline">1 ≤ <em>n</em> ≤ 10<sup>5</sup></span>。</p>
+<p>对于所有测试点，满足 <span class="math inline">1 ≤ <em>T</em> ≤ 10</span>。</p>
+<h3 id="解题思路">解题思路</h3>
+<h3 id="解答代码">解答代码</h3>
+<hr>
+<h2 id="p5441-xr-2伤痕">P5441 【XR-2】伤痕</h2>
+<h3 id="题目背景">题目背景</h3>
+<blockquote>
+<p>长日尽处，我来到你的面前，你将看见我的伤痕，你会知晓我曾受伤，也曾痊愈。——泰戈尔《深爱你这城》</p>
+</blockquote>
+<h3 id="题目描述-1">题目描述</h3>
+<p>X 国经历了一场前所未有的大地震，人们伤痕累累，整个国家破碎不堪。</p>
+<p>为了帮助人们痊愈，也为了让 X 国能够生存下去，X 国国王决定重建 X
+国。</p>
+<p>国王决定先建造 <span class="math inline"><em>n</em></span>
+座城市，由于国王喜欢奇数，所以 <span class="math inline"><em>n</em></span> 为奇数。</p>
+<p>城市建造完后，需要给每两座城市之间都修建一条道路，即一共需要修建
+<span class="math inline">$\frac{n(n-1)}{2}$</span> 条道路。</p>
+<p>不过，修建双向道路的成本太高了，建造完 <span class="math inline"><em>n</em></span> 座城市后剩下的经费最多只够修建
+<span class="math inline"><em>n</em></span>
+条双向道路，而其余的道路只能修建成单向的。好在方向并不会影响修建单向道路所需的费用，因此所有单向道路的方向可以任意决定。</p>
+<p>另外，等到重建完成后，国王决定将 <span class="math inline">4</span>
+座城市钦定为 X 国的核心城市。为促进 X 国的发展，这 <span class="math inline">4</span>
+座核心城市中的任意两座城市，必须能够在不经过非核心城市的情况下相互到达。</p>
+<p>国王希望，你能够给他一种道路修建方案，使重建完成后选择 <span class="math inline">4</span> 座核心城市的方案数最大化。</p>
+<h3 id="输入格式-1">输入格式</h3>
+<p>一行一个正整数 <span class="math inline"><em>n</em>(1 ≤ <em>n</em> ≤ 99)</span>，保证 <span class="math inline"><em>n</em></span> 为奇数，表示有 <span class="math inline"><em>n</em></span> 座城市。</p>
+<h3 id="输出格式-1">输出格式</h3>
+<p>第一行包含一个整数，表示最大的选择 <span class="math inline">4</span>
+座核心城市的方案数。</p>
+<p>接下来的 <span class="math inline"><em>n</em></span> 行每行 <span class="math inline"><em>n</em></span>
+个正整数描述一个邻接矩阵，表示你的道路修建方案。</p>
+<p>具体来说，第 <span class="math inline"><em>i</em></span> 行的第 <span class="math inline"><em>j</em></span> 个数为 <span class="math inline">1</span> 表示第 <span class="math inline"><em>i</em></span> 座城市可以通过一条道路到达第 <span class="math inline"><em>j</em></span> 座城市，为 <span class="math inline">0</span> 表示第 <span class="math inline"><em>i</em></span> 座城市无法通过一条道路到达第 <span class="math inline"><em>j</em></span> 座城市。我们分为 <span class="math inline">3</span> 种情况详细说明：</p>
+<ol type="1">
+<li><span class="math inline"><em>i</em>, <em>j</em></span>
+之前的道路为一条 <span class="math inline"><em>i</em></span> 到 <span class="math inline"><em>j</em></span> 的单向道路，则邻接矩阵的第 <span class="math inline"><em>i</em></span> 行第 <span class="math inline"><em>j</em></span> 个数为 <span class="math inline">1</span>，第 <span class="math inline"><em>j</em></span> 行第 <span class="math inline"><em>i</em></span> 个数为 <span class="math inline">0</span>。</li>
+<li><span class="math inline"><em>i</em>, <em>j</em></span>
+之间的道路为一条双向道路，则邻接矩阵的第 <span class="math inline"><em>i</em></span> 行第 <span class="math inline"><em>j</em></span> 个数和第 <span class="math inline"><em>j</em></span> 行第 <span class="math inline"><em>i</em></span> 个数均为 <span class="math inline">1</span>，你需要保证最多修建 <span class="math inline"><em>n</em></span> 条双向道路。</li>
+<li><span class="math inline"><em>i</em> = <em>j</em></span>，则第 <span class="math inline"><em>i</em></span> 行第 <span class="math inline"><em>j</em></span> 个数（第 <span class="math inline"><em>j</em></span> 行第 <span class="math inline"><em>i</em></span> 个数）为 <span class="math inline">0</span>。</li>
+</ol>
+<h3 id="样例-1-1">样例 #1</h3>
+<h4 id="样例输入-1-1">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-1">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0</span><br><span class="line">0 1 1</span><br><span class="line">0 0 1</span><br><span class="line">0 1 0</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2-1">样例 #2</h3>
+<h4 id="样例输入-2-1">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2-1">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">5</span><br><span class="line">0 1 0 1 1</span><br><span class="line">0 0 1 1 0</span><br><span class="line">1 0 0 0 1</span><br><span class="line">1 0 1 0 1</span><br><span class="line">1 1 0 0 0</span><br></pre></td></tr></table></figure>
+<h3 id="提示-1">提示</h3>
+<p>【样例 <span class="math inline">1</span> 说明】</p>
+<p>由于一共只有 <span class="math inline">3</span> 个点，所以选择 <span class="math inline">4</span> 座核心城市的方案数一定为 <span class="math inline">0</span>，那么只需要保证修建方案满足条件即可。</p>
+<p>【样例 <span class="math inline">2</span> 说明】</p>
+<p><img data-src="https://cdn.luogu.com.cn/upload/pic/60711.png"></p>
+<p>显然，在 <span class="math inline">5</span> 个点中任意选 <span class="math inline">4</span>
+个点，都满足核心城市的条件，因此方案数最大为 <span class="math inline">5</span>。</p>
+<p>【数据规模与约定】</p>
+<p>本题一共有 <span class="math inline">50</span> 个测试点，每个测试点
+<span class="math inline">2</span> 分。对于第 <span class="math inline"><em>i</em></span> 个测试点，<span class="math inline"><em>n</em> = 2<em>i</em> − 1</span>。</p>
+<p>对于每个测试点，有五种可能的结果：</p>
+<ol type="1">
+<li>输出格式错误，包括：没有输出最大方案数、没有输出邻接矩阵、输出了多余的信息等。你将无法得到该测试点的任何分数，同时我们无法确定
+Special Judge 的返回结果。</li>
+<li>没有正确计算最大方案数，即使构造的道路修建方案是正确的。你将得到该测试点
+<span class="math inline">0%</span> 的分数（即 <span class="math inline">0</span> 分），Special Judge 将会返回 WA
+的结果，同时输出 “The answer is wrong.”</li>
+<li>正确计算了最大方案数，但是构造的道路修建方案不满足条件，包括：邻接矩阵中有不为
+<span class="math inline">0</span> 或 <span class="math inline">1</span>
+的数、有自环、有两座城市中没有道路、有多于 <span class="math inline"><em>n</em></span> 条双向道路等。你将得到该测试点
+<span class="math inline">50%</span> 的分数（即 <span class="math inline">1</span> 分），Special Judge 将会返回 WA
+的结果，同时输出 “The answer is correct, but your plan breaks the
+rules.”</li>
+<li>正确计算了最大方案数，构造的道路修建方案满足条件但没有将选择 <span class="math inline">4</span> 座核心城市的方案数最大化。你将得到该测试点
+<span class="math inline">50%</span> 的分数（即 <span class="math inline">1</span> 分），Special Judge 将会返回 WA
+的结果，同时输出 “The answer is correct, but your plan is wrong.”</li>
+<li>正确计算了最大方案数，同时正确构造了道路修建方案。你将得到该测试点
+<span class="math inline">100%</span> 的分数（即 <span class="math inline">2</span> 分），Special Judge 将会返回 AC
+的结果，同时输出 “The answer is correct.”</li>
+</ol>
+<h3 id="解题思路-1">解题思路</h3>
+<h3 id="解答代码-1">解答代码</h3>
+<hr>
+<h2 id="p5595-xr-4歌唱比赛">P5595 【XR-4】歌唱比赛</h2>
+<h3 id="题目背景-1">题目背景</h3>
+<p><strong>赛时提醒：本题不提供任何关于样例 4
+以及无解的解释。</strong></p>
+<p><strong>赛时提醒：本题不提供任何关于输出格式以及 Special Judge
+的解释。</strong></p>
+<p><strong>赛时提醒：抱歉，本题的 Special Judge
+不忽略行末空格，请保证两行中没有多余字符。</strong></p>
+<p><strong>赛时提醒：非常抱歉，本题输入数据是 Windows 格式，而非 Linux
+格式，所以在末尾的 <code>\n</code> 之前有一个多余的 <code>\r</code>
+字符。请使用 <code>scanf</code> 或 <code>cin</code> 读入数据，而非
+<code>getline</code>，因为后者会多读入一个
+<code>\r</code>。</strong></p>
+<h3 id="题目描述-2">题目描述</h3>
+<p>小 X 参加了一场歌唱比赛。</p>
+<p>经过一路鏖战，小 X 终于挺进了决赛，他的对手是小 Y。</p>
+<p>这场歌唱比赛的冠军是由点赞数决定的，谁的点赞数高，谁就能夺冠。</p>
+<p>小 X 和小 Y
+依次演唱完自己的最后一首歌曲后，他们最终的点赞数确定了下来。</p>
+<p>揭晓冠军的时刻终于到来了，主持人为了增加悬念，决定从小 X 与小 Y
+的点赞数的最后一位开始，依次比较。</p>
+<p>比如，小 X 的点赞数是 <span class="math inline">37</span>，小 Y
+的点赞数是 <span class="math inline">28</span>。首先比较最后一位，小 X
+是 <span class="math inline">7</span>，小 Y 是 <span class="math inline">8</span>，此时小 Y 暂时领先。再加上前一位，小 X 是
+<span class="math inline">37</span>，小 Y 是 <span class="math inline">28</span>，此时小 X 暂时领先。比较结束，如果我们用
+<code>X</code> 代表小 X 暂时领先，<code>Y</code> 代表小 Y
+暂时领先，那么可以写下一个字符串 <code>XY</code>。</p>
+<p>再比如，小 X 的点赞数是 <span class="math inline">137</span>，小 Y
+的点赞数是 <span class="math inline">47</span>。如果我们再用
+<code>Z</code> 表示小 X 与小 Y 的点赞数暂时一样，那么写下的字符串应该为
+<code>XYZ</code>。</p>
+<p>你作为一个精通 OI
+的神仙，自然知道这种比较方式是非常不科学的，这样只是在无端拖延时间罢了，但是你却对最后写下的这个字符串很感兴趣。</p>
+<p>现在，你得到了这个最后写下的字符串，你需要构造出一种可能的小 X 与小 Y
+的点赞数。</p>
+<p>当然，有可能不存在任何一种情况的点赞数满足这个字符串，那么你只需要输出
+<code>-1</code> 即可。</p>
+<p>为了方便你输出，请用前导零来补足位数。</p>
+<h3 id="输入格式-2">输入格式</h3>
+<p>一行一个字符串 <span class="math inline"><em>s</em></span>，表示最后写下的字符串。</p>
+<h3 id="输出格式-2">输出格式</h3>
+<p>如果有解：</p>
+<ul>
+<li>第一行一个整数，表示小 X 的点赞数。</li>
+<li>第二行一个整数，表示小 Y 的点赞数。</li>
+</ul>
+<p>如果无解：</p>
+<ul>
+<li>一行一个整数 <code>-1</code>。</li>
+</ul>
+<h3 id="样例-1-2">样例 #1</h3>
+<h4 id="样例输入-1-2">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XY</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-2">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">37</span><br><span class="line">28</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2-2">样例 #2</h3>
+<h4 id="样例输入-2-2">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XYZ</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2-2">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">137</span><br><span class="line">047</span><br></pre></td></tr></table></figure>
+<h3 id="样例-3">样例 #3</h3>
+<h4 id="样例输入-3">样例输入 #3</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZZZZZZ</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-3">样例输出 #3</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">000000</span><br><span class="line">000000</span><br></pre></td></tr></table></figure>
+<h3 id="样例-4">样例 #4</h3>
+<h4 id="样例输入-4">样例输入 #4</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XYZXYZ</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-4">样例输出 #4</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-1</span><br></pre></td></tr></table></figure>
+<h3 id="提示-2">提示</h3>
+<p><strong>本题采用捆绑测试。</strong></p>
+<ul>
+<li>Subtask 1（11 points）：<span class="math inline">len(<em>s</em>) = 1</span>。</li>
+<li>Subtask 2（42 points）：<span class="math inline"><em>s</em><sub><em>i</em></sub> ∈ {<code>X</code>, <code>Y</code>}</span>。</li>
+<li>Subtask 3（21 points）：数据保证有解。</li>
+<li>Subtask 4（26 points）：无特殊限制。</li>
+</ul>
+<p>对于 <span class="math inline">100%</span> 的数据，<span class="math inline"><em>s</em><sub><em>i</em></sub> ∈ {<code>X</code>, <code>Y</code>, <code>Z</code>}</span>，<span class="math inline">1 ≤ len(<em>s</em>) ≤ 10<sup>6</sup></span>。</p>
+<h3 id="解题思路-2">解题思路</h3>
+<h3 id="解答代码-2">解答代码</h3>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2023-10/%E6%9E%84%E9%80%A0.html" title="『洛谷』构造">https://meteordream.github.io/Luogu/基础算法/2023-10/构造.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Luogu/" rel="tag"><i class="fa fa-tag"></i> Luogu</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2023-07/860_%E6%9F%A0%E6%AA%AC%E6%B0%B4%E6%89%BE%E9%9B%B6(%E7%AE%80%E5%8D%95).html" rel="prev" title="『LeetCode』860 柠檬水找零">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』860 柠檬水找零
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Luogu/DataStructure/2023-10/%E9%93%BE%E8%A1%A8.html" rel="next" title="『洛谷』链表">
+      『洛谷』链表 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0"><span class="nav-number">1.</span> <span class="nav-text">构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p3599-koishi-loves-construction"><span class="nav-number">2.</span> <span class="nav-text">P3599 Koishi Loves
+Construction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1"><span class="nav-number">2.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1"><span class="nav-number">2.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2"><span class="nav-number">2.5.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2"><span class="nav-number">2.5.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2"><span class="nav-number">2.5.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA"><span class="nav-number">2.6.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-number">2.7.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81"><span class="nav-number">2.8.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p5441-xr-2%E4%BC%A4%E7%97%95"><span class="nav-number">3.</span> <span class="nav-text">P5441 【XR-2】伤痕</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="nav-number">3.1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-1"><span class="nav-number">3.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">3.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">3.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-1"><span class="nav-number">3.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-1"><span class="nav-number">3.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-1"><span class="nav-number">3.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2-1"><span class="nav-number">3.6.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2-1"><span class="nav-number">3.6.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2-1"><span class="nav-number">3.6.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-1"><span class="nav-number">3.7.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-1"><span class="nav-number">3.8.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-1"><span class="nav-number">3.9.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p5595-xr-4%E6%AD%8C%E5%94%B1%E6%AF%94%E8%B5%9B"><span class="nav-number">4.</span> <span class="nav-text">P5595 【XR-4】歌唱比赛</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF-1"><span class="nav-number">4.1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-2"><span class="nav-number">4.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-2"><span class="nav-number">4.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-2"><span class="nav-number">4.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-2"><span class="nav-number">4.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-2"><span class="nav-number">4.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-2"><span class="nav-number">4.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2-2"><span class="nav-number">4.6.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2-2"><span class="nav-number">4.6.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2-2"><span class="nav-number">4.6.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-3"><span class="nav-number">4.7.</span> <span class="nav-text">样例 #3</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-3"><span class="nav-number">4.7.1.</span> <span class="nav-text">样例输入 #3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-3"><span class="nav-number">4.7.2.</span> <span class="nav-text">样例输出 #3</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-4"><span class="nav-number">4.8.</span> <span class="nav-text">样例 #4</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-4"><span class="nav-number">4.8.1.</span> <span class="nav-text">样例输入 #4</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-4"><span class="nav-number">4.8.2.</span> <span class="nav-text">样例输出 #4</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-2"><span class="nav-number">4.9.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-2"><span class="nav-number">4.10.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-2"><span class="nav-number">4.11.</span> <span class="nav-text">解答代码</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

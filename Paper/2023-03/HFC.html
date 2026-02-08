@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: High Frequency Component Helps Explain the Generalization of Convolutional Neural Networks Author: Haohan Wang, Xindi Wu, Zeyi Huang, Eric P. Xing Institution: Carnegie Mellon Univ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』High Frequency Component Helps Explain the Generalization of Convolutional Neural Networks">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2023-03/HFC.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: High Frequency Component Helps Explain the Generalization of Convolutional Neural Networks Author: Haohan Wang, Xindi Wu, Zeyi Huang, Eric P. Xing Institution: Carnegie Mellon Univ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/intro.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/image-20230320145657151.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/results_rethinking.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/image-20230320170352079.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/results_epoch.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/results_heuristics.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/results_BatchNorm.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/image-20230320203333316.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/image-20230320204745333.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/HFC/image-20230320205118406.png">
+<meta property="article:published_time" content="2023-03-20T03:32:47.000Z">
+<meta property="article:modified_time" content="2023-03-20T03:32:47.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="域迁移">
+<meta property="article:tag" content="CVPR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2023-03/HFC/intro.svg">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2023-03/HFC.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』High Frequency Component Helps Explain the Generalization of Convolutional Neural Networks | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2023-03/HFC.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』High Frequency Component Helps Explain the Generalization of Convolutional Neural Networks
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-20 11:32:47" itemprop="dateCreated datePublished" datetime="2023-03-20T11:32:47+08:00">2023-03-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2023-03/HFC.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2023-03/HFC.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: High Frequency Component Helps Explain the
+Generalization of Convolutional Neural Networks</li>
+<li><strong>Author</strong>: Haohan Wang, Xindi Wu, Zeyi Huang, Eric P.
+Xing</li>
+<li><strong>Institution</strong>: Carnegie Mellon University(<a target="_blank" rel="noopener" href="https://www.cmu.edu/">卡内基梅隆大学</a>)</li>
+<li><strong>Year</strong>: 2020</li>
+<li><strong>Journal</strong>: CVPR</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_CVPR_2020/html/Wang_High-Frequency_Component_Helps_Explain_the_Generalization_of_Convolutional_Neural_Networks_CVPR_2020_paper.html">Open
+access</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.13545">Arxiv</a>, <a target="_blank" rel="noopener" href="https://github.com/HaohanWang/HFC">Github</a></li>
+<li><strong>Cite</strong>: <strong><em>Haohan Wang, Xindi Wu, Zeyi
+Huang, Eric P. Xing</em></strong>; Proceedings of the IEEE/CVF
+Conference on Computer Vision and Pattern Recognition (CVPR), 2020,
+pp. 8684-8694</li>
+<li><strong>Idea</strong>:
+作者研究了泛化性与频率的图像的关联，是一篇比较有启发的研究的讨论的论文</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Wang_2020_CVPR,</span><br><span class="line">    author = &#123;Wang, Haohan and Wu, Xindi and Huang, Zeyi and Xing, Eric P.&#125;,</span><br><span class="line">    title = &#123;High-Frequency Component Helps Explain the Generalization of Convolutional Neural Networks&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)&#125;,</span><br><span class="line">    month = &#123;June&#125;,</span><br><span class="line">    year = &#123;2020&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>作者研究了图像的频谱图与卷积神经网络（CNN）的泛化之间的关联，CNN
+会捕捉图像的高频成分。</p>
+<h2 id="introduction">Introduction</h2>
+<p>作者从数据的方面研究了CNN 的泛化性，作者认为，CNN
+的泛化性使人类与模型之间感知差异的直接结果，CNN
+可以用比人类更高粒度的视角查看数据。</p>
+<figure>
+<img data-src="HFC/intro.svg" alt="intro">
+<figcaption aria-hidden="true">intro</figcaption>
+</figure>
+<p>如图所示，作者认为图像的高频成分与语义存在联系，而模型主要学习到的是高频成分，所以导致了一些反直觉的现象如对抗样本。</p>
+<figure>
+<img data-src="HFC/image-20230320145657151.png" alt="image-20230320145657151">
+<figcaption aria-hidden="true">image-20230320145657151</figcaption>
+</figure>
+<p>上图展示了 CIFAR10
+中一些样本及其高频和低频的预测结果，左中右分别是原图、低频、高频图像，可见高频分量的预测相对比较准确，低频虽然看起来与原图差不多，但模型预测结果却截然不同。</p>
+<p>基于这些观察，作者试图通过输入图像频谱的差分相应来解释，这篇文章贡献有：</p>
+<ul>
+<li>说明了 CNN 利用图像高频成分以牺牲鲁棒性为代价提高精确度，揭示了 CNN
+准确性与鲁棒性直接的均衡</li>
+<li>以频谱图为工具提出假设解释 CNN 的一些泛化行为</li>
+<li>提出了可以提高 CNN 对抗鲁棒性的方法，无需训练和微调</li>
+</ul>
+<h2 id="method">Method</h2>
+<h3 id="高频成分与泛化性的讨论">高频成分与泛化性的讨论</h3>
+<p>先给出一些符号表示</p>
+<ul>
+<li>样本和标签：<span class="math inline">⟨<strong>x</strong>, <strong>y</strong>⟩</span></li>
+<li>参数为 <span class="math inline"><em>θ</em></span> 的CNN：<span class="math inline"><em>f</em>(⋅; <em>θ</em>)</span></li>
+<li>参数为 <span class="math inline">ℋ</span> 的人类模型：<span class="math inline"><em>f</em>(⋅; ℋ)</span></li>
+<li>损失函数：<span class="math inline"><em>l</em>(⋅, ⋅)</span></li>
+<li>验证预测准确率的函数：<span class="math inline"><em>α</em>(⋅, ⋅)</span>，预测正确为 <span class="math inline">1.0</span> 否则为 <span class="math inline">0.0</span></li>
+<li>计算两个向量的距离：<span class="math inline"><em>d</em>(⋅, ⋅)</span></li>
+<li>傅里叶变换：<span class="math inline">ℱ(⋅)</span>
+和逆傅里叶变换：<span class="math inline">ℱ<sup>−1</sup>(⋅)</span></li>
+<li>样本的频域组成：<span class="math inline"><strong>z</strong></span>，有 <span class="math inline"><strong>z</strong> = ℱ(<strong>x</strong>)</span> 和
+<span class="math inline"><strong>x</strong> = ℱ<sup>−1</sup>(<strong>z</strong>)</span>，因为傅里叶变换和逆傅里叶变换都会引入复数，为了确保模型输入一致忽略复数的虚数部分</li>
+</ul>
+<p>首先将 <span class="math inline"><strong>x</strong></span>
+进行分解得到图像的低频成分（LFC）和高频成分（HFC）： <span class="math inline"><strong>x</strong> = {<strong>x</strong><sub><em>l</em></sub>, <strong>x</strong><sub><em>h</em></sub>}</span>：
+<span class="math display">$$
+\begin{align*}
+    \mathbf{z} = \mathcal{F}(\mathbf{x}), \quad \quad
+    \mathbf{z}_l, \mathbf{z}_h =t(\mathbf{z}; r), \\
+    \mathbf{x}_l = \mathcal{F}^{-1}(\mathbf{z}_l), \quad \quad
+    \mathbf{x}_h = \mathcal{F}^{-1}(\mathbf{z}_h),
+\end{align*}
+$$</span> 其中 <span class="math inline"><em>t</em>(⋅; <em>r</em>)</span>
+表示一个分离高频和低频的阈值函数，根据超参数半径 <span class="math inline"><em>r</em></span> 确定，考虑 <span class="math inline"><em>n</em> × <em>n</em></span> 深度 <span class="math inline">𝒩</span> 的灰度图，则有 <span class="math inline"><strong>z</strong> ∈ 𝒞<sup><em>n</em> × <em>n</em></sup></span>
+其中 <span class="math inline">𝒞</span> 表示复数。用 <span class="math inline"><strong>z</strong>(<em>i</em>, <em>j</em>)</span>
+表示 <span class="math inline"><strong>z</strong></span> 在 <span class="math inline">(<em>i</em>, <em>j</em>)</span> 位置的值， <span class="math inline"><em>c</em><sub><em>i</em></sub>, <em>c</em><sub><em>j</em></sub></span>
+表示质心，则 <span class="math inline"><strong>z</strong><sub><em>l</em></sub>, <strong>z</strong><sub><em>h</em></sub> = <em>t</em>(<strong>z</strong>; <em>r</em>)</span>
+定义为： <span class="math display">$$
+\begin{align*}
+    \mathbf{z}_l(i,j) = \begin{cases} \mathbf{z}(i,j),
+\,&amp;\textnormal{if} \,  d((i,j),(c_i,c_j)) \leq r \\
+    0, \, &amp;\textnormal{otherwise}
+    \end{cases},
+    \\
+    \mathbf{z}_h(i,j) = \begin{cases} 0, \, &amp;\textnormal{if}
+\,d((i,j),(c_i,c_j)) \leq r \\
+    \mathbf{z}(i,j), \, &amp;\textnormal{otherwise}
+    \end{cases}
+\end{align*}
+$$</span> 该文章中 <span class="math inline"><em>d</em>(⋅, ⋅)</span>
+一般使用欧氏距离，若 <span class="math inline"><strong>x</strong></span>
+是多通道图像则应用到每个通道上。</p>
+<p>假设：人类只能感知低频，而模型可以感知低频和高频 <span class="math display"><strong>y</strong> := <em>f</em>(<strong>x</strong>; ℋ) = <em>f</em>(<strong>x</strong><sub><em>l</em></sub>; ℋ)</span>
+CNN的训练目标是 <span class="math display">arg min<sub><em>θ</em></sub> <em>l</em>(<em>f</em>(<strong>x</strong>; <em>θ</em>), <strong>y</strong>)</span>
+等价于 <span class="math display">arg min<sub><em>θ</em></sub> <em>l</em>(<em>f</em>({<strong>x</strong><sub><em>l</em></sub>, <strong>x</strong><sub><em>h</em></sub>}; <em>θ</em>), <strong>y</strong>)</span>
+模型可以利用高频成分来最小化 loss
+是会导致模型预测结果与人类观察不同。这个观点被经验的证明是正确的。如前面的实验结果图所示。</p>
+<p>即系考察 CNN 的鲁棒性与准确率之间的平衡，对于准确率，定义为 <span class="math display">𝔼<sub>(<strong>x</strong>, <strong>y</strong>)</sub><em>α</em>(<em>f</em>(<strong>x</strong>; <em>θ</em>), <strong>y</strong>)</span>
+对抗鲁棒性为 <span class="math display">𝔼<sub>(<strong>x</strong>, <strong>y</strong>)</sub>min<sub><strong>x</strong><sup>′</sup> : <em>d</em>(<strong>x</strong><sup>′</sup>, <strong>x</strong>) ≤ <em>ϵ</em></sub><em>α</em>(<em>f</em>(<strong>x</strong><sup>′</sup>; <em>θ</em>), <strong>y</strong>)</span>
+其中 <span class="math inline"><em>ϵ</em></span> 是对抗扰动的上界。</p>
+<p>然后作者给出了第二个假设：对于模型 <span class="math inline"><em>θ</em></span> 存在样本 <span class="math inline">⟨<strong>x</strong>, <strong>y</strong>⟩</span> 满足
+<span class="math display"><em>f</em>(<strong>x</strong>; <em>θ</em>) ≠ <em>f</em>(<strong>x</strong><sub><em>l</em></sub>; <em>θ</em>)</span>
+根据前面两个假设，可以得到一个推论：</p>
+<p>在对于模型 <span class="math inline"><em>θ</em></span> 在任意距离函数
+<span class="math inline"><em>d</em>(⋅, ⋅)</span> 和界 <span class="math inline"><em>ϵ</em></span> 满足 <span class="math inline"><em>ϵ</em> ≥ <em>d</em>(<strong>x</strong>, <strong>x</strong><sub><em>l</em></sub>)</span>
+存在样本 <span class="math inline">⟨<strong>x</strong>, <strong>y</strong>⟩</span>
+使得模型不能准确预测又不鲁棒</p>
+<h3 id="重新思考数据">重新思考数据</h3>
+<p>有论文任务模型记忆容量很大可以记忆打乱标签的数据，但问题是：如果模型可以简单记忆数据，为什么它不直接记住所有数据来减少训练损失而是要学习关注数据之外的泛化模式呢？</p>
+<p>作者提出了如下假设：尽管最小化训练损失的结果相同，但模型在下面两张情况下有不同的特征水平</p>
+<ul>
+<li>在原始标签的情况下，模型会先学低频成分，在渐渐学习高频成分来提高准确率</li>
+<li>在打乱标签的情况下，低频成分与标签之间的关联因为打乱顺序而丢失了，当模型同等学习高频成分和低频成分时必须记忆图像</li>
+</ul>
+<figure>
+<img data-src="HFC/results_rethinking.svg" alt="results_rethinking">
+<figcaption aria-hidden="true">results_rethinking</figcaption>
+</figure>
+<p>上图显示了作者使用不同标签模式下不同阈值的低频成分在训练过程的精度变换情况。首先打乱标签使用了比自然标签更多的
+epoch
+才能达到同样的训练准确率，说明记忆样本是一种“非自然”的行为而不是去学习泛化模式。通过对比低频训练曲线，可以看出自然模式比打乱模式学到更多的低频模式。相反打乱模式在
+<span class="math inline"><em>r</em> = 4</span>
+的时候几乎没有学到任何低频成分，而在自然模式即使是在训练的最早期阶段也有
+<span class="math inline">40%</span>
+的低频成分。这表明自然模式更倾向于低频成分而打乱模式则对低频和高频没有倾向。</p>
+<p>作者对这种现象的解释是：因为数据的标签是人类组织和标注的，所以低频成分和标签之间的关联比高频成分更强，网络学习低频成分能更大程度的降低目标损失。</p>
+<figure>
+<img data-src="HFC/image-20230320170352079.png" alt="image-20230320170352079">
+<figcaption aria-hidden="true">image-20230320170352079</figcaption>
+</figure>
+<p>上面的实验证明低频成分比高频成分更“泛化”，这也证明了作者上面的说法。</p>
+<p>作者还提出了一个问题：网络对于低频成分的倾向性使技术发展过程中“幸存者偏见”导致的结果，换而言之是一种自然选择的结果，不符合要求的想法无法发表。</p>
+<h3 id="启发式训练">启发式训练</h3>
+<p>作者在不同的半径条件下测试了不同的启发式方法对低频成分和高频成分的测试准确率。</p>
+<figure>
+<img data-src="HFC/results_epoch.svg" alt="results_epoch">
+<figcaption aria-hidden="true">results_epoch</figcaption>
+</figure>
+<p>首先作者考察了 <strong>Batch Size</strong>
+对泛化的影响，上图的实验结果表明，小批量准确率更好，而大批量泛化性好一些。此外，泛化差距与模型倾向于学习高频分量是相关的：使用更大的
+epoch
+训练的模型对高频分量没什么影响，准确率差异也不大。这其中的原因作者称是模型在拟合人类的行为（人类标注）能实现最小的泛化差距。</p>
+<p><img data-src="HFC/results_heuristics.svg" alt="results_heuristics">一些其他的训练方法：</p>
+<ul>
+<li>dropout：没什么变化</li>
+<li>Mix-up：对高频成分更加关注，准确率也有所提高</li>
+<li>对抗训练：准确率相对较低，但泛化差距也较小，作者认为是鲁棒性和准确率之间的一个平衡</li>
+<li>BatchNorm：对低频成分和高频成分都更加关注了</li>
+</ul>
+<p>作者提出：BN
+将不同信号之间的分布差异消除了，所以网络更容易捕捉到不同预测信号，下面的实验佐证了这一观点。</p>
+<figure>
+<img data-src="HFC/results_BatchNorm.svg" alt="results_BatchNorm">
+<figcaption aria-hidden="true">results_BatchNorm</figcaption>
+</figure>
+<h3 id="对抗攻防">对抗攻防</h3>
+<p>由卷积定理：图像的卷积运算等价于图像频域的逐元素乘法，因此，如果卷积核在高平区域的权重忽略不就，那么卷积核将对对应的高频成分进行加权，但仅适用于第一层，后续的因为不与数据直接关联。所以若是想要让模型忽略高频成分，作者提出强迫模型学习到在频域高频段只有可忽略权重的卷积核。</p>
+<figure>
+<img data-src="HFC/image-20230320203333316.png" alt="image-20230320203333316">
+<figcaption aria-hidden="true">image-20230320203333316</figcaption>
+</figure>
+<p>可以从上图中的 (a, b)
+可以看出经过对抗训练的卷积核趋于平滑，作者探究了通过平滑卷积核来提高对抗鲁棒性的可能性，对卷积核
+<span class="math inline"><strong>w</strong></span>，用 <span class="math inline"><em>i</em>, <em>j</em></span> 分别表示其行列索引，用
+<span class="math inline"><strong>w</strong><sub><em>i</em>, <em>j</em></sub></span>
+来表示对应 <span class="math inline"><em>i</em></span> 行 <span class="math inline"><em>j</em></span> 列的值，用 <span class="math inline">𝒩(<em>i</em>, <em>j</em>)</span>
+表示其领域的值，<span class="math inline"><em>ρ</em></span> 是一个超参数
+<span class="math display"><strong>w</strong><sub><em>i</em>, <em>j</em></sub> = <strong>w</strong><sub><em>i</em>, <em>j</em></sub> + ∑<sub>(<em>h</em>, <em>k</em>) ∈ 𝒩(<em>i</em>, <em>j</em>)</sub><em>ρ</em><strong>w</strong><sub><em>h</em>, <em>k</em></sub></span>
+<span class="math inline">𝒩(<em>i</em>, <em>j</em>)</span>
+固定为邻居八个位置的值，边界外的值用边界上的值进行填充。</p>
+<p>下面的表格展示了作者的这个方法的效果</p>
+<figure>
+<img data-src="HFC/image-20230320204745333.png" alt="image-20230320204745333">
+<figcaption aria-hidden="true">image-20230320204745333</figcaption>
+</figure>
+<p>可见对于干净图像是有所损伤的，但确实能提高一定的鲁棒性</p>
+<h3 id="一些其他讨论">一些其他讨论</h3>
+<p>简单看看</p>
+<figure>
+<img data-src="HFC/image-20230320205118406.png" alt="image-20230320205118406">
+<figcaption aria-hidden="true">image-20230320205118406</figcaption>
+</figure>
+<p>目标图像较小的时候仅依靠低频可能效果不太好，高频图像对于小目标可能比较重要。</p>
+<p>问题：高频成分仅仅是噪声吗？作者尝试使用 SVG
+去噪，结果表明答案是否定的。</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>在这篇文章中，作者研究了图像频谱对 CNN
+的泛化性的影响，作者提出：数据中有很多信号，但不是所有信号都与人类的视觉偏好相符。其他的一些讨论如下：</p>
+<ul>
+<li>CNN
+可以关注到与人类视觉不一样的高频组成，导致泛化性能的差距，如打乱标签数据和对抗鲁棒性</li>
+<li>提高准确的启发式方法可能鼓励模型关注到高频分量，但也可能会导致鲁棒性的降低</li>
+<li>鲁棒的模型有平滑的卷积核，但反之不总是成立</li>
+<li>目标检测中有同样的结论</li>
+</ul>
+<p>启示和目标：</p>
+<ul>
+<li>准确率排行榜可以推动研究想着某个方向发展，但一定能反映模型与人类的一致性，这很重要</li>
+<li>作者希望能降原始图像与低频率对应的性能一起报告</li>
+<li>人类可能也存在归纳偏差，即人类识别物体可能更倾向于低频信号，这对于未来工作可能有启发</li>
+</ul>
+<hr>
+<p><strong>如有错漏，欢迎指正！如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2023-03/HFC.html" title="『论文笔记』High Frequency Component Helps Explain the Generalization of Convolutional Neural Networks">https://meteordream.github.io/Paper/2023-03/HFC.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E5%9F%9F%E8%BF%81%E7%A7%BB/" rel="tag"><i class="fa fa-tag"></i> 域迁移</a>
+              <a href="/tags/CVPR/" rel="tag"><i class="fa fa-tag"></i> CVPR</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Paper/2023-03/MAD.html" rel="prev" title="『论文笔记』Modality-Agnostic Debiasing for Single Domain Generalization">
+      <i class="fa fa-chevron-left"></i> 『论文笔记』Modality-Agnostic Debiasing for Single Domain Generalization
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E6%97%A5%E5%B8%B8/2023-03/GithubVisit.html" rel="next" title="GitHub 访问">
+      GitHub 访问 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E9%A2%91%E6%88%90%E5%88%86%E4%B8%8E%E6%B3%9B%E5%8C%96%E6%80%A7%E7%9A%84%E8%AE%A8%E8%AE%BA"><span class="nav-number">4.1.</span> <span class="nav-text">高频成分与泛化性的讨论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E6%80%9D%E8%80%83%E6%95%B0%E6%8D%AE"><span class="nav-number">4.2.</span> <span class="nav-text">重新思考数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8F%91%E5%BC%8F%E8%AE%AD%E7%BB%83"><span class="nav-number">4.3.</span> <span class="nav-text">启发式训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%8A%97%E6%94%BB%E9%98%B2"><span class="nav-number">4.4.</span> <span class="nav-text">对抗攻防</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%85%B6%E4%BB%96%E8%AE%A8%E8%AE%BA"><span class="nav-number">4.5.</span> <span class="nav-text">一些其他讨论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

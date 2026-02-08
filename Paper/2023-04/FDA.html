@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: FDA: Fourier Domain Adaptation for Semantic Segmentation Author: Yanchao Yang  Institution: UCLA(加州大学洛杉矶分校) Year: 2020 Journal:CVPR Source: IEEE, arxiv, Github, Open access Cite: Y">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』FDA - Fourier Domain Adaptation for Semantic Segmentation">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2023-04/FDA.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: FDA: Fourier Domain Adaptation for Semantic Segmentation Author: Yanchao Yang  Institution: UCLA(加州大学洛杉矶分校) Year: 2020 Journal:CVPR Source: IEEE, arxiv, Github, Open access Cite: Y">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/FDA/illustrate_fftda.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/FDA/differentLB.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/FDA/cbnorm.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/FDA/image-20230413160718152.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/FDA/image-20230413160902771.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/FDA/image-20230413160951708.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/FDA/explain.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/FDA/visuals.png">
+<meta property="article:published_time" content="2023-04-13T06:11:24.000Z">
+<meta property="article:modified_time" content="2023-04-13T06:11:24.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="域迁移">
+<meta property="article:tag" content="CVPR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2023-04/FDA/illustrate_fftda.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2023-04/FDA.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』FDA - Fourier Domain Adaptation for Semantic Segmentation | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2023-04/FDA.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』FDA - Fourier Domain Adaptation for Semantic Segmentation
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-13 14:11:24" itemprop="dateCreated datePublished" datetime="2023-04-13T14:11:24+08:00">2023-04-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2023-04/FDA.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2023-04/FDA.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: FDA: Fourier Domain Adaptation for Semantic
+Segmentation</li>
+<li><strong>Author</strong>: Yanchao Yang<br>
+</li>
+<li><strong>Institution</strong>: <a target="_blank" rel="noopener" href="https://www.cs.ucla.edu">UCLA</a>(加州大学洛杉矶分校)</li>
+<li><strong>Year</strong>: 2020</li>
+<li><strong>Journal</strong>:CVPR</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/9157228">IEEE</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2004.05498">arxiv</a>, <a target="_blank" rel="noopener" href="https://github.com/YanchaoYang/FDA">Github</a>, <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_CVPR_2020/html/Yang_FDA_Fourier_Domain_Adaptation_for_Semantic_Segmentation_CVPR_2020_paper.html">Open
+access</a></li>
+<li><strong>Cite</strong>: <strong><em>Yanchao Yang, Stefano
+Soatto</em></strong>; Proceedings of the IEEE/CVF Conference on Computer
+Vision and Pattern Recognition (CVPR), 2020, pp. 4085-4095</li>
+<li><strong>Idea</strong>:
+用目标域的低频振幅替换源域做训练来近似域对齐</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Yang_2020_CVPR,</span><br><span class="line">    author = &#123;Yang, Yanchao and Soatto, Stefano&#125;,</span><br><span class="line">    title = &#123;FDA: Fourier Domain Adaptation for Semantic Segmentation&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)&#125;,</span><br><span class="line">    month = &#123;June&#125;,</span><br><span class="line">    year = &#123;2020&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>提出了一种无监督域适应的方法，通过交换源域的低频成分来减少源域和目标域的分布差异。</p>
+<h2 id="introduction">Introduction</h2>
+<p>如图所示</p>
+<figure>
+<img data-src="FDA/illustrate_fftda.png" alt="illustrate_fftda">
+<figcaption aria-hidden="true">illustrate_fftda</figcaption>
+</figure>
+<p>作者对源域和目标域图像做 FFT
+并用目标域的低频部分替换源域的低频部分再使用 iFFT
+获得重构图像用于训练。</p>
+<p>有一个需要选择的超参数，即交换频谱区域的大小（图中绿色框），作者测试了各种大小以及一种多尺度方法。</p>
+<p>作者提出这种方法的动机在于可以观察到振幅谱的低频部分可以显著变化而不会影响高级的语义信息，通过学习这种变化可以使得模型更加泛化。</p>
+<h2 id="method">Method</h2>
+<p>首先进行傅里叶变换，用 <span class="math inline">ℱ<sup><em>A</em></sup>, ℱ<sup><em>P</em></sup> : ℝ<sup><em>H</em> × <em>W</em> × 3</sup> → ℝ<sup><em>H</em> × <em>W</em> × 3</sup></span>
+表示傅里叶变换 <span class="math inline">ℱ</span>
+得到的振幅和相位，对于单通道图像 <span class="math inline"><em>x</em></span> 有： <span class="math display">$$
+\mathcal{F}(x)(m, n) = \sum_{h,w} x(h,w) e^{-j2\pi\left(\dfrac{h}{H}m +
+\dfrac{w}{W}n\right)}, j^2=-1
+$$</span> 用 <span class="math inline">ℱ<sup>−1</sup></span>
+表示逆傅里叶变换用于将振幅和相位映射回空域，然后设置掩模矩阵 <span class="math inline"><em>M</em><sub><em>β</em></sub></span>
+其除了中心区域外的位置都是 0，其中<span class="math inline"><em>β</em> ∈ (0, 1)</span>，假设图像的中心为 <span class="math inline">(0, 0)</span>： <span class="math display"><em>M</em><sub><em>β</em></sub>(<em>h</em>, <em>w</em>) = 𝟙<sub>(<em>h</em>, <em>w</em>) ∈ [−<em>β</em><em>H</em> : <em>β</em><em>H</em>, −<em>β</em><em>W</em> : <em>β</em><em>W</em>]</sub></span>
+<span class="math inline"><em>β</em></span>
+不是基于像素进行选择的，所以不取决于图像大小和分辨率。</p>
+<p>给定两个随机从源域和目标域采样的图像 <span class="math inline"><em>x</em><sup><em>s</em></sup> ∼ <em>D</em><sup><em>s</em></sup>, <em>x</em><sup><em>t</em></sup> ∼ <em>D</em><sup><em>t</em></sup></span>，作者提出的
+FDA 可以表示为： <span class="math display"><em>x</em><sup><em>s</em> → <em>t</em></sup> = ℱ<sup>−1</sup>([<em>M</em><sub><em>β</em></sub> ∘ ℱ<sup><em>A</em></sup>(<em>x</em><sup><em>t</em></sup>) + (1 − <em>M</em><sub><em>β</em></sub>) ∘ ℱ<sup><em>A</em></sup>(<em>x</em><sup><em>s</em></sup>), ℱ<sup><em>P</em></sup>(<em>x</em><sup><em>s</em></sup>)])</span>
+其中将原图像低频部分的相位 <span class="math inline">ℱ<sup><em>A</em></sup>(<em>x</em><sup><em>s</em></sup>)</span>
+替换为了目标图像。</p>
+<figure>
+<img data-src="FDA/differentLB.png" alt="differentLB">
+<figcaption aria-hidden="true">differentLB</figcaption>
+</figure>
+<p>上图展示了 <span class="math inline"><em>β</em></span>
+选择的不同带来的影响，作者设置 <span class="math inline"><em>β</em> ≤ 0.15</span>.</p>
+<p>应用到语义分割，目标损失函数为： <span class="math display">ℒ<sub><em>c</em><em>e</em></sub>(<em>ϕ</em><sup><em>w</em></sup>; <em>D</em><sup><em>s</em> → <em>t</em></sup>) = −∑<sub><em>i</em></sub>⟨<em>y</em><sub><em>i</em></sub><sup><em>s</em></sup>, log (<em>ϕ</em><sup><em>w</em></sup>(<em>x</em><sub><em>i</em></sub><sup><em>s</em> → <em>t</em></sup>))⟩.</span>
+添加了正则化使其更鲁棒（没看懂） <span class="math display">ℒ<sub><em>e</em><em>n</em><em>t</em></sub>(<em>ϕ</em><sup><em>w</em></sup>; <em>D</em><sup><em>t</em></sup>) = ∑<sub><em>i</em></sub><em>ρ</em>(−⟨<em>ϕ</em><sup><em>w</em></sup>(<em>x</em><sub><em>i</em></sub><sup><em>t</em></sup>), log (<em>ϕ</em><sup><em>w</em></sup>(<em>x</em><sub><em>i</em></sub><sup><em>t</em></sup>))⟩)</span>
+其中 <span class="math inline"><em>ρ</em>(<em>x</em>) = (<em>x</em><sup>2</sup> + 0.001<sup>2</sup>)<sup><em>η</em></sup></span>
+是Charbonnier惩罚函数，如下图所示，其对于高熵预测的惩罚大于低熵预测的惩罚。</p>
+<p><img data-src="FDA/cbnorm.png" alt="cbnorm" style="zoom:28%;"></p>
+<p>最后使用整体的损失训练语义分割网络 <span class="math inline"><em>ϕ</em><sup><em>w</em></sup></span> ： <span class="math display">ℒ(<em>ϕ</em><sup><em>w</em></sup>; <em>D</em><sup><em>s</em> → <em>t</em></sup>, <em>D</em><sup><em>t</em></sup>) = ℒ<sub><em>c</em><em>e</em></sub>(<em>ϕ</em><sup><em>w</em></sup>; <em>D</em><sup><em>s</em> → <em>t</em></sup>) + <em>λ</em><sub><em>e</em><em>n</em><em>t</em></sub>ℒ<sub><em>e</em><em>n</em><em>t</em></sub>(<em>ϕ</em><sup><em>w</em></sup>; <em>D</em><sup><em>t</em></sup>)</span>
+还有一些关于自监督训练的说明，但不是很懂，有兴趣的同学可以去看看原文。</p>
+<h2 id="experiment">Experiment</h2>
+<p>实验设置：</p>
+<ul>
+<li>数据集：合成数据集GTA5 和 SYNTHIA，真实域数据集 CityScapes</li>
+<li>分割网络：ResNet101 和 VGG16</li>
+<li>训练设置：BatchSize 为 1，SGD优化器，学习率 2.5e-4，poly
+学习率调整策略(0.9 比例)，0.0005 权重衰减</li>
+</ul>
+<p>GTA5 <span class="math inline">→</span> CityScapes
+任务的消融实验：</p>
+<figure>
+<img data-src="FDA/image-20230413160718152.png" alt="image-20230413160718152">
+<figcaption aria-hidden="true">image-20230413160718152</figcaption>
+</figure>
+<p>GTA5 <span class="math inline">→</span> CityScapes
+任务的量化比较：</p>
+<figure>
+<img data-src="FDA/image-20230413160902771.png" alt="image-20230413160902771">
+<figcaption aria-hidden="true">image-20230413160902771</figcaption>
+</figure>
+<p>SYNTHIA <span class="math inline">→</span> CityScapes
+任务的量化比较：</p>
+<figure>
+<img data-src="FDA/image-20230413160951708.png" alt="image-20230413160951708">
+<figcaption aria-hidden="true">image-20230413160951708</figcaption>
+</figure>
+<p>如果从头开始训练，较大的 <span class="math inline"><em>β</em></span>
+泛化效果更好，但与自监督训练相结合时会产生更多偏差</p>
+<figure>
+<img data-src="FDA/explain.png" alt="explain">
+<figcaption aria-hidden="true">explain</figcaption>
+</figure>
+<p>可视化实验</p>
+<figure>
+<img data-src="FDA/visuals.png" alt="visuals">
+<figcaption aria-hidden="true">visuals</figcaption>
+</figure>
+<h2 id="conclusion">Conclusion</h2>
+<p>作者提出了一种不需要任何学习的简单域对齐方法，并且可以轻松集成到将无监督域适应转换为半监督学习的学习系统中。需要注意损失函数的适当正则化，为此作者提出了具有各向异性（Charbonnier）加权的熵正则化器。多频带传输方案解决了自我监督训练中的自我参照问题，该方案不需要对具有复杂模型选择的学生网络进行联合训练。</p>
+<p>这表明，由于低级统计数据导致的一些分布失调（众所周知，这种失调会对跨不同领域的泛化造成严重破坏）可以通过快速傅里叶变换非常简单地捕捉到。此外，实数信号频谱的傅里叶逆变换保证是实数，因为可以很容易地证明虚部在给定被积函数的斜对称性的情况下被抵消了。</p>
+<p>对影响图像域的有害可变性的鲁棒性仍然是机器学习中的一个难题，作者并不声称我们的方法是最终的解决方案。然而，在某些情况下，可能没有必要学习已经知道的东西，例如图像的低级统计数据可以有很大差异而不影响底层场景的语义。这种预处理可以替代复杂的架构或费力的数据扩充。</p>
+<h2 id="others">Others</h2>
+<p>这个想法在我的研究中也被想到了，但并没有很好的实验结果，这篇论文值得研究和学习为什么同样的
+idea 我没有做出成果呢？</p>
+<h3 id="源码分析">源码分析</h3>
+<p>PS：重要的实现在 <code>__init__.py</code> 文件中还挺隐蔽</p>
+<p>作者写了 numpy 和 pytorch 的两种实现，实际上用 pytorch
+的好一些，因为可以使用 GPU 加速计算。</p>
+<p>最开始是提取相位和振幅的函数（有点奇怪）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">extract_ampl_phase</span>(<span class="params">fft_im</span>):</span><br><span class="line">    <span class="comment"># fft_im: size should be bx3xhxwx2</span></span><br><span class="line">    fft_amp = fft_im[:,:,:,:,<span class="number">0</span>]**<span class="number">2</span> + fft_im[:,:,:,:,<span class="number">1</span>]**<span class="number">2</span></span><br><span class="line">    fft_amp = torch.sqrt(fft_amp)</span><br><span class="line">    fft_pha = torch.atan2( fft_im[:,:,:,:,<span class="number">1</span>], fft_im[:,:,:,:,<span class="number">0</span>] )</span><br><span class="line">    <span class="keyword">return</span> fft_amp, fft_pha</span><br></pre></td></tr></table></figure>
+<p>接下来是个四个角上替换的函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">low_freq_mutate</span>(<span class="params"> amp_src, amp_trg, L=<span class="number">0.1</span> </span>):</span><br><span class="line">    _, _, h, w = amp_src.size()</span><br><span class="line">    b = (  np.floor(np.amin((h,w))*L)  ).astype(<span class="built_in">int</span>)     <span class="comment"># get b</span></span><br><span class="line">    amp_src[:,:,<span class="number">0</span>:b,<span class="number">0</span>:b]     = amp_trg[:,:,<span class="number">0</span>:b,<span class="number">0</span>:b]      <span class="comment"># top left</span></span><br><span class="line">    amp_src[:,:,<span class="number">0</span>:b,w-b:w]   = amp_trg[:,:,<span class="number">0</span>:b,w-b:w]    <span class="comment"># top right</span></span><br><span class="line">    amp_src[:,:,h-b:h,<span class="number">0</span>:b]   = amp_trg[:,:,h-b:h,<span class="number">0</span>:b]    <span class="comment"># bottom left</span></span><br><span class="line">    amp_src[:,:,h-b:h,w-b:w] = amp_trg[:,:,h-b:h,w-b:w]  <span class="comment"># bottom right</span></span><br><span class="line">    <span class="keyword">return</span> amp_src</span><br></pre></td></tr></table></figure>
+<p>接下来这个函数应该是等价的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">low_freq_mutate_np</span>(<span class="params"> amp_src, amp_trg, L=<span class="number">0.1</span> </span>):</span><br><span class="line">    a_src = np.fft.fftshift( amp_src, axes=(-<span class="number">2</span>, -<span class="number">1</span>) )</span><br><span class="line">    a_trg = np.fft.fftshift( amp_trg, axes=(-<span class="number">2</span>, -<span class="number">1</span>) )</span><br><span class="line"></span><br><span class="line">    _, h, w = a_src.shape</span><br><span class="line">    b = (  np.floor(np.amin((h,w))*L)  ).astype(<span class="built_in">int</span>)</span><br><span class="line">    c_h = np.floor(h/<span class="number">2.0</span>).astype(<span class="built_in">int</span>)</span><br><span class="line">    c_w = np.floor(w/<span class="number">2.0</span>).astype(<span class="built_in">int</span>)</span><br><span class="line"></span><br><span class="line">    h1 = c_h-b</span><br><span class="line">    h2 = c_h+b+<span class="number">1</span></span><br><span class="line">    w1 = c_w-b</span><br><span class="line">    w2 = c_w+b+<span class="number">1</span></span><br><span class="line"></span><br><span class="line">    a_src[:,h1:h2,w1:w2] = a_trg[:,h1:h2,w1:w2]</span><br><span class="line">    a_src = np.fft.ifftshift( a_src, axes=(-<span class="number">2</span>, -<span class="number">1</span>) )</span><br><span class="line">    <span class="keyword">return</span> a_src</span><br></pre></td></tr></table></figure>
+<p>然后是两种实现方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">FDA_source_to_target</span>(<span class="params">src_img, trg_img, L=<span class="number">0.1</span></span>):</span><br><span class="line">    <span class="comment"># exchange magnitude</span></span><br><span class="line">    <span class="comment"># input: src_img, trg_img</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># get fft of both source and target</span></span><br><span class="line">    fft_src = torch.rfft( src_img.clone(), signal_ndim=<span class="number">2</span>, onesided=<span class="literal">False</span> ) </span><br><span class="line">    fft_trg = torch.rfft( trg_img.clone(), signal_ndim=<span class="number">2</span>, onesided=<span class="literal">False</span> )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># extract amplitude and phase of both ffts</span></span><br><span class="line">    amp_src, pha_src = extract_ampl_phase( fft_src.clone())</span><br><span class="line">    amp_trg, pha_trg = extract_ampl_phase( fft_trg.clone())</span><br><span class="line"></span><br><span class="line">    <span class="comment"># replace the low frequency amplitude part of source with that from target</span></span><br><span class="line">    amp_src_ = low_freq_mutate( amp_src.clone(), amp_trg.clone(), L=L )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># recompose fft of source</span></span><br><span class="line">    fft_src_ = torch.zeros( fft_src.size(), dtype=torch.<span class="built_in">float</span> )</span><br><span class="line">    fft_src_[:,:,:,:,<span class="number">0</span>] = torch.cos(pha_src.clone()) * amp_src_.clone()</span><br><span class="line">    fft_src_[:,:,:,:,<span class="number">1</span>] = torch.sin(pha_src.clone()) * amp_src_.clone()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># get the recomposed image: source content, target style</span></span><br><span class="line">    _, _, imgH, imgW = src_img.size()</span><br><span class="line">    src_in_trg = torch.irfft( fft_src_, signal_ndim=<span class="number">2</span>, onesided=<span class="literal">False</span>, signal_sizes=[imgH,imgW] )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> src_in_trg</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">FDA_source_to_target_np</span>(<span class="params"> src_img, trg_img, L=<span class="number">0.1</span> </span>):</span><br><span class="line">    <span class="comment"># exchange magnitude</span></span><br><span class="line">    <span class="comment"># input: src_img, trg_img</span></span><br><span class="line"></span><br><span class="line">    src_img_np = src_img <span class="comment">#.cpu().numpy()</span></span><br><span class="line">    trg_img_np = trg_img <span class="comment">#.cpu().numpy()</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># get fft of both source and target</span></span><br><span class="line">    fft_src_np = np.fft.fft2( src_img_np, axes=(-<span class="number">2</span>, -<span class="number">1</span>) )</span><br><span class="line">    fft_trg_np = np.fft.fft2( trg_img_np, axes=(-<span class="number">2</span>, -<span class="number">1</span>) )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># extract amplitude and phase of both ffts</span></span><br><span class="line">    amp_src, pha_src = np.<span class="built_in">abs</span>(fft_src_np), np.angle(fft_src_np)</span><br><span class="line">    amp_trg, pha_trg = np.<span class="built_in">abs</span>(fft_trg_np), np.angle(fft_trg_np)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># mutate the amplitude part of source with target</span></span><br><span class="line">    amp_src_ = low_freq_mutate_np( amp_src, amp_trg, L=L )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># mutated fft of source</span></span><br><span class="line">    fft_src_ = amp_src_ * np.exp( <span class="number">1j</span> * pha_src )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># get the mutated image</span></span><br><span class="line">    src_in_trg = np.fft.ifft2( fft_src_, axes=(-<span class="number">2</span>, -<span class="number">1</span>) )</span><br><span class="line">    src_in_trg = np.real(src_in_trg)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> src_in_trg</span><br></pre></td></tr></table></figure>
+<p>实际上上面的代码会报错，应该是作者使用的是旧版 pytorch
+的缘故，新版本的 pytorch 将 fft 集成到一个包 <code>torch.fft</code>
+里面了而且并不会输出虚数实数分离的情况，所以若要运行需要安装合适的版本或者稍微进行修改</p>
+<hr>
+<p><strong>如有错漏，欢迎指正！如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2023-04/FDA.html" title="『论文笔记』FDA - Fourier Domain Adaptation for Semantic Segmentation">https://meteordream.github.io/Paper/2023-04/FDA.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E5%9F%9F%E8%BF%81%E7%A7%BB/" rel="tag"><i class="fa fa-tag"></i> 域迁移</a>
+              <a href="/tags/CVPR/" rel="tag"><i class="fa fa-tag"></i> CVPR</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Latex/2023-03/Latex_figure.html" rel="prev" title="『Latex』图片">
+      <i class="fa fa-chevron-left"></i> 『Latex』图片
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Paper/2023-04/GFNet.html" rel="next" title="『论文笔记』Global Filter Networks for Image Classification">
+      『论文笔记』Global Filter Networks for Image Classification <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">7.</span> <span class="nav-text">Others</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">7.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

@@ -1,0 +1,2691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言 本文为洛谷刷题记录, 对应题目网址为 https:&#x2F;&#x2F;www.luogu.com.cn&#x2F;problem&#x2F; 后面加上题目编号 如https:&#x2F;&#x2F;www.luogu.com.cn&#x2F;problem&#x2F;P1000 洛谷在线IDE: https:&#x2F;&#x2F;www.luogu.com.cn&#x2F;ide 做题顺序题单来源: https:&#x2F;&#x2F;studyingfather.com&#x2F;archives&#x2F;841 使用三种编程语">
+<meta property="og:type" content="article">
+<meta property="og:title" content="洛谷刷题记录">
+<meta property="og:url" content="https://meteordream.github.io/Luogu/2021-08/Luogu.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="前言 本文为洛谷刷题记录, 对应题目网址为 https:&#x2F;&#x2F;www.luogu.com.cn&#x2F;problem&#x2F; 后面加上题目编号 如https:&#x2F;&#x2F;www.luogu.com.cn&#x2F;problem&#x2F;P1000 洛谷在线IDE: https:&#x2F;&#x2F;www.luogu.com.cn&#x2F;ide 做题顺序题单来源: https:&#x2F;&#x2F;studyingfather.com&#x2F;archives&#x2F;841 使用三种编程语">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-11T08:21:50.000Z">
+<meta property="article:modified_time" content="2023-10-05T09:05:38.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Luogu">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/Luogu/2021-08/Luogu.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>洛谷刷题记录 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Luogu/2021-08/Luogu.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          洛谷刷题记录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-11 16:21:50" itemprop="dateCreated datePublished" datetime="2021-08-11T16:21:50+08:00">2021-08-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-05 17:05:38" itemprop="dateModified" datetime="2023-10-05T17:05:38+08:00">2023-10-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Luogu/" itemprop="url" rel="index"><span itemprop="name">Luogu</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Luogu/2021-08/Luogu.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Luogu/2021-08/Luogu.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>23k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>21 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="前言">前言</h2>
+<p>本文为洛谷刷题记录, 对应题目网址为 <a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/" class="uri">https://www.luogu.com.cn/problem/</a> 后面加上题目编号 如<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P1000" class="uri">https://www.luogu.com.cn/problem/P1000</a></p>
+<p>洛谷在线IDE: <a target="_blank" rel="noopener" href="https://www.luogu.com.cn/ide" class="uri">https://www.luogu.com.cn/ide</a></p>
+<p>做题顺序题单来源: <a target="_blank" rel="noopener" href="https://studyingfather.com/archives/841" class="uri">https://studyingfather.com/archives/841</a></p>
+<p>使用三种编程语言，分别是 Python, C++, Java,
+虽然没有标签但三种语言都有各自的特点应该很好辨认:</p>
+<ul>
+<li>C++ 的带有头文件典型的如
+<code>#include &lt;bits/stdc++.h&gt;</code>, 一般也有
+<code>using namespace std;</code></li>
+<li>Java 代码一般是 <code>public class Main</code> 类，以及
+<code>import Java.util.*;</code></li>
+<li>除了上述两种剩下的就是 Python
+代码了，和前面两种语言相比特点是没有分号和大括号</li>
+<li>用什么语言做题看心情，不保证每题都有三语言解法</li>
+</ul>
+<span id="more"></span>
+<hr>
+<h2 id="小技巧">小技巧</h2>
+<h3 id="c字符串流">C++字符串流</h3>
+<p>但是对于大量数据只能一个数一个数转换，颇为繁琐</p>
+<p>还有一种方法就是 stringstream (使用stringstream 需包含头文件
+<code>&lt;sstream&gt;</code>）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">123</span>, b = <span class="number">456</span>, c = <span class="number">789</span>;</span><br><span class="line"></span><br><span class="line">stringstream ss;</span><br><span class="line"></span><br><span class="line">ss &lt;&lt; a &lt;&lt; b &lt;&lt; c;</span><br></pre></td></tr></table></figure>
+<p>以上几行把a b c三个变量读入字符串流中，这样就可以把a b
+c三个变量无缝衔接起来，但是需要注意的是，stringstream型不能直接输出，也不支持迭代器，需要利用stringstream类的成员函数str()才能把它当成普通字符串来用，例如</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">string s = ss.<span class="built_in">str</span>();</span><br></pre></td></tr></table></figure>
+<p>而把字符串转为数值的话也是用stringstream，例如上面的ss就可以转换为一个int型</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">ss &gt;&gt; i;</span><br></pre></td></tr></table></figure>
+<p>以上都是C++的方法，c语言有sprintf和sscanf，对应stringstream字符串流的读和写，<code>&lt;stdlib.h&gt;</code>中还有数值与字符串相互转换的iota和atoi函数，感兴趣的可以自己去了解。用c语言的sprintf比C++的字符串流效率高，但是我还是想用C++的字符串，为啥？因为C++字符串的可拓展性和灵活性比较高嘛hhhh</p>
+<h3 id="c输入输出问题">C++输入输出问题</h3>
+<p>关同步，不能 <code>cin, scanf</code> 和 <code>cout, printf</code>
+混用了，但能加快 <code>cin, cout</code> 的速度, 注意也不要用
+<code>endl</code> 而用 <code>"\n"</code> 代替</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">    std::cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">    std::cout.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 解题代码</span></span><br><span class="line">    <span class="built_in">memset</span>(vis,<span class="number">0</span>,<span class="built_in">sizeof</span>(vis));<span class="comment">//初始化数组</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="输入输出重定向">输入输出重定向</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 标准声明：FILE *freopen( const char *path, const char *mode, FILE *stream );</span></span><br><span class="line">    <span class="built_in">freopen</span>(<span class="string">&quot;P1000.in&quot;</span>, <span class="string">&quot;r&quot;</span>, stdin);  <span class="comment">// 输入流重定向</span></span><br><span class="line">    <span class="built_in">freopen</span>(<span class="string">&quot;P1000.out&quot;</span>, <span class="string">&quot;w&quot;</span>, stdout);  <span class="comment">// 输出流重定向</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Java.io.FileInputStream;</span><br><span class="line"><span class="keyword">import</span> Java.io.FileNotFoundException;</span><br><span class="line"><span class="keyword">import</span> Java.io.FileOutputStream;</span><br><span class="line"><span class="keyword">import</span> Java.io.PrintStream;</span><br><span class="line"><span class="keyword">import</span> Java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> FileNotFoundException &#123;</span><br><span class="line">        <span class="comment">// 标准输入流重定向</span></span><br><span class="line">        System.setIn(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;luogu.in&quot;</span>));</span><br><span class="line">        <span class="comment">// 标准输出流重定向</span></span><br><span class="line">        System.setOut(<span class="keyword">new</span> <span class="title class_">PrintStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;luogu.out&quot;</span>)));</span><br><span class="line">        <span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line">        <span class="comment">// 设置分隔符（可以使用正则匹配）</span></span><br><span class="line">        sc.useDelimiter(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        System.out.println(sc.nextLine());</span><br><span class="line">        sc.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="快速幂和快速素数判断">快速幂和快速素数判断</h3>
+<ul>
+<li>最简单的方法是对 <span class="math inline">$2 ~ \sqrt{n}$</span>
+进行取余测试</li>
+<li>给出了数据范围可以直接打出素数表</li>
+<li>Rabin-Miller测试（底分别是<span class="math inline">2, 3, 5, 7, 11, 13, 17</span>的7次测试最小反例是
+<span class="math inline">341550071728321</span>, 在该范围内可以认为
+“伪素数” 就是 素数）（<span class="math inline">2, 325, 9375, 28178, 450775, 9780504, 1795265022</span>这组数在
+<span class="math inline">2<sup>64</sup></span>内都没有反例）</li>
+<li>再优化，快速幂，FFT等等都能上，不过数据量没大到需要这些优化的程度</li>
+</ul>
+<p>Rabin-Miller测试</p>
+<p>摘自<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/220203643">知乎</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> ll;</span><br><span class="line"><span class="function">ll <span class="title">qpow</span><span class="params">(ll a, ll n, ll p)</span>    <span class="comment">// 快速幂</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ll ans = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (n) &#123;</span><br><span class="line">        <span class="keyword">if</span> (n &amp; <span class="number">1</span>)</span><br><span class="line">            ans = (__int128)ans * a % p;    <span class="comment">// 注意！中间结果可能溢出，需要使用__int128过渡</span></span><br><span class="line">        a = (__int128)a * a % p;</span><br><span class="line">        n &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">is_prime</span><span class="params">(ll x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x &lt; <span class="number">3</span>)    <span class="comment">// 特判1，2</span></span><br><span class="line">        <span class="keyword">return</span> x == <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">if</span> (x % <span class="number">2</span> == <span class="number">0</span>)    <span class="comment">// 特判偶数</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    ll A[] = &#123;<span class="number">2</span>, <span class="number">325</span>, <span class="number">9375</span>, <span class="number">28178</span>, <span class="number">450775</span>, <span class="number">9780504</span>, <span class="number">1795265022</span>&#125;, d = x - <span class="number">1</span>, r = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (d % <span class="number">2</span> == <span class="number">0</span>)    <span class="comment">// 算出d, r</span></span><br><span class="line">        d /= <span class="number">2</span>, ++r;</span><br><span class="line">    <span class="comment">// 或：r = __builtin_ctz(d), d &gt;&gt;= r;</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> a : A) &#123;</span><br><span class="line">        ll v = <span class="built_in">qpow</span>(a, d, x);    <span class="comment">// a^d</span></span><br><span class="line">        <span class="comment">// 如果a^d≡0，说明是a是x的倍数；如果a^d≡1或-1，说明这串数接下来一定都是1，不用继续计算</span></span><br><span class="line">        <span class="keyword">if</span> (v &lt;= <span class="number">1</span> || v == x - <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; r; ++i) &#123;</span><br><span class="line">            v = (__int128)v * v % x;         <span class="comment">// 同样使用__int128过渡</span></span><br><span class="line">            <span class="keyword">if</span> (v == x - <span class="number">1</span> &amp;&amp; i != r - <span class="number">1</span>)    <span class="comment">// 得到-1，说明接下来都是1，可以退出了</span></span><br><span class="line">            &#123;</span><br><span class="line">                v = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 在中途而非开头得到1，却没有经过-1，说明存在其他数字y≠-1满足y^2≡1，则x一定不是奇素数</span></span><br><span class="line">            <span class="keyword">if</span> (v == <span class="number">1</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (v != <span class="number">1</span>)    <span class="comment">// 查看是不是以1结尾</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>自己改写的(甚至可以说是抄的。。。)：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">long</span> <span class="title">quickpow</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> n, <span class="type">int</span> mod)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// x ^ n % mod 快速幂</span></span><br><span class="line">    <span class="type">long</span> ans = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (n != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (n &amp; <span class="number">1</span> == <span class="number">1</span>)</span><br><span class="line">            ans = ans * x % mod;</span><br><span class="line">        x = x * x % mod;</span><br><span class="line">        n &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">isprime</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x &lt; <span class="number">3</span>) <span class="keyword">return</span> x == <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">if</span> (x % <span class="number">2</span> == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="type">int</span> s[] = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">17</span>&#125;;</span><br><span class="line">    <span class="type">int</span> d = x - <span class="number">1</span>, r = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (d % <span class="number">2</span> == <span class="number">0</span>) &#123;</span><br><span class="line">        d &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">        ++r;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> b : s) &#123;</span><br><span class="line">        <span class="type">long</span> y = <span class="built_in">quickpow</span>(b, d, x);</span><br><span class="line">        <span class="keyword">if</span> (y == <span class="number">1</span> || y == <span class="number">0</span> || y == x - <span class="number">1</span>) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; r; ++i) &#123;</span><br><span class="line">            y = y * y % x;</span><br><span class="line">            <span class="keyword">if</span> (y == x - <span class="number">1</span> &amp;&amp; i != r - <span class="number">1</span>) &#123;</span><br><span class="line">                y = <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (y == <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (y != <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="矩阵快速幂">矩阵快速幂</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[][] matrix_mul(<span class="type">int</span>[][] A, <span class="type">int</span>[][] B, <span class="type">int</span> mod) &#123;</span><br><span class="line">        <span class="comment">// 简单矩阵乘法</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">r</span> <span class="operator">=</span> A.length, c = B[<span class="number">0</span>].length, d = B.length;</span><br><span class="line">        <span class="keyword">if</span> (d != A[<span class="number">0</span>].length) <span class="comment">// 不合理的矩阵乘法</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="type">int</span>[][] s = <span class="keyword">new</span> <span class="title class_">int</span>[r][c];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; r; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> <span class="number">0</span>; k &lt; d; ++k) &#123;</span><br><span class="line">                <span class="type">long</span> <span class="variable">tmp</span> <span class="operator">=</span> (<span class="type">long</span>) A[i][k];</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; c; ++j) &#123;</span><br><span class="line">                    s[i][j] = (<span class="type">int</span>) ((tmp * B[k][j] + s[i][j]) % mod);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[][] quickpow(<span class="type">int</span>[][] A, <span class="type">int</span> n, <span class="type">int</span> mod) &#123;</span><br><span class="line">        <span class="comment">// 矩阵快速幂</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">r</span> <span class="operator">=</span> A.length;</span><br><span class="line">        <span class="comment">// 初值为 单位矩阵</span></span><br><span class="line">        <span class="type">int</span>[][] s = <span class="keyword">new</span> <span class="title class_">int</span>[r][r];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; r; ++i)</span><br><span class="line">            s[i][i] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> ((n &amp; <span class="number">1</span>) == <span class="number">1</span>)</span><br><span class="line">                s = matrix_mul(s, A, mod);</span><br><span class="line">            A = matrix_mul(A, A, mod);</span><br><span class="line">            n &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[][] matrix_mul(<span class="type">int</span>[][] A, <span class="type">int</span>[][] B) &#123;</span><br><span class="line">        <span class="comment">// 简单矩阵乘法(不取模版本)</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">r</span> <span class="operator">=</span> A.length, c = B[<span class="number">0</span>].length, d = B.length;</span><br><span class="line">        <span class="keyword">if</span> (d != A[<span class="number">0</span>].length) <span class="comment">// 不合理的矩阵乘法</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="type">int</span>[][] s = <span class="keyword">new</span> <span class="title class_">int</span>[r][c];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; r; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">k</span> <span class="operator">=</span> <span class="number">0</span>; k &lt; d; ++k) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; c; ++j) &#123;</span><br><span class="line">                    s[i][j] += A[i][k] * B[k][j];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span>[][] quickpow(<span class="type">int</span>[][] A, <span class="type">int</span> n) &#123;</span><br><span class="line">        <span class="comment">// 矩阵快速幂(不取模版本)</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">r</span> <span class="operator">=</span> A.length;</span><br><span class="line">        <span class="comment">// 初值为 单位矩阵</span></span><br><span class="line">        <span class="type">int</span>[][] s = <span class="keyword">new</span> <span class="title class_">int</span>[r][r];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; r; ++i)</span><br><span class="line">            s[i][i] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (n != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> ((n &amp; <span class="number">1</span>) == <span class="number">1</span>)</span><br><span class="line">                s = matrix_mul(s, A);</span><br><span class="line">            A = matrix_mul(A, A);</span><br><span class="line">            n &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">matrix_mul</span>(<span class="params">x: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]], y: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]], mod: <span class="built_in">int</span> = <span class="number">0</span></span>) -&gt; <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;矩阵乘法&quot;&quot;&quot;</span></span><br><span class="line">    n1, n2, m1, m2 = <span class="built_in">len</span>(x), <span class="built_in">len</span>(x[<span class="number">0</span>]), <span class="built_in">len</span>(y), <span class="built_in">len</span>(y[<span class="number">0</span>])</span><br><span class="line">    <span class="keyword">if</span> n2 != m1:  <span class="comment"># 无法做矩阵乘法</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    ans = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n1):</span><br><span class="line">        <span class="comment"># row = [sum((x[i][k] * y[k][j] % mod) if mod else x[i][k] * y[k][j] for k in range(m1)) for j in range(m2)]</span></span><br><span class="line">        row = []</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(m2):</span><br><span class="line">            s = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(m1):</span><br><span class="line">                <span class="keyword">if</span> mod:</span><br><span class="line">                    s += x[i][k] * y[k][j] % mod</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    s += x[i][k] * y[k][j]</span><br><span class="line">            row.append(s)</span><br><span class="line">        ans.append(row)</span><br><span class="line">    <span class="keyword">return</span> ans</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">quickpow</span>(<span class="params">x: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]], n: <span class="built_in">int</span>, mod: <span class="built_in">int</span> = <span class="number">0</span></span>) -&gt; <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;矩阵快速幂&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 初值是与 x 同阶的单位矩阵</span></span><br><span class="line">    s = <span class="built_in">len</span>(x)</span><br><span class="line">    ans = [[<span class="built_in">int</span>(i == j) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(s)] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(s)]</span><br><span class="line">    <span class="keyword">while</span> n:</span><br><span class="line">        <span class="keyword">if</span> n &amp; <span class="number">1</span>:</span><br><span class="line">            ans = matrix_mul(ans, x, mod)</span><br><span class="line">        x = matrix_mul(x, x, mod)</span><br><span class="line">        n &gt;&gt;= <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> ans</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="题单">题单</h2>
+<p>附上题单，防止某天链接崩溃了, 也记录下做完的题目</p>
+<h3 id="part-0-试机题">Part 0 试机题</h3>
+<blockquote>
+<p>三道试机题目。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1000
+超级玛丽游戏</label></li>
+<li><label><input type="checkbox" checked>P1001 A+B
+Problem</label></li>
+<li><label><input type="checkbox" checked>P1008 三连击</label></li>
+</ul>
+<h3 id="part-1-入门阶段">Part 1 入门阶段</h3>
+<blockquote>
+<p>本部分内容针对入门 OIer ，主要是语言基础内容。</p>
+</blockquote>
+<h4 id="part-1.1-从零开始">Part 1.1 从零开始</h4>
+<blockquote>
+<p>语言基础题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1421
+小玉买文具</label></li>
+<li><label><input type="checkbox" checked>P1909 买铅笔</label></li>
+<li><label><input type="checkbox" checked>P1089
+津津的储蓄计划</label></li>
+<li><label><input type="checkbox" checked>P1085
+不高兴的津津</label></li>
+<li><label><input type="checkbox" checked>P1035
+级数求和</label></li>
+<li><label><input type="checkbox" checked>P1980
+计数问题</label></li>
+<li><label><input type="checkbox" checked>P1014
+Cantor表</label></li>
+<li><label><input type="checkbox" checked>P1307
+数字反转</label></li>
+</ul>
+<h4 id="part-1.2-数组基础">Part 1.2 数组基础</h4>
+<blockquote>
+<p>数组可以用于存储大量的信息。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1046
+陶陶摘苹果</label></li>
+<li><label><input type="checkbox" checked>P1047
+校门外的树</label></li>
+<li><label><input type="checkbox" checked>P1427
+小鱼的数字游戏</label></li>
+<li><label><input type="checkbox" checked>P2141
+珠心算测验</label></li>
+<li><label><input type="checkbox" checked>P5594
+【XR-4】模拟赛</label></li>
+</ul>
+<h4 id="part-1.3-字符串基础">Part 1.3 字符串基础</h4>
+<blockquote>
+<p>字符串是特殊的数组，但它也有很多自身的特点。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P5015
+标题统计</label></li>
+<li><label><input type="checkbox" checked>P1055
+ISBN号码</label></li>
+<li><label><input type="checkbox" checked>P1308
+统计单词数</label></li>
+<li><label><input type="checkbox" checked>P2010
+回文日期</label></li>
+<li><label><input type="checkbox" checked>P1012 拼数</label></li>
+<li><label><input type="checkbox" checked>P5587
+打字练习</label></li>
+</ul>
+<h4 id="part-1.4-函数递归及递推">Part 1.4 函数，递归及递推</h4>
+<blockquote>
+<p>这是初学者最难理解的部分，建议画出递归图来理解递归的过程。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1028
+数的计算</label></li>
+<li><label><input type="checkbox" checked>P1036 选数</label></li>
+<li><label><input type="checkbox" checked>P1464
+Function</label></li>
+<li><label><input type="checkbox" checked>P5534
+【XR-3】等差数列</label></li>
+<li><label><input type="checkbox" checked>P1192
+台阶问题</label></li>
+<li><label><input type="checkbox" checked>P1025
+数的划分</label></li>
+<li><label><input type="checkbox" checked>P4994
+终于结束的起点</label></li>
+</ul>
+<h3 id="part-2-基础算法">Part 2 基础算法</h3>
+<blockquote>
+<p>这一部分的内容包含了 OI 中的基础算法，供各位巩固基础。</p>
+</blockquote>
+<p>当然，这里面也有一些难度比较高的题目。</p>
+<h4 id="part-2.1-模拟">Part 2.1 模拟</h4>
+<blockquote>
+<p>模拟，顾名思义就是题目要求你做什么你就做什么，这样的题目很考验选手的代码组织能力。</p>
+</blockquote>
+<p>这里不仅仅有非常基础的模拟，也有一些非常复杂的题目。</p>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1003 铺地毯</label></li>
+<li><label><input type="checkbox" checked>P1067
+多项式输出</label></li>
+<li><label><input type="checkbox" checked>P1328
+生活大爆炸版石头剪刀布</label></li>
+<li><label><input type="checkbox" checked>P1563
+玩具谜题</label></li>
+<li><label><input type="checkbox" checked>P1042 乒乓球</label></li>
+<li><label><input type="checkbox" checked>P1179
+数字统计</label></li>
+<li><label><input type="checkbox" checked>P2615
+神奇的幻方</label></li>
+<li><label><input type="checkbox" checked>P3952
+时间复杂度</label></li>
+<li><label><input type="checkbox">P2482 [SDOI2010]猪国杀</label></li>
+<li><label><input type="checkbox" checked>P5380
+[THUPC2019]鸭棋</label></li>
+</ul>
+<h4 id="part-2.2-排序算法">Part 2.2 排序算法</h4>
+<blockquote>
+<p>通过排序，我们可以将数据有序化，这让我们对数据的处理方便了很多。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1177
+【模板】快速排序</label></li>
+<li><label><input type="checkbox" checked>P1059
+明明的随机数</label></li>
+<li><label><input type="checkbox" checked>P1068
+分数线划定</label></li>
+<li><label><input type="checkbox" checked>P1051
+谁拿了最多奖学金</label></li>
+<li><label><input type="checkbox" checked>P1309 瑞士轮</label></li>
+<li><label><input type="checkbox" checked>P1908 逆序对</label></li>
+</ul>
+<h4 id="part-2.3-二分答案">Part 2.3 二分答案</h4>
+<blockquote>
+<p>对一个满足单调性质的问题，我们可以采用二分答案的方法来解决。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1024
+一元三次方程求解</label></li>
+<li><label><input type="checkbox" checked>P2678 跳石头</label></li>
+<li><label><input type="checkbox" checked>P1316 丢瓶盖</label></li>
+<li><label><input type="checkbox" checked>P1902
+刺杀大使</label></li>
+<li><label><input type="checkbox" checked>P1314
+聪明的质监员</label></li>
+<li><label><input type="checkbox" checked>P1083 借教室</label></li>
+<li><label><input type="checkbox" checked>P4343
+[SHOI2015]自动刷题机</label></li>
+</ul>
+<h4 id="part-2.4-分治">Part 2.4 分治</h4>
+<blockquote>
+<p>分治，即分而治之，将大问题分解为小问题，分别求解，最后合并结果。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1226
+【模板】快速幂||取余运算</label></li>
+<li><label><input type="checkbox" checked>P1010 幂次方</label></li>
+<li><label><input type="checkbox" checked>P1429
+平面最近点对（加强版）</label></li>
+<li><label><input type="checkbox" checked>P3612 [USACO17JAN]Secret
+Cow Code</label></li>
+</ul>
+<h4 id="part-2.5-贪心">Part 2.5 贪心</h4>
+<blockquote>
+<p>贪心，指的是决策时都采取当前最优解的算法。有的时候，这样做确实可以获得最优解。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1208 [USACO1.3]Mixing
+Milk</label></li>
+<li><label><input type="checkbox" checked>P4995 跳跳！</label></li>
+<li><label><input type="checkbox" checked>P1094
+纪念品分组</label></li>
+<li><label><input type="checkbox" checked>P1199
+三国游戏</label></li>
+<li><label><input type="checkbox" checked>P2672 推销员</label></li>
+<li><label><input type="checkbox" checked>P1080
+国王游戏</label></li>
+<li><label><input type="checkbox" checked>P2123
+皇后游戏</label></li>
+<li><label><input type="checkbox" checked>P5521
+[yLOI2019]梅深不见冬</label></li>
+</ul>
+<h4 id="part-2.6-构造">Part 2.6 构造</h4>
+<blockquote>
+<p>构造题是一种形式灵活多样的题型。正是因为这个特点，使得构造题没有一种通用的方法。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3599 Koishi Loves
+Construction</label></li>
+<li><label><input type="checkbox">P5441 【XR-2】伤痕</label></li>
+<li><label><input type="checkbox">P5595 【XR-4】歌唱比赛</label></li>
+</ul>
+<h4 id="part-2.7-高精度">Part 2.7 高精度</h4>
+<blockquote>
+<p>在 C++ 中，long long
+都无法表示我们需要的整数时怎么办？那就用<del>Python</del>高精度吧！</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1601 A+B
+Problem（高精）</label></li>
+<li><label><input type="checkbox" checked>P2142
+高精度减法</label></li>
+<li><label><input type="checkbox" checked>P1303 A*B
+Problem</label></li>
+<li><label><input type="checkbox" checked>P1480 A/B
+Problem</label></li>
+<li><label><input type="checkbox" checked>P1009
+阶乘之和</label></li>
+</ul>
+<h4 id="part-2.8-前缀和-差分">Part 2.8 前缀和 &amp; 差分</h4>
+<blockquote>
+<p>前缀和是一种重要的预处理，能大大降低查询的时间复杂度，而差分则是一种和前缀和相对的策略。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3131 [USACO16JAN]Subsequences
+Summing to Sevens</label></li>
+<li><label><input type="checkbox">P1387 最大正方形</label></li>
+<li><label><input type="checkbox">P3397 地毯</label></li>
+<li><label><input type="checkbox">P2280
+[HNOI2003]激光炸弹</label></li>
+<li><label><input type="checkbox">P4552 [Poetize6] IncDec
+Sequence</label></li>
+</ul>
+<h3 id="part-3-搜索">Part 3 搜索</h3>
+<blockquote>
+<p>搜索其实就是高级的枚举，很多题目都可以用搜索完成。就算不能，搜索也是骗分神器。</p>
+</blockquote>
+<h4 id="part-3.1-深度优先搜索">Part 3.1 深度优先搜索</h4>
+<blockquote>
+<p>深度优先搜索（DFS），即按照深度优先的顺序搜索的算法。</p>
+</blockquote>
+<p>深度优先搜索一般使用栈来实现。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P1219 八皇后</label></li>
+<li><label><input type="checkbox">P1019 单词接龙</label></li>
+<li><label><input type="checkbox">P5194
+[USACO05DEC]Scales</label></li>
+<li><label><input type="checkbox">P5440 【XR-2】奇迹</label></li>
+<li><label><input type="checkbox">P1378 油滴扩展</label></li>
+</ul>
+<h4 id="part-3.2-广度优先搜索">Part 3.2 广度优先搜索</h4>
+<blockquote>
+<p>广度优先搜索（BFS），即优先扩展浅层节点，逐渐深入的搜索算法。</p>
+</blockquote>
+<p>广度优先搜索一般使用队列来实现。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P1162 填涂颜色</label></li>
+<li><label><input type="checkbox">P1443 马的遍历</label></li>
+<li><label><input type="checkbox">P3956 棋盘</label></li>
+<li><label><input type="checkbox">P1032 字串变换</label></li>
+<li><label><input type="checkbox">P1126 机器人搬重物</label></li>
+</ul>
+<h4 id="part-3.3-记忆化搜索">Part 3.3 记忆化搜索</h4>
+<blockquote>
+<p>通过将已经遍历的状态记录下来，从而减少重复的搜索量，这就是记忆化搜索。</p>
+</blockquote>
+<p>动态规划的时候，记忆化搜索也是一种高效简洁的实现方式。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P1514 引水入城</label></li>
+<li><label><input type="checkbox">P1535 游荡的奶牛</label></li>
+<li><label><input type="checkbox">P1434 [SHOI2002]滑雪</label></li>
+<li><label><input type="checkbox">P3953 逛公园</label></li>
+</ul>
+<h4 id="part-3.4-搜索的剪枝">Part 3.4 搜索的剪枝</h4>
+<blockquote>
+<p>对于一些不必要搜索的部分，我们可以避免访问这些状态，从而提高搜索效率。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1120 小木棍
+［数据加强版］</label></li>
+<li><label><input type="checkbox">P1312 Mayan游戏</label></li>
+<li><label><input type="checkbox">P1074 靶形数独</label></li>
+</ul>
+<h4 id="part-3.5-双向搜索">Part 3.5 双向搜索</h4>
+<blockquote>
+<p>在搜索时，如果能从初态和终态出发，同时进行搜索，就可以减小搜索树的规模，提高时间效率。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3067 [USACO12OPEN]Balanced Cow
+Subsets</label></li>
+<li><label><input type="checkbox">P4799 [CEOI2015
+Day2]世界冰球锦标赛</label></li>
+<li><label><input type="checkbox">P5195 [USACO05DEC]Knights of
+Ni</label></li>
+</ul>
+<h4 id="part-3.6-a">Part 3.6 A*</h4>
+<blockquote>
+<p>在 BFS
+中，如果能设计一个合理的估价函数，就可以更快扩展到最优解。这就是
+A*算法。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1379 八数码难题</label></li>
+</ul>
+<h4 id="part-3.7-ida">Part 3.7 IDA*</h4>
+<blockquote>
+<p>像 BFS 那样，每次只扩展一层节点，却采用 DFS
+方式来遍历搜索树，这就是迭代加深搜索。</p>
+</blockquote>
+<p>再加上一个估价函数来减小搜索量，就是 IDA*了。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P2324
+[SCOI2005]骑士精神</label></li>
+<li><label><input type="checkbox">P2534
+[AHOI2012]铁盘整理</label></li>
+</ul>
+<h4 id="part-3.8-dlx">Part 3.8 DLX</h4>
+<blockquote>
+<p>算法 X
+是通过回溯法求解精确覆盖问题的算法，而删除列这一操作可以使用舞蹈链加速。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4929
+【模板】舞蹈链（DLX）</label></li>
+<li><label><input type="checkbox">P4205
+[NOI2005]智慧珠游戏</label></li>
+</ul>
+<h3 id="part-4-动态规划">Part 4 动态规划</h3>
+<blockquote>
+<p>动态规划是一种重要的思维方法，通过利用已有的子问题信息高效求出当前问题的最优解。</p>
+</blockquote>
+<h4 id="part-4.1-线性动态规划">Part 4.1 线性动态规划</h4>
+<blockquote>
+<p>线性动态规划，即具有线性阶段划分的动态规划。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1216 数字三角形</label></li>
+<li><label><input type="checkbox">P1020 导弹拦截</label></li>
+<li><label><input type="checkbox">P1091 合唱队形</label></li>
+<li><label><input type="checkbox">P1095 守望者的逃离</label></li>
+<li><label><input type="checkbox">P1541 乌龟棋</label></li>
+<li><label><input type="checkbox">P1868 饥饿的奶牛</label></li>
+<li><label><input type="checkbox">P2679 子串</label></li>
+<li><label><input type="checkbox">P2501
+[HAOI2006]数字序列</label></li>
+<li><label><input type="checkbox">P3336 [ZJOI2013]话旧</label></li>
+<li><label><input type="checkbox">P3558
+[POI2013]BAJ-Bytecomputer</label></li>
+<li><label><input type="checkbox">P4158 [SCOI2009]粉刷匠</label></li>
+<li><label><input type="checkbox">P5301
+[GXOI/GZOI2019]宝牌一大堆</label></li>
+</ul>
+<h4 id="part-4.2-背包动态规划">Part 4.2 背包动态规划</h4>
+<blockquote>
+<p>背包动态规划是线性动态规划中特殊的一类，NOIP中考到的次数也不少。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1048 采药</label></li>
+<li><label><input type="checkbox">P1060 开心的金明</label></li>
+<li><label><input type="checkbox">P1855 榨取kkksc03</label></li>
+<li><label><input type="checkbox">P5020 货币系统</label></li>
+<li><label><input type="checkbox">P1757 通天之分组背包</label></li>
+<li><label><input type="checkbox">P1064 金明的预算方案</label></li>
+<li><label><input type="checkbox">P2946 [USACO09MAR]Cow Frisbee
+Team</label></li>
+<li><label><input type="checkbox">P1156 垃圾陷阱</label></li>
+<li><label><input type="checkbox">P5322
+[BJOI2019]排兵布阵</label></li>
+<li><label><input type="checkbox">P5289
+[十二省联考2019]皮配</label></li>
+</ul>
+<h4 id="part-4.3-区间动态规划">Part 4.3 区间动态规划</h4>
+<blockquote>
+<p>区间动态规划一般以区间作为动态规划的阶段。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1880 [NOI1995]石子合并</label></li>
+<li><label><input type="checkbox">P3146 [USACO16OPEN]248</label></li>
+<li><label><input type="checkbox">P1063 能量项链</label></li>
+<li><label><input type="checkbox">P1005 矩阵取数游戏</label></li>
+<li><label><input type="checkbox">P4170 [CQOI2007]涂色</label></li>
+<li><label><input type="checkbox">P4302
+[SCOI2003]字符串折叠</label></li>
+<li><label><input type="checkbox">P2466
+[SDOI2008]Sue的小球</label></li>
+</ul>
+<h4 id="part-4.4-树形动态规划">Part 4.4 树形动态规划</h4>
+<blockquote>
+<p>树形动态规划，即在树上进行的动态规划。</p>
+</blockquote>
+<p>因为树的递归性质，树形动态规划一般都是递归求解的。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P1352 没有上司的舞会</label></li>
+<li><label><input type="checkbox">P1040 加分二叉树</label></li>
+<li><label><input type="checkbox">P1122 最大子树和</label></li>
+<li><label><input type="checkbox">P1273 有线电视网</label></li>
+<li><label><input type="checkbox">P2014 选课</label></li>
+<li><label><input type="checkbox">P2585
+[ZJOI2006]三色二叉树</label></li>
+<li><label><input type="checkbox">P3047 [USACO12FEB]Nearby
+Cows</label></li>
+<li><label><input type="checkbox">P3698
+[CQOI2017]小Q的棋盘</label></li>
+<li><label><input type="checkbox">P5658 括号树</label></li>
+<li><label><input type="checkbox">P2607 [ZJOI2008]骑士</label></li>
+<li><label><input type="checkbox">P3177
+[HAOI2015]树上染色</label></li>
+<li><label><input type="checkbox">P4395 [BOI2003]Gem</label></li>
+<li><label><input type="checkbox">P4516
+[JSOI2018]潜入行动</label></li>
+</ul>
+<h4 id="part-4.5-状态压缩动态规划">Part 4.5 状态压缩动态规划</h4>
+<blockquote>
+<p>将一个状态压缩为一个整数（通常为二进制数），就可以在更为方便地进行状态转移的同时，达到节约空间的目的。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2704 [NOI2001]炮兵阵地</label></li>
+<li><label><input type="checkbox">P1879 [USACO06NOV]Corn
+Fields</label></li>
+<li><label><input type="checkbox">P1896
+[SCOI2005]互不侵犯</label></li>
+<li><label><input type="checkbox">P3092 [USACO13NOV]No
+Change</label></li>
+<li><label><input type="checkbox">P3694 邦邦的大合唱站队</label></li>
+<li><label><input type="checkbox">P4925
+[1007]Scarlet的字符串不可能这么可爱</label></li>
+<li><label><input type="checkbox">P2157
+[SDOI2009]学校食堂</label></li>
+<li><label><input type="checkbox">P2167
+[SDOI2009]Bill的挑战</label></li>
+<li><label><input type="checkbox">P2396 yyy loves Maths
+VII</label></li>
+<li><label><input type="checkbox">P4363
+[九省联考2018]一双木棋</label></li>
+<li><label><input type="checkbox">P5005 中国象棋 – 摆上马</label></li>
+<li><label><input type="checkbox">P2150 [NOI2015]寿司晚宴</label></li>
+</ul>
+<h4 id="part-4.6-倍增优化动态规划">Part 4.6 倍增优化动态规划</h4>
+<blockquote>
+<p>利用倍增的方式，我们可以将状态转移的效率大大提高。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1613 跑路</label></li>
+<li><label><input type="checkbox">P1081 开车旅行</label></li>
+<li><label><input type="checkbox">P5024 保卫王国</label></li>
+</ul>
+<h4 id="part-4.7-数据结构优化动态规划">Part 4.7
+数据结构优化动态规划</h4>
+<blockquote>
+<p>利用数据结构来维护已有信息，也可以达到优化状态转移的目的。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4719 【模板】动态dp</label></li>
+<li><label><input type="checkbox">P4751 动态dp【加强版】</label></li>
+<li><label><input type="checkbox">P3287
+[SCOI2014]方伯伯的玉米田</label></li>
+<li><label><input type="checkbox">P2605
+[ZJOI2010]基站选址</label></li>
+</ul>
+<h4 id="part-4.8-单调队列优化动态规划">Part 4.8
+单调队列优化动态规划</h4>
+<blockquote>
+<p>借助单调队列，排除不可能的决策，可以起到优化状态转移的效果。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1776 宝物筛选</label></li>
+<li><label><input type="checkbox">P3089
+[USACO13NOV]Pogo-Cow</label></li>
+<li><label><input type="checkbox">P3572 [POI2014]PTA-Little
+Bird</label></li>
+<li><label><input type="checkbox">P3522
+[POI2011]TEM-Temperature</label></li>
+<li><label><input type="checkbox">P4544 [USACO10NOV]Buying
+Feed</label></li>
+<li><label><input type="checkbox">P5665 划分</label></li>
+<li><label><input type="checkbox">P1973
+[NOI2011]Noi嘉年华</label></li>
+<li><label><input type="checkbox">P2569
+[SCOI2010]股票交易</label></li>
+<li><label><input type="checkbox">P4852 yyf hates
+choukapai</label></li>
+</ul>
+<h4 id="part-4.9-斜率优化动态规划">Part 4.9 斜率优化动态规划</h4>
+<blockquote>
+<p>通过用单调队列维护一个凸壳，来达到优化转移的目的。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2900 [USACO08MAR]Land
+Acquisition</label></li>
+<li><label><input type="checkbox">P3195
+[HNOI2008]玩具装箱</label></li>
+<li><label><input type="checkbox">P3628
+[APIO2010]特别行动队</label></li>
+<li><label><input type="checkbox">P3648
+[APIO2014]序列分割</label></li>
+<li><label><input type="checkbox">P4027 [NOI2007]货币兑换</label></li>
+<li><label><input type="checkbox">P4360
+[CEOI2004]锯木厂选址</label></li>
+<li><label><input type="checkbox">P5468 [NOI2019]回家路线</label></li>
+<li><label><input type="checkbox">P2305 [NOI2014]购票</label></li>
+</ul>
+<h4 id="part-4.10-决策单调性优化动态规划">Part 4.10
+决策单调性优化动态规划</h4>
+<blockquote>
+<p>利用决策间的递变规律，也能实现优化状态转移的目的。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3515 [POI2011]Lightning
+Conductor</label></li>
+<li><label><input type="checkbox">P4767 [IOI2000]邮局</label></li>
+<li><label><input type="checkbox">P1912 [NOI2009]诗人小G</label></li>
+<li><label><input type="checkbox">P1973
+[NOI2011]Noi嘉年华</label></li>
+<li><label><input type="checkbox">P3724
+[AH2017/HNOI2017]大佬</label></li>
+<li><label><input type="checkbox">P5574
+[CmdOI2019]任务分配问题</label></li>
+</ul>
+<h4 id="part-4.11-数位统计类动态规划">Part 4.11 数位统计类动态规划</h4>
+<blockquote>
+<p>统计一个区间中满足条件的数有多少，就是数位统计类动态规划。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2602
+[ZJOI2010]数字计数</label></li>
+<li><label><input type="checkbox">P3281 [SCOI2013]数数</label></li>
+<li><label><input type="checkbox">P2518 [HAOI2010]计数</label></li>
+<li><label><input type="checkbox">P2657 [SCOI2009]windy数</label></li>
+<li><label><input type="checkbox">P3286
+[SCOI2014]方伯伯的商场之旅</label></li>
+<li><label><input type="checkbox">P4124
+[CQOI2016]手机号码</label></li>
+<li><label><input type="checkbox">P4999 烦人的数学作业</label></li>
+<li><label><input type="checkbox">P2606
+[ZJOI2010]排列计数</label></li>
+<li><label><input type="checkbox">P4798 [CEOI2015
+Day1]卡尔文球锦标赛</label></li>
+</ul>
+<h4 id="part-4.12-轮廓线动态规划">Part 4.12 轮廓线动态规划</h4>
+<blockquote>
+<p>轮廓线动态规划（即常说的插头
+DP）是一种特殊的状压动态规划，通过以轮廓线为状态来实现状态转移。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P5056 【模板】插头dp</label></li>
+<li><label><input type="checkbox">P2289 [HNOI2004]邮递员</label></li>
+<li><label><input type="checkbox">P2337
+[SCOI2012]喵星人的入侵</label></li>
+<li><label><input type="checkbox">P5347
+【XR-1】俄罗斯方块</label></li>
+</ul>
+<h3 id="part-5-字符串">Part 5 字符串</h3>
+<blockquote>
+<p>字符串问题有很多自己的特点。</p>
+</blockquote>
+<h4 id="part-5.1-字符串哈希">Part 5.1 字符串哈希</h4>
+<blockquote>
+<p>字符串哈希通过牺牲很小的准确率，达到快速进行字符串匹配的效果。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3370
+【模板】字符串哈希</label></li>
+<li><label><input type="checkbox">P5270
+无论怎样神树大人都会删库跑路</label></li>
+<li><label><input type="checkbox">P5537 【XR-3】系统设计</label></li>
+</ul>
+<h4 id="part-5.2-kmp">Part 5.2 KMP</h4>
+<blockquote>
+<p>KMP 算法可以用来解决模式串匹配问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3375
+【模板】KMP字符串匹配</label></li>
+<li><label><input type="checkbox">P4391 [BOI2009]Radio
+Transmission</label></li>
+<li><label><input type="checkbox">P3435 [POI2006]OKR-Periods of
+Words</label></li>
+<li><label><input type="checkbox">P4824 [USACO15FEB]Censoring
+(Silver)</label></li>
+<li><label><input type="checkbox">P2375 [NOI2014]动物园</label></li>
+<li><label><input type="checkbox">P3426
+[POI2005]SZA-Template</label></li>
+<li><label><input type="checkbox">P3193 [HNOI2008]GT考试</label></li>
+</ul>
+<h4 id="part-5.3-manacher">Part 5.3 Manacher</h4>
+<blockquote>
+<p>Manacher 可以在线性时间内求出一个字符串的最长回文子串。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3805
+【模板】manacher算法</label></li>
+<li><label><input type="checkbox">P4555
+[国家集训队]最长双回文串</label></li>
+<li><label><input type="checkbox">P1659
+[国家集训队]拉拉队排练</label></li>
+</ul>
+<h4 id="part-5.4-trie树">Part 5.4 Trie树</h4>
+<blockquote>
+<p>Trie树可以像查字典一样把多个字符串组织到一棵树上。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3879
+[TJOI2010]阅读理解</label></li>
+<li><label><input type="checkbox">P2292 [HNOI2004]L语言</label></li>
+<li><label><input type="checkbox">P2922 [USACO08DEC]Secret
+Message</label></li>
+<li><label><input type="checkbox">P3065
+[USACO12DEC]First!</label></li>
+<li><label><input type="checkbox">P3294 [SCOI2016]背单词</label></li>
+<li><label><input type="checkbox">P4407
+[JSOI2009]电子字典</label></li>
+<li><label><input type="checkbox">P4551 最长异或路径</label></li>
+<li><label><input type="checkbox">P4683 [IOI2008]Type
+Printer</label></li>
+<li><label><input type="checkbox">P3783
+[SDOI2017]天才黑客</label></li>
+</ul>
+<h4 id="part-5.5-ac自动机">Part 5.5 AC自动机</h4>
+<blockquote>
+<p>AC自动机可以看成是 KMP 和 Trie
+的结合体，用于解决多字符串匹配问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3808
+【模板】AC自动机（简单版）</label></li>
+<li><label><input type="checkbox">P3796
+【模板】AC自动机（加强版）</label></li>
+<li><label><input type="checkbox">P5357
+【模板】AC自动机（二次加强版）</label></li>
+<li><label><input type="checkbox">P3121 [USACO15FEB]Censoring
+(Gold)</label></li>
+<li><label><input type="checkbox">P2414
+[NOI2011]阿狸的打字机</label></li>
+<li><label><input type="checkbox">P3966 [TJOI2013]单词</label></li>
+<li><label><input type="checkbox">P2444 [POI2000]病毒</label></li>
+<li><label><input type="checkbox">P3311 [SDOI2014]数数</label></li>
+<li><label><input type="checkbox">P4052
+[JSOI2007]文本生成器</label></li>
+<li><label><input type="checkbox">P5599
+【XR-4】文本编辑器</label></li>
+</ul>
+<h4 id="part-5.6-回文自动机">Part 5.6 回文自动机</h4>
+<blockquote>
+<p>回文自动机是解决回文串问题的有力工具。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P5496
+【模板】回文自动机（PAM）</label></li>
+<li><label><input type="checkbox">P3649 [APIO2014]回文串</label></li>
+<li><label><input type="checkbox">P4287
+[SHOI2011]双倍回文</label></li>
+<li><label><input type="checkbox">P4762 [CERC2014]Virus
+synthesis</label></li>
+</ul>
+<h4 id="part-5.7-后缀数组">Part 5.7 后缀数组</h4>
+<blockquote>
+<p>后缀数组可以解决很多字符串匹配的问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3809 【模板】后缀排序</label></li>
+<li><label><input type="checkbox">P5353
+【模板】树上后缀排序</label></li>
+<li><label><input type="checkbox">P2336
+[SCOI2012]喵星球上的点名</label></li>
+<li><label><input type="checkbox">P2463
+[SDOI2008]Sandy的卡片</label></li>
+<li><label><input type="checkbox">P2852 [USACO06DEC]Milk
+Patterns</label></li>
+<li><label><input type="checkbox">P4051
+[JSOI2007]字符加密</label></li>
+<li><label><input type="checkbox">P1117
+[NOI2016]优秀的拆分</label></li>
+<li><label><input type="checkbox">P2178 [NOI2015]品酒大会</label></li>
+<li><label><input type="checkbox">P5346 【XR-1】柯南家族</label></li>
+<li><label><input type="checkbox">P5576 [CmdOI2019]口头禅</label></li>
+</ul>
+<h4 id="part-5.8-后缀自动机">Part 5.8 后缀自动机</h4>
+<blockquote>
+<p>后缀自动机是一种处理字符串问题的强大工具。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3804
+【模板】后缀自动机</label></li>
+<li><label><input type="checkbox">P3649 [APIO2014]回文串</label></li>
+<li><label><input type="checkbox">P3975 [TJOI2015]弦论</label></li>
+<li><label><input type="checkbox">P4248 [AHOI2013]差异</label></li>
+<li><label><input type="checkbox">P5341
+[TJOI2019]甲苯先生和大中锋的字符串</label></li>
+<li><label><input type="checkbox">P4770 [NOI2018]你的名字</label></li>
+<li><label><input type="checkbox">P5284
+[十二省联考2019]字符串问题</label></li>
+<li><label><input type="checkbox">P5319
+[BJOI2019]奥术神杖</label></li>
+</ul>
+<h3 id="part-6-数学">Part 6 数学</h3>
+<blockquote>
+<p>OI 中的数学知识很多，也有些杂乱。</p>
+</blockquote>
+<h4 id="part-6.1-位运算">Part 6.1 位运算</h4>
+<blockquote>
+<p>将十进制整数转换为二进制后，有很多按位运算的运算符。</p>
+</blockquote>
+<p>如果能善于利用位运算的一些性质，往往能达到事半功倍的效果。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P5657 格雷码</label></li>
+<li><label><input type="checkbox">P5514
+[MtOI2019]永夜的报应</label></li>
+<li><label><input type="checkbox">P5538
+【XR-3】Namid[A]me</label></li>
+<li><label><input type="checkbox">P5539 【XR-3】Unknown
+Mother-Goose</label></li>
+<li><label><input type="checkbox">P5523 [yLOI2019]珍珠</label></li>
+</ul>
+<h4 id="part-6.2-整除相关">Part 6.2 整除相关</h4>
+<blockquote>
+<p>与整除相关的概念有很多，比较常用的有素数，最大公约数和欧拉函数。</p>
+</blockquote>
+<h5 id="part-6.2.1-素数">Part 6.2.1 素数</h5>
+<blockquote>
+<p>素数，指的是除 1 和它本身之外没有其他约数的数。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4718
+【模板】Pollard-Rho算法</label></li>
+<li><label><input type="checkbox">P1075 质因数分解</label></li>
+<li><label><input type="checkbox">P2441 角色属性树</label></li>
+<li><label><input type="checkbox">P5535 【XR-3】小道消息</label></li>
+</ul>
+<h5 id="part-6.2.2-最大公约数">Part 6.2.2 最大公约数</h5>
+<blockquote>
+<p>如果两个数有一个共同的约数，那么这个约数就被称为公约数。最大公约数就是指这两个数的所有公约数中，最大的一个。</p>
+</blockquote>
+<p>求解两个数的最大公约数，可以采用欧几里得算法解决。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P5435 【模板】快速 GCD</label></li>
+<li><label><input type="checkbox">P5436 【XR-2】缘分</label></li>
+<li><label><input type="checkbox">P1029
+最大公约数和最小公倍数问题</label></li>
+<li><label><input type="checkbox">P1414 又是毕业季II</label></li>
+<li><label><input type="checkbox">P2152
+[SDOI2009]SuperGCD</label></li>
+<li><label><input type="checkbox">P1072 Hankson 的趣味题</label></li>
+</ul>
+<h5 id="part-6.2.3-欧拉函数">Part 6.2.3 欧拉函数</h5>
+<blockquote>
+<p>欧拉函数 ​ 表示了小于 ​ 的数字中，与 ​ 互质的数字个数。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2158 [SDOI2008]仪仗队</label></li>
+<li><label><input type="checkbox">P2568 GCD</label></li>
+<li><label><input type="checkbox">P2398 GCD SUM</label></li>
+<li><label><input type="checkbox">P4139
+上帝与集合的正确用法</label></li>
+</ul>
+<h4 id="part-6.3-同余方程">Part 6.3 同余方程</h4>
+<blockquote>
+<p>求解同余方程往往可以引出不少话题。</p>
+</blockquote>
+<h5 id="part-6.3.1-线性同余方程乘法逆元">Part 6.3.1
+线性同余方程&amp;乘法逆元</h5>
+<blockquote>
+<p>线性同余方程是同余方程中最基础的内容。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4549 【模板】裴蜀定理</label></li>
+<li><label><input type="checkbox">P2613
+【模板】有理数取余</label></li>
+<li><label><input type="checkbox">P3811 【模板】乘法逆元</label></li>
+<li><label><input type="checkbox">P5431 【模板】乘法逆元2</label></li>
+<li><label><input type="checkbox">P1082 同余方程</label></li>
+<li><label><input type="checkbox">P3951 小凯的疑惑</label></li>
+<li><label><input type="checkbox">P1516 青蛙的约会</label></li>
+</ul>
+<h5 id="part-6.3.2-中国剩余定理">Part 6.3.2 中国剩余定理</h5>
+<blockquote>
+<p>中国剩余定理可以快速解一元线性同余方程组。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4777
+【模板】扩展中国剩余定理（EXCRT）</label></li>
+<li><label><input type="checkbox">P3868 [TJOI2009]猜数字</label></li>
+<li><label><input type="checkbox">P2480
+[SDOI2010]古代猪文</label></li>
+<li><label><input type="checkbox">P4774 [NOI2018]屠龙勇士</label></li>
+<li><label><input type="checkbox">P5345 【XR-1】快乐肥宅</label></li>
+</ul>
+<h5 id="part-6.3.3-高次同余方程">Part 6.3.3 高次同余方程</h5>
+<blockquote>
+<p>BSGS 算法可以高效计算离散对数。</p>
+</blockquote>
+<p>而高次剩余的求解更加复杂，其中二次剩余作为高次剩余中比较特殊的情况，可以使用
+Cipolla 法求解。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P4195 【模板】exBSGS</label></li>
+<li><label><input type="checkbox">P5491 【模板】二次剩余</label></li>
+<li><label><input type="checkbox">P3306
+[SDOI2013]随机数生成器</label></li>
+<li><label><input type="checkbox">P2485 [SDOI2011]计算器</label></li>
+</ul>
+<h4 id="part-6.4-博弈论">Part 6.4 博弈论</h4>
+<blockquote>
+<p>博弈论考虑游戏中的个体的预测行为和实际行为，并研究它们的优化策略。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2197 【模板】nim游戏</label></li>
+<li><label><input type="checkbox">P1288 取数游戏II</label></li>
+<li><label><input type="checkbox">P1290 欧几里德的游戏</label></li>
+<li><label><input type="checkbox">P1247 取火柴游戏</label></li>
+<li><label><input type="checkbox">P2252 取石子游戏</label></li>
+</ul>
+<h4 id="part-6.5-概率与期望">Part 6.5 概率与期望</h4>
+<blockquote>
+<p>概率和期望是紧密相连的，OI
+中往往会出现和概率期望相关的动态规划问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P5104 红包发红包</label></li>
+<li><label><input type="checkbox">P1850 换教室</label></li>
+<li><label><input type="checkbox">P3830 [SHOI2012]随机树</label></li>
+<li><label><input type="checkbox">P4564 [CTSC2018]假面</label></li>
+<li><label><input type="checkbox">P2473 [SCOI2008]奖励关</label></li>
+<li><label><input type="checkbox">P2221
+[HAOI2012]高速公路</label></li>
+<li><label><input type="checkbox">P3239 [HNOI2015]亚瑟王</label></li>
+<li><label><input type="checkbox">P3750
+[六省联考2017]分手是祝愿</label></li>
+<li><label><input type="checkbox">P4284
+[SHOI2014]概率充电器</label></li>
+<li><label><input type="checkbox">P5249
+[LnOI2019]加特林轮盘赌</label></li>
+<li><label><input type="checkbox">P2081
+[NOI2012]迷失游乐园</label></li>
+<li><label><input type="checkbox">P3343
+[ZJOI2015]地震后的幻想乡</label></li>
+<li><label><input type="checkbox">P3600 随机数生成器</label></li>
+<li><label><input type="checkbox">P5326 [ZJOI2019]开关</label></li>
+</ul>
+<h4 id="part-6.6-组合数学">Part 6.6 组合数学</h4>
+<blockquote>
+<p>组合数学常常与计数问题，概率期望紧密相连。</p>
+</blockquote>
+<h5 id="part-6.6.1-排列组合">Part 6.6.1 排列组合</h5>
+<blockquote>
+<p>排列组合是组合数学的基础。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3807
+【模板】卢卡斯定理</label></li>
+<li><label><input type="checkbox">P2822 组合数问题</label></li>
+<li><label><input type="checkbox">P5520 [yLOI2019]青原樱</label></li>
+<li><label><input type="checkbox">P3197 [HNOI2008]越狱</label></li>
+<li><label><input type="checkbox">P2290
+[HNOI2004]树的计数</label></li>
+<li><label><input type="checkbox">P4981 父子</label></li>
+<li><label><input type="checkbox">P4769 [NOI2018]冒泡排序</label></li>
+<li><label><input type="checkbox">P4931
+情侣？给我烧了！（加强版）</label></li>
+<li><label><input type="checkbox">P5596 【XR-4】题</label></li>
+<li><label><input type="checkbox">P5598 【XR-4】混乱度</label></li>
+</ul>
+<h5 id="part-6.6.2-卡特兰数斯特林数">Part 6.6.2
+卡特兰数&amp;斯特林数</h5>
+<blockquote>
+<p>卡特兰数和斯特林数是两类常见的组合递推数列。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P5395
+【模板】第二类斯特林数·行</label></li>
+<li><label><input type="checkbox">P5396
+【模板】第二类斯特林数·列</label></li>
+<li><label><input type="checkbox">P5408
+【模板】第一类斯特林数·行</label></li>
+<li><label><input type="checkbox">P5409
+【模板】第一类斯特林数·列</label></li>
+<li><label><input type="checkbox">P1655 小朋友的球</label></li>
+<li><label><input type="checkbox">P2532
+[AHOI2012]树屋阶梯</label></li>
+<li><label><input type="checkbox">P3200
+[HNOI2009]有趣的数列</label></li>
+<li><label><input type="checkbox">P3978 [TJOI2015]概率论</label></li>
+<li><label><input type="checkbox">P4091
+[HEOI2016/TJOI2016]求和</label></li>
+<li><label><input type="checkbox">P4827 [国家集训队]Crash
+的文明世界</label></li>
+</ul>
+<h5 id="part-6.6.3-容斥原理">Part 6.6.3 容斥原理</h5>
+<blockquote>
+<p>容斥原理常常用于解决集合的计数问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P5664 Emiya 家今天的饭</label></li>
+<li><label><input type="checkbox">P1450
+[HAOI2008]硬币购物</label></li>
+<li><label><input type="checkbox">P3214 [HNOI2011]卡农</label></li>
+<li><label><input type="checkbox">P3270
+[JLOI2016]成绩比较</label></li>
+<li><label><input type="checkbox">P4336
+[SHOI2016]黑暗前的幻想乡</label></li>
+<li><label><input type="checkbox">P4448
+[AHOI2018初中组]球球的排列</label></li>
+<li><label><input type="checkbox">P4491 [HAOI2018]染色</label></li>
+<li><label><input type="checkbox">P5339
+[TJOI2019]唱、跳、rap和篮球</label></li>
+<li><label><input type="checkbox">P5400
+[CTS2019]随机立方体</label></li>
+</ul>
+<h4 id="part-6.7-线性代数">Part 6.7 线性代数</h4>
+<blockquote>
+<p>线性代数主要用于解决线性关系问题。</p>
+</blockquote>
+<h5 id="part-6.7.1-矩阵">Part 6.7.1 矩阵</h5>
+<blockquote>
+<p>利用矩阵优化数列递推，可以实现复杂度从线性到对数级的转变。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3390
+【模板】矩阵快速幂</label></li>
+<li><label><input type="checkbox">P1939
+【模板】矩阵加速（数列）</label></li>
+<li><label><input type="checkbox">P4783 【模板】矩阵求逆</label></li>
+<li><label><input type="checkbox">P1962 斐波那契数列</label></li>
+<li><label><input type="checkbox">P1349 广义斐波那契数列</label></li>
+<li><label><input type="checkbox">P4000 斐波那契数列</label></li>
+<li><label><input type="checkbox">P3758 [TJOI2017]可乐</label></li>
+<li><label><input type="checkbox">P4967 黑暗打击</label></li>
+<li><label><input type="checkbox">P5343 【XR-1】分块</label></li>
+<li><label><input type="checkbox">P5337
+[TJOI2019]甲苯先生的字符串</label></li>
+<li><label><input type="checkbox">P5303
+[GXOI/GZOI2019]逼死强迫症</label></li>
+</ul>
+<h5 id="part-6.7.2-高斯消元">Part 6.7.2 高斯消元</h5>
+<blockquote>
+<p>高斯消元可以用来求解方程组。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3389
+【模板】高斯消元法</label></li>
+<li><label><input type="checkbox">P4387 付公主的函数</label></li>
+<li><label><input type="checkbox">P2447
+[SDOI2010]外星千足虫</label></li>
+<li><label><input type="checkbox">P4035
+[JSOI2008]球形空间产生器</label></li>
+<li><label><input type="checkbox">P5516
+[MtOI2019]小铃的烦恼</label></li>
+<li><label><input type="checkbox">P4111
+[HEOI2015]小Z的房间</label></li>
+<li><label><input type="checkbox">P4457
+[BJOI2018]治疗之雨</label></li>
+</ul>
+<h5 id="part-6.7.3-线性基">Part 6.7.3 线性基</h5>
+<blockquote>
+<p>线性基可以求解最大异或和的一类问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3812 【模板】线性基</label></li>
+<li><label><input type="checkbox">P3857 [TJOI2008]彩灯</label></li>
+<li><label><input type="checkbox">P4570 [BJWC2011]元素</label></li>
+<li><label><input type="checkbox">P4301
+[CQOI2013]新Nim游戏</label></li>
+<li><label><input type="checkbox">P3292
+[SCOI2016]幸运数字</label></li>
+<li><label><input type="checkbox">P4151
+[WC2011]最大XOR和路径</label></li>
+</ul>
+<h4 id="part-6.8-多项式">Part 6.8 多项式</h4>
+<blockquote>
+<p>对多项式的运算进行优化，从而能够解决规模更大的问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1919 【模板】A*B
+Problem升级版（FFT快速傅里叶）</label></li>
+<li><label><input type="checkbox">P3803
+【模板】多项式乘法（FFT）</label></li>
+<li><label><input type="checkbox">P4238
+【模板】多项式求逆</label></li>
+<li><label><input type="checkbox">P4245
+【模板】任意模数NTT</label></li>
+<li><label><input type="checkbox">P4512
+【模板】多项式除法</label></li>
+<li><label><input type="checkbox">P4717
+【模板】快速沃尔什变换</label></li>
+<li><label><input type="checkbox">P4721 【模板】分治 FFT</label></li>
+<li><label><input type="checkbox">P4725
+【模板】多项式对数函数</label></li>
+<li><label><input type="checkbox">P4726
+【模板】多项式指数函数</label></li>
+<li><label><input type="checkbox">P4781
+【模板】拉格朗日插值</label></li>
+<li><label><input type="checkbox">P5050
+【模板】多项式多点求值</label></li>
+<li><label><input type="checkbox">P5158
+【模板】多项式快速插值</label></li>
+<li><label><input type="checkbox">P5205
+【模板】多项式开根</label></li>
+<li><label><input type="checkbox">P5245
+【模板】多项式快速幂</label></li>
+<li><label><input type="checkbox">P5273 【模板】多项式幂函数
+(加强版)</label></li>
+<li><label><input type="checkbox">P5282
+【模板】快速阶乘算法</label></li>
+<li><label><input type="checkbox">P5373
+【模板】多项式复合函数</label></li>
+<li><label><input type="checkbox">P5383
+【模板】普通多项式转下降幂多项式</label></li>
+<li><label><input type="checkbox">P5393
+【模板】下降幂多项式转普通多项式</label></li>
+<li><label><input type="checkbox">P5394
+【模板】下降幂多项式乘法</label></li>
+<li><label><input type="checkbox">P3338 [ZJOI2014]力</label></li>
+<li><label><input type="checkbox">P3723
+[AH2017/HNOI2017]礼物</label></li>
+<li><label><input type="checkbox">P5437 【XR-2】约定</label></li>
+<li><label><input type="checkbox">P5293
+[HNOI2019]白兔之舞</label></li>
+<li><label><input type="checkbox">P5432 A/B Problem
+(加强版)</label></li>
+<li><label><input type="checkbox">P5472 [NOI2019]斗主地</label></li>
+<li><label><input type="checkbox">P5577
+[CmdOI2019]算力训练</label></li>
+</ul>
+<h4 id="part-6.9-莫比乌斯反演">Part 6.9 莫比乌斯反演</h4>
+<blockquote>
+<p>运用莫比乌斯反演，我们可以将一些函数转化，从而降低计算难度。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3172 [CQOI2015]选数</label></li>
+<li><label><input type="checkbox">P2522 [HAOI2011]Problem
+b</label></li>
+<li><label><input type="checkbox">P3455
+[POI2007]ZAP-Queries</label></li>
+<li><label><input type="checkbox">P3327
+[SDOI2015]约数个数和</label></li>
+<li><label><input type="checkbox">P1829 [国家集训队]Crash的数字表格 /
+JZPTAB</label></li>
+<li><label><input type="checkbox">P4619 [SDOI2018]旧试题</label></li>
+<li><label><input type="checkbox">P3704
+[SDOI2017]数字表格</label></li>
+<li><label><input type="checkbox">P5518
+[MtOI2019]幽灵乐团</label></li>
+</ul>
+<h4 id="part-6.10-筛法">Part 6.10 筛法</h4>
+<blockquote>
+<p>利用数列的性质，有多种筛法可以求出我们想要的信息。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3383
+【模板】线性筛素数</label></li>
+<li><label><input type="checkbox">P4213
+【模板】杜教筛（Sum）</label></li>
+<li><label><input type="checkbox">P5325 【模板】Min_25筛</label></li>
+<li><label><input type="checkbox">P1865 A % B Problem</label></li>
+<li><label><input type="checkbox">P1621 集合</label></li>
+<li><label><input type="checkbox">P3768 简单的数学题</label></li>
+<li><label><input type="checkbox">P5438 【XR-2】记忆</label></li>
+</ul>
+<h4 id="part-6.11-线性规划">Part 6.11 线性规划</h4>
+<blockquote>
+<p>线性规划是研究线性约束条件下线性目标函数极值问题的方法。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3980
+[NOI2008]志愿者招募</label></li>
+<li><label><input type="checkbox">P4232
+无意识之外的捉迷藏</label></li>
+</ul>
+<h4 id="part-6.12-数值方法">Part 6.12 数值方法</h4>
+<blockquote>
+<p>在算法领域，有很多求近似值的数值方法。</p>
+</blockquote>
+<h5 id="part-6.12.1-三分法">Part 6.12.1 三分法</h5>
+<blockquote>
+<p>三分法可以求出一个单峰 / 单谷函数的极值。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3382 【模板】三分法</label></li>
+<li><label><input type="checkbox">P1883 函数</label></li>
+</ul>
+<h5 id="part-6.12.2-自适应辛普森法">Part 6.12.2 自适应辛普森法</h5>
+<blockquote>
+<p>自适应辛普森法可以高效求出给定函数的数值积分。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4525
+【模板】自适应辛普森法1</label></li>
+<li><label><input type="checkbox">P4526
+【模板】自适应辛普森法2</label></li>
+<li><label><input type="checkbox">P3779
+[SDOI2017]龙与地下城</label></li>
+</ul>
+<h4 id="part-6.13-置换群">Part 6.13 置换群</h4>
+<blockquote>
+<p>置换群通常用来解决一些涉及“本质不同”的计数问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4980 【模板】Polya定理</label></li>
+<li><label><input type="checkbox">P1446 [HNOI2008]Cards</label></li>
+<li><label><input type="checkbox">P2561
+[AHOI2002]黑白瓷砖</label></li>
+<li><label><input type="checkbox">P4128 [SHOI2006]有色图</label></li>
+<li><label><input type="checkbox">P4727
+[HNOI2009]图的同构记数</label></li>
+</ul>
+<h3 id="part-7-数据结构">Part 7 数据结构</h3>
+<blockquote>
+<p>灵活地运用数据结构可以高效地查询并处理需要的信息。</p>
+</blockquote>
+<h4 id="part-7.1-链表">Part 7.1 链表</h4>
+<blockquote>
+<p>在一个数列中高效插入一个元素，链表毫无疑问是最好的选择。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>P1996
+约瑟夫问题</label></li>
+<li><label><input type="checkbox" checked>P1160
+队列安排</label></li>
+</ul>
+<h4 id="part-7.2-栈">Part 7.2 栈</h4>
+<blockquote>
+<p>栈，是一种后进先出（FILO）的数据结构。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1449 后缀表达式</label></li>
+<li><label><input type="checkbox">P1739 表达式括号匹配</label></li>
+<li><label><input type="checkbox">P1981 表达式求值</label></li>
+<li><label><input type="checkbox">P1175 表达式的转换</label></li>
+</ul>
+<h4 id="part-7.3-队列">Part 7.3 队列</h4>
+<blockquote>
+<p>队列，是一种先进先出（FIFO）的数据结构。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1540 机器翻译</label></li>
+</ul>
+<h4 id="part-7.4-并查集">Part 7.4 并查集</h4>
+<blockquote>
+<p>并查集常用于处理一些不相交集合的合并和查询问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1111 修复公路</label></li>
+<li><label><input type="checkbox">P3958 奶酪</label></li>
+<li><label><input type="checkbox">P1525 关押罪犯</label></li>
+<li><label><input type="checkbox">P4185 [USACO18JAN]MooTube
+G</label></li>
+<li><label><input type="checkbox">P2024 [NOI2001]食物链</label></li>
+<li><label><input type="checkbox">P1197
+[JSOI2008]星球大战</label></li>
+<li><label><input type="checkbox">P1196
+[NOI2002]银河英雄传说</label></li>
+<li><label><input type="checkbox">P1955
+[NOI2015]程序自动分析</label></li>
+</ul>
+<h4 id="part-7.5-二叉堆">Part 7.5 二叉堆</h4>
+<blockquote>
+<p>二叉堆是一棵完全二叉树，堆中某个节点的值总是不大于或不小于其父节点的值。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3378 【模板】堆</label></li>
+<li><label><input type="checkbox">P1090 合并果子</label></li>
+<li><label><input type="checkbox">P1168 中位数</label></li>
+<li><label><input type="checkbox">P2085 最小函数值</label></li>
+<li><label><input type="checkbox">P2827 蚯蚓</label></li>
+<li><label><input type="checkbox">P3045 [USACO12FEB]Cow
+Coupons</label></li>
+</ul>
+<h4 id="part-7.6-st表">Part 7.6 ST表</h4>
+<blockquote>
+<p>ST表可以离线查询区间最值。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3865 【模板】ST表</label></li>
+<li><label><input type="checkbox">P2251 质量检测</label></li>
+<li><label><input type="checkbox">P1816 忠诚</label></li>
+<li><label><input type="checkbox">P1198 [JSOI2008]最大数</label></li>
+<li><label><input type="checkbox">P2880 [USACO07JAN]Balanced
+Lineup</label></li>
+<li><label><input type="checkbox">P5012 水の数列</label></li>
+<li><label><input type="checkbox">P5344 【XR-1】逛森林</label></li>
+<li><label><input type="checkbox">P2048 [NOI2010]超级钢琴</label></li>
+</ul>
+<h4 id="part-7.7-树状数组">Part 7.7 树状数组</h4>
+<blockquote>
+<p>树状数组是一种简洁高效的树形数据结构。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3374 【模板】树状数组
+1</label></li>
+<li><label><input type="checkbox">P3368 【模板】树状数组
+2</label></li>
+<li><label><input type="checkbox">P1908 逆序对</label></li>
+<li><label><input type="checkbox">P1966 火柴排队</label></li>
+<li><label><input type="checkbox">P3605 [USACO17JAN]Promotion
+Counting</label></li>
+<li><label><input type="checkbox">P1972
+[SDOI2009]HH的项链</label></li>
+<li><label><input type="checkbox">P3586 [POI2015]LOG</label></li>
+<li><label><input type="checkbox">P4054
+[JSOI2009]计数问题</label></li>
+<li><label><input type="checkbox">P4113 [HEOI2012]采花</label></li>
+<li><label><input type="checkbox">P3960 列队</label></li>
+</ul>
+<h4 id="part-7.8-线段树">Part 7.8 线段树</h4>
+<blockquote>
+<p>线段树的通用性比树状数组更强，可以处理更多涉及区间操作的题目。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3372 【模板】线段树 1</label></li>
+<li><label><input type="checkbox">P3373 【模板】线段树 2</label></li>
+<li><label><input type="checkbox">P5490 【模板】扫描线</label></li>
+<li><label><input type="checkbox">P4588
+[TJOI2018]数学计算</label></li>
+<li><label><input type="checkbox">P1502 窗口的星星</label></li>
+<li><label><input type="checkbox">P2471 [SCOI2007]降雨量</label></li>
+<li><label><input type="checkbox">P2824
+[HEOI2016/TJOI2016]排序</label></li>
+<li><label><input type="checkbox">P3722
+[AH2017/HNOI2017]影魔</label></li>
+<li><label><input type="checkbox">P4097 [HEOI2013]Segment</label></li>
+<li><label><input type="checkbox">P4198 楼房重建</label></li>
+<li><label><input type="checkbox">P4513 小白逛公园</label></li>
+<li><label><input type="checkbox">P4556
+[Vani有约会]雨天的尾巴</label></li>
+<li><label><input type="checkbox">P5324 [BJOI2019]删数</label></li>
+<li><label><input type="checkbox">P5327 [ZJOI2019]语言</label></li>
+</ul>
+<h4 id="part-7.9-分块">Part 7.9 分块</h4>
+<blockquote>
+<p>分块是一种非常通用的暴力方法，虽然效率不如线段树和树状数组，但可以解决很多线段树和树状数组处理不了的问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3870 [TJOI2009]开关</label></li>
+<li><label><input type="checkbox">P3396 哈希冲突</label></li>
+<li><label><input type="checkbox">P3863 序列</label></li>
+<li><label><input type="checkbox">P1975 [国家集训队]排队</label></li>
+<li><label><input type="checkbox">P3710 方方方的数据结构</label></li>
+<li><label><input type="checkbox">P3992 [BJOI2017]开车</label></li>
+<li><label><input type="checkbox">P4168 [Violet]蒲公英</label></li>
+<li><label><input type="checkbox">P4119
+[Ynoi2018]未来日记</label></li>
+</ul>
+<h4 id="part-7.10-可并堆">Part 7.10 可并堆</h4>
+<blockquote>
+<p>可并堆分为左偏树和配对堆两种，它们都具有堆的性质，且可以高效合并。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3377
+【模板】左偏树（可并堆）</label></li>
+<li><label><input type="checkbox">P2713 罗马游戏</label></li>
+<li><label><input type="checkbox">P1456 Monkey King</label></li>
+<li><label><input type="checkbox">P1552 [APIO2012]派遣</label></li>
+<li><label><input type="checkbox">P3261
+[JLOI2015]城池攻占</label></li>
+<li><label><input type="checkbox">P3273
+[SCOI2011]棘手的操作</label></li>
+<li><label><input type="checkbox">P4331 [BOI2004]Sequence</label></li>
+</ul>
+<h4 id="part-7.11-主席树">Part 7.11 主席树</h4>
+<blockquote>
+<p>主席树，即可持久化权值线段树。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2468
+[SDOI2010]粟粟的书架</label></li>
+<li><label><input type="checkbox">P3302 [SDOI2013]森林</label></li>
+<li><label><input type="checkbox">P3168
+[CQOI2015]任务查询系统</label></li>
+<li><label><input type="checkbox">P4559 [JSOI2018]列队</label></li>
+<li><label><input type="checkbox">P2633 Count on a tree</label></li>
+<li><label><input type="checkbox">P3293 [SCOI2016]美味</label></li>
+<li><label><input type="checkbox">P4618
+[SDOI2018]原题识别</label></li>
+</ul>
+<h4 id="part-7.12-平衡树">Part 7.12 平衡树</h4>
+<blockquote>
+<p>二叉搜索树可以用来维护有序序列。</p>
+</blockquote>
+<p>为了保证查询效率，有多种使二叉搜索树保持平衡的实现方法。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P3369
+【模板】普通平衡树</label></li>
+<li><label><input type="checkbox">P3391
+【模板】文艺平衡树（Splay）</label></li>
+<li><label><input type="checkbox">P3850 [TJOI2007]书架</label></li>
+<li><label><input type="checkbox">P4008
+[NOI2003]文本编辑器</label></li>
+<li><label><input type="checkbox">P5338
+[TJOI2019]甲苯先生的滚榜</label></li>
+<li><label><input type="checkbox">P2042 [NOI2005]维护数列</label></li>
+<li><label><input type="checkbox">P1110
+[ZJOI2007]报表统计</label></li>
+<li><label><input type="checkbox">P3644
+[APIO2015]八邻旁之桥</label></li>
+<li><label><input type="checkbox">P1486
+[NOI2004]郁闷的出纳员</label></li>
+<li><label><input type="checkbox">P2710 数列</label></li>
+<li><label><input type="checkbox">P3224 [HNOI2012]永无乡</label></li>
+<li><label><input type="checkbox">P3285
+[SCOI2014]方伯伯的OJ</label></li>
+<li><label><input type="checkbox">P5321 [BJOI2019]送别</label></li>
+</ul>
+<h4 id="part-7.13-树链剖分">Part 7.13 树链剖分</h4>
+<blockquote>
+<p>树链剖分可以将任意一条树上路径划分成若干条连续的链，并用线段树等数据结构高效维护链上信息。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3384 【模板】树链剖分</label></li>
+<li><label><input type="checkbox">P3313 [SDOI2014]旅行</label></li>
+<li><label><input type="checkbox">P2590
+[ZJOI2008]树的统计</label></li>
+<li><label><input type="checkbox">P1505 [国家集训队]旅游</label></li>
+<li><label><input type="checkbox">P2486 [SDOI2011]染色</label></li>
+<li><label><input type="checkbox">P3258
+[JLOI2014]松鼠的新家</label></li>
+<li><label><input type="checkbox">P4069 [SDOI2016]游戏</label></li>
+<li><label><input type="checkbox">P4211 [LNOI2014]LCA</label></li>
+<li><label><input type="checkbox">P4592 [TJOI2018]异或</label></li>
+<li><label><input type="checkbox">P5305
+[GXOI/GZOI2019]旧词</label></li>
+<li><label><input type="checkbox">P5354
+[Ynoi2017]由乃的OJ</label></li>
+<li><label><input type="checkbox">P5499
+[LnOI2019]Abbi并不想研学</label></li>
+</ul>
+<h4 id="part-7.14-树套树">Part 7.14 树套树</h4>
+<blockquote>
+<p>树套树可以用来维护多维度信息。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3380
+【模板】二逼平衡树（树套树）</label></li>
+<li><label><input type="checkbox">P1975 [国家集训队]排队</label></li>
+<li><label><input type="checkbox">P3332
+[ZJOI2013]K大数查询</label></li>
+<li><label><input type="checkbox">P4278 带插入区间K小值</label></li>
+<li><label><input type="checkbox">P1903 [国家集训队]数颜色 /
+维护队列</label></li>
+<li><label><input type="checkbox">P3759
+[TJOI2017]不勤劳的图书管理员</label></li>
+<li><label><input type="checkbox">P3242 [HNOI2015]接水果</label></li>
+<li><label><input type="checkbox">P3248 [HNOI2016]树</label></li>
+<li><label><input type="checkbox">P5445 [APIO2019]路灯</label></li>
+</ul>
+<h4 id="part-7.15-动态树">Part 7.15 动态树</h4>
+<blockquote>
+<p>Link-Cut Tree 可以用来解决动态树一类问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3690 【模板】Link Cut Tree
+（动态树）</label></li>
+<li><label><input type="checkbox">P3203
+[HNOI2010]弹飞绵羊</label></li>
+<li><label><input type="checkbox">P4338 [ZJOI2018]历史</label></li>
+<li><label><input type="checkbox">P4312 [COCI2009]OTOCI</label></li>
+<li><label><input type="checkbox">P1501 [国家集训队]Tree
+II</label></li>
+<li><label><input type="checkbox">P2387 [NOI2014]魔法森林</label></li>
+<li><label><input type="checkbox">P3348 [ZJOI2016]大森林</label></li>
+<li><label><input type="checkbox">P3703
+[SDOI2017]树点涂色</label></li>
+<li><label><input type="checkbox">P4172 [WC2006]水管局长</label></li>
+<li><label><input type="checkbox">P4219 [BJOI2014]大融合</label></li>
+<li><label><input type="checkbox">P5489 EntropyIncreaser 与
+动态图</label></li>
+</ul>
+<h4 id="part-7.16-可持久化数据结构">Part 7.16 可持久化数据结构</h4>
+<blockquote>
+<p>可持久化数据结构实现了在更新信息的时候保留历史版本。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3919
+【模板】可持久化数组（可持久化线段树/平衡树）</label></li>
+<li><label><input type="checkbox">P3834 【模板】可持久化线段树
+1（主席树）</label></li>
+<li><label><input type="checkbox">P3402
+【模板】可持久化并查集</label></li>
+<li><label><input type="checkbox">P3835
+【模板】可持久化平衡树</label></li>
+<li><label><input type="checkbox">P5055
+【模板】可持久化文艺平衡树</label></li>
+<li><label><input type="checkbox">P5283
+[十二省联考2019]异或粽子</label></li>
+</ul>
+<h4 id="part-7.17-k-d-tree">Part 7.17 K-D Tree</h4>
+<blockquote>
+<p>K-D Tree 是一种高效处理 ​ 维信息的数据结构。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4357 [CQOI2016]K远点对</label></li>
+<li><label><input type="checkbox">P4148 简单题</label></li>
+<li><label><input type="checkbox">P2479 [SDOI2010]捉迷藏</label></li>
+<li><label><input type="checkbox">P3769
+[CH弱省胡策R2]TATT</label></li>
+<li><label><input type="checkbox">P4169
+[Violet]天使玩偶/SJY摆棋子</label></li>
+<li><label><input type="checkbox">P4390 [BOI2007]Mokia</label></li>
+<li><label><input type="checkbox">P4475 巧克力王国</label></li>
+<li><label><input type="checkbox">P2093
+[国家集训队]JZPFAR</label></li>
+<li><label><input type="checkbox">P5471 [NOI2019]弹跳</label></li>
+</ul>
+<h4 id="part-7.18-珂朵莉树">Part 7.18 珂朵莉树</h4>
+<blockquote>
+<p>珂朵莉树，是一种基于 std::set
+的暴力数据结构，在数据随机的情况下表现优秀。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P5251
+[LnOI2019]第二代图灵机</label></li>
+<li><label><input type="checkbox">P5350 序列</label></li>
+</ul>
+<h3 id="part-8-图论">Part 8 图论</h3>
+<blockquote>
+<p>图论是数学的一个分支，它以图为研究的对象。</p>
+</blockquote>
+<h4 id="part-8.1-图的存储与遍历">Part 8.1 图的存储与遍历</h4>
+<blockquote>
+<p>这里的图论内容都比较简单，涉及图的存储以及遍历图的方式。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2661 信息传递</label></li>
+<li><label><input type="checkbox">P2921 [USACO08DEC]Trick or Treat on
+the Farm</label></li>
+</ul>
+<h4 id="part-8.2-最短路问题">Part 8.2 最短路问题</h4>
+<blockquote>
+<p>很多题目都可以转化为最短路的模型。因此，掌握最短路算法非常重要。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3371
+【模板】单源最短路径（弱化版）</label></li>
+<li><label><input type="checkbox">P4779
+【模板】单源最短路径（标准版）</label></li>
+<li><label><input type="checkbox">P5905 【模板】Johnson
+全源最短路</label></li>
+<li><label><input type="checkbox">P1144 最短路计数</label></li>
+<li><label><input type="checkbox">P1462
+通往奥格瑞玛的道路</label></li>
+<li><label><input type="checkbox">P1522 Cow Tours</label></li>
+<li><label><input type="checkbox">P1266 速度限制</label></li>
+<li><label><input type="checkbox">P4001 [ICPC-Beijing
+2006]狼抓兔子</label></li>
+<li><label><input type="checkbox">P4568
+[JLOI2011]飞行路线</label></li>
+<li><label><input type="checkbox">P3238
+[HNOI2014]道路堵塞</label></li>
+<li><label><input type="checkbox">P5304
+[GXOI/GZOI2019]旅行者</label></li>
+</ul>
+<h4 id="part-8.3-树上问题">Part 8.3 树上问题</h4>
+<blockquote>
+<p>作为一种特殊的图，树上的问题具有很多鲜明的特点。</p>
+</blockquote>
+<h4 id="part-8.3.1-二叉树">Part 8.3.1 二叉树</h4>
+<blockquote>
+<p>二叉树是一种特殊的树，它有很多特殊的性质。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1087 FBI树</label></li>
+<li><label><input type="checkbox">P1030 求先序排列</label></li>
+<li><label><input type="checkbox">P1305 新二叉树</label></li>
+<li><label><input type="checkbox">P1229 遍历问题</label></li>
+<li><label><input type="checkbox">P5018 对称二叉树</label></li>
+<li><label><input type="checkbox">P5597 【XR-4】复读</label></li>
+</ul>
+<h4 id="part-8.3.2-树的直径">Part 8.3.2 树的直径</h4>
+<blockquote>
+<p>树的直径被定义为树上最远的两点间的距离。</p>
+</blockquote>
+<p>计算树的直径，可以通过两遍 DFS 解决。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P2195 HXY造公园</label></li>
+<li><label><input type="checkbox">P3629 [APIO2010]巡逻</label></li>
+<li><label><input type="checkbox">P5536 【XR-3】核心城市</label></li>
+<li><label><input type="checkbox">P1099 树网的核</label></li>
+<li><label><input type="checkbox">P4408
+[NOI2003]逃学的小孩</label></li>
+</ul>
+<h4 id="part-8.3.3-最近公共祖先">Part 8.3.3 最近公共祖先</h4>
+<blockquote>
+<p>两个点的最近公共祖先，即两个点的所有公共祖先中，离根节点最远的一个节点。</p>
+</blockquote>
+<p>求解最近公共祖先，常用的方法是树上倍增或者树链剖分。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P3379
+【模板】最近公共祖先（LCA）</label></li>
+<li><label><input type="checkbox">P3938 斐波那契</label></li>
+<li><label><input type="checkbox">P4281 [AHOI2008]紧急集合 /
+聚会</label></li>
+</ul>
+<h4 id="part-8.4-生成树">Part 8.4 生成树</h4>
+<blockquote>
+<p>用 ​ 条边将图上的 ​ 个点连接起来，形成的树就被称为生成树。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3366
+【模板】最小生成树</label></li>
+<li><label><input type="checkbox">P4180
+【模板】严格次小生成树[BJWC2010]</label></li>
+<li><label><input type="checkbox">P2872 [USACO07DEC]Building
+Roads</label></li>
+<li><label><input type="checkbox">P1991 无线通讯网</label></li>
+<li><label><input type="checkbox">P1967 货车运输</label></li>
+<li><label><input type="checkbox">P4047
+[JSOI2010]部落划分</label></li>
+</ul>
+<h4 id="part-8.5-拓扑排序">Part 8.5 拓扑排序</h4>
+<blockquote>
+<p>将一个有向无环图排序，使得所有排在前面的节点不能依赖于排在后面的节点，这就是拓扑排序。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1113 杂务</label></li>
+<li><label><input type="checkbox">P1983 车站分级</label></li>
+<li><label><input type="checkbox">P1038 神经网络</label></li>
+</ul>
+<h4 id="part-8.6-差分约束">Part 8.6 差分约束</h4>
+<blockquote>
+<p>差分约束要解决的问题是：求出一组 ​
+元不等式的一组解，使得所有约束关系都能得到满足。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P5960
+【模板】差分约束算法</label></li>
+<li><label><input type="checkbox">P3275 [SCOI2011]糖果</label></li>
+<li><label><input type="checkbox">P2294
+[HNOI2005]狡猾的商人</label></li>
+<li><label><input type="checkbox">P4926 [1007]倍杀测量者</label></li>
+<li><label><input type="checkbox">P5590 赛车游戏</label></li>
+</ul>
+<h4 id="part-8.7-图的连通性相关">Part 8.7 图的连通性相关</h4>
+<blockquote>
+<p>利用 Tarjan 算法，我们可以解决很多与图的连通性相关的问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3387 【模板】缩点</label></li>
+<li><label><input type="checkbox">P3388
+【模板】割点（割顶）</label></li>
+<li><label><input type="checkbox">P2341
+[HAOI2006]受欢迎的牛</label></li>
+<li><label><input type="checkbox">P2863 [USACO06JAN]The Cow
+Prom</label></li>
+<li><label><input type="checkbox">P2746 [USACO5.3]Network of
+Schools</label></li>
+<li><label><input type="checkbox">P1407
+[国家集训队]稳定婚姻</label></li>
+<li><label><input type="checkbox">P2272
+[ZJOI2007]最大半连通子图</label></li>
+<li><label><input type="checkbox">P3225
+[HNOI2012]矿场搭建</label></li>
+<li><label><input type="checkbox">P5058 [ZJOI2004]嗅探器</label></li>
+<li><label><input type="checkbox">P2515
+[HAOI2010]软件安装</label></li>
+</ul>
+<h4 id="part-8.8-二分图">Part 8.8 二分图</h4>
+<blockquote>
+<p>二分图上的不少问题都可以转化成网络流解决，当然也有独特的其他方法。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3386
+【模板】二分图匹配</label></li>
+<li><label><input type="checkbox">P2756
+飞行员配对方案问题</label></li>
+<li><label><input type="checkbox">P1129
+[ZJOI2007]矩阵游戏</label></li>
+<li><label><input type="checkbox">P1559
+运动员最佳匹配问题</label></li>
+<li><label><input type="checkbox">P2423 [HEOI2012]朋友圈</label></li>
+<li><label><input type="checkbox">P2764 最小路径覆盖问题</label></li>
+<li><label><input type="checkbox">P2825
+[HEOI2016/TJOI2016]游戏</label></li>
+<li><label><input type="checkbox">P3033 [USACO11NOV]Cow
+Steeplechase</label></li>
+<li><label><input type="checkbox">P3731
+[HAOI2017]新型城市化</label></li>
+<li><label><input type="checkbox">P4014 分配问题</label></li>
+<li><label><input type="checkbox">P4617 [COCI2017-2018#5]
+Planinarenje</label></li>
+</ul>
+<h4 id="part-8.9-网络流">Part 8.9 网络流</h4>
+<blockquote>
+<p>网络流是图论中一个重要的分支，很多题目都可以通过建立网络流的模型来解决。</p>
+</blockquote>
+<h5 id="part-8.9.1-最大流">Part 8.9.1 最大流</h5>
+<blockquote>
+<p>最大流，即求网络中最大的流量。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3376
+【模板】网络最大流</label></li>
+<li><label><input type="checkbox">P4722 【模板】最大流 加强版 /
+预流推进</label></li>
+<li><label><input type="checkbox">P2065 [TJOI2011]卡片</label></li>
+<li><label><input type="checkbox">P2763 试题库问题</label></li>
+<li><label><input type="checkbox">P2472 [SCOI2007]蜥蜴</label></li>
+<li><label><input type="checkbox">P2754 [CTSC1999]家园</label></li>
+<li><label><input type="checkbox">P2765 魔术球问题</label></li>
+<li><label><input type="checkbox">P2766
+最长不下降子序列问题</label></li>
+<li><label><input type="checkbox">P2805
+[NOI2009]植物大战僵尸</label></li>
+<li><label><input type="checkbox">P3749
+[六省联考2017]寿司餐厅</label></li>
+</ul>
+<h5 id="part-8.9.2-最小割">Part 8.9.2 最小割</h5>
+<blockquote>
+<p>最小割，即求一个边权最小的边集，使得源点和汇点不再连通。</p>
+</blockquote>
+<p>可以证明，最大流=最小割。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P1344 [USACO4.4]Pollutant
+Control</label></li>
+<li><label><input type="checkbox">P1345
+[USACO5.4]Telecowmunication</label></li>
+<li><label><input type="checkbox">P2057
+[SHOI2007]善意的投票</label></li>
+<li><label><input type="checkbox">P2598
+[ZJOI2009]狼和羊的故事</label></li>
+<li><label><input type="checkbox">P2774 方格取数问题</label></li>
+<li><label><input type="checkbox">P4126 [AHOI2009]最小割</label></li>
+<li><label><input type="checkbox">P5039
+[SHOI2010]最小生成树</label></li>
+</ul>
+<h5 id="part-8.9.3-费用流">Part 8.9.3 费用流</h5>
+<blockquote>
+<p>在网络流中给边加上一个参数——费用，就出现了费用流。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3381
+【模板】最小费用最大流</label></li>
+<li><label><input type="checkbox">P4016 负载平衡问题</label></li>
+<li><label><input type="checkbox">P4452
+[国家集训队]航班安排</label></li>
+<li><label><input type="checkbox">P2045 方格取数加强版</label></li>
+<li><label><input type="checkbox">P2050 [NOI2012]美食节</label></li>
+<li><label><input type="checkbox">P2053 [SCOI2007]修车</label></li>
+<li><label><input type="checkbox">P2604
+[ZJOI2010]网络扩容</label></li>
+<li><label><input type="checkbox">P2770 航空路线问题</label></li>
+<li><label><input type="checkbox">P3159
+[CQOI2012]交换棋子</label></li>
+<li><label><input type="checkbox">P3356 火星探险问题</label></li>
+<li><label><input type="checkbox">P3358
+最长k可重区间集问题</label></li>
+<li><label><input type="checkbox">P4013 数字梯形问题</label></li>
+<li><label><input type="checkbox">P4015 运输问题</label></li>
+<li><label><input type="checkbox">P5331 [SNOI2019]通信</label></li>
+</ul>
+<h5 id="part-8.9.4-上下界网络流">Part 8.9.4 上下界网络流</h5>
+<blockquote>
+<p>在网络流问题中给每条边的流量增加一个下界，就有了上下界网络流。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3980
+[NOI2008]志愿者招募</label></li>
+<li><label><input type="checkbox">P4043
+[AHOI2014/JSOI2014]支线剧情</label></li>
+<li><label><input type="checkbox">P4553 80人环游世界</label></li>
+<li><label><input type="checkbox">P4843 清理雪道</label></li>
+</ul>
+<h4 id="part-8.10-2-sat">Part 8.10 2-SAT</h4>
+<blockquote>
+<p>k-SAT 问题的目标是对一些布尔变量赋值，满足限定的条件。</p>
+</blockquote>
+<p>在 k-SAT 问题中，2-SAT 问题属于较为容易解决的一类。</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P4782 【模板】2-SAT
+问题</label></li>
+<li><label><input type="checkbox">P4171
+[JSOI2010]满汉全席</label></li>
+<li><label><input type="checkbox">P3825 [NOI2017]游戏</label></li>
+<li><label><input type="checkbox">P5332
+[JSOI2019]精准预测</label></li>
+</ul>
+<h4 id="part-8.11-点分治">Part 8.11 点分治</h4>
+<blockquote>
+<p>点分治是一种可以高效统计树上路径信息的算法。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3806 【模板】点分治1</label></li>
+<li><label><input type="checkbox">P2634
+[国家集训队]聪聪可可</label></li>
+<li><label><input type="checkbox">P2664 树上游戏</label></li>
+<li><label><input type="checkbox">P3714
+[BJOI2017]树的难题</label></li>
+<li><label><input type="checkbox">P4149 [IOI2011]Race</label></li>
+<li><label><input type="checkbox">P3241 [HNOI2015]开店</label></li>
+<li><label><input type="checkbox">P4075
+[SDOI2016]模式字符串</label></li>
+<li><label><input type="checkbox">P4183 [USACO18JAN]Cow at Large
+P</label></li>
+<li><label><input type="checkbox">P4292 [WC2010]重建计划</label></li>
+<li><label><input type="checkbox">P5306
+[COCI2019]Transport</label></li>
+</ul>
+<h4 id="part-8.12-虚树">Part 8.12 虚树</h4>
+<blockquote>
+<p>将一些无用的点从树上删去，从而达到降低树的规模的效果。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2495 [SDOI2011]消耗战</label></li>
+<li><label><input type="checkbox">P3233 [HNOI2014]世界树</label></li>
+<li><label><input type="checkbox">P5360
+[SDOI2019]世界地图</label></li>
+<li><label><input type="checkbox">P5439 【XR-2】永恒</label></li>
+</ul>
+<h4 id="part-8.13-矩阵树定理">Part 8.13 矩阵树定理</h4>
+<blockquote>
+<p>矩阵树定理可以解决图的生成树计数问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4111
+[HEOI2015]小Z的房间</label></li>
+<li><label><input type="checkbox">P2144
+[FJOI2007]轮状病毒</label></li>
+<li><label><input type="checkbox">P3317 [SDOI2014]重建</label></li>
+<li><label><input type="checkbox">P4208
+[JSOI2008]最小生成树计数</label></li>
+</ul>
+<h3 id="part-9-计算几何">Part 9 计算几何</h3>
+<blockquote>
+<p>试着用计算机来解决几何问题吧！</p>
+</blockquote>
+<h4 id="part-9.1-凸包">Part 9.1 凸包</h4>
+<blockquote>
+<p>凸包指在平面上能包含所有给定点的最小凸多边形。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P2742 【模板】二维凸包</label></li>
+<li><label><input type="checkbox">P2287
+[HNOI2004]最佳包裹</label></li>
+<li><label><input type="checkbox">P3829
+[SHOI2012]信用卡凸包</label></li>
+<li><label><input type="checkbox">P4680
+[Ynoi2018]末日时在做什么?有没有空?可以来拯救吗?</label></li>
+<li><label><input type="checkbox">P4557 [JSOI2018]战争</label></li>
+<li><label><input type="checkbox">P5403 [CTS2019]田野</label></li>
+</ul>
+<h4 id="part-9.2-旋转卡壳">Part 9.2 旋转卡壳</h4>
+<blockquote>
+<p>旋转卡壳是一种求出凸包所有对踵点对的算法。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1452 Beauty Contest</label></li>
+<li><label><input type="checkbox">P3187
+[HNOI2007]最小矩形覆盖</label></li>
+</ul>
+<h4 id="part-9.3-半平面交">Part 9.3 半平面交</h4>
+<blockquote>
+<p>多个半平面的交集称之为半平面交。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3256 [JLOI2013]赛车</label></li>
+<li><label><input type="checkbox">P2600 [ZJOI2008]瞭望塔</label></li>
+<li><label><input type="checkbox">P4196
+[CQOI2006]凸多边形</label></li>
+<li><label><input type="checkbox">P3297 [SDOI2013]逃考</label></li>
+<li><label><input type="checkbox">P4250
+[SCOI2015]小凸想跑步</label></li>
+<li><label><input type="checkbox">P5328
+[ZJOI2019]浙江省选</label></li>
+</ul>
+<h3 id="part-10-杂项">Part 10 杂项</h3>
+<blockquote>
+<p>这里的专题，有很多都难以纳入前面的类别中，故将他们单独列入了杂项。</p>
+</blockquote>
+<h4 id="part-10.1-模拟退火">Part 10.1 模拟退火</h4>
+<blockquote>
+<p>模拟退火是一种随机化算法。当一个问题的方案数量极大（甚至是无穷的）而且不是一个单峰函数时，我们常使用模拟退火求解。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1337 [JSOI2004]平衡点 /
+吊打XXX</label></li>
+<li><label><input type="checkbox">P2503
+[HAOI2006]均分数据</label></li>
+<li><label><input type="checkbox">P3878 [TJOI2010]分金币</label></li>
+</ul>
+<h4 id="part-10.2-01-分数规划">Part 10.2 0/1 分数规划</h4>
+<blockquote>
+<p>0/1 分数规划用来求一个分式的极值。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4377 [USACO18OPEN]Talent
+Show</label></li>
+<li><label><input type="checkbox">P3199 [HNOI2009]最小圈</label></li>
+<li><label><input type="checkbox">P3288
+[SCOI2014]方伯伯运椰子</label></li>
+<li><label><input type="checkbox">P3705
+[SDOI2017]新生舞会</label></li>
+<li><label><input type="checkbox">P4322
+[JSOI2016]最佳团体</label></li>
+</ul>
+<h4 id="part-10.3-离线算法">Part 10.3 离线算法</h4>
+<blockquote>
+<p>当题目不要求强制在线时，我们可以一次性读入所有询问来处理。</p>
+</blockquote>
+<h5 id="part-10.3.1-cdq-分治">Part 10.3.1 CDQ 分治</h5>
+<blockquote>
+<p>CDQ 分治是一个基于分治思想的离线算法。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P3810
+【模板】三维偏序（陌上花开）</label></li>
+<li><label><input type="checkbox">P3157
+[CQOI2011]动态逆序对</label></li>
+<li><label><input type="checkbox">P2487
+[SDOI2011]拦截导弹</label></li>
+<li><label><input type="checkbox">P4690
+[Ynoi2016]镜中的昆虫</label></li>
+<li><label><input type="checkbox">P3206
+[HNOI2010]城市建设</label></li>
+</ul>
+<h5 id="part-10.3.2-整体二分">Part 10.3.2 整体二分</h5>
+<blockquote>
+<p>整体二分，顾名思义就是把多个查询一起二分解决。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1527
+[国家集训队]矩阵乘法</label></li>
+<li><label><input type="checkbox">P2617 Dynamic Rankings</label></li>
+<li><label><input type="checkbox">P3527
+[POI2011]MET-Meteors</label></li>
+<li><label><input type="checkbox">P4602
+[CTSC2018]混合果汁</label></li>
+</ul>
+<h5 id="part-10.3.3-莫队">Part 10.3.3 莫队</h5>
+<blockquote>
+<p>莫队算法可以解决不少离线区间询问问题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1494 [国家集训队]小Z的袜子
+/【模板】莫队</label></li>
+<li><label><input type="checkbox">P1903 [国家集训队]数颜色 / 维护队列
+/【模板】带修莫队</label></li>
+<li><label><input type="checkbox">P5906 【模板】回滚莫队</label></li>
+<li><label><input type="checkbox">P4887
+【模板】莫队二次离线（第十四分块(前体)）</label></li>
+<li><label><input type="checkbox">P2709 小B的询问</label></li>
+<li><label><input type="checkbox">P3674 小清新人渣的本愿</label></li>
+<li><label><input type="checkbox">P3709 大爷的字符串题</label></li>
+<li><label><input type="checkbox">P4074 [WC2013]糖果公园</label></li>
+<li><label><input type="checkbox">P5501
+[LnOI2019]来者不拒，去者不追</label></li>
+</ul>
+<h4 id="part-10.4-奇怪的题目">Part 10.4 奇怪的题目</h4>
+<blockquote>
+<p>OI 界中有一些非常规套路的题目，这里放出来分享。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P4920 [WC2015]未来程序</label></li>
+<li><label><input type="checkbox">P5042
+[国家集训队]丢失的题面（ydc的题面）</label></li>
+<li><label><input type="checkbox">P5285
+[十二省联考2019]骗分过样例</label></li>
+<li><label><input type="checkbox">P5246
+[集训队互测2016]消失的源代码</label></li>
+</ul>
+<h4 id="part-10.5-非传统题">Part 10.5 非传统题</h4>
+<blockquote>
+<p>在 NOI 等比赛中，非传统题正越来越频繁出现。</p>
+</blockquote>
+<p>非传统题主要包括以下几类：提交答案题，交互题，通信题。</p>
+<h5 id="part-10.5.1-提交答案题">Part 10.5.1 提交答案题</h5>
+<blockquote>
+<p>给你一些输入，你只需要提交这些输入对应的答案，即为提交答案题。</p>
+</blockquote>
+<ul class="task-list">
+<li><label><input type="checkbox">P1335
+[NOI2013]小Q的修炼</label></li>
+<li><label><input type="checkbox">P1737
+[NOI2016]旷野大计算</label></li>
+<li><label><input type="checkbox">P3614 yyy棋 II</label></li>
+<li><label><input type="checkbox">P3640 [APIO2013]出题人</label></li>
+<li><label><input type="checkbox">P3782 [WC2017]排序</label></li>
+<li><label><input type="checkbox">P3836 Nowruz</label></li>
+<li><label><input type="checkbox">P4920 [WC2015]未来程序</label></li>
+<li><label><input type="checkbox">P5402 [CTS2019]无处安放</label></li>
+<li><label><input type="checkbox">P5418
+[CTSC2016]NOIP十合一</label></li>
+<li><label><input type="checkbox">P5600 【XR-4】尺规作图</label></li>
+</ul>
+<hr>
+<p>end</p>
+<hr>
+<h2 id="有必要二刷的题目">有必要二刷的题目</h2>
+<ul class="task-list">
+<li><label><input type="checkbox">P1047 [NOIP2005 普及组] 校门外的树 -
+线段树解法</label></li>
+<li><label><input type="checkbox">P1012 [NOIP1998 提高组] 拼数 -
+自定义排序</label></li>
+<li><label><input type="checkbox">P1025 [NOIP2001 提高组] 数的划分 -
+动态规划</label></li>
+<li><label><input type="checkbox">P1179 [NOIP2010 普及组] 数字统计 -
+数位dp</label></li>
+<li><label><input type="checkbox">P1908 逆序对 -
+线段树解法</label></li>
+</ul>
+<p>没做完的题目</p>
+<ul class="task-list">
+<li><label><input type="checkbox">P2482 [SDOI2010]猪国杀
+这个实在是太复杂了</label></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Luogu/2021-08/Luogu.html" title="洛谷刷题记录">https://meteordream.github.io/Luogu/2021-08/Luogu.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Luogu/" rel="tag"><i class="fa fa-tag"></i> Luogu</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E9%9A%8F%E7%AC%94/2021-07/%E7%A0%94%E7%A9%B6%E7%94%9F%E6%B6%AF%E5%B1%95%E6%9C%9B.html" rel="prev" title="研究生涯展望">
+      <i class="fa fa-chevron-left"></i> 研究生涯展望
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-01/654_%E6%9C%80%E5%A4%A7%E4%BA%8C%E5%8F%89%E6%A0%91(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』654 最大二叉树">
+      『LeetCode』654 最大二叉树 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="nav-number">2.</span> <span class="nav-text">小技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#c%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B5%81"><span class="nav-number">2.1.</span> <span class="nav-text">C++字符串流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.</span> <span class="nav-text">C++输入输出问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">2.3.</span> <span class="nav-text">输入输出重定向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%B9%82%E5%92%8C%E5%BF%AB%E9%80%9F%E7%B4%A0%E6%95%B0%E5%88%A4%E6%96%AD"><span class="nav-number">2.4.</span> <span class="nav-text">快速幂和快速素数判断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E5%B9%82"><span class="nav-number">2.5.</span> <span class="nav-text">矩阵快速幂</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E5%8D%95"><span class="nav-number">3.</span> <span class="nav-text">题单</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#part-0-%E8%AF%95%E6%9C%BA%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">Part 0 试机题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-1-%E5%85%A5%E9%97%A8%E9%98%B6%E6%AE%B5"><span class="nav-number">3.2.</span> <span class="nav-text">Part 1 入门阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-1.1-%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B"><span class="nav-number">3.2.1.</span> <span class="nav-text">Part 1.1 从零开始</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-1.2-%E6%95%B0%E7%BB%84%E5%9F%BA%E7%A1%80"><span class="nav-number">3.2.2.</span> <span class="nav-text">Part 1.2 数组基础</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-1.3-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%9F%BA%E7%A1%80"><span class="nav-number">3.2.3.</span> <span class="nav-text">Part 1.3 字符串基础</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-1.4-%E5%87%BD%E6%95%B0%E9%80%92%E5%BD%92%E5%8F%8A%E9%80%92%E6%8E%A8"><span class="nav-number">3.2.4.</span> <span class="nav-text">Part 1.4 函数，递归及递推</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-2-%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95"><span class="nav-number">3.3.</span> <span class="nav-text">Part 2 基础算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-2.1-%E6%A8%A1%E6%8B%9F"><span class="nav-number">3.3.1.</span> <span class="nav-text">Part 2.1 模拟</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-2.2-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95"><span class="nav-number">3.3.2.</span> <span class="nav-text">Part 2.2 排序算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-2.3-%E4%BA%8C%E5%88%86%E7%AD%94%E6%A1%88"><span class="nav-number">3.3.3.</span> <span class="nav-text">Part 2.3 二分答案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-2.4-%E5%88%86%E6%B2%BB"><span class="nav-number">3.3.4.</span> <span class="nav-text">Part 2.4 分治</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-2.5-%E8%B4%AA%E5%BF%83"><span class="nav-number">3.3.5.</span> <span class="nav-text">Part 2.5 贪心</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-2.6-%E6%9E%84%E9%80%A0"><span class="nav-number">3.3.6.</span> <span class="nav-text">Part 2.6 构造</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-2.7-%E9%AB%98%E7%B2%BE%E5%BA%A6"><span class="nav-number">3.3.7.</span> <span class="nav-text">Part 2.7 高精度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-2.8-%E5%89%8D%E7%BC%80%E5%92%8C-%E5%B7%AE%E5%88%86"><span class="nav-number">3.3.8.</span> <span class="nav-text">Part 2.8 前缀和 &amp; 差分</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-3-%E6%90%9C%E7%B4%A2"><span class="nav-number">3.4.</span> <span class="nav-text">Part 3 搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-3.1-%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2"><span class="nav-number">3.4.1.</span> <span class="nav-text">Part 3.1 深度优先搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-3.2-%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2"><span class="nav-number">3.4.2.</span> <span class="nav-text">Part 3.2 广度优先搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-3.3-%E8%AE%B0%E5%BF%86%E5%8C%96%E6%90%9C%E7%B4%A2"><span class="nav-number">3.4.3.</span> <span class="nav-text">Part 3.3 记忆化搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-3.4-%E6%90%9C%E7%B4%A2%E7%9A%84%E5%89%AA%E6%9E%9D"><span class="nav-number">3.4.4.</span> <span class="nav-text">Part 3.4 搜索的剪枝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-3.5-%E5%8F%8C%E5%90%91%E6%90%9C%E7%B4%A2"><span class="nav-number">3.4.5.</span> <span class="nav-text">Part 3.5 双向搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-3.6-a"><span class="nav-number">3.4.6.</span> <span class="nav-text">Part 3.6 A*</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-3.7-ida"><span class="nav-number">3.4.7.</span> <span class="nav-text">Part 3.7 IDA*</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-3.8-dlx"><span class="nav-number">3.4.8.</span> <span class="nav-text">Part 3.8 DLX</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-4-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.</span> <span class="nav-text">Part 4 动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.1-%E7%BA%BF%E6%80%A7%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.1.</span> <span class="nav-text">Part 4.1 线性动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.2-%E8%83%8C%E5%8C%85%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.2.</span> <span class="nav-text">Part 4.2 背包动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.3-%E5%8C%BA%E9%97%B4%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.3.</span> <span class="nav-text">Part 4.3 区间动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.4-%E6%A0%91%E5%BD%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.4.</span> <span class="nav-text">Part 4.4 树形动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.5-%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.5.</span> <span class="nav-text">Part 4.5 状态压缩动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.6-%E5%80%8D%E5%A2%9E%E4%BC%98%E5%8C%96%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.6.</span> <span class="nav-text">Part 4.6 倍增优化动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.7-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BC%98%E5%8C%96%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.7.</span> <span class="nav-text">Part 4.7
+数据结构优化动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.8-%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97%E4%BC%98%E5%8C%96%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.8.</span> <span class="nav-text">Part 4.8
+单调队列优化动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.9-%E6%96%9C%E7%8E%87%E4%BC%98%E5%8C%96%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.9.</span> <span class="nav-text">Part 4.9 斜率优化动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.10-%E5%86%B3%E7%AD%96%E5%8D%95%E8%B0%83%E6%80%A7%E4%BC%98%E5%8C%96%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.10.</span> <span class="nav-text">Part 4.10
+决策单调性优化动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.11-%E6%95%B0%E4%BD%8D%E7%BB%9F%E8%AE%A1%E7%B1%BB%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.11.</span> <span class="nav-text">Part 4.11 数位统计类动态规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-4.12-%E8%BD%AE%E5%BB%93%E7%BA%BF%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.5.12.</span> <span class="nav-text">Part 4.12 轮廓线动态规划</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-5-%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">3.6.</span> <span class="nav-text">Part 5 字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-5.1-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%93%88%E5%B8%8C"><span class="nav-number">3.6.1.</span> <span class="nav-text">Part 5.1 字符串哈希</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-5.2-kmp"><span class="nav-number">3.6.2.</span> <span class="nav-text">Part 5.2 KMP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-5.3-manacher"><span class="nav-number">3.6.3.</span> <span class="nav-text">Part 5.3 Manacher</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-5.4-trie%E6%A0%91"><span class="nav-number">3.6.4.</span> <span class="nav-text">Part 5.4 Trie树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-5.5-ac%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="nav-number">3.6.5.</span> <span class="nav-text">Part 5.5 AC自动机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-5.6-%E5%9B%9E%E6%96%87%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="nav-number">3.6.6.</span> <span class="nav-text">Part 5.6 回文自动机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-5.7-%E5%90%8E%E7%BC%80%E6%95%B0%E7%BB%84"><span class="nav-number">3.6.7.</span> <span class="nav-text">Part 5.7 后缀数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-5.8-%E5%90%8E%E7%BC%80%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="nav-number">3.6.8.</span> <span class="nav-text">Part 5.8 后缀自动机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-6-%E6%95%B0%E5%AD%A6"><span class="nav-number">3.7.</span> <span class="nav-text">Part 6 数学</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.1-%E4%BD%8D%E8%BF%90%E7%AE%97"><span class="nav-number">3.7.1.</span> <span class="nav-text">Part 6.1 位运算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.2-%E6%95%B4%E9%99%A4%E7%9B%B8%E5%85%B3"><span class="nav-number">3.7.2.</span> <span class="nav-text">Part 6.2 整除相关</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.2.1-%E7%B4%A0%E6%95%B0"><span class="nav-number">3.7.2.1.</span> <span class="nav-text">Part 6.2.1 素数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.2.2-%E6%9C%80%E5%A4%A7%E5%85%AC%E7%BA%A6%E6%95%B0"><span class="nav-number">3.7.2.2.</span> <span class="nav-text">Part 6.2.2 最大公约数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.2.3-%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0"><span class="nav-number">3.7.2.3.</span> <span class="nav-text">Part 6.2.3 欧拉函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.3-%E5%90%8C%E4%BD%99%E6%96%B9%E7%A8%8B"><span class="nav-number">3.7.3.</span> <span class="nav-text">Part 6.3 同余方程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.3.1-%E7%BA%BF%E6%80%A7%E5%90%8C%E4%BD%99%E6%96%B9%E7%A8%8B%E4%B9%98%E6%B3%95%E9%80%86%E5%85%83"><span class="nav-number">3.7.3.1.</span> <span class="nav-text">Part 6.3.1
+线性同余方程&amp;乘法逆元</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.3.2-%E4%B8%AD%E5%9B%BD%E5%89%A9%E4%BD%99%E5%AE%9A%E7%90%86"><span class="nav-number">3.7.3.2.</span> <span class="nav-text">Part 6.3.2 中国剩余定理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.3.3-%E9%AB%98%E6%AC%A1%E5%90%8C%E4%BD%99%E6%96%B9%E7%A8%8B"><span class="nav-number">3.7.3.3.</span> <span class="nav-text">Part 6.3.3 高次同余方程</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.4-%E5%8D%9A%E5%BC%88%E8%AE%BA"><span class="nav-number">3.7.4.</span> <span class="nav-text">Part 6.4 博弈论</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.5-%E6%A6%82%E7%8E%87%E4%B8%8E%E6%9C%9F%E6%9C%9B"><span class="nav-number">3.7.5.</span> <span class="nav-text">Part 6.5 概率与期望</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.6-%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6"><span class="nav-number">3.7.6.</span> <span class="nav-text">Part 6.6 组合数学</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.6.1-%E6%8E%92%E5%88%97%E7%BB%84%E5%90%88"><span class="nav-number">3.7.6.1.</span> <span class="nav-text">Part 6.6.1 排列组合</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.6.2-%E5%8D%A1%E7%89%B9%E5%85%B0%E6%95%B0%E6%96%AF%E7%89%B9%E6%9E%97%E6%95%B0"><span class="nav-number">3.7.6.2.</span> <span class="nav-text">Part 6.6.2
+卡特兰数&amp;斯特林数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.6.3-%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86"><span class="nav-number">3.7.6.3.</span> <span class="nav-text">Part 6.6.3 容斥原理</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.7-%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0"><span class="nav-number">3.7.7.</span> <span class="nav-text">Part 6.7 线性代数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.7.1-%E7%9F%A9%E9%98%B5"><span class="nav-number">3.7.7.1.</span> <span class="nav-text">Part 6.7.1 矩阵</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.7.2-%E9%AB%98%E6%96%AF%E6%B6%88%E5%85%83"><span class="nav-number">3.7.7.2.</span> <span class="nav-text">Part 6.7.2 高斯消元</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.7.3-%E7%BA%BF%E6%80%A7%E5%9F%BA"><span class="nav-number">3.7.7.3.</span> <span class="nav-text">Part 6.7.3 线性基</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.8-%E5%A4%9A%E9%A1%B9%E5%BC%8F"><span class="nav-number">3.7.8.</span> <span class="nav-text">Part 6.8 多项式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.9-%E8%8E%AB%E6%AF%94%E4%B9%8C%E6%96%AF%E5%8F%8D%E6%BC%94"><span class="nav-number">3.7.9.</span> <span class="nav-text">Part 6.9 莫比乌斯反演</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.10-%E7%AD%9B%E6%B3%95"><span class="nav-number">3.7.10.</span> <span class="nav-text">Part 6.10 筛法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.11-%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92"><span class="nav-number">3.7.11.</span> <span class="nav-text">Part 6.11 线性规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.12-%E6%95%B0%E5%80%BC%E6%96%B9%E6%B3%95"><span class="nav-number">3.7.12.</span> <span class="nav-text">Part 6.12 数值方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.12.1-%E4%B8%89%E5%88%86%E6%B3%95"><span class="nav-number">3.7.12.1.</span> <span class="nav-text">Part 6.12.1 三分法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-6.12.2-%E8%87%AA%E9%80%82%E5%BA%94%E8%BE%9B%E6%99%AE%E6%A3%AE%E6%B3%95"><span class="nav-number">3.7.12.2.</span> <span class="nav-text">Part 6.12.2 自适应辛普森法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-6.13-%E7%BD%AE%E6%8D%A2%E7%BE%A4"><span class="nav-number">3.7.13.</span> <span class="nav-text">Part 6.13 置换群</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-7-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.8.</span> <span class="nav-text">Part 7 数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.1-%E9%93%BE%E8%A1%A8"><span class="nav-number">3.8.1.</span> <span class="nav-text">Part 7.1 链表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.2-%E6%A0%88"><span class="nav-number">3.8.2.</span> <span class="nav-text">Part 7.2 栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.3-%E9%98%9F%E5%88%97"><span class="nav-number">3.8.3.</span> <span class="nav-text">Part 7.3 队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.4-%E5%B9%B6%E6%9F%A5%E9%9B%86"><span class="nav-number">3.8.4.</span> <span class="nav-text">Part 7.4 并查集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.5-%E4%BA%8C%E5%8F%89%E5%A0%86"><span class="nav-number">3.8.5.</span> <span class="nav-text">Part 7.5 二叉堆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.6-st%E8%A1%A8"><span class="nav-number">3.8.6.</span> <span class="nav-text">Part 7.6 ST表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.7-%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84"><span class="nav-number">3.8.7.</span> <span class="nav-text">Part 7.7 树状数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.8-%E7%BA%BF%E6%AE%B5%E6%A0%91"><span class="nav-number">3.8.8.</span> <span class="nav-text">Part 7.8 线段树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.9-%E5%88%86%E5%9D%97"><span class="nav-number">3.8.9.</span> <span class="nav-text">Part 7.9 分块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.10-%E5%8F%AF%E5%B9%B6%E5%A0%86"><span class="nav-number">3.8.10.</span> <span class="nav-text">Part 7.10 可并堆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.11-%E4%B8%BB%E5%B8%AD%E6%A0%91"><span class="nav-number">3.8.11.</span> <span class="nav-text">Part 7.11 主席树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.12-%E5%B9%B3%E8%A1%A1%E6%A0%91"><span class="nav-number">3.8.12.</span> <span class="nav-text">Part 7.12 平衡树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.13-%E6%A0%91%E9%93%BE%E5%89%96%E5%88%86"><span class="nav-number">3.8.13.</span> <span class="nav-text">Part 7.13 树链剖分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.14-%E6%A0%91%E5%A5%97%E6%A0%91"><span class="nav-number">3.8.14.</span> <span class="nav-text">Part 7.14 树套树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.15-%E5%8A%A8%E6%80%81%E6%A0%91"><span class="nav-number">3.8.15.</span> <span class="nav-text">Part 7.15 动态树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.16-%E5%8F%AF%E6%8C%81%E4%B9%85%E5%8C%96%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.8.16.</span> <span class="nav-text">Part 7.16 可持久化数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.17-k-d-tree"><span class="nav-number">3.8.17.</span> <span class="nav-text">Part 7.17 K-D Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-7.18-%E7%8F%82%E6%9C%B5%E8%8E%89%E6%A0%91"><span class="nav-number">3.8.18.</span> <span class="nav-text">Part 7.18 珂朵莉树</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-8-%E5%9B%BE%E8%AE%BA"><span class="nav-number">3.9.</span> <span class="nav-text">Part 8 图论</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.1-%E5%9B%BE%E7%9A%84%E5%AD%98%E5%82%A8%E4%B8%8E%E9%81%8D%E5%8E%86"><span class="nav-number">3.9.1.</span> <span class="nav-text">Part 8.1 图的存储与遍历</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.2-%E6%9C%80%E7%9F%AD%E8%B7%AF%E9%97%AE%E9%A2%98"><span class="nav-number">3.9.2.</span> <span class="nav-text">Part 8.2 最短路问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.3-%E6%A0%91%E4%B8%8A%E9%97%AE%E9%A2%98"><span class="nav-number">3.9.3.</span> <span class="nav-text">Part 8.3 树上问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.3.1-%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">3.9.4.</span> <span class="nav-text">Part 8.3.1 二叉树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.3.2-%E6%A0%91%E7%9A%84%E7%9B%B4%E5%BE%84"><span class="nav-number">3.9.5.</span> <span class="nav-text">Part 8.3.2 树的直径</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.3.3-%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88"><span class="nav-number">3.9.6.</span> <span class="nav-text">Part 8.3.3 最近公共祖先</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.4-%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">3.9.7.</span> <span class="nav-text">Part 8.4 生成树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.5-%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F"><span class="nav-number">3.9.8.</span> <span class="nav-text">Part 8.5 拓扑排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.6-%E5%B7%AE%E5%88%86%E7%BA%A6%E6%9D%9F"><span class="nav-number">3.9.9.</span> <span class="nav-text">Part 8.6 差分约束</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.7-%E5%9B%BE%E7%9A%84%E8%BF%9E%E9%80%9A%E6%80%A7%E7%9B%B8%E5%85%B3"><span class="nav-number">3.9.10.</span> <span class="nav-text">Part 8.7 图的连通性相关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.8-%E4%BA%8C%E5%88%86%E5%9B%BE"><span class="nav-number">3.9.11.</span> <span class="nav-text">Part 8.8 二分图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.9-%E7%BD%91%E7%BB%9C%E6%B5%81"><span class="nav-number">3.9.12.</span> <span class="nav-text">Part 8.9 网络流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part-8.9.1-%E6%9C%80%E5%A4%A7%E6%B5%81"><span class="nav-number">3.9.12.1.</span> <span class="nav-text">Part 8.9.1 最大流</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-8.9.2-%E6%9C%80%E5%B0%8F%E5%89%B2"><span class="nav-number">3.9.12.2.</span> <span class="nav-text">Part 8.9.2 最小割</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-8.9.3-%E8%B4%B9%E7%94%A8%E6%B5%81"><span class="nav-number">3.9.12.3.</span> <span class="nav-text">Part 8.9.3 费用流</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-8.9.4-%E4%B8%8A%E4%B8%8B%E7%95%8C%E7%BD%91%E7%BB%9C%E6%B5%81"><span class="nav-number">3.9.12.4.</span> <span class="nav-text">Part 8.9.4 上下界网络流</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.10-2-sat"><span class="nav-number">3.9.13.</span> <span class="nav-text">Part 8.10 2-SAT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.11-%E7%82%B9%E5%88%86%E6%B2%BB"><span class="nav-number">3.9.14.</span> <span class="nav-text">Part 8.11 点分治</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.12-%E8%99%9A%E6%A0%91"><span class="nav-number">3.9.15.</span> <span class="nav-text">Part 8.12 虚树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-8.13-%E7%9F%A9%E9%98%B5%E6%A0%91%E5%AE%9A%E7%90%86"><span class="nav-number">3.9.16.</span> <span class="nav-text">Part 8.13 矩阵树定理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-9-%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95"><span class="nav-number">3.10.</span> <span class="nav-text">Part 9 计算几何</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-9.1-%E5%87%B8%E5%8C%85"><span class="nav-number">3.10.1.</span> <span class="nav-text">Part 9.1 凸包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-9.2-%E6%97%8B%E8%BD%AC%E5%8D%A1%E5%A3%B3"><span class="nav-number">3.10.2.</span> <span class="nav-text">Part 9.2 旋转卡壳</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-9.3-%E5%8D%8A%E5%B9%B3%E9%9D%A2%E4%BA%A4"><span class="nav-number">3.10.3.</span> <span class="nav-text">Part 9.3 半平面交</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#part-10-%E6%9D%82%E9%A1%B9"><span class="nav-number">3.11.</span> <span class="nav-text">Part 10 杂项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#part-10.1-%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB"><span class="nav-number">3.11.1.</span> <span class="nav-text">Part 10.1 模拟退火</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-10.2-01-%E5%88%86%E6%95%B0%E8%A7%84%E5%88%92"><span class="nav-number">3.11.2.</span> <span class="nav-text">Part 10.2 0&#x2F;1 分数规划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-10.3-%E7%A6%BB%E7%BA%BF%E7%AE%97%E6%B3%95"><span class="nav-number">3.11.3.</span> <span class="nav-text">Part 10.3 离线算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part-10.3.1-cdq-%E5%88%86%E6%B2%BB"><span class="nav-number">3.11.3.1.</span> <span class="nav-text">Part 10.3.1 CDQ 分治</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-10.3.2-%E6%95%B4%E4%BD%93%E4%BA%8C%E5%88%86"><span class="nav-number">3.11.3.2.</span> <span class="nav-text">Part 10.3.2 整体二分</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part-10.3.3-%E8%8E%AB%E9%98%9F"><span class="nav-number">3.11.3.3.</span> <span class="nav-text">Part 10.3.3 莫队</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-10.4-%E5%A5%87%E6%80%AA%E7%9A%84%E9%A2%98%E7%9B%AE"><span class="nav-number">3.11.4.</span> <span class="nav-text">Part 10.4 奇怪的题目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part-10.5-%E9%9D%9E%E4%BC%A0%E7%BB%9F%E9%A2%98"><span class="nav-number">3.11.5.</span> <span class="nav-text">Part 10.5 非传统题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part-10.5.1-%E6%8F%90%E4%BA%A4%E7%AD%94%E6%A1%88%E9%A2%98"><span class="nav-number">3.11.5.1.</span> <span class="nav-text">Part 10.5.1 提交答案题</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E5%BF%85%E8%A6%81%E4%BA%8C%E5%88%B7%E7%9A%84%E9%A2%98%E7%9B%AE"><span class="nav-number">4.</span> <span class="nav-text">有必要二刷的题目</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

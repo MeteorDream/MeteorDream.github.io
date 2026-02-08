@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="基础算法-分治 分治，即分而治之，将大问题分解为小问题，分别求解，最后合并结果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『洛谷』分治">
+<meta property="og:url" content="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-09/%E5%88%86%E6%B2%BB.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="基础算法-分治 分治，即分而治之，将大问题分解为小问题，分别求解，最后合并结果。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-15T05:58:02.000Z">
+<meta property="article:modified_time" content="2023-04-11T08:54:48.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Luogu">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-09/%E5%88%86%E6%B2%BB.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『洛谷』分治 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-09/%E5%88%86%E6%B2%BB.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『洛谷』分治
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-09-15 13:58:02" itemprop="dateCreated datePublished" datetime="2022-09-15T13:58:02+08:00">2022-09-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-11 16:54:48" itemprop="dateModified" datetime="2023-04-11T16:54:48+08:00">2023-04-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Luogu/" itemprop="url" rel="index"><span itemprop="name">Luogu</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">基础算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-09/%E5%88%86%E6%B2%BB.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-09/%E5%88%86%E6%B2%BB.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="基础算法-分治">基础算法-分治</h2>
+<p>分治，即分而治之，将大问题分解为小问题，分别求解，最后合并结果。</p>
+<hr>
+<span id="more"></span>
+<h2 id="p1226-模板快速幂取余运算">P1226 【模板】快速幂||取余运算</h2>
+<h3 id="题目描述">题目描述</h3>
+<p>给你三个整数 <span class="math inline"><em>a</em>, <em>b</em>, <em>p</em></span>，求 <span class="math inline"><em>a</em><sup><em>b</em></sup> mod  <em>p</em></span>。</p>
+<h3 id="输入格式">输入格式</h3>
+<p>输入只有一行三个整数，分别代表 <span class="math inline"><em>a</em>, <em>b</em>, <em>p</em></span>。</p>
+<h3 id="输出格式">输出格式</h3>
+<p>输出一行一个字符串 <code>a^b mod p=s</code>，其中 <span class="math inline"><em>a</em>, <em>b</em>, <em>p</em></span>
+分别为题目给定的值， <span class="math inline"><em>s</em></span>
+为运算结果。</p>
+<h3 id="样例-1">样例 #1</h3>
+<h4 id="样例输入-1">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 10 9</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2^10 mod 9=7</span><br></pre></td></tr></table></figure>
+<h3 id="提示">提示</h3>
+<p><strong>样例解释</strong></p>
+<p><span class="math inline">2<sup>10</sup> = 1024</span>，<span class="math inline">1024 mod  9 = 7</span>。</p>
+<p><strong>数据规模与约定</strong></p>
+<p>对于 <span class="math inline">100%</span> 的数据，保证 <span class="math inline">0 ≤ <em>a</em>, <em>b</em> &lt; 2<sup>31</sup></span>，<span class="math inline"><em>a</em> + <em>b</em> &gt; 0</span>，<span class="math inline">2 ≤ <em>p</em> &lt; 2<sup>31</sup></span>。</p>
+<h3 id="解题思路">解题思路</h3>
+<p>模板题没什么好解释的，不确定的话可以把数据拉到极限测试一下
+<code>2147483647</code>.</p>
+<h3 id="解答代码">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="function">ll <span class="title">qmod</span><span class="params">(ll a, ll b, ll p)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 快速幂 (a^b)%p</span></span><br><span class="line">    ll ans = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (ll cnt = a; b != <span class="number">0ll</span>; b &gt;&gt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((b &amp; <span class="number">1</span>) == <span class="number">1</span>) ans = (ans * cnt) % p;</span><br><span class="line">        cnt = (cnt * cnt) % p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ll a, b, p;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%lld%lld%lld&quot;</span>, &amp;a, &amp;b, &amp;p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%lld^%lld mod %lld=%lld&quot;</span>, a, b, p, <span class="built_in">qmod</span>(a, b, p));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p1010-noip1998-普及组-幂次方">P1010 [NOIP1998 普及组]
+幂次方</h2>
+<h3 id="题目描述-1">题目描述</h3>
+<p>任何一个正整数都可以用 <span class="math inline">2</span>
+的幂次方表示。例如 $137=2<sup>7+2</sup>3+2^0 $。</p>
+<p>同时约定方次用括号来表示，即 <span class="math inline"><em>a</em><sup><em>b</em></sup></span> 可表示为
+<span class="math inline"><em>a</em>(<em>b</em>)</span>。</p>
+<p>由此可知，<span class="math inline">137</span> 可表示为 <span class="math inline">2(7) + 2(3) + 2(0)</span></p>
+<p>进一步：</p>
+<p><span class="math inline">7 = 2<sup>2</sup> + 2 + 2<sup>0</sup></span> ( <span class="math inline">2<sup>1</sup></span> 用 <span class="math inline">2</span> 表示)，并且 <span class="math inline">3 = 2 + 2<sup>0</sup></span>。</p>
+<p>所以最后 <span class="math inline">137</span> 可表示为 <span class="math inline">2(2(2) + 2 + 2(0)) + 2(2 + 2(0)) + 2(0)</span>。</p>
+<p>又如 <span class="math inline">1315 = 2<sup>10</sup> + 2<sup>8</sup> + 2<sup>5</sup> + 2 + 1</span></p>
+<p>所以 <span class="math inline">1315</span> 最后可表示为 <span class="math inline">2(2(2 + 2(0)) + 2) + 2(2(2 + 2(0))) + 2(2(2) + 2(0)) + 2 + 2(0)</span>。</p>
+<h3 id="输入格式-1">输入格式</h3>
+<p>一行一个正整数 <span class="math inline"><em>n</em></span>。</p>
+<h3 id="输出格式-1">输出格式</h3>
+<p>符合约定的 <span class="math inline"><em>n</em></span> 的 <span class="math inline">0, 2</span> 表示（在表示中不能有空格）。</p>
+<h3 id="样例-1-1">样例 #1</h3>
+<h4 id="样例输入-1-1">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1315</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-1">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2(2(2+2(0))+2)+2(2(2+2(0)))+2(2(2)+2(0))+2+2(0)</span><br></pre></td></tr></table></figure>
+<h3 id="提示-1">提示</h3>
+<p><strong>【数据范围】</strong></p>
+<p>对于 <span class="math inline">100%</span> 的数据，<span class="math inline">1 ≤ <em>n</em> ≤ 2 × 10<sup>4</sup></span>。</p>
+<h3 id="解题思路-1">解题思路</h3>
+<p>任何一个正整数都可以用 <span class="math inline">2</span>
+的幂次方表示，不难理解，因为这句话和“<strong>任何一个正整数都能用二进制表示</strong>”是完全等价的，所以不难推出对应的表达式，至于剩下的，递归即可。</p>
+<blockquote>
+<p>不理解第一句话的可以将数字全部转为二进制表示看看：</p>
+<p><span class="math inline">137(1000 1001) = 2<sup>7</sup>(1000 0000) + 2<sup>3</sup>(1000) + 2<sup>0</sup>(1)</span>.</p>
+<p><span class="math inline">7, 3, 0</span> 都是二进制表示中 <span class="math inline">1</span> 对应的下标（从右向左）</p>
+</blockquote>
+<h3 id="解答代码-1">解答代码</h3>
+<blockquote>
+<p>水平有限，代码不太简洁</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function">string <span class="title">get</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">    stringstream ss;</span><br><span class="line">    <span class="type">bool</span> plus = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">30</span>; i &gt; <span class="number">1</span>; --i) &#123;</span><br><span class="line">        <span class="type">int</span> x = <span class="number">1</span> &lt;&lt; i;</span><br><span class="line">        <span class="keyword">if</span> ((n &amp; x) != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (plus) ss &lt;&lt; <span class="string">&quot;+&quot;</span>;</span><br><span class="line">            ss &lt;&lt; <span class="string">&quot;2(&quot;</span> &lt;&lt; <span class="built_in">get</span>(i) &lt;&lt; <span class="string">&#x27;)&#x27;</span>;</span><br><span class="line">            plus = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((n &amp; <span class="number">2</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (plus) ss &lt;&lt; <span class="string">&quot;+&quot;</span>;</span><br><span class="line">        ss &lt;&lt; <span class="number">2</span>;</span><br><span class="line">        plus = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((n &amp; <span class="number">1</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (plus) ss &lt;&lt; <span class="string">&quot;+&quot;</span>;</span><br><span class="line">        ss &lt;&lt; <span class="string">&quot;2(0)&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ss.<span class="built_in">str</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">get</span>(n);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p1257-平面上的最接近点对">P1257 平面上的最接近点对</h2>
+<h3 id="题目描述-2">题目描述</h3>
+<p>给定平面上 <span class="math inline"><em>n</em></span>
+个点，找出其中的一对点的距离，使得在这 <span class="math inline"><em>n</em></span>
+个点的所有点对中，该距离为所有点对中最小的。</p>
+<h3 id="输入格式-2">输入格式</h3>
+<p>第一行一个整数 <span class="math inline"><em>n</em></span>，表示点的个数。</p>
+<p>接下来 <span class="math inline"><em>n</em></span> 行，每行两个实数
+<span class="math inline"><em>x</em>, <em>y</em></span>
+，表示一个点的行坐标和列坐标。</p>
+<h3 id="输出格式-2">输出格式</h3>
+<p>仅一行，一个实数，表示最短距离，四舍五入保留 <span class="math inline">4</span> 位小数。</p>
+<h3 id="样例-1-2">样例 #1</h3>
+<h4 id="样例输入-1-2">样例输入 #1</h4>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">3</span><br><span class="line">1 1</span><br><span class="line">1 2</span><br><span class="line">2 2</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-2">样例输出 #1</h4>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.0000</span><br></pre></td></tr></table></figure>
+<h3 id="提示-2">提示</h3>
+<h4 id="数据规模与约定">数据规模与约定</h4>
+<p>对于 <span class="math inline">100%</span> 的数据，保证 <span class="math inline">1 ≤ <em>n</em> ≤ 10<sup>4</sup></span>，<span class="math inline">0 ≤ <em>x</em>, <em>y</em> ≤ 10<sup>9</sup></span>，小数点后的数字个数不超过
+<span class="math inline">6</span>。</p>
+<h3 id="解题思路-2">解题思路</h3>
+<p>其实接下来两题是一样的，只不过数据范围不同，这题范围暴力两两枚举即可</p>
+<h3 id="解答代码-2">解答代码</h3>
+<p>时间复杂度 <span class="math inline"><em>O</em>(<em>n</em><sup>2</sup>)</span>.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">redir</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="comment">//    std::cin.tie(0);</span></span><br><span class="line"><span class="comment">//    std::cout.tie(0);</span></span><br><span class="line"><span class="comment">//    freopen(&quot;luogu.in&quot;, &quot;r&quot;, stdin);</span></span><br><span class="line"><span class="comment">//    freopen(&quot;out.txt&quot;, &quot;w&quot;, stdout);</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">10007</span>;</span><br><span class="line"><span class="type">double</span> x[N], y[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">pow</span><span class="params">(<span class="type">double</span> x)</span> </span>&#123;<span class="keyword">return</span> x * x;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">redir</span>();</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%lf%lf&quot;</span>, &amp;x[i], &amp;y[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">double</span> ans = <span class="built_in">pow</span>(x[<span class="number">0</span>] - x[<span class="number">1</span>]) + <span class="built_in">pow</span>(y[<span class="number">0</span>] - y[<span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i + <span class="number">1</span>; j &lt; n; ++j) &#123;</span><br><span class="line">            ans = <span class="built_in">min</span>(ans, <span class="built_in">pow</span>(x[i] - x[j]) + <span class="built_in">pow</span>(y[i] - y[j]));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%.4lf&quot;</span>, <span class="built_in">sqrt</span>(ans));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p1429-平面最近点对加强版">P1429 平面最近点对（加强版）</h2>
+<h3 id="题目背景">题目背景</h3>
+<p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P7883">P7883</a>
+平面最近点对（加强加强版）</p>
+<h3 id="题目描述-3">题目描述</h3>
+<p>给定平面上 <span class="math inline"><em>n</em></span>
+个点，找出其中的一对点的距离，使得在这 <span class="math inline"><em>n</em></span>
+个点的所有点对中，该距离为所有点对中最小的</p>
+<h3 id="输入格式-3">输入格式</h3>
+<p>第一行：<span class="math inline"><em>n</em></span> ，保证 <span class="math inline">2 ≤ <em>n</em> ≤ 200000</span> 。(注：<span class="math inline">2<em>e</em>5</span>)</p>
+<p>接下来 <span class="math inline"><em>n</em></span>
+行：每行两个实数：<span class="math inline"><em>x</em> <em>y</em></span>
+，表示一个点的行坐标和列坐标，中间用一个空格隔开。</p>
+<h3 id="输出格式-3">输出格式</h3>
+<p>仅一行，一个实数，表示最短距离，精确到小数点后面 <span class="math inline">4</span> 位。</p>
+<h3 id="样例-1-3">样例 #1</h3>
+<h4 id="样例输入-1-3">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">3</span><br><span class="line">1 1</span><br><span class="line">1 2</span><br><span class="line">2 2</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-3">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.0000</span><br></pre></td></tr></table></figure>
+<h3 id="提示-3">提示</h3>
+<p>数据保证 <span class="math inline">0 ≤ <em>x</em>, <em>y</em> ≤ 10<sup>9</sup></span></p>
+<h3 id="解题思路-3">解题思路</h3>
+<p>其实平面最近点对是数据结构和算法教科书上经典的分治算法例题了，先排序，然后一分为二，然后结果有三种可能</p>
+<ul>
+<li>最近两点都在左边</li>
+<li>最近两点都在右边</li>
+<li>最近两点一个在左一个在右</li>
+</ul>
+<p>前两种情况递归可解，麻烦的是第三种情况，解决方法是划分条带</p>
+<p>我们假设划分的两个区间是 <span class="math inline">[<em>a</em>, <em>b</em>], [<em>b</em>, <em>c</em>] (<em>a</em> &lt; <em>b</em> &lt; <em>c</em>)</span>,
+且前两种情况的最优解为 <span class="math inline"><em>s</em></span>，那么如果第三种情况比 <span class="math inline"><em>s</em></span>
+更优，那么第三种情况的两个点横坐标应该在 <span class="math inline">[<em>b</em> − <em>s</em>, <em>b</em> + <em>s</em>]</span>
+的范围内，纵坐标同理，可以证明该方法最坏情况下复杂度为 <span class="math inline"><em>O</em>(<em>n</em>)</span>，不过如果每次都排序的话需要
+<span class="math inline"><em>O</em>(<em>n</em>log <em>n</em>)</span>
+最后总的时间复杂度为 <span class="math inline"><em>O</em>(<em>n</em>log<sup>2</sup><em>n</em>)</span>,
+不过可以预处理出分别按 <span class="math inline"><em>x</em>, <em>y</em></span> 排序（或者对 <span class="math inline"><em>y</em></span>
+的排序使用归并，那么每次内部排序都是 <span class="math inline"><em>O</em>(<em>n</em>)</span>）的结果，此时总时间复杂度为
+<span class="math inline"><em>O</em>(<em>n</em>log <em>n</em>)</span>.</p>
+<p>取巧了，正确做法看下一题加强加强版。</p>
+<h3 id="解答代码-3">解答代码</h3>
+<p>暴力的时间复杂度 <span class="math inline"><em>O</em>(<em>n</em><sup>2</sup>)</span>, 能拿 55
+分</p>
+<p>一个取巧的写法，可以 100 分</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">redir</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="comment">//    std::cin.tie(0);</span></span><br><span class="line"><span class="comment">//    std::cout.tie(0);</span></span><br><span class="line">    <span class="comment">// freopen(&quot;luogu.in&quot;, &quot;r&quot;, stdin);</span></span><br><span class="line"><span class="comment">//    freopen(&quot;out.txt&quot;, &quot;w&quot;, stdout);</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">200007</span>;</span><br><span class="line"><span class="type">double</span> x[N], y[N];</span><br><span class="line"><span class="type">int</span> sx[N], sy[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="type">double</span> <span class="title">pow</span><span class="params">(<span class="type">double</span> x)</span> </span>&#123;<span class="keyword">return</span> x * x;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">dist</span><span class="params">(<span class="type">int</span> x1, <span class="type">int</span> x2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sqrt</span>(<span class="built_in">pow</span>(x[x1] - x[x2]) + <span class="built_in">pow</span>(y[x1] - y[x2]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp_x</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x[a] &lt; x[b];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp_y</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> y[a] &lt; y[b];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">redir</span>();</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%lf%lf&quot;</span>, &amp;x[i], &amp;y[i]);</span><br><span class="line">        sx[i] = i; sy[i] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sort</span>(sx, sx + n, comp_x);</span><br><span class="line">    <span class="built_in">sort</span>(sy, sy + n, comp_y);</span><br><span class="line">    <span class="type">double</span> ans = <span class="built_in">dist</span>(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i + <span class="number">1</span>; j &lt; n; ++j) &#123;</span><br><span class="line">            <span class="keyword">if</span> (x[sx[j]] - x[sx[i]] &gt;= ans) <span class="keyword">break</span>;</span><br><span class="line">            ans = <span class="built_in">min</span>(ans, <span class="built_in">dist</span>(sx[i], sx[j]));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i + <span class="number">1</span>; j &lt; n; ++j) &#123;</span><br><span class="line">            <span class="keyword">if</span> (y[sy[j]] - y[sy[i]] &gt;= ans) <span class="keyword">break</span>;</span><br><span class="line">            ans = <span class="built_in">min</span>(ans, <span class="built_in">dist</span>(sy[i], sy[j]));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%.4lf&quot;</span>, ans);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p7883-平面最近点对加强加强版">P7883
+平面最近点对（加强加强版）</h2>
+<h3 id="题目背景-1">题目背景</h3>
+<p><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P1429">P1429
+平面最近点对（加强版）</a>里最高赞题解写道：</p>
+<blockquote>
+<p>我们充分发扬人类智慧：<br>
+将所有点全部绕原点旋转同一个角度，然后按 <span class="math inline"><em>x</em></span> 坐标排序<br>
+根据数学直觉，在随机旋转后，答案中的两个点在数组中肯定不会离得太远<br>
+所以我们只取每个点向后的 <span class="math inline">5</span>
+个点来计算答案<br>
+这样速度快得飞起，在 <span class="math inline"><em>n</em> = 1000000</span> 时都可以在 1 s
+内卡过</p>
+</blockquote>
+<p>当然，这是错的。</p>
+<h3 id="题目描述-4">题目描述</h3>
+<p>给定 <span class="math inline"><em>n</em></span>
+个二维欧几里得平面上的点 <span class="math inline"><em>p</em><sub>1</sub>, <em>p</em><sub>2</sub>, …, <em>p</em><sub><em>n</em></sub></span>，请输出距离最近的两个点的距离。</p>
+<h3 id="输入格式-4">输入格式</h3>
+<p>输入第一行为一个正整数 <span class="math inline"><em>n</em></span>，表示点数。</p>
+<p>接下来 <span class="math inline"><em>n</em></span> 行，第 <span class="math inline"><em>i</em></span> 行为用空格隔开的整数 <span class="math inline"><em>x</em><sub><em>i</em></sub>, <em>y</em><sub><em>i</em></sub></span>，表示
+<span class="math inline"><em>p</em><sub><em>i</em></sub> = (<em>x</em><sub><em>i</em></sub>, <em>y</em><sub><em>i</em></sub>)</span>。</p>
+<p>输入保证：没有两个坐标完全相同的点。</p>
+<h3 id="输出格式-4">输出格式</h3>
+<p>输出一行，包含一个整数 <span class="math inline"><em>D</em><sup>2</sup></span>，表示距离最近的两个点的距离的<strong>平方</strong>。</p>
+<p>由于输入的点为整点，因此这个值一定是整数。</p>
+<h3 id="样例-1-4">样例 #1</h3>
+<h4 id="样例输入-1-4">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2</span><br><span class="line">-10000000 -10000000</span><br><span class="line">10000000 10000000</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-4">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">800000000000000</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2">样例 #2</h3>
+<h4 id="样例输入-2">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">5</span><br><span class="line">1 1</span><br><span class="line">1 9</span><br><span class="line">9 1</span><br><span class="line">9 9</span><br><span class="line">0 10</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2</span><br></pre></td></tr></table></figure>
+<h3 id="提示-4">提示</h3>
+<p>对于第二组样例，<span class="math inline">(1, 9)</span>、<span class="math inline">(0, 10)</span> 两个点最近，距离为 <span class="math inline">$\sqrt 2$</span>，因此你需要输出 <span class="math inline">2</span>。</p>
+<h4 id="数据范围">数据范围</h4>
+<p>对于 <span class="math inline">100%</span> 的数据，<span class="math inline">2 ≤ <em>n</em> ≤ 4 × 10<sup>5</sup></span>，<span class="math inline">−10<sup>7</sup> ≤ <em>x</em><sub><em>i</em></sub>, <em>y</em><sub><em>i</em></sub> ≤ 10<sup>7</sup></span>。</p>
+<p>本题目标复杂度是 <span class="math inline"><em>O</em>(<em>n</em>log<sup>2</sup><em>n</em>)</span>。设置
+350ms 时限的原因是：</p>
+<ol type="1">
+<li><span class="math inline"><em>O</em>(<em>n</em>log<sup>2</sup><em>n</em>)</span>
+参考代码使用 <code>cin</code> 不会 TLE。最快的 std 能 <span class="math inline">&lt;</span> 100ms。</li>
+<li><span class="citation" data-cites="wlzhouzhuan">@wlzhouzhuan</span>
+的程序能恰好在 350ms 内跑 <span class="math inline">1000<em>n</em></span> 次检查。</li>
+<li>150 组测试数据，为了防止卡评测。</li>
+</ol>
+<h3 id="解题思路-4">解题思路</h3>
+<p>看本文上一题的解题思路，是一样的</p>
+<h3 id="解答代码-4">解答代码</h3>
+<p>上一题取巧的代码，这题还能拿 120 分</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">redir</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="comment">//    std::cin.tie(0);</span></span><br><span class="line"><span class="comment">//    std::cout.tie(0);</span></span><br><span class="line">    <span class="comment">// freopen(&quot;luogu.in&quot;, &quot;r&quot;, stdin);</span></span><br><span class="line"><span class="comment">//    freopen(&quot;out.txt&quot;, &quot;w&quot;, stdout);</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ll long long</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">400007</span>;</span><br><span class="line">ll x[N], y[N];</span><br><span class="line"><span class="type">int</span> sx[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">inline</span> ll <span class="title">pow</span><span class="params">(ll x)</span> </span>&#123;<span class="keyword">return</span> x * x;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">dist</span><span class="params">(<span class="type">int</span> x1, <span class="type">int</span> x2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">pow</span>(x[x1] - x[x2]) + <span class="built_in">pow</span>(y[x1] - y[x2]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp_x</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x[a] &lt; x[b];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">redir</span>();</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%lld%lld&quot;</span>, &amp;x[i], &amp;y[i]);</span><br><span class="line">        sx[i] = i; <span class="comment">//sy[i] = i;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sort</span>(sx, sx + n, comp_x);</span><br><span class="line">    ll ans = <span class="built_in">dist</span>(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i + <span class="number">1</span>; j &lt; n; ++j) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">pow</span>(x[sx[j]] - x[sx[i]]) &gt;= ans) <span class="keyword">break</span>;</span><br><span class="line">            ans = <span class="built_in">min</span>(ans, <span class="built_in">dist</span>(sx[i], sx[j]));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%lld&quot;</span>, ans);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分治法：已经全部通过 150 个用例，但还有优化点 =&gt; 对 y
+排序使用归并可以保证严格 <span class="math inline"><em>O</em>(<em>n</em><em>l</em><em>o</em><em>g</em><em>n</em>)</span>.
+(PS: 建议去本题评论区看看“人类智慧”的好些做法🤣)</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">long</span> <span class="type">long</span> ll;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">400007</span>;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Point</span> &#123;</span><br><span class="line">    ll x, y;</span><br><span class="line">&#125; p[N];</span><br><span class="line"><span class="type">int</span> n, temp[N];</span><br><span class="line">ll INF = <span class="number">1ll</span> &lt;&lt; <span class="number">60</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">get_data</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%lld&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%lld%lld&quot;</span>, &amp;p[i].x, &amp;p[i].y);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp_x</span><span class="params">(<span class="type">const</span> Point &amp;a, <span class="type">const</span> Point &amp;b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a.x &lt; b.x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp_y</span><span class="params">(<span class="type">const</span> <span class="type">int</span> &amp;a, <span class="type">const</span> <span class="type">int</span> &amp;b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> p[a].y &lt; p[b].y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">sqrt</span><span class="params">(<span class="type">int</span> a)</span> </span>&#123;</span><br><span class="line">    ll b = a;</span><br><span class="line">    <span class="keyword">return</span> b * b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">dist</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 计算两点间的距离</span></span><br><span class="line">    <span class="type">int</span> dx = p[a].x - p[b].x, dy = p[a].y - p[b].y;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sqrt</span>(dx) + <span class="built_in">sqrt</span>(dy);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">min_point</span><span class="params">(<span class="type">int</span> left, <span class="type">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 计算 [left, right] 范围内最近两点距离</span></span><br><span class="line">    <span class="keyword">if</span> (left == right) <span class="keyword">return</span> INF;</span><br><span class="line">    <span class="keyword">if</span> (left + <span class="number">1</span> == right) <span class="keyword">return</span> <span class="built_in">dist</span>(left, right);</span><br><span class="line">    <span class="type">int</span> mid = left + right &gt;&gt; <span class="number">1</span>;</span><br><span class="line">    ll d = <span class="built_in">min</span>(<span class="built_in">min_point</span>(left, mid), <span class="built_in">min_point</span>(mid + <span class="number">1</span>, right));</span><br><span class="line">    <span class="comment">// 借助临时数组储存符合要求的点的下标</span></span><br><span class="line">    <span class="type">int</span> k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = left; i &lt;= right; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">sqrt</span>(p[i].x - p[mid].x) &lt;= d) temp[k++] = i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sort</span>(temp, temp + k, comp_y);</span><br><span class="line">    <span class="comment">// 暴力计算两点间最近距离</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; k; ++i) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i + <span class="number">1</span>; j &lt; k &amp;&amp; <span class="built_in">sqrt</span>(p[temp[j]].y - p[temp[i]].y) &lt; d; ++j) &#123;</span><br><span class="line">            ll td = <span class="built_in">dist</span>(temp[i], temp[j]);</span><br><span class="line">            <span class="keyword">if</span> (td &lt; d) d = td;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">get_data</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sort</span>(p, p + n, comp_x);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%lld&quot;</span>, <span class="built_in">min_point</span>(<span class="number">0</span>, n - <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p3612-usaco17jansecret-cow-code-s">P3612 [USACO17JAN]Secret Cow
+Code S</h2>
+<h3 id="题面翻译">题面翻译</h3>
+<p>奶牛正在试验秘密代码，并设计了一种方法来创建一个无限长的字符串作为其代码的一部分使用。</p>
+<p>给定一个字符串，让后面的字符旋转一次（每一次正确的旋转，最后一个字符都会成为新的第一个字符）。也就是说，给定一个初始字符串，之后的每一步都会增加当前字符串的长度。</p>
+<p>给定初始字符串和索引，请帮助奶牛计算无限字符串中位置 <span class="math inline"><em>N</em></span> 的字符。</p>
+<p>第一行输入一个字符串。该字符串包含最多 <span class="math inline">30</span> 个大写字母，数据保证 <span class="math inline"><em>N</em> ≤ 10<sup>18</sup></span> 。</p>
+<p>第二行输入 <span class="math inline"><em>N</em></span>。请注意，数据可能很大，放进一个标准的
+<span class="math inline">32</span> 位整数可能不够，所以你可能要使用一个
+<span class="math inline">64</span> 位的整数类型（例如，在 C/C++ 中是
+<code>long long</code>）。</p>
+<p>请输出从初始字符串生成的无限字符串中的位置的字符。第一个字符是 <span class="math inline"><em>N</em> = 1</span>.。</p>
+<p>感谢@y_z_h 的翻译</p>
+<h3 id="题目描述-5">题目描述</h3>
+<p>The cows are experimenting with secret codes, and have devised a
+method for creating an infinite-length string to be used as part of one
+of their codes.</p>
+<p>Given a string <span class="math inline"><em>s</em></span>, let <span class="math inline"><em>F</em>(<em>s</em>)</span> be <span class="math inline"><em>s</em></span> followed by <span class="math inline"><em>s</em></span> “rotated” one character to the
+right (in a right rotation, the last character of <span class="math inline"><em>s</em></span> rotates around and becomes the new
+first character). Given an initial string <span class="math inline"><em>s</em></span>, the cows build their
+infinite-length code string by repeatedly applying <span class="math inline"><em>F</em></span>; each step therefore doubles the
+length of the current string.</p>
+<p>Given the initial string and an index <span class="math inline"><em>N</em></span>, please help the cows compute the
+character at the <span class="math inline"><em>N</em></span>th position
+within the infinite code string.</p>
+<h3 id="输入格式-5">输入格式</h3>
+<p>The input consists of a single line containing a string followed by
+<span class="math inline"><em>N</em></span>. The string consists of at
+most 30 uppercase characters, and <span class="math inline"><em>N</em> ≤ 10<sup>18</sup></span>.</p>
+<p>Note that <span class="math inline"><em>N</em></span> may be too
+large to fit into a standard 32-bit integer, so you may want to use a
+64-bit integer type (e.g., a “long long” in C/C++).</p>
+<h3 id="输出格式-5">输出格式</h3>
+<p>Please output the <span class="math inline"><em>N</em></span>th
+character of the infinite code built from the initial string. The first
+character is <span class="math inline"><em>N</em> = 1</span>.</p>
+<h3 id="样例-1-5">样例 #1</h3>
+<h4 id="样例输入-1-5">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">COW 8</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-5">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C</span><br></pre></td></tr></table></figure>
+<h3 id="提示-5">提示</h3>
+<p>In this example, the initial string COW expands as follows:</p>
+<p>COW -&gt; COWWCO -&gt; COW WCO OCO WWC</p>
+<p>12345678</p>
+<h3 id="解题思路-5">解题思路</h3>
+<p>每一次旋转字符串都会变长一倍，可以推导以下需要旋转几次，然后再逆向推导回去是原字符串的第几个字母</p>
+<h3 id="解答代码-5">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">long</span> <span class="type">long</span> n;</span><br><span class="line">string s;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    cin &gt;&gt; s &gt;&gt; n;</span><br><span class="line">    <span class="comment">// 顺推字符串的长度</span></span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> b = s.<span class="built_in">size</span>(), t = b;</span><br><span class="line">    <span class="keyword">while</span> (t &lt; n) t *= <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// 逆推在原字符串位置</span></span><br><span class="line">    <span class="keyword">while</span> (n &gt; b) &#123;</span><br><span class="line">        <span class="comment">// 如果在字符串的右半部分，就要推导其在左半部分的位置</span></span><br><span class="line">        <span class="keyword">if</span> (n &gt; t / <span class="number">2</span>) <span class="keyword">if</span> (--n &gt; t / <span class="number">2</span>) n -= t / <span class="number">2</span>;</span><br><span class="line">        t /= <span class="number">2</span>; <span class="comment">// 下一轮字符串长度</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; s[n - <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-09/%E5%88%86%E6%B2%BB.html" title="『洛谷』分治">https://meteordream.github.io/Luogu/基础算法/2022-09/分治.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Luogu/" rel="tag"><i class="fa fa-tag"></i> Luogu</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-09/1619_%E5%88%A0%E9%99%A4%E6%9F%90%E4%BA%9B%E5%85%83%E7%B4%A0%E5%90%8E%E7%9A%84%E6%95%B0%E7%BB%84%E5%9D%87%E5%80%BC(%E7%AE%80%E5%8D%95).html" rel="prev" title="『LeetCode』1619 删除某些元素后的数组均值">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』1619 删除某些元素后的数组均值
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-09/827_%E6%9C%80%E5%A4%A7%E4%BA%BA%E5%B7%A5%E5%B2%9B(%E5%9B%B0%E9%9A%BE).html" rel="next" title="『LeetCode』827 最大人工岛">
+      『LeetCode』827 最大人工岛 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95-%E5%88%86%E6%B2%BB"><span class="nav-number">1.</span> <span class="nav-text">基础算法-分治</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p1226-%E6%A8%A1%E6%9D%BF%E5%BF%AB%E9%80%9F%E5%B9%82%E5%8F%96%E4%BD%99%E8%BF%90%E7%AE%97"><span class="nav-number">2.</span> <span class="nav-text">P1226 【模板】快速幂||取余运算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1"><span class="nav-number">2.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1"><span class="nav-number">2.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA"><span class="nav-number">2.5.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-number">2.6.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81"><span class="nav-number">2.7.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p1010-noip1998-%E6%99%AE%E5%8F%8A%E7%BB%84-%E5%B9%82%E6%AC%A1%E6%96%B9"><span class="nav-number">3.</span> <span class="nav-text">P1010 [NOIP1998 普及组]
+幂次方</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-1"><span class="nav-number">3.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">3.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">3.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-1"><span class="nav-number">3.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-1"><span class="nav-number">3.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-1"><span class="nav-number">3.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-1"><span class="nav-number">3.5.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-1"><span class="nav-number">3.6.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-1"><span class="nav-number">3.7.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p1257-%E5%B9%B3%E9%9D%A2%E4%B8%8A%E7%9A%84%E6%9C%80%E6%8E%A5%E8%BF%91%E7%82%B9%E5%AF%B9"><span class="nav-number">4.</span> <span class="nav-text">P1257 平面上的最接近点对</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-2"><span class="nav-number">4.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-2"><span class="nav-number">4.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-2"><span class="nav-number">4.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-2"><span class="nav-number">4.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-2"><span class="nav-number">4.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-2"><span class="nav-number">4.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-2"><span class="nav-number">4.5.</span> <span class="nav-text">提示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A7%84%E6%A8%A1%E4%B8%8E%E7%BA%A6%E5%AE%9A"><span class="nav-number">4.5.1.</span> <span class="nav-text">数据规模与约定</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-2"><span class="nav-number">4.6.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-2"><span class="nav-number">4.7.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p1429-%E5%B9%B3%E9%9D%A2%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9%E5%8A%A0%E5%BC%BA%E7%89%88"><span class="nav-number">5.</span> <span class="nav-text">P1429 平面最近点对（加强版）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="nav-number">5.1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-3"><span class="nav-number">5.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-3"><span class="nav-number">5.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-3"><span class="nav-number">5.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-3"><span class="nav-number">5.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-3"><span class="nav-number">5.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-3"><span class="nav-number">5.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-3"><span class="nav-number">5.6.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-3"><span class="nav-number">5.7.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-3"><span class="nav-number">5.8.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p7883-%E5%B9%B3%E9%9D%A2%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9%E5%8A%A0%E5%BC%BA%E5%8A%A0%E5%BC%BA%E7%89%88"><span class="nav-number">6.</span> <span class="nav-text">P7883
+平面最近点对（加强加强版）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF-1"><span class="nav-number">6.1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-4"><span class="nav-number">6.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-4"><span class="nav-number">6.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-4"><span class="nav-number">6.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-4"><span class="nav-number">6.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-4"><span class="nav-number">6.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-4"><span class="nav-number">6.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2"><span class="nav-number">6.6.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2"><span class="nav-number">6.6.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2"><span class="nav-number">6.6.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-4"><span class="nav-number">6.7.</span> <span class="nav-text">提示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4"><span class="nav-number">6.7.1.</span> <span class="nav-text">数据范围</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-4"><span class="nav-number">6.8.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-4"><span class="nav-number">6.9.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p3612-usaco17jansecret-cow-code-s"><span class="nav-number">7.</span> <span class="nav-text">P3612 [USACO17JAN]Secret Cow
+Code S</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E9%9D%A2%E7%BF%BB%E8%AF%91"><span class="nav-number">7.1.</span> <span class="nav-text">题面翻译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-5"><span class="nav-number">7.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-5"><span class="nav-number">7.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-5"><span class="nav-number">7.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-5"><span class="nav-number">7.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-5"><span class="nav-number">7.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-5"><span class="nav-number">7.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-5"><span class="nav-number">7.6.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-5"><span class="nav-number">7.7.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-5"><span class="nav-number">7.8.</span> <span class="nav-text">解答代码</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

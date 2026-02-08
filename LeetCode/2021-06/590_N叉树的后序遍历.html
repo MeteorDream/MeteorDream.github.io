@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="题目 590. N 叉树的后序遍历 难度: 简单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『LeetCode』590 N叉树的后序遍历">
+<meta property="og:url" content="https://meteordream.github.io/LeetCode/2021-06/590_N%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="题目 590. N 叉树的后序遍历 难度: 简单">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/LeetCode/2021-06/590_N叉树的后序遍历/20220603221457.png">
+<meta property="article:published_time" content="2021-06-29T03:00:47.000Z">
+<meta property="article:modified_time" content="2021-06-29T03:21:40.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="LeetCode">
+<meta property="article:tag" content="二叉树">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/LeetCode/2021-06/590_N叉树的后序遍历/20220603221457.png">
+
+<link rel="canonical" href="https://meteordream.github.io/LeetCode/2021-06/590_N%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『LeetCode』590 N叉树的后序遍历 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/LeetCode/2021-06/590_N%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『LeetCode』590 N叉树的后序遍历
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-29 11:00:47 / 修改时间：11:21:40" itemprop="dateCreated datePublished" datetime="2021-06-29T11:00:47+08:00">2021-06-29</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LeetCode/" itemprop="url" rel="index"><span itemprop="name">LeetCode</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/LeetCode/2021-06/590_N%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/LeetCode/2021-06/590_N%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目">题目</h2>
+<p><a href="%5B题目链接%5D(https://leetcode-cn.com/problems/n-ary-tree-postorder-traversal/)">590.
+N 叉树的后序遍历</a></p>
+<p>难度: 简单</p>
+<span id="more"></span>
+<p>给定一个 N 叉树，返回其节点值的 <strong>后序遍历</strong> 。</p>
+<p>N 叉树 在输入中按层序遍历进行序列化表示，每组子节点由空值
+<code>null</code> 分隔（请参见示例）。</p>
+<p><strong>进阶：</strong></p>
+<p>递归法很简单，你可以使用迭代法完成此题吗?</p>
+<p><strong>示例 1：</strong></p>
+<p>’‘’html 1 / |<br>
+3 2 4 /<br>
+5 6’’’</p>
+<blockquote>
+<p><strong>输入：</strong>root = [1,null,3,2,4,null,5,6]<br>
+<strong>输出：</strong>[5,6,3,2,4,1]</p>
+</blockquote>
+<p><strong>示例 2：</strong></p>
+<figure>
+<img data-src="590_N叉树的后序遍历/20220603221457.png" alt="sample_4_964.png">
+<figcaption aria-hidden="true">sample_4_964.png</figcaption>
+</figure>
+<blockquote>
+<p><strong>输入：</strong>root =
+[1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]<br>
+<strong>输出：</strong>[2,6,14,11,7,3,12,8,4,13,9,10,5,1]</p>
+</blockquote>
+<p><strong>提示：</strong></p>
+<ul>
+<li>N 叉树的高度小于或等于 1000</li>
+<li>节点总数在范围 <span class="math inline">[0, 10<sup>4</sup>]</span>
+内</li>
+</ul>
+<hr>
+<h2 id="递归">递归</h2>
+<p>递归方法很简单，只需先<strong>递归的</strong>遍历孩子结点再遍历根结点即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">postorder</span>(<span class="params">self, root: <span class="string">&#x27;Node&#x27;</span></span>) -&gt; <span class="type">List</span>[<span class="built_in">int</span>]:</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">dfs</span>(<span class="params">root: <span class="string">&#x27;Node&#x27;</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">for</span> child <span class="keyword">in</span> root.children:</span><br><span class="line">                dfs(child)</span><br><span class="line">            value.append(root.val)</span><br><span class="line">        </span><br><span class="line">        value = []</span><br><span class="line">        <span class="keyword">if</span> root:</span><br><span class="line">            dfs(root)</span><br><span class="line">        <span class="keyword">return</span> value</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Java */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> List&lt;Integer&gt; <span class="title function_">postorder</span><span class="params">(Node root)</span> &#123;</span><br><span class="line">        List&lt;Integer&gt; value = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        post(root, value);</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">post</span><span class="params">(Node root, List&lt;Integer&gt; value)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (root != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Node cur : root.children) &#123;</span><br><span class="line">                <span class="keyword">if</span> (cur != <span class="literal">null</span>)</span><br><span class="line">                    post(cur, value);</span><br><span class="line">            &#125;</span><br><span class="line">            value.add(root.val);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C++ */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; value;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(Node* root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> child: root-&gt;children)</span><br><span class="line">            <span class="built_in">dfs</span>(child);</span><br><span class="line">        value.<span class="built_in">emplace_back</span>(root-&gt;val);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">postorder</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (root != <span class="literal">nullptr</span>)</span><br><span class="line">            <span class="built_in">dfs</span>(root);</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度: <span class="math inline"><em>O</em>(<em>n</em>)</span>
+，每个结点仅访问一次</li>
+<li>空间复杂度: <span class="math inline"><em>O</em>(<em>n</em>)</span>
+，N叉树成链表形式的时候递归深度会达到 <span class="math inline"><em>n</em></span></li>
+</ul>
+<hr>
+<h2 id="迭代">迭代</h2>
+<p>与二叉树类似，后序遍历的迭代方法有种 <strong>取巧</strong>
+的办法，即使用先序遍历，但遍历时正序遍历孩子结点，再将结果翻转，或者结果放在双端队列中，每次都在队头插入，即可得到
+“后序遍历”。</p>
+<p>上述的方法实际上并没有按照 <strong>“后序”</strong>
+的顺序访问结点，换而言之，这种“后序遍历”实际上是一种变形的先序遍历.</p>
+<p>下面将提供一种按照 <strong>“后序”</strong>
+的访问顺序的后序遍历，但N叉树的后序遍历与二次树的大同小异，所以请确保您已经理解并能够写出二叉树的
+后序遍历 的非递归写法再继续阅读；如果不能，请先完成这题： <a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-postorder-traversal/">145.
+二叉树的后序遍历</a></p>
+<p>好的，现在假设您已经学会了二叉树的非递归后序遍历，我们来看一看N叉树的后序遍历有什么不同。</p>
+<p>二叉树与N叉树的唯一区别仅仅在于
+<strong>孩子结点的数量</strong>，在二叉树的后序非递归算法中，我们使用了一个变量
+<code>prev</code>
+来记录上一个遍历的结点，这个变量的作用是用于区分栈顶结点的右子树是否已经遍历过，回忆二叉树的前序和中序遍历，栈中存放的结点是
+<strong>未访问的</strong> 和 <strong>访问过左子树的</strong>
+结点，而后序遍历栈中同时存放了
+<strong>访问过左子树和访问过右子树的</strong> 结点，所以需要一个标志即
+<code>prev</code> 来区分这两种结点。</p>
+<p>现在，从二叉树拓展到N叉树，孩子结点的数量不再是只有两个了，栈中可能会同时存在
+<strong>访问过一个孩子结点的、访问过两个孩子结点的、访问过三个孩子结点的……</strong>
+的结点，<del>这个时候仅仅一个标志已经无法帮助我们区分这些不同访问层次的结点</del>(后面仔细想下一个标志也可以实现，但是需要遍历孩子数组检索遍历到哪个孩子结点了，一方面会增加编程难度，另一方面如果N很大还会增大时间复杂度)，所以相对应的对于每一个结点，我们都要设置一个标志来记录该结点有多少个孩子结点已经遍历过了。</p>
+<p>由此，我们很容易就能由二叉树的后序非递归得到N叉树的后序非递归算法：</p>
+<ul>
+<li>对于访问二叉树的左孩子结点，我们改为访问N叉树的第一个孩子结点</li>
+<li>对于访问二叉树的右孩子结点，我们取得标志(已访问过的孩子数)然后访问下一个孩子结点</li>
+<li>对于判断是否访问过右孩子结点，我们根据标志判断孩子结点是否全部访问过</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">postorder</span>(<span class="params">self, root: <span class="string">&#x27;Node&#x27;</span></span>) -&gt; <span class="type">List</span>[<span class="built_in">int</span>]:</span><br><span class="line">        value, s = [], []</span><br><span class="line">        cur = root</span><br><span class="line">        <span class="keyword">while</span> s <span class="keyword">or</span> cur:</span><br><span class="line">            <span class="keyword">while</span> cur:</span><br><span class="line">                s.append((cur, <span class="number">0</span>))</span><br><span class="line">                <span class="keyword">if</span> cur.children:</span><br><span class="line">                    cur = cur.children[<span class="number">0</span>]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    cur = <span class="literal">None</span></span><br><span class="line">            cur, c = s.pop()</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> cur.children <span class="keyword">or</span> c &gt;= <span class="built_in">len</span>(cur.children):</span><br><span class="line">                value.append(cur.val)</span><br><span class="line">                cur = <span class="literal">None</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                c += <span class="number">1</span></span><br><span class="line">                s.append((cur, c))</span><br><span class="line">                <span class="keyword">if</span> c &lt; <span class="built_in">len</span>(cur.children):</span><br><span class="line">                    cur = cur.children[c]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    cur = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">return</span> value</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Java */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> List&lt;Integer&gt; <span class="title function_">postorder</span><span class="params">(Node root)</span> &#123;</span><br><span class="line">        List&lt;Integer&gt; value = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="comment">// child 记录 对应结点 已经遍历过的孩子数量</span></span><br><span class="line">        Deque&lt;Node&gt; s = <span class="keyword">new</span> <span class="title class_">ArrayDeque</span>&lt;&gt;();</span><br><span class="line">        Deque&lt;Integer&gt; child = <span class="keyword">new</span> <span class="title class_">ArrayDeque</span>&lt;&gt;();</span><br><span class="line">        <span class="type">Node</span> <span class="variable">cur</span> <span class="operator">=</span> root;</span><br><span class="line">        <span class="type">int</span> next;</span><br><span class="line">        <span class="keyword">while</span> (!s.isEmpty() || cur != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">while</span> (cur != <span class="literal">null</span>) &#123;</span><br><span class="line">                s.addLast(cur);</span><br><span class="line">                child.add(<span class="number">0</span>);</span><br><span class="line">                <span class="keyword">if</span> (cur.children.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    cur = cur.children.get(<span class="number">0</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span></span><br><span class="line">                    cur = <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            cur = s.pollLast();</span><br><span class="line">            next = child.pollLast();</span><br><span class="line">            <span class="keyword">if</span> (cur.children.size() == <span class="number">0</span> || next &gt;= cur.children.size()) &#123;</span><br><span class="line">                value.add(cur.val);</span><br><span class="line">                cur = <span class="literal">null</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                s.addLast(cur);</span><br><span class="line">                child.addLast(next + <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span> (next + <span class="number">1</span> &lt; cur.children.size())</span><br><span class="line">                    cur = cur.children.get(next + <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    cur = <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C++ */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">postorder</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; value;</span><br><span class="line">        stack&lt;pair&lt;Node*, <span class="type">int</span>&gt;&gt; s;</span><br><span class="line">        <span class="keyword">auto</span> cur = <span class="built_in">pair</span>(root, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">while</span> (!s.<span class="built_in">empty</span>() || cur.first != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="keyword">while</span> (cur.first != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                s.<span class="built_in">push</span>(cur);</span><br><span class="line">                <span class="keyword">if</span> (cur.first-&gt;children.<span class="built_in">size</span>() &gt; <span class="number">0</span>)</span><br><span class="line">                    cur = <span class="built_in">pair</span>(cur.first-&gt;children[<span class="number">0</span>], <span class="number">0</span>);</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    cur.first = <span class="literal">nullptr</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            cur = s.<span class="built_in">top</span>();</span><br><span class="line">            s.<span class="built_in">pop</span>();</span><br><span class="line">            <span class="keyword">if</span> (cur.first-&gt;children.<span class="built_in">size</span>() == <span class="number">0</span> || cur.second &gt;= cur.first-&gt;children.<span class="built_in">size</span>()) &#123;</span><br><span class="line">                value.<span class="built_in">emplace_back</span>(cur.first-&gt;val);</span><br><span class="line">                cur.first = <span class="literal">nullptr</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                ++cur.second;</span><br><span class="line">                s.<span class="built_in">push</span>(cur);</span><br><span class="line">                <span class="keyword">if</span> (cur.second &lt; cur.first-&gt;children.<span class="built_in">size</span>())</span><br><span class="line">                    cur = <span class="built_in">pair</span>(cur.first-&gt;children[cur.second], <span class="number">0</span>);</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    cur.first = <span class="literal">nullptr</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度: <span class="math inline"><em>O</em>(<em>n</em> × <em>N</em>)</span>
+，每个结点都会入栈出栈 孩子数量 次，满N叉树下复杂度达到 <span class="math inline"><em>O</em>(<em>n</em> × <em>N</em>)</span> ，其中
+<span class="math inline"><em>n</em></span> 为树中结点的数量</li>
+<li>空间复杂度: <span class="math inline"><em>O</em>(<em>n</em>)</span>，N叉树为链表状时空间复杂度最大</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/LeetCode/2021-06/590_N%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86.html" title="『LeetCode』590 N叉树的后序遍历">https://meteordream.github.io/LeetCode/2021-06/590_N叉树的后序遍历.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LeetCode/" rel="tag"><i class="fa fa-tag"></i> LeetCode</a>
+              <a href="/tags/Binary-Tree/" rel="tag"><i class="fa fa-tag"></i> 二叉树</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2021-06/483_%E6%9C%80%E5%B0%8F%E5%A5%BD%E8%BF%9B%E5%88%B6.html" rel="prev" title="『LeetCode』483 最小好进制">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』483 最小好进制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E9%9A%8F%E7%AC%94/2021-07/%E7%A0%94%E7%A9%B6%E7%94%9F%E6%B6%AF%E5%B1%95%E6%9C%9B.html" rel="next" title="研究生涯展望">
+      研究生涯展望 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%92%E5%BD%92"><span class="nav-number">2.</span> <span class="nav-text">递归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3"><span class="nav-number">3.</span> <span class="nav-text">迭代</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

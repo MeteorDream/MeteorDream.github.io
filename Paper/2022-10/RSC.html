@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Self-challenging Improves Cross-Domain Generalization Author: Zeyi Huang, Haohan Wang, Eric P. Xing &amp; Dong Huang Institution: School of Computer Science, Carnegie Mellon Univer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Self-challenging Improves Cross-Domain Generalization">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-10/RSC.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Self-challenging Improves Cross-Domain Generalization Author: Zeyi Huang, Haohan Wang, Eric P. Xing &amp; Dong Huang Institution: School of Computer Science, Carnegie Mellon Univer">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-10/RSC/504434_1_En_8_Fig1_HTML.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-10/RSC/504434_1_En_8_Figa_HTML.png">
+<meta property="article:published_time" content="2022-10-26T08:26:02.000Z">
+<meta property="article:modified_time" content="2022-10-26T08:26:02.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="域迁移">
+<meta property="article:tag" content="ECCV">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-10/RSC/504434_1_En_8_Fig1_HTML.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-10/RSC.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Self-challenging Improves Cross-Domain Generalization | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-10/RSC.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Self-challenging Improves Cross-Domain Generalization
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-10-26 16:26:02" itemprop="dateCreated datePublished" datetime="2022-10-26T16:26:02+08:00">2022-10-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-10/RSC.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-10/RSC.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li>Title: Self-challenging Improves Cross-Domain Generalization</li>
+<li>Author: Zeyi Huang, Haohan Wang, Eric P. Xing &amp; Dong Huang</li>
+<li>Institution: School of Computer Science, Carnegie Mellon University,
+Pittsburgh, USA<br>
+</li>
+<li>Year: 2020</li>
+<li>Journal: ECCV</li>
+<li>Source: <a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8">Springer</a>,
+<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2007.02454">Arxiv</a>, <a target="_blank" rel="noopener" href="https://github.com/DeLightCMU/RSC">Official code</a></li>
+<li>Idea:
+根据梯度大小将比较重要的特征掩去来强迫模型学习更多标签相关的特征</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@inproceedings&#123;huang2020self,</span><br><span class="line">  title=&#123;Self-challenging improves cross-domain generalization&#125;,</span><br><span class="line">  author=&#123;Huang, Zeyi and Wang, Haohan and Xing, Eric P and Huang, Dong&#125;,</span><br><span class="line">  booktitle=&#123;European Conference on Computer Vision&#125;,</span><br><span class="line">  pages=&#123;124--140&#125;,</span><br><span class="line">  year=&#123;2020&#125;,</span><br><span class="line">  organization=&#123;Springer&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>提出了 Representation Self-Challenging (<strong>RSC</strong>)
+用于提高模型的域泛化性能。具体思路是通过迭代地丢弃一些特征来使网络学习到更多和标签有关的特征。</p>
+<blockquote>
+<p>听起来和 dropout 差不多？</p>
+</blockquote>
+<h2 id="introduction">Introduction</h2>
+<p>作者提出的解决域泛化问题的方法消除每个 epoch
+中高梯度的响应特征来强迫模型学习更多相关的信息，作者提出这种方法的原因是认为模型其实不需要根据目标的所有信息就很很好的区分目标，如下图所示，可能只需要猫咪的耳朵、胡须等就能分辨出猫咪，此时模型就不会学习到其他一些更多的特征。</p>
+<figure>
+<img data-src="RSC/504434_1_En_8_Fig1_HTML.png" alt="Fig. 2.">
+<figcaption aria-hidden="true">Fig. 2.</figcaption>
+</figure>
+<p>作者提出的方法是 Representation Self Challenging
+(<strong>RSC</strong>)，即将梯度高的认为是关键信息将其抹去来使模型学习更多的信息增强其泛化性能。</p>
+<h2 id="method">Method</h2>
+<p>RSC 主要有三步：</p>
+<ol type="1">
+<li><strong>定位</strong>：首先计算前一层对应特征的梯度</li>
+</ol>
+<p><span class="math display">$$
+\begin{aligned} \mathbf {g}_\mathbf {z}= \partial (h(\mathbf
+{z};\widehat{\theta }_t^\text {top})\odot \mathbf {y})/\partial \mathbf
+{z}, \end{aligned}
+$$</span></p>
+<p>其中 <span class="math inline">⊙</span> 表示逐元素乘法，<span class="math inline"><em>h</em></span> 表示部分网络，<span class="math inline"><em>x</em>, <em>y</em></span> 表示输入和标签，RSC
+计算 <span class="math inline">(100 − <em>p</em>)<sup><em>t</em><em>h</em></sup></span>
+的百分比的元素记为 <span class="math inline"><em>q</em><sub><em>p</em></sub></span>
+然后得到一个掩模矩阵：</p>
+<p><span class="math display">$$
+\begin{aligned} \mathbf {m}(i) = {\left\{ \begin{array}{ll} 0, \quad
+\text {if}\quad \mathbf {g}_\mathbf {z}(i) \ge q_p \\ 1, \quad \text
+{otherwise} \end{array}\right. } \end{aligned}
+$$</span></p>
+<ol start="2" type="1">
+<li><strong>掩模</strong>：使用掩模矩阵对特征 <span class="math inline"><em>z</em></span> 进行掩模 <span class="math inline">$\begin{aligned} \tilde{\mathbf {z}}= \mathbf
+{z}\odot \mathbf {m} \end{aligned}$</span></li>
+<li><strong>更新</strong>：计算 <span class="math inline">$\begin{aligned} \tilde{\mathbf {s}} = \text
+{softmax}(h(\tilde{\mathbf {z}};\widehat{\theta }_t^\text {top})),
+\end{aligned}$</span> 然后使用梯度 <span class="math inline">$\begin{aligned} \tilde{\mathbf {g}}_\theta =
+\partial l(\tilde{\mathbf {s}}, \mathbf {y})/\partial \widehat{\theta
+}_t \end{aligned}$</span> 更新模型</li>
+</ol>
+<p>具体算法如下图所示</p>
+<figure>
+<img data-src="RSC/504434_1_En_8_Figa_HTML.png" alt="figure a">
+<figcaption aria-hidden="true">figure a</figcaption>
+</figure>
+<blockquote>
+<p>其实也不难理解，用通俗一点的语言解释：</p>
+<ol type="1">
+<li>先正常前向传播得到模型输出，然后反传计算中间层的特征梯度，根据梯度大小将确定一个
+01 掩模矩阵</li>
+<li>使用掩模矩阵对特征进行掩模然后重新前向传播得到输出</li>
+<li>使用新的输出反传计算梯度更新模型</li>
+</ol>
+</blockquote>
+<h2 id="detail">Detail</h2>
+<p>协变量偏移：每个域都相同的，例如猫的语义，但因为边缘分布的不同，可能会学习到不同的特征，例如尖尖的耳朵和胡须。</p>
+<blockquote>
+<p>具体推论行文看得眼花缭乱，不看惹</p>
+</blockquote>
+<p>有两种设置：逐空间的 RSC 和逐通道的 RSC</p>
+<p>有 dropout 的衍生方法声称在训练的开始阶段不进行 dropout
+操作，而是等网络学习到一定的特征以后再进行，作者也用上了有一点改进</p>
+<h2 id="experiment">Experiment</h2>
+<p>数据集：PACS, VLCS, Office-Home, ImageNet-Sketch</p>
+<blockquote>
+<p>在使用其开源代码复现时发现其实是多源域泛化，例如在 PACS
+中用其中一个域作为目标域而另外三个域合并作为源域</p>
+<p>好吧，这一点翻回去看论文的时候发现论文里面也有提到</p>
+</blockquote>
+<p>下面几个都是在 PACS 的消融实验</p>
+<p>表1：逐空间的 RSC，drop 比例为 50%</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 63%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Feature Drop Strategies</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Artpaint</th>
+<th style="text-align: left;">Cartoon</th>
+<th style="text-align: left;">Sketch</th>
+<th style="text-align: left;">Photo</th>
+<th style="text-align: left;">Avg ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Baseline [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/1#ref-CR4">4</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">78.96</td>
+<td style="text-align: left;">73.93</td>
+<td style="text-align: left;">70.59</td>
+<td style="text-align: left;"><strong>96.28</strong></td>
+<td style="text-align: left;">79.94</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">79.32</td>
+<td style="text-align: left;">75.27</td>
+<td style="text-align: left;">74.06</td>
+<td style="text-align: left;">95.54</td>
+<td style="text-align: left;">81.05</td>
+</tr>
+<tr>
+<td style="text-align: left;">Top-Activation</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">80.31</td>
+<td style="text-align: left;">76.05</td>
+<td style="text-align: left;">76.13</td>
+<td style="text-align: left;"><strong>95.72</strong></td>
+<td style="text-align: left;">82.03</td>
+</tr>
+<tr>
+<td style="text-align: left;">Top-Gradient</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;"><strong>81.23</strong></td>
+<td style="text-align: left;"><strong>77.23</strong></td>
+<td style="text-align: left;"><strong>77.56</strong></td>
+<td style="text-align: left;">95.61</td>
+<td style="text-align: left;"><strong>82.91</strong></td>
+</tr>
+</tbody>
+</table>
+<p>表2：逐空间的 RSC，用了“Top-gradient”</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 9%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Feature Dropping Percentage</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Artpaint</th>
+<th style="text-align: left;">Cartoon</th>
+<th style="text-align: left;">Sketch</th>
+<th style="text-align: left;">Photo</th>
+<th style="text-align: left;">Avg ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">66.7%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">80.11</td>
+<td style="text-align: left;">76.35</td>
+<td style="text-align: left;">76.24</td>
+<td style="text-align: left;">95.16</td>
+<td style="text-align: left;">81.97</td>
+</tr>
+<tr>
+<td style="text-align: left;">50.0%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">81.23</td>
+<td style="text-align: left;">77.23</td>
+<td style="text-align: left;">77.56</td>
+<td style="text-align: left;">95.61</td>
+<td style="text-align: left;">82.91</td>
+</tr>
+<tr>
+<td style="text-align: left;">33.3%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;"><strong>82.87</strong></td>
+<td style="text-align: left;"><strong>78.23</strong></td>
+<td style="text-align: left;"><strong>78.89</strong></td>
+<td style="text-align: left;">95.82</td>
+<td style="text-align: left;"><strong>83.95</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">25.0%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">81.63</td>
+<td style="text-align: left;">78.06</td>
+<td style="text-align: left;">78.12</td>
+<td style="text-align: left;">96.06</td>
+<td style="text-align: left;">83.46</td>
+</tr>
+<tr>
+<td style="text-align: left;">20.0%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">81.22</td>
+<td style="text-align: left;">77.43</td>
+<td style="text-align: left;">77.83</td>
+<td style="text-align: left;">96.25</td>
+<td style="text-align: left;">83.18</td>
+</tr>
+<tr>
+<td style="text-align: left;">13.7%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">80.71</td>
+<td style="text-align: left;">77.18</td>
+<td style="text-align: left;">77.12</td>
+<td style="text-align: left;"><strong>96.36</strong></td>
+<td style="text-align: left;">82.84</td>
+</tr>
+</tbody>
+</table>
+<p>表3：逐空间的 RSC，用了“Top-gradient”，drop 比例调整为 33.3%</p>
+<table>
+<colgroup>
+<col style="width: 23%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Batch Percentage</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Artpaint</th>
+<th style="text-align: left;">Cartoon</th>
+<th style="text-align: left;">Sketch</th>
+<th style="text-align: left;">Photo</th>
+<th style="text-align: left;">Avg ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">50.0%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;"><strong>82.87</strong></td>
+<td style="text-align: left;">78.23</td>
+<td style="text-align: left;">78.89</td>
+<td style="text-align: left;">95.82</td>
+<td style="text-align: left;">83.95</td>
+</tr>
+<tr>
+<td style="text-align: left;">33.3%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">82.32</td>
+<td style="text-align: left;"><strong>78.75</strong></td>
+<td style="text-align: left;"><strong>79.56</strong></td>
+<td style="text-align: left;">96.05</td>
+<td style="text-align: left;"><strong>84.17</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">25.0%</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">81.85</td>
+<td style="text-align: left;">78.32</td>
+<td style="text-align: left;">78.75</td>
+<td style="text-align: left;"><strong>96.21</strong></td>
+<td style="text-align: left;">83.78</td>
+</tr>
+</tbody>
+</table>
+<p>表4：“Top-Gradient”, Feature Dropping Percentage(33.3%33.3%) and
+Batch Percentage(33.3%33.3%).</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Artpaint</th>
+<th style="text-align: left;">Cartoon</th>
+<th style="text-align: left;">Sketch</th>
+<th style="text-align: left;">Photo</th>
+<th style="text-align: left;">Avg ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Spatial</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">82.32</td>
+<td style="text-align: left;">78.75</td>
+<td style="text-align: left;">79.56</td>
+<td style="text-align: left;"><strong>96.05</strong></td>
+<td style="text-align: left;">84.17</td>
+</tr>
+<tr>
+<td style="text-align: left;">Spatial+Channel</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;"><strong>83.43</strong></td>
+<td style="text-align: left;"><strong>80.31</strong></td>
+<td style="text-align: left;"><strong>80.85</strong></td>
+<td style="text-align: left;">95.99</td>
+<td style="text-align: left;"><strong>85.15</strong></td>
+</tr>
+</tbody>
+</table>
+<p>表5：Ablation study of Dropout methods. “S” and “C” represent
+spatial-wise and channel-wise respectively. For fair comparison, results
+of above methods are report at their best setting and hyperparameters.
+RSC used the hyperparameters selected in above ablation
+studies:“Top-Gradient”, Feature Dropping Percentage (33.3%33.3%) and
+Batch Percentage (33.3%33.3%).</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 66%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Artpaint</th>
+<th style="text-align: left;">Cartoon</th>
+<th style="text-align: left;">Sketch</th>
+<th style="text-align: left;">Photo</th>
+<th style="text-align: left;">Avg ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Baseline [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/5#ref-CR4">4</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">78.96</td>
+<td style="text-align: left;">73.93</td>
+<td style="text-align: left;">70.59</td>
+<td style="text-align: left;"><strong>96.28</strong></td>
+<td style="text-align: left;">79.94</td>
+</tr>
+<tr>
+<td style="text-align: left;">Cutout [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/5#ref-CR6">6</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">79.63</td>
+<td style="text-align: left;">75.35</td>
+<td style="text-align: left;">71.56</td>
+<td style="text-align: left;">95.87</td>
+<td style="text-align: left;">80.60</td>
+</tr>
+<tr>
+<td style="text-align: left;">DropBlock [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/5#ref-CR9">9</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">80.25</td>
+<td style="text-align: left;">77.54</td>
+<td style="text-align: left;">76.42</td>
+<td style="text-align: left;">95.64</td>
+<td style="text-align: left;">82.46</td>
+</tr>
+<tr>
+<td style="text-align: left;">AdversarialDropout [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/5#ref-CR21">21</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">82.35</td>
+<td style="text-align: left;">78.23</td>
+<td style="text-align: left;">75.86</td>
+<td style="text-align: left;">96.12</td>
+<td style="text-align: left;">83.07</td>
+</tr>
+<tr>
+<td style="text-align: left;">Random(S+C)</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">79.55</td>
+<td style="text-align: left;">75.56</td>
+<td style="text-align: left;">74.39</td>
+<td style="text-align: left;">95.36</td>
+<td style="text-align: left;">81.22</td>
+</tr>
+<tr>
+<td style="text-align: left;">Top-Activation(S+C)</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">81.03</td>
+<td style="text-align: left;">77.86</td>
+<td style="text-align: left;">76.65</td>
+<td style="text-align: left;">96.11</td>
+<td style="text-align: left;">82.91</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>RSC</strong>:
+Top-Gradient(S+C)</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;"><strong>83.43</strong></td>
+<td style="text-align: left;"><strong>80.31</strong></td>
+<td style="text-align: left;"><strong>80.85</strong></td>
+<td style="text-align: left;">95.99</td>
+<td style="text-align: left;"><strong>85.15</strong></td>
+</tr>
+</tbody>
+</table>
+<p>表6：<strong>DG results on PACS [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8#ref-CR13">13</a>]
+(Best in bold).</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 64%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">PACS</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Artpaint</th>
+<th style="text-align: left;">Cartoon</th>
+<th style="text-align: left;">Sketch</th>
+<th style="text-align: left;">Photo</th>
+<th style="text-align: left;">Avg ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Baseline [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR4">4</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">66.68</td>
+<td style="text-align: left;">69.41</td>
+<td style="text-align: left;">60.02</td>
+<td style="text-align: left;">89.98</td>
+<td style="text-align: left;">71.52</td>
+</tr>
+<tr>
+<td style="text-align: left;">Hex [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR31">31</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">66.80</td>
+<td style="text-align: left;">69.70</td>
+<td style="text-align: left;">56.20</td>
+<td style="text-align: left;">87.90</td>
+<td style="text-align: left;">70.20</td>
+</tr>
+<tr>
+<td style="text-align: left;">PAR [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR30">30</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">66.30</td>
+<td style="text-align: left;">66.30</td>
+<td style="text-align: left;">64.10</td>
+<td style="text-align: left;">89.60</td>
+<td style="text-align: left;">72.08</td>
+</tr>
+<tr>
+<td style="text-align: left;">MetaReg [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR1">1</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">69.82</td>
+<td style="text-align: left;">70.35</td>
+<td style="text-align: left;">59.26</td>
+<td style="text-align: left;"><strong>91.07</strong></td>
+<td style="text-align: left;">72.62</td>
+</tr>
+<tr>
+<td style="text-align: left;">Epi-FCR [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR14">14</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">64.70</td>
+<td style="text-align: left;">72.30</td>
+<td style="text-align: left;">65.00</td>
+<td style="text-align: left;">86.10</td>
+<td style="text-align: left;">72.00</td>
+</tr>
+<tr>
+<td style="text-align: left;">JiGen [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR4">4</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">67.63</td>
+<td style="text-align: left;">71.71</td>
+<td style="text-align: left;">65.18</td>
+<td style="text-align: left;">89.00</td>
+<td style="text-align: left;">73.38</td>
+</tr>
+<tr>
+<td style="text-align: left;">MASF [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR7">7</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">70.35</td>
+<td style="text-align: left;">72.46</td>
+<td style="text-align: left;"><strong>67.33</strong></td>
+<td style="text-align: left;">90.68</td>
+<td style="text-align: left;">75.21</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSC (ours)</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;"><strong>71.62</strong></td>
+<td style="text-align: left;"><strong>75.11</strong></td>
+<td style="text-align: left;">66.62</td>
+<td style="text-align: left;">90.88</td>
+<td style="text-align: left;"><strong>76.05</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Baseline [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR4">4</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">78.96</td>
+<td style="text-align: left;">73.93</td>
+<td style="text-align: left;">70.59</td>
+<td style="text-align: left;"><strong>96.28</strong></td>
+<td style="text-align: left;">79.94</td>
+</tr>
+<tr>
+<td style="text-align: left;">MASF [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR7">7</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">80.29</td>
+<td style="text-align: left;">77.17</td>
+<td style="text-align: left;">71.69</td>
+<td style="text-align: left;">94.99</td>
+<td style="text-align: left;">81.03</td>
+</tr>
+<tr>
+<td style="text-align: left;">Epi-FCR [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR14">14</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">82.10</td>
+<td style="text-align: left;">77.00</td>
+<td style="text-align: left;">73.00</td>
+<td style="text-align: left;">93.90</td>
+<td style="text-align: left;">81.50</td>
+</tr>
+<tr>
+<td style="text-align: left;">JiGen [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR4">4</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">79.42</td>
+<td style="text-align: left;">75.25</td>
+<td style="text-align: left;">71.35</td>
+<td style="text-align: left;">96.03</td>
+<td style="text-align: left;">80.51</td>
+</tr>
+<tr>
+<td style="text-align: left;">MetaReg [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR1">1</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;"><strong>83.70</strong></td>
+<td style="text-align: left;">77.20</td>
+<td style="text-align: left;">70.30</td>
+<td style="text-align: left;">95.50</td>
+<td style="text-align: left;">81.70</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSC (ours)</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">83.43</td>
+<td style="text-align: left;"><strong>80.31</strong></td>
+<td style="text-align: left;"><strong>80.85</strong></td>
+<td style="text-align: left;">95.99</td>
+<td style="text-align: left;"><strong>85.15</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Baseline [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR4">4</a>]</td>
+<td style="text-align: left;">ResNet50</td>
+<td style="text-align: left;">86.20</td>
+<td style="text-align: left;">78.70</td>
+<td style="text-align: left;">70.63</td>
+<td style="text-align: left;">97.66</td>
+<td style="text-align: left;">83.29</td>
+</tr>
+<tr>
+<td style="text-align: left;">MASF [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR7">7</a>]</td>
+<td style="text-align: left;">ResNet50</td>
+<td style="text-align: left;">82.89</td>
+<td style="text-align: left;">80.49</td>
+<td style="text-align: left;">72.29</td>
+<td style="text-align: left;">95.01</td>
+<td style="text-align: left;">82.67</td>
+</tr>
+<tr>
+<td style="text-align: left;">MetaReg [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/6#ref-CR1">1</a>]</td>
+<td style="text-align: left;">ResNet50</td>
+<td style="text-align: left;">87.20</td>
+<td style="text-align: left;">79.20</td>
+<td style="text-align: left;">70.30</td>
+<td style="text-align: left;">97.60</td>
+<td style="text-align: left;">83.60</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSC (ours)</td>
+<td style="text-align: left;">ResNet50</td>
+<td style="text-align: left;"><strong>87.89</strong></td>
+<td style="text-align: left;"><strong>82.16</strong></td>
+<td style="text-align: left;"><strong>83.35</strong></td>
+<td style="text-align: left;"><strong>97.92</strong></td>
+<td style="text-align: left;"><strong>87.83</strong></td>
+</tr>
+</tbody>
+</table>
+<p>表7：<strong>DG results on VLCS [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8#ref-CR27">27</a>]
+(Best in bold).</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 64%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">VLCS</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Caltech</th>
+<th style="text-align: left;">Labelme</th>
+<th style="text-align: left;">Pascal</th>
+<th style="text-align: left;">Sun</th>
+<th style="text-align: left;">Avg ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Baseline [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/7#ref-CR4">4</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">96.25</td>
+<td style="text-align: left;">59.72</td>
+<td style="text-align: left;">70.58</td>
+<td style="text-align: left;">64.51</td>
+<td style="text-align: left;">72.76</td>
+</tr>
+<tr>
+<td style="text-align: left;">Epi-FCR [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/7#ref-CR14">14</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">94.10</td>
+<td style="text-align: left;">64.30</td>
+<td style="text-align: left;">67.10</td>
+<td style="text-align: left;">65.90</td>
+<td style="text-align: left;">72.90</td>
+</tr>
+<tr>
+<td style="text-align: left;">JiGen [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/7#ref-CR4">4</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">96.93</td>
+<td style="text-align: left;">60.90</td>
+<td style="text-align: left;">70.62</td>
+<td style="text-align: left;">64.30</td>
+<td style="text-align: left;">73.19</td>
+</tr>
+<tr>
+<td style="text-align: left;">MASF [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/7#ref-CR7">7</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">94.78</td>
+<td style="text-align: left;"><strong>64.90</strong></td>
+<td style="text-align: left;">69.14</td>
+<td style="text-align: left;">67.64</td>
+<td style="text-align: left;">74.11</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSC (ours)</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;"><strong>97.61</strong></td>
+<td style="text-align: left;">61.86</td>
+<td style="text-align: left;"><strong>73.93</strong></td>
+<td style="text-align: left;"><strong>68.32</strong></td>
+<td style="text-align: left;"><strong>75.43</strong></td>
+</tr>
+</tbody>
+</table>
+<p>表8：DG results on Office-Home [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/8#ref-CR28">28</a>]
+(Best in bold).</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 63%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Office-Home</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Art</th>
+<th style="text-align: left;">Clipart</th>
+<th style="text-align: left;">Product</th>
+<th style="text-align: left;">Real</th>
+<th style="text-align: left;">Avg ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Baseline [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/8#ref-CR4">4</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">52.15</td>
+<td style="text-align: left;">45.86</td>
+<td style="text-align: left;">70.86</td>
+<td style="text-align: left;">73.15</td>
+<td style="text-align: left;">60.51</td>
+</tr>
+<tr>
+<td style="text-align: left;">JiGen [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/8#ref-CR4">4</a>]</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;">53.04</td>
+<td style="text-align: left;">47.51</td>
+<td style="text-align: left;">71.47</td>
+<td style="text-align: left;">72.79</td>
+<td style="text-align: left;">61.20</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSC (ours)</td>
+<td style="text-align: left;">ResNet18</td>
+<td style="text-align: left;"><strong>58.42</strong></td>
+<td style="text-align: left;"><strong>47.90</strong></td>
+<td style="text-align: left;"><strong>71.63</strong></td>
+<td style="text-align: left;"><strong>74.54</strong></td>
+<td style="text-align: left;"><strong>63.12</strong></td>
+</tr>
+</tbody>
+</table>
+<p>表9：<strong>DG results on ImageNet-Sketch [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8#ref-CR30">30</a>].</strong></p>
+<table>
+<colgroup>
+<col style="width: 75%">
+<col style="width: 6%">
+<col style="width: 9%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">ImageNet-Sketch</th>
+<th style="text-align: left;">Backbone</th>
+<th style="text-align: left;">Top-1 Acc ↑↑</th>
+<th style="text-align: left;">Top-5 Acc ↑↑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Baseline [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/9#ref-CR31">31</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">12.04</td>
+<td style="text-align: left;">24.80</td>
+</tr>
+<tr>
+<td style="text-align: left;">Hex [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/9#ref-CR31">31</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">14.69</td>
+<td style="text-align: left;">28.98</td>
+</tr>
+<tr>
+<td style="text-align: left;">PAR [<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/978-3-030-58536-5_8/tables/9#ref-CR30">30</a>]</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;">15.01</td>
+<td style="text-align: left;">29.57</td>
+</tr>
+<tr>
+<td style="text-align: left;">RSC (ours)</td>
+<td style="text-align: left;">AlexNet</td>
+<td style="text-align: left;"><strong>16.12</strong></td>
+<td style="text-align: left;"><strong>30.78</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="conclusion">Conclusion</h2>
+<p>作者引入了一种简单的训练启发式方法，可以直接应用于几乎任何CNN架构，无需额外的模型架构，也几乎不需要增加计算工作量。作者将其命名为
+RSC 。RSC 迭代地强制 CNN
+在训练域中激活不太占主导地位但仍与标签相关的特征。RSC的理论和实证分析验证了RSC是扩展训练域特征分布的基础而有效的方法。</p>
+<h2 id="code">Code</h2>
+<p>看看作者给出的开源代码叭~</p>
+<p>关键部分在模型的前向传播部分（略去了部分不太关心的模型函数）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ResNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, block, layers, jigsaw_classes=<span class="number">1000</span>, classes=<span class="number">100</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.inplanes = <span class="number">64</span></span><br><span class="line">        <span class="built_in">super</span>(ResNet, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.conv1 = nn.Conv2d(<span class="number">3</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>,</span><br><span class="line">                               bias=<span class="literal">False</span>)</span><br><span class="line">        <span class="variable language_">self</span>.bn1 = nn.BatchNorm2d(<span class="number">64</span>)</span><br><span class="line">        <span class="variable language_">self</span>.relu = nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        <span class="variable language_">self</span>.maxpool = nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.layer1 = <span class="variable language_">self</span>._make_layer(block, <span class="number">64</span>, layers[<span class="number">0</span>])</span><br><span class="line">        <span class="variable language_">self</span>.layer2 = <span class="variable language_">self</span>._make_layer(block, <span class="number">128</span>, layers[<span class="number">1</span>], stride=<span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.layer3 = <span class="variable language_">self</span>._make_layer(block, <span class="number">256</span>, layers[<span class="number">2</span>], stride=<span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.layer4 = <span class="variable language_">self</span>._make_layer(block, <span class="number">512</span>, layers[<span class="number">3</span>], stride=<span class="number">2</span>)</span><br><span class="line">        <span class="variable language_">self</span>.avgpool = nn.AvgPool2d(<span class="number">7</span>, stride=<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># self.jigsaw_classifier = nn.Linear(512 * block.expansion, jigsaw_classes)</span></span><br><span class="line">        <span class="variable language_">self</span>.class_classifier = nn.Linear(<span class="number">512</span> * block.expansion, classes)</span><br><span class="line">        <span class="comment">#self.domain_classifier = nn.Linear(512 * block.expansion, domains)</span></span><br><span class="line">        <span class="variable language_">self</span>.pecent = <span class="number">1</span>/<span class="number">3</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, gt=<span class="literal">None</span>, flag=<span class="literal">None</span>, epoch=<span class="literal">None</span></span>):</span><br><span class="line">        x = <span class="variable language_">self</span>.conv1(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.bn1(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.relu(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.maxpool(x)</span><br><span class="line"></span><br><span class="line">        x = <span class="variable language_">self</span>.layer1(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.layer2(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.layer3(x)</span><br><span class="line">        x = <span class="variable language_">self</span>.layer4(x)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> flag:</span><br><span class="line">            interval = <span class="number">10</span></span><br><span class="line">            <span class="keyword">if</span> epoch % interval == <span class="number">0</span>:</span><br><span class="line">                <span class="variable language_">self</span>.pecent = <span class="number">3.0</span> / <span class="number">10</span> + (epoch / interval) * <span class="number">2.0</span> / <span class="number">10</span></span><br><span class="line"></span><br><span class="line">            <span class="variable language_">self</span>.<span class="built_in">eval</span>()</span><br><span class="line">            x_new = x.clone().detach()</span><br><span class="line">            x_new = Variable(x_new.data, requires_grad=<span class="literal">True</span>)</span><br><span class="line">            x_new_view = <span class="variable language_">self</span>.avgpool(x_new)</span><br><span class="line">            x_new_view = x_new_view.view(x_new_view.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">            output = <span class="variable language_">self</span>.class_classifier(x_new_view)</span><br><span class="line">            class_num = output.shape[<span class="number">1</span>]</span><br><span class="line">            index = gt</span><br><span class="line">            num_rois = x_new.shape[<span class="number">0</span>]</span><br><span class="line">            num_channel = x_new.shape[<span class="number">1</span>]</span><br><span class="line">            H = x_new.shape[<span class="number">2</span>]</span><br><span class="line">            HW = x_new.shape[<span class="number">2</span>] * x_new.shape[<span class="number">3</span>]</span><br><span class="line">            one_hot = torch.zeros((<span class="number">1</span>), dtype=torch.float32).cuda()</span><br><span class="line">            one_hot = Variable(one_hot, requires_grad=<span class="literal">False</span>)</span><br><span class="line">            sp_i = torch.ones([<span class="number">2</span>, num_rois]).long()</span><br><span class="line">            sp_i[<span class="number">0</span>, :] = torch.arange(num_rois)</span><br><span class="line">            sp_i[<span class="number">1</span>, :] = index</span><br><span class="line">            sp_v = torch.ones([num_rois])</span><br><span class="line">            one_hot_sparse = torch.sparse.FloatTensor(sp_i, sp_v, torch.Size([num_rois, class_num])).to_dense().cuda()</span><br><span class="line">            one_hot_sparse = Variable(one_hot_sparse, requires_grad=<span class="literal">False</span>)</span><br><span class="line">            one_hot = torch.<span class="built_in">sum</span>(output * one_hot_sparse)</span><br><span class="line">            <span class="variable language_">self</span>.zero_grad()</span><br><span class="line">            one_hot.backward()</span><br><span class="line">            grads_val = x_new.grad.clone().detach()</span><br><span class="line">            grad_channel_mean = torch.mean(grads_val.view(num_rois, num_channel, -<span class="number">1</span>), dim=<span class="number">2</span>)</span><br><span class="line">            channel_mean = grad_channel_mean</span><br><span class="line">            grad_channel_mean = grad_channel_mean.view(num_rois, num_channel, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">            spatial_mean = torch.<span class="built_in">sum</span>(x_new * grad_channel_mean, <span class="number">1</span>)</span><br><span class="line">            spatial_mean = spatial_mean.view(num_rois, HW)</span><br><span class="line">            <span class="variable language_">self</span>.zero_grad()</span><br><span class="line"></span><br><span class="line">            choose_one = random.randint(<span class="number">0</span>, <span class="number">9</span>)</span><br><span class="line">            <span class="keyword">if</span> choose_one &lt;= <span class="number">4</span>:</span><br><span class="line">                <span class="comment"># ---------------------------- spatial -----------------------</span></span><br><span class="line">                spatial_drop_num = math.ceil(HW * <span class="number">1</span> / <span class="number">3.0</span>)</span><br><span class="line">                th18_mask_value = torch.sort(spatial_mean, dim=<span class="number">1</span>, descending=<span class="literal">True</span>)[<span class="number">0</span>][:, spatial_drop_num]</span><br><span class="line">                th18_mask_value = th18_mask_value.view(num_rois, <span class="number">1</span>).expand(num_rois, <span class="number">49</span>)</span><br><span class="line">                mask_all_cuda = torch.where(spatial_mean &gt; th18_mask_value, torch.zeros(spatial_mean.shape).cuda(),</span><br><span class="line">                                            torch.ones(spatial_mean.shape).cuda())</span><br><span class="line">                mask_all = mask_all_cuda.reshape(num_rois, H, H).view(num_rois, <span class="number">1</span>, H, H)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># -------------------------- channel ----------------------------</span></span><br><span class="line">                vector_thresh_percent = math.ceil(num_channel * <span class="number">1</span> / <span class="number">3.2</span>)</span><br><span class="line">                vector_thresh_value = torch.sort(channel_mean, dim=<span class="number">1</span>, descending=<span class="literal">True</span>)[<span class="number">0</span>][:, vector_thresh_percent]</span><br><span class="line">                vector_thresh_value = vector_thresh_value.view(num_rois, <span class="number">1</span>).expand(num_rois, num_channel)</span><br><span class="line">                vector = torch.where(channel_mean &gt; vector_thresh_value,</span><br><span class="line">                                     torch.zeros(channel_mean.shape).cuda(),</span><br><span class="line">                                     torch.ones(channel_mean.shape).cuda())</span><br><span class="line">                mask_all = vector.view(num_rois, num_channel, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># ----------------------------------- batch ----------------------------------------</span></span><br><span class="line">            cls_prob_before = F.softmax(output, dim=<span class="number">1</span>)</span><br><span class="line">            x_new_view_after = x_new * mask_all</span><br><span class="line">            x_new_view_after = <span class="variable language_">self</span>.avgpool(x_new_view_after)</span><br><span class="line">            x_new_view_after = x_new_view_after.view(x_new_view_after.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">            x_new_view_after = <span class="variable language_">self</span>.class_classifier(x_new_view_after)</span><br><span class="line">            cls_prob_after = F.softmax(x_new_view_after, dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">            sp_i = torch.ones([<span class="number">2</span>, num_rois]).long()</span><br><span class="line">            sp_i[<span class="number">0</span>, :] = torch.arange(num_rois)</span><br><span class="line">            sp_i[<span class="number">1</span>, :] = index</span><br><span class="line">            sp_v = torch.ones([num_rois])</span><br><span class="line">            one_hot_sparse = torch.sparse.FloatTensor(sp_i, sp_v, torch.Size([num_rois, class_num])).to_dense().cuda()</span><br><span class="line">            before_vector = torch.<span class="built_in">sum</span>(one_hot_sparse * cls_prob_before, dim=<span class="number">1</span>)</span><br><span class="line">            after_vector = torch.<span class="built_in">sum</span>(one_hot_sparse * cls_prob_after, dim=<span class="number">1</span>)</span><br><span class="line">            change_vector = before_vector - after_vector - <span class="number">0.0001</span></span><br><span class="line">            change_vector = torch.where(change_vector &gt; <span class="number">0</span>, change_vector, torch.zeros(change_vector.shape).cuda())</span><br><span class="line">            th_fg_value = torch.sort(change_vector, dim=<span class="number">0</span>, descending=<span class="literal">True</span>)[<span class="number">0</span>][<span class="built_in">int</span>(<span class="built_in">round</span>(<span class="built_in">float</span>(num_rois) * <span class="variable language_">self</span>.pecent))]</span><br><span class="line">            drop_index_fg = change_vector.gt(th_fg_value).long()</span><br><span class="line">            ignore_index_fg = <span class="number">1</span> - drop_index_fg</span><br><span class="line">            not_01_ignore_index_fg = ignore_index_fg.nonzero()[:, <span class="number">0</span>]</span><br><span class="line">            mask_all[not_01_ignore_index_fg.long(), :] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">            <span class="variable language_">self</span>.train()</span><br><span class="line">            mask_all = Variable(mask_all, requires_grad=<span class="literal">True</span>)</span><br><span class="line">            x = x * mask_all</span><br><span class="line"></span><br><span class="line">        x = <span class="variable language_">self</span>.avgpool(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.class_classifier(x) </span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>好像有一点点复杂，不看惹~</p>
+</blockquote>
+<hr>
+<h2 id="结果复现">结果复现</h2>
+<p>使用开源代码在 PACS 进行结果复现</p>
+<blockquote>
+<p>根据个人所使用的服务器的情况对代码的一些部分进行了微调</p>
+<p>原论文中结果在后面括号备注
+<strong>RSC</strong>，复现结果在后面括号备注 <strong>Ours</strong>.</p>
+<p>因为服务器比较拥挤，没有足够的显存，所以 ResNet50 的复现结果中 batch
+size 减小到 32 (默认值为 64 预计需要显存 15 G左右)</p>
+<p>后面发现不知道为什么结果差太远了想办法协商了下跑了 64 的 batch size
+发现结果相差极大</p>
+</blockquote>
+<table>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 13%">
+<col style="width: 20%">
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 8%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">Method</th>
+<th style="text-align: center;">Backbone</th>
+<th style="text-align: center;">Art painting</th>
+<th style="text-align: center;">Cartoon</th>
+<th style="text-align: center;">Sketch</th>
+<th style="text-align: center;">Photo</th>
+<th style="text-align: center;">Avg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Baseline(RSC)</td>
+<td style="text-align: center;">ResNet18</td>
+<td style="text-align: center;">78.96</td>
+<td style="text-align: center;">73.93</td>
+<td style="text-align: center;">70.59</td>
+<td style="text-align: center;">96.28</td>
+<td style="text-align: center;">79.94</td>
+</tr>
+<tr>
+<td style="text-align: center;">RSC(RSC)</td>
+<td style="text-align: center;">ResNet18</td>
+<td style="text-align: center;">83.43</td>
+<td style="text-align: center;">80.31</td>
+<td style="text-align: center;">80.85</td>
+<td style="text-align: center;">95.99</td>
+<td style="text-align: center;">85.51</td>
+</tr>
+<tr>
+<td style="text-align: center;">RSC(Ours)</td>
+<td style="text-align: center;">ResNet18</td>
+<td style="text-align: center;">79.79</td>
+<td style="text-align: center;">80.67</td>
+<td style="text-align: center;">82.74</td>
+<td style="text-align: center;">93.83</td>
+<td style="text-align: center;">84.26</td>
+</tr>
+<tr>
+<td style="text-align: center;">Baseline(RSC)</td>
+<td style="text-align: center;">ResNet50</td>
+<td style="text-align: center;">86.20</td>
+<td style="text-align: center;">78.70</td>
+<td style="text-align: center;">70.63</td>
+<td style="text-align: center;">97.66</td>
+<td style="text-align: center;">83.29</td>
+</tr>
+<tr>
+<td style="text-align: center;">RSC(RSC)</td>
+<td style="text-align: center;">ResNet50</td>
+<td style="text-align: center;">87.89</td>
+<td style="text-align: center;">82.16</td>
+<td style="text-align: center;">83.35</td>
+<td style="text-align: center;">97.92</td>
+<td style="text-align: center;">87.83</td>
+</tr>
+<tr>
+<td style="text-align: center;">RSC(Ours, bs32)</td>
+<td style="text-align: center;">ResNet50</td>
+<td style="text-align: center;">77.24</td>
+<td style="text-align: center;">82.03</td>
+<td style="text-align: center;">82.69</td>
+<td style="text-align: center;">93.71</td>
+<td style="text-align: center;">83.91</td>
+</tr>
+<tr>
+<td style="text-align: center;">RSC(Ours, bs64)</td>
+<td style="text-align: center;">ResNet50</td>
+<td style="text-align: center;">85.35</td>
+<td style="text-align: center;">85.92</td>
+<td style="text-align: center;">84.09</td>
+<td style="text-align: center;">95.20</td>
+<td style="text-align: center;">87.64</td>
+</tr>
+<tr>
+<td style="text-align: center;">RSC(Ours*)</td>
+<td style="text-align: center;">ResNet50</td>
+<td style="text-align: center;">84.13</td>
+<td style="text-align: center;">81.86</td>
+<td style="text-align: center;">79.90</td>
+<td style="text-align: center;">99.42</td>
+<td style="text-align: center;">86.32</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>*</code> 将开源代码中模型挪移到自己编写这边的框架来进行测试</p>
+</blockquote>
+<h2 id="references">References</h2>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-10/RSC.html" title="『论文笔记』Self-challenging Improves Cross-Domain Generalization">https://meteordream.github.io/Paper/2022-10/RSC.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E5%9F%9F%E8%BF%81%E7%A7%BB/" rel="tag"><i class="fa fa-tag"></i> 域迁移</a>
+              <a href="/tags/ECCV/" rel="tag"><i class="fa fa-tag"></i> ECCV</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-10/934_%E6%9C%80%E7%9F%AD%E7%9A%84%E6%A1%A5(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』934 最短的桥">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』934 最短的桥
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-10/1822_%E6%95%B0%E7%BB%84%E5%85%83%E7%B4%A0%E7%A7%AF%E7%9A%84%E7%AC%A6%E5%8F%B7(%E7%AE%80%E5%8D%95).html" rel="next" title="『LeetCode』1822 数组元素积的符号">
+      『LeetCode』1822 数组元素积的符号 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#detail"><span class="nav-number">5.</span> <span class="nav-text">Detail</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">6.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#code"><span class="nav-number">8.</span> <span class="nav-text">Code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%8E%B0"><span class="nav-number">9.</span> <span class="nav-text">结果复现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">10.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

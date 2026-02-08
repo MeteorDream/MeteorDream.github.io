@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Gradient Normalization for Generative Adversarial Networks Author: Yi-Lun Wu, Hong-Han Shuai, Zhi Rui Tam, Hong-Yu Chiu Institution: (台湾)國立交通大學 Year: 2021 Journal: ICCV2021 Source:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Gradient Normalization for Generative Adversarial Networks">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-07/GNGAN.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Gradient Normalization for Generative Adversarial Networks Author: Yi-Lun Wu, Hong-Han Shuai, Zhi Rui Tam, Hong-Yu Chiu Institution: (台湾)國立交通大學 Year: 2021 Journal: ICCV2021 Source:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220727211521407.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220727214021252.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220728140615776.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220728143929101.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220728144240350.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220728145414554.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220728152419262.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220728152534286.png">
+<meta property="article:published_time" content="2022-07-24T09:24:23.000Z">
+<meta property="article:modified_time" content="2022-08-29T06:21:49.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Normalization">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="ICCV">
+<meta property="article:tag" content="GAN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-07/GNGAN/image-20220727211521407.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-07/GNGAN.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Gradient Normalization for Generative Adversarial Networks | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-07/GNGAN.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Gradient Normalization for Generative Adversarial Networks
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-24 17:24:23" itemprop="dateCreated datePublished" datetime="2022-07-24T17:24:23+08:00">2022-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-29 14:21:49" itemprop="dateModified" datetime="2022-08-29T14:21:49+08:00">2022-08-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-07/GNGAN.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-07/GNGAN.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>20k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>18 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Gradient Normalization for Generative
+Adversarial Networks</li>
+<li><strong>Author</strong>: Yi-Lun Wu, Hong-Han Shuai, Zhi Rui Tam,
+Hong-Yu Chiu</li>
+<li><strong>Institution</strong>: (台湾)國立交通大學</li>
+<li><strong>Year</strong>: 2021</li>
+<li><strong>Journal</strong>: ICCV2021</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2109.02235">arxiv</a>, <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/ICCV2021/html/Wu_Gradient_Normalization_for_Generative_Adversarial_Networks_ICCV_2021_paper.html">open
+access</a>, <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/ICCV2021/papers/Wu_Gradient_Normalization_for_Generative_Adversarial_Networks_ICCV_2021_paper.pdf">pdf</a>,
+<a target="_blank" rel="noopener" href="https://github.com/basiclab/GNGAN-PyTorch">Official
+Code</a></li>
+<li><strong>Idea</strong>:
+提出了GN对整个模型进行Lipschitz约束来提高GAN训练的稳定性</li>
+<li><strong>Cite</strong>: Yi-Lun Wu, Hong-Han Shuai, Zhi-Rui Tam,
+Hong-Yu Chiu; Proceedings of the IEEE/CVF International Conference on
+Computer Vision (ICCV), 2021, pp. 6373-6382</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;GNGAN_2021_ICCV,</span><br><span class="line">    author = &#123;Yi-Lun Wu, Hong-Han Shuai, Zhi Rui Tam, Hong-Yu Chiu&#125;,</span><br><span class="line">    title = &#123;Gradient Normalization for Generative Adversarial Networks&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)&#125;,</span><br><span class="line">    month = &#123;October&#125;,</span><br><span class="line">    year = &#123;2021&#125;,</span><br><span class="line">    pages = &#123;6373-6382&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>文章提出了一种通用的 Gradient Normalization(GN)
+的方法来解决生成对抗网络(GANs)中由尖锐梯度空间导致的训练不稳定的问题。GN
+仅在鉴别器上增加了对梯度范数约束来提高鉴别器的性能。</p>
+<h2 id="introduction">Introduction</h2>
+<blockquote>
+<p>GAN 的评价指标: FID 和 IS 参考: <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35586657/article/details/98478508" class="uri">https://blog.csdn.net/qq_35586657/article/details/98478508</a></p>
+</blockquote>
+<p>GAN
+包含两个网络：生成器（目标是生成可以骗过鉴别器的图片），鉴别器（目标是鉴别出生成器生成的图片）。GANs
+的一个挑战性的问题是训练过程不稳定，其中一个原因是鉴别器的尖锐梯度空间(sharp
+gradient space)导致生成器模型崩塌。简单的处理方法是 L2
+规范化和权重裁剪，但这种处理方法会导致鉴别器的性能下降。另一种方法是对鉴别器通过正则化和规范化约束Lipschitz连续函数小于一个固定的Lipschitz常数
+<span class="math inline"><em>K</em></span>,
+可以在不牺牲鉴别器性能的条件下平滑梯度空间。</p>
+<p>作者认为可以从三个角度考察Lipschitz约束：</p>
+<ul>
+<li>约束模块还是模型，约束模型的好些，因为约束模块会降低单个模块性能</li>
+<li>基于采样的还是非基于采样的，如果方法需要从固定的分布进行采样，那就是基于采样的，非采样的好些，基于采样的可能遇到“新样本”时不那么有效</li>
+<li>严约束还是松约束，定义是梯度范数是否小于一个有限的固定值，严约束更好因为可以避免未见过的样本导致梯度不稳定</li>
+</ul>
+<p>目前还没有同时满足约束模块，非采样，严约束的方法，但作者提出的方法 GN
+就同时满足，并且很容易迁移到不同类型的网络结构中。</p>
+<p>这篇文章的三点贡献：</p>
+<ul>
+<li>针对 GAN 提出了 GN 很好的平衡了训练过程的稳定性和生成器的性能</li>
+<li>从理论上证明了 GN
+是梯度范数有界的，该性质可以避免生成器遇到梯度爆炸梯度消失的问题并且稳定训练过程</li>
+<li>IS 和 FID 评价的实验结果 SOTA</li>
+</ul>
+<h3 id="相关工作">相关工作</h3>
+<p>主要提到有两类：正则化(regularization), 规范化(Normalization)</p>
+<ul>
+<li>正则化：主要是对尖锐梯度进行约束，有基于梯度惩罚的方法，Lipschitz
+正则化、一致性约束、正交约束等</li>
+<li>规范化：例如基于谱范数的规范化、基于权重范数的规范化等。注意到规范化都是非采样的，在训练稳定性上会比正则化更优</li>
+</ul>
+<p><span class="math display">$$
+D_{KL}(p||q) = \sum_{i=1}^{N} p(x_i)\cdot log\frac{p(x_i)}{q(x_i)}
+$$</span></p>
+<blockquote>
+<p>对于 Wasserstein loss 和 WGAN 讲解比较清晰的一篇文章: <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25071913" class="uri">https://zhuanlan.zhihu.com/p/25071913</a></p>
+<p>及其后续有提到权重裁剪和梯度惩罚：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/52602529/answer/158727900" class="uri">https://www.zhihu.com/question/52602529/answer/158727900</a></p>
+<p>Lipschitz 约束在 GAN 中的作用</p>
+<p>对于输入为<span class="math inline"><em>x</em></span>的判别器网络可以表示为：</p>
+<p><span class="math display"><em>f</em>(<em>x</em>, <em>θ</em>) = <em>W</em><sup><em>L</em> + 1</sup><em>a</em><sub><em>L</em></sub>(<em>W</em><sup><em>L</em></sup>(<em>a</em><sub><em>L</em> − 1</sub>(<em>W</em><sup><em>L</em> − 1</sup>(⋯<em>a</em><sub>1</sub>(<em>W</em><sup>1</sup><em>x</em>)⋯))))</span></p>
+<p>其中，<span class="math inline"><em>θ</em> := {<em>W</em><sup>1</sup>, ⋯, <em>W</em><sup><em>L</em></sup>, <em>W</em><sup><em>L</em> + 1</sup>}</span>是学习参数集，也就是网络的权重，<span class="math inline"><em>a</em><sub><em>l</em></sub></span>是非线性激活函数，上述表达式没有考虑偏差。
+完整的判别器网络可以表示为：</p>
+<p><span class="math display"><em>D</em>(<em>x</em>, <em>θ</em>) = 𝒜(<em>f</em>(<em>x</em>, <em>θ</em>))</span>
+对于GAN而言，判别器的目的是为了区分开真假样本，要最大化目标函数<span class="math inline"><em>m</em><em>a</em><em>x</em><sub><em>D</em></sub><em>V</em>(<em>G</em>, <em>D</em>)</span>，在固定生成器后得到的判别器最优解为：</p>
+<p><span class="math display">$$
+D_G^*(x) = \frac{q_{data}(x)}{q_{data}(x) + p_G(x)} = sigmoid(f^*(x))
+$$</span> 我们知道<span class="math inline"><em>s</em><em>i</em><em>g</em><em>m</em><em>o</em><em>i</em><em>d</em></span>的表达式为<span class="math inline">$\frac{1}{1+e^{-x}}$</span>代入上式可以解出：</p>
+<p><span class="math display"><em>f</em><sup>*</sup>(<em>x</em>) = <em>l</em><em>o</em><em>g</em><em>q</em><sub><em>d</em><em>a</em><em>t</em><em>a</em></sub>(<em>x</em>) − <em>l</em><em>o</em><em>g</em><em>p</em><sub><em>G</em></sub>(<em>x</em>)</span>
+我们对<span class="math inline"><em>f</em><sup>*</sup>(<em>x</em>)</span>对<span class="math inline"><em>x</em></span>求导：</p>
+<p><span class="math display">$$
+\nabla_x f^*(x) = \frac{1}{q_{data}(x)} \nabla_x q_{data}(x) -
+\frac{1}{p_G(x)} \nabla_x p_G(x)
+$$</span>
+这个导数可以是无限的，甚至是无法计算的，这就会造成判别器失控（一路无限制优化），导致函数空间很大，这就使得D的能力过强，GAN的平衡倾斜。
+为了给予判别器于一定限制，这就要Lipschitz假设，通过添加在输入示例x上定义的正则化项来控制鉴别器的Lipschitz常数，此时优化就为：</p>
+<p><span class="math display"><em>a</em><em>r</em><em>g</em><em>m</em><em>a</em><em>x</em><sub>‖<em>f</em>‖<sub><em>L</em><em>i</em><em>p</em></sub> ≤ <em>K</em></sub><em>V</em>(<em>G</em>, <em>D</em>)</span></p>
+<p>自此，我们看到Lipschitz假设对于GAN的重要性，为了较好实现Lipschitz假设，谱归一化将展示强大的能力。</p>
+</blockquote>
+<h2 id="method">Method</h2>
+<h3 id="gan">GAN</h3>
+<p>基本的GAN网络包含生成器和判别器，数学表述为</p>
+<p>生成器 <span class="math inline"><em>G</em> : ℝ<sup><em>d</em><sub><em>z</em></sub></sup> → ℝ<sup><em>n</em></sup></span>,
+判别器 <span class="math inline"><em>D</em> : ℝ<sup><em>n</em></sup> → ℝ</span>,
+最小最大化目标是 <span class="math display">$$
+\begin{aligned}
+\min_G\max_D\text{ }&amp;\mathbb{E}_{x\sim
+p_r(x)}\big[log(D(x))\big]+\mathbb{E}_{\tilde{x}\sim
+p_g(x)}\big[log(1-D(\tilde{x}))\big]
+\end{aligned}
+$$</span> 其中 <span class="math inline"><em>p</em><sub><em>r</em></sub>(<em>x</em>)</span>
+表示真实数据分布， <span class="math inline"><em>p</em><sub><em>g</em></sub>(<em>x</em>)</span>
+表示由 <span class="math inline"><em>p</em><sub><em>g</em></sub> = <em>G</em><sub>*</sub>(<em>p</em><sub><em>z</em></sub>)</span>
+定义的分布（<span class="math inline">*</span> 表示前推测度 ， <span class="math inline"><em>p</em><sub><em>z</em></sub></span> 是 <span class="math inline"><em>d</em><sub><em>z</em></sub></span>
+维的先验分布）。</p>
+<blockquote>
+<p>前推测度(pushforward measure) 参考 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Pushforward_measure" class="uri">https://en.wikipedia.org/wiki/Pushforward_measure</a>,
+大概理解下就是……我不理解 😳</p>
+<p>但这里的意思就是 <span class="math inline"><em>p</em><sub><em>g</em></sub>(<em>x</em>)</span>
+表示生成样本，整体的思路就是判别器要尽可能把真实样本分为正例，生成样本分为负例，<span class="math inline">𝔼</span>
+表示期望，而生成器的目标相反，尽量使分类器无法区分真实样本和生成样本</p>
+</blockquote>
+<p>GAN很难训练，问题包括但不仅限于梯度消失和梯度爆炸，主要产生的原因是：</p>
+<ol type="1">
+<li>优化的目标函数等级与最小化 <span class="math inline"><em>p</em><sub><em>g</em></sub>(<em>x</em>)</span>
+和 <span class="math inline"><em>p</em><sub><em>r</em></sub>(<em>x</em>)</span>
+的 JS 散度，而当 <span class="math inline"><em>p</em><sub><em>g</em></sub>(<em>x</em>)</span>
+和 <span class="math inline"><em>p</em><sub><em>r</em></sub>(<em>x</em>)</span>
+没有交集的时候 JS 散度是一个常数，梯度为 0</li>
+<li>有限的样本容易是判别器过拟合间接导致梯度爆炸</li>
+</ol>
+<p>WGAN 提出了一种新的损失函数 <span class="math display">min<sub><em>G</em></sub>max<sub><em>D</em>, <em>L</em><sub><em>D</em></sub> ≤ 1</sub>
+𝔼<sub><em>x</em> ∼ <em>p</em><sub><em>r</em></sub>(<em>x</em>)</sub>[<em>D</em>(<em>x</em>)] − 𝔼<sub><em>x̃</em> ∼ <em>p</em><sub><em>g</em></sub>(<em>x</em>)</sub>[<em>D</em>(<em>x̃</em>)],</span>
+<span class="math inline"><em>L</em><sub><em>D</em></sub> := inf {<em>L</em> ∈ ℝ : |<em>D</em>(<em>x</em>) − <em>D</em>(<em>y</em>)| ≤ <em>L</em>‖<em>x</em> − <em>y</em>‖, ∀<em>x</em>, <em>y</em> ∈ ℝ<sup><em>n</em></sup>}</span>
+表示判别器的 Lipschitz 常数，等价于 <span class="math inline">|<em>D</em>(<em>x</em>) − <em>D</em>(<em>y</em>)| ≤ <em>L</em><sub><em>D</em></sub>‖<em>x</em> − <em>y</em>‖, ∀<em>x</em>, <em>y</em> ∈ ℝ<sup><em>n</em></sup></span>.
+(具体可以看前面提到的那篇文章，讲得很详细)</p>
+<p>不过，限制神经网络的Lipschitz常数和提高神经网络的性能之间很难达到一个平衡，有些方法直接对每层的Lipschitz常数进行限制，导致网络的函数空间受到了限制影响性能，而权重裁剪和正则化的方法虽然可以在一个更大的空间内进行搜索，但限制却很弱。</p>
+<p>接下来，作者证明了逐层Lipschitz限制网络的Lipschitz常数的上界由其第一个
+<span class="math inline"><em>k</em></span> 层子网络的任意一层决定。</p>
+<h3 id="证明和推导">证明和推导</h3>
+<p><strong>定义1</strong> 用 <span class="math inline"><em>f</em><sub><em>K</em></sub> : ℝ<sup><em>n</em></sup> → ℝ</span>
+表示一个 <span class="math inline"><em>K</em></span>
+层网络，该网络可以描述为一系列的仿射变换的嵌套 <span class="math display">$$
+\begin{aligned}
+f_K(x)&amp;=\phi_K(\mathbf{W}_K\cdot(\phi_{K-1}(\cdots \mathbf{W}_1\cdot
+x+\mathbf{b}_1))+\mathbf{b}_K)\\
+&amp;=\phi_K(\mathbf{W}_K\cdot f_{K-1}(x)+\mathbf{b}_K),
+\end{aligned}
+$$</span> 其中 <span class="math inline"><strong>W</strong><sub><em>K</em></sub> ∈ ℝ<sup><em>d</em><sub><em>K</em></sub> × <em>d</em><sub><em>K</em> − 1</sub></sup></span>
+和 <span class="math inline"><strong>b</strong><sub><em>K</em></sub> ∈ ℝ<sup><em>d</em><sub><em>K</em></sub></sup></span>
+是第 <span class="math inline"><em>K</em></span> 层的网络参数, <span class="math inline"><em>d</em><sub><em>K</em></sub></span> 是目标维度，
+<span class="math inline"><em>ϕ</em><sub><em>K</em></sub></span> 是第
+<span class="math inline"><em>K</em></span> 层的非线性激活函数，用 <span class="math inline"><em>f</em><sub><em>k</em></sub>, ∀<em>k</em> ∈ {1⋯<em>K</em>}</span>
+表示第一个 <span class="math inline"><em>K</em></span> 层子网。</p>
+<p><strong>定义2</strong> 用 <span class="math inline"><em>f</em><sub><em>K</em></sub> : ℝ<sup><em>n</em></sup> → ℝ</span>
+表示一个 <span class="math inline"><em>K</em></span> 层网络，令 <span class="math inline">∃<em>L</em><sub><em>k</em></sub> ≤ <em>L</em>, ∀<em>k</em> ∈ {1⋯<em>K</em>}</span>
+则 <span class="math inline"><em>f</em><sub><em>K</em></sub></span>
+表示一个表示一个逐层 <span class="math inline"><em>L</em></span>-Lipschitz 现在的网络，<span class="math inline"><em>L</em><sub><em>K</em></sub></span> 是第 <span class="math inline"><em>K</em></span> 层的 Lipschitz 常数： <span class="math display">‖<strong>W</strong><sub><em>k</em></sub> ⋅ <em>x</em> − <strong>W</strong><sub><em>k</em></sub> ⋅ <em>y</em>‖ ≤ <em>L</em><sub><em>k</em></sub>‖<em>x</em> − <em>y</em>‖, ∀<em>x</em>, <em>y</em> ∈ ℝ<sup><em>d</em><sub><em>k</em> − 1</sub></sup>.</span>
+<strong>引理3</strong> <span class="math inline"><em>f</em> : ℝ<sup><em>n</em></sup> → ℝ</span>
+是连续可微函数，<span class="math inline"><em>L</em><sub><em>f</em></sub></span> 是 <span class="math inline"><em>f</em></span> 的 Lipschitz 常数，则 Lipschitz
+限制 <span class="math inline">|<em>f</em>(<em>x</em>) − <em>f</em>(<em>y</em>)| ≤ <em>L</em><sub><em>f</em></sub>‖<em>x</em> − <em>y</em>‖, ∀<em>x</em>, <em>y</em> ∈ ℝ<sup><em>n</em></sup></span>
+等价于 <span class="math display">‖∇<sub><em>x</em></sub><em>f</em>(<em>x</em>)‖ ≤ <em>L</em><sub><em>f</em></sub>, ∀<em>x</em> ∈ ℝ<sup><em>n</em></sup></span></p>
+<blockquote>
+<p><strong>引理3</strong> 的证明：</p>
+<p>先证充分性：</p>
+<p>由 Lipschitz 限制的定义可知 <span class="math display">|<em>f</em>(<em>x</em>) − <em>f</em>(<em>y</em>)| ≤ <em>L</em><sub><em>f</em></sub>‖<em>x</em> − <em>y</em>‖</span>
+我们考虑 <span class="math inline"><em>x</em></span> 在 <span class="math inline">(<em>y</em> − <em>x</em>)</span>
+方向的方向导数的范数 <span class="math display">$$
+\langle\nabla f(x),\frac{y-x}{\Vert y-x\Vert}\rangle=\lim_{y\rightarrow
+x}\frac{\vert f(y)-f(x)\vert}{\Vert x-y\Vert}\le L_{f}
+$$</span> 其中 <span class="math inline">⟨⋅, ⋅⟩</span>
+表示内积，因此梯度的范数是最大的方向导数范数，因此 <span class="math display">‖∇<em>f</em>(<em>x</em>)‖ ≤ <em>L</em><sub><em>f</em></sub></span>
+充分性得证，下面证必要性：</p>
+<p>根据假设，<span class="math inline"><em>f</em></span>
+是连续可微的，满足梯度定理条件，因此可以只考虑 <span class="math inline"><em>y</em></span> 到 <span class="math inline"><em>x</em></span> 的直线的线积分 <span class="math display">$$
+\begin{align}
+&amp;\vert f(x)-f(y)\vert\\
+&amp;=\Big\vert\int_y^x\nabla f(r) dr\Big\vert\\
+&amp;=\Big\vert\int_0^1\langle \nabla f(xt+y(1-t)),x-y\rangle
+dt\Big\vert\\
+&amp;\le\Big\vert\int_0^1\Vert \nabla f(xt+y(1-t))\Vert\cdot\Vert
+x-y\Vert dt\Big\vert\\
+&amp;\le L_{f} \Big\vert\int_0^1\Vert x-y\Vert dt\Big\vert\\
+&amp;=L_{f}\Vert x-y\Vert.
+\end{align}
+$$</span> 因此必要性得证。</p>
+<p>引理 3 启发作者设计一种直接约束梯度范数的规范化方法。</p>
+</blockquote>
+<p><strong>假设4</strong> <span class="math inline"><em>f</em> : ℝ<sup><em>n</em></sup> → ℝ</span>
+表示由神经网络定义的连续函数，且 <span class="math inline"><em>f</em></span> 的所有激活函数都是分段线性的，因此
+<span class="math inline"><em>f</em></span> 也是近乎可微的。</p>
+<p><strong>定理5</strong> <span class="math inline"><em>f</em><sub><em>K</em></sub> : ℝ<sup><em>n</em></sup> → ℝ</span>
+表示一个逐层 1-Lipschitz 约束的 <span class="math inline"><em>K</em></span> 层网络，第一个 <span class="math inline"><em>k</em></span> 层网络的 Lipschitz 常数上限 <span class="math inline"><em>L</em><sub><em>f</em><sub><em>k</em></sub></sub></span>
+由 <span class="math inline"><em>L</em><sub><em>f</em><sub><em>k</em> − 1</sub></sub></span>
+决定，即： <span class="math display"><em>L</em><sub><em>f</em><sub><em>k</em></sub></sub> ≤ <em>L</em><sub><em>f</em><sub><em>k</em> − 1</sub></sub>, ∀<em>k</em> ∈ {2⋯<em>K</em>}</span></p>
+<blockquote>
+<p>证明：</p>
+<p>因为所有层都包含了激活函数且都是 1-Lipschitz 约束，那么 <span class="math display">$$
+\begin{aligned}
+\Vert \mathbf{W}_k\cdot x-\mathbf{W}_k\cdot y\Vert&amp;\le\Vert
+x-y\Vert,\forall x,y\in\mathbb{R}^{d_{k-1}}\\
+L_{\phi_k}&amp;=1.
+\end{aligned}
+$$</span> 由上式我们可以推出第 <span class="math inline"><em>k</em></span> 层的特征距离上限： <span class="math display">$$
+\begin{aligned}
+&amp;\Vert f_k(x)-f_k(y) \Vert \\
+&amp;=\Vert\phi_k(\mathbf{W}_k\cdot
+f_{k-1}(x)+\mathbf{b}_k)-\phi_k(\mathbf{W}_k\cdot
+f_{k-1}(y)+\mathbf{b}_k)\Vert \\
+&amp;\le L_{\phi_k}\Vert(\mathbf{W}_k\cdot
+f_{k-1}(x)+\mathbf{b}_k)-(\mathbf{W}_k\cdot
+f_{k-1}(y)+\mathbf{b}_k)\Vert \\
+&amp;\le L_{\phi_k}L_k\Vert f_{k-1}(x)-f_{k-1}(y)\Vert \\
+&amp;= \Vert f_{k-1}(x)-f_{k-1}(y)\Vert. \\
+\end{aligned}
+$$</span> 即 <span class="math display">$$
+\frac{\Vert f_k(x)-f_k(y)\Vert}{\Vert x-y\Vert}\le\frac{\Vert
+f_{k-1}(x)-f_{k-1}(y)\Vert}{\Vert x-y\Vert}, \forall x,y \in\mathbb{R}^n
+$$</span> 证毕</p>
+</blockquote>
+<p>定理5当且仅当 <span class="math inline">∃<em>x</em>, <em>y</em> ∈ ℝ<sup><em>n</em></sup></span>
+且满足下式时成立 <span class="math display">$$
+\frac{\Vert f_k(x)-f_k(y)\Vert}{\Vert x-y\Vert}=\frac{\Vert
+f_{k-1}(x)-f_{k-1}(y)\Vert}{\Vert x-y\Vert}=L_{f_{k-1}}
+$$</span> 否则 <span class="math display"><em>L</em><sub><em>f</em><sub><em>k</em></sub></sub> &lt; <em>L</em><sub><em>f</em><sub><em>k</em> − 1</sub></sub> &lt; ⋯ &lt; <em>L</em><sub><em>f</em><sub>1</sub></sub> ≤ 1</span>
+即 Lipschitz
+常数逐层减小，另一方面，也不必逐层Lipschitz约束，而是可以构建整个Lipschitz模型。根据引理
+3，作者提出了 Gradient Normalization (GN).</p>
+<p>GN 对梯度范数 <span class="math inline">‖∇<sub><em>x</em></sub><em>f</em>(<em>x</em>)‖</span>
+进行规范化且同时限制了 <span class="math inline"><em>f</em>(<em>x</em>)</span> : <span class="math display">$$
+\hat{f}(x)=\frac{f(x)}{\Vert\nabla_x f(x)\Vert+\zeta(x)}
+$$</span> 其中 <span class="math inline"><em>ζ</em>(<em>x</em>) : ℝ<sup><em>n</em></sup> → ℝ</span>
+是一个通用项，可以是常数或者与 <span class="math inline"><em>f</em>(<em>x</em>)</span> 相关避免 <span class="math inline">|<em>f̂</em>(<em>x</em>)|</span> 变成无穷大或 <span class="math inline">‖∇<sub><em>x</em></sub><em>f̂</em>(<em>x</em>)‖</span>
+近乎0. 作者将 <span class="math inline"><em>ζ</em>(<em>x</em>)</span>
+设置为 <span class="math inline">|<em>f</em>(<em>x</em>)|</span> 并证明
+GN 是满足 1-Lipschitz 约束</p>
+<p><strong>定理6</strong> 将 <span class="math inline"><em>f</em> : ℝ<sup><em>n</em></sup> → ℝ</span>
+定义为有神经网络建模的连续函数，并且网络中的所有激活函数都是分段线性的。规范化函数
+<span class="math inline"><em>f̂</em>(<em>x</em>) = <em>f</em>(<em>x</em>)/(‖∇<sub><em>x</em></sub><em>f</em>(<em>x</em>)‖+|<em>f</em>(<em>x</em>)|)</span>
+是梯度范数的界限，因为 <span class="math display">$$
+\Vert\nabla_x\hat{f}(x)\Vert=\Bigg\vert\frac{\Vert\nabla
+f\Vert}{\Vert\nabla f\Vert+\vert f\vert}\Bigg\vert^2\le 1
+$$</span></p>
+<blockquote>
+<p>证明：</p>
+<p>简单起见，这里忽略函数参数。由 <span class="math inline"><em>f̂</em>(<em>x</em>)</span> 的梯度范数定义得：
+<span class="math display">$$
+\begin{align}
+\Vert\nabla\hat{f}\Vert
+&amp;=\Bigg\Vert\nabla\bigg(\frac{f}{\Vert\nabla f\Vert+\vert
+f\vert}\bigg)\Bigg\Vert \\
+&amp;=\Bigg\Vert\frac{\nabla f\big(\Vert\nabla f\Vert+\vert
+f\vert\big)-f\nabla\big(\Vert\nabla f\Vert+\vert
+f\vert\big)}{\big(\Vert\nabla f\Vert+\vert f\vert\big)^2}\Bigg\Vert.
+\label{th5:pfeq2}
+\end{align}
+$$</span> 由链式规则，可以推出 <span class="math display">$$
+\begin{align}
+\nabla\Vert\nabla f\Vert&amp;=\nabla^2 f\frac{\nabla f}{\Vert\nabla
+f\Vert}, \\
+\nabla\vert f\vert&amp;=\nabla f\frac{f}{\vert f\vert}.
+\end{align}
+$$</span> 由于神经网络中的激活函数都是分段线性的，所以其 Hessian 矩阵
+<span class="math inline">∇<sup>2</sup><em>f</em></span> 是 <span class="math inline">0</span> 矩阵，前面的式子可以化简为 <span class="math display">$$
+\begin{aligned}
+\Vert\nabla\hat{f}\Vert
+=\Bigg\Vert\frac{\Vert\nabla f\Vert^2}{\big(\Vert\nabla f\Vert+\vert
+f\vert\big)^2}\Bigg\Vert
+=\Bigg\Vert\frac{\Vert\nabla f\Vert}{\Vert\nabla f\Vert+\vert
+f\vert}\Bigg\Vert^2\le 1.
+\end{aligned}
+$$</span> 即定理 6</p>
+</blockquote>
+<p>考虑到如果鉴别器过拟合可能会出现 <span class="math inline"><em>f</em>(<em>x</em>) → ±∞</span> 和 <span class="math inline">‖∇<sub><em>x</em></sub><em>f</em>(<em>x</em>)‖ → 0</span>
+的情况，以及 <span class="math inline"><em>ζ</em>(<em>x</em>) = 0</span>
+和 <span class="math inline"><em>ζ</em>(<em>x</em>) = 1</span>
+两种常见情况。</p>
+<figure>
+<img data-src="GNGAN/image-20220727211521407.png" alt="image-20220727211521407">
+<figcaption aria-hidden="true">image-20220727211521407</figcaption>
+</figure>
+<p>因为函数范数 <span class="math inline">|<em>f</em>(<em>x</em>)|</span>
+不直接与梯度范数相关，所以对于极端预测结果可能是规范化的梯度范数<span class="math inline">‖∇<sub><em>x</em></sub><em>f̂</em>(<em>x</em>)‖</span>
+和规范化的函数值 <span class="math inline">|<em>f̂</em>(<em>x</em>)|</span> 爆炸，所以提出将
+<span class="math inline"><em>ζ</em>(<em>x</em>)</span> 设置为 <span class="math inline">|<em>f</em>(<em>x</em>)|</span>
+。这种自动调整的机制能防止生成器获得爆炸梯度，以此可以稳定GAN的训练过程。伪代码如下：</p>
+<figure>
+<img data-src="GNGAN/image-20220727214021252.png" alt="image-20220727214021252">
+<figcaption aria-hidden="true">image-20220727214021252</figcaption>
+</figure>
+<p><strong>GN的梯度分析</strong>: <span class="math inline"><em>f̂</em>(<em>x</em>)</span> 对 <span class="math inline"><em>W</em><sub><em>k</em></sub></span>
+的的梯度如下： $$ $$ 从最后一个等式可以看出，GN
+是自适应梯度正则化的特殊形式。而第一个等式中，第一项是GAN的目标梯度，用于提高鉴别器的性能，而第二项是正则项，用自适应的正则化参数惩罚
+<span class="math inline"><em>f</em></span>
+的梯度范数。这种梯度惩罚更灵活，因此这种自平衡机制强迫GN达到严 Lipschitz
+约束。</p>
+<hr>
+<h2 id="experiment">Experiment</h2>
+<ul>
+<li>数据集：
+<ul>
+<li>CIFAR10: 包含 <span class="math inline">60<em>K</em></span> 大小为
+<span class="math inline">32 × 32 × 3</span> 的图像，划分为 <span class="math inline">50<em>K</em></span> 训练集和 <span class="math inline">10<em>K</em></span> 测试集</li>
+<li>STL-10：无监督数据集，<span class="math inline">48 × 48 × 3</span>,
+包含 <span class="math inline">5<em>k</em></span> 训练数据，<span class="math inline">8<em>k</em></span> 测试数据和 <span class="math inline">100<em>k</em></span> 无标签数据</li>
+<li>CelebA-HQ: 超分辨率数据集, <span class="math inline">30<em>k</em></span> 大小为 <span class="math inline">256 × 256 × 3</span> 人脸图像</li>
+<li>LSUN Church Outdoor：超分辨率数据集, 包含 <span class="math inline">126<em>k</em></span> 大小为 <span class="math inline">256 × 256 × 3</span> 的教堂户外景象</li>
+</ul></li>
+<li>验证标准：Inception Score (IS)和 Frechet Inception Distance
+(FID)</li>
+<li>损失函数：因为 GN 的输出为 <span class="math inline">[−1, 1]</span>
+会使 Wasserstein loss 退化为 hinge loss
+<ul>
+<li>hinge loss</li>
+<li>nonsaturating loss (NS)</li>
+</ul></li>
+</ul>
+<h3 id="无条件图像生成">无条件图像生成</h3>
+<figure>
+<img data-src="GNGAN/image-20220728140615776.png" alt="image-20220728140615776">
+<figcaption aria-hidden="true">image-20220728140615776</figcaption>
+</figure>
+<p>GN-GAN 联合 consistency regularization (CR) 标记为 GN-GAN-CR</p>
+<h3 id="有条件图像生成">有条件图像生成</h3>
+<figure>
+<img data-src="GNGAN/image-20220728143929101.png" alt="image-20220728143929101">
+<figcaption aria-hidden="true">image-20220728143929101</figcaption>
+</figure>
+<h3 id="无条件大尺寸图片生成">无条件大尺寸图片生成</h3>
+<figure>
+<img data-src="GNGAN/image-20220728144240350.png" alt="image-20220728144240350">
+<figcaption aria-hidden="true">image-20220728144240350</figcaption>
+</figure>
+<p>附加材料有更多的图片展示</p>
+<h3 id="定理5的实验分析">定理5的实验分析</h3>
+<figure>
+<img data-src="GNGAN/image-20220728145414554.png" alt="image-20220728145414554">
+<figcaption aria-hidden="true">image-20220728145414554</figcaption>
+</figure>
+<p>根据定理5，随着层数增加，Lipschitz常数减小。上图展示了对 SN 和 GN
+使用 wasserstein loss 的测试，<span class="math inline"><em>n</em></span>L
+表示生成器和鉴别器的卷积层的数量，可见SN的鉴别器Lipschitz常数远小于1.
+此外，SN-GAN 的所有鉴别器在Lipschitz约束<span class="math inline"><em>L</em><sub><em>D</em></sub> ≤ 1</span>下都不能很好地近似的
+Wasserstein
+距离，即使上述推论保证了最优鉴别器的存在，作者认为这是因为SN过度约束了鉴别器的Lipschitz常数以至于鉴别器无法提高Lipschitz常数并接近理论最优。</p>
+<h3 id="消融实验">消融实验</h3>
+<p><strong>激活函数</strong>
+定理6的前提是激活函数是分段线性的，作者测试了不同激活函数下的效果对比</p>
+<figure>
+<img data-src="GNGAN/image-20220728152419262.png" alt="image-20220728152419262">
+<figcaption aria-hidden="true">image-20220728152419262</figcaption>
+</figure>
+<p><strong>GN变量</strong> 如图所示</p>
+<figure>
+<img data-src="GNGAN/image-20220728152534286.png" alt="image-20220728152534286">
+<figcaption aria-hidden="true">image-20220728152534286</figcaption>
+</figure>
+<hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>提出了一种简单实现的梯度规范化方法GN用于稳定GANs的训练，并证明了其满足严Lipschitz约束并使任意鉴别器作为Lipschitz连续函数。实验中在不同结构的网络和不同数据集中取得了SOTA结果。</p>
+<p>作者计划后续用类似的方法替换GN的分母来减少计算量，还有就是在一些其他生成任务。</p>
+<h2 id="code-analysis">Code Analysis</h2>
+<p>开源代码仓库中提到 GN 任意迁移到其他 GAN 网络结构中，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> BCEWithLogitsLoss</span><br><span class="line"><span class="keyword">from</span> models.gradnorm <span class="keyword">import</span> normalize_gradient</span><br><span class="line"></span><br><span class="line">net_D = ...     <span class="comment"># discriminator</span></span><br><span class="line">net_G = ...     <span class="comment"># generator</span></span><br><span class="line">loss_fn = BCEWithLogitsLoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Update discriminator</span></span><br><span class="line">x_real = ...                                    <span class="comment"># real data</span></span><br><span class="line">x_fake = net_G(torch.randn(<span class="number">64</span>, <span class="number">3</span>, <span class="number">32</span>, <span class="number">32</span>))      <span class="comment"># fake data</span></span><br><span class="line">pred_real = normalize_gradient(net_D, x_real)   <span class="comment"># net_D(x_real)</span></span><br><span class="line">pred_fake = normalize_gradient(net_D, x_fake)   <span class="comment"># net_D(x_fake)</span></span><br><span class="line">loss_real = loss_fn(pred_real, torch.ones_like(pred_real))</span><br><span class="line">loss_fake = loss_fn(pred_fake, torch.zeros_like(pred_fake))</span><br><span class="line">(loss_real + loss_fake).backward()              <span class="comment"># backward propagation</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment"># Update generator</span></span><br><span class="line">x_fake = net_G(torch.randn(<span class="number">64</span>, <span class="number">3</span>, <span class="number">32</span>, <span class="number">32</span>))      <span class="comment"># fake data</span></span><br><span class="line">pred_fake = normalize_gradient(net_D, x_fake)   <span class="comment"># net_D(x_fake)</span></span><br><span class="line">loss_fake = loss_fn(pred_fake, torch.ones_like(pred_fake))</span><br><span class="line">loss.backward()                                 <span class="comment"># backward propagation</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>关键代码在第 20 行
+<code>pred_fake = normalize_gradient(net_D, x_fake)   # net_D(x_fake)</code>，我们进入函数内部查看，函数实现仅8行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">normalize_gradient</span>(<span class="params">net_D, x, **kwargs</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                     f</span></span><br><span class="line"><span class="string">    f_hat = --------------------</span></span><br><span class="line"><span class="string">            || grad_f || + | f |</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    x.requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    f = net_D(x, **kwargs)</span><br><span class="line">    grad = torch.autograd.grad(</span><br><span class="line">        f, [x], torch.ones_like(f), create_graph=<span class="literal">True</span>, retain_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">    grad_norm = torch.norm(torch.flatten(grad, start_dim=<span class="number">1</span>), p=<span class="number">2</span>, dim=<span class="number">1</span>)</span><br><span class="line">    grad_norm = grad_norm.view(-<span class="number">1</span>, *[<span class="number">1</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(f.shape) - <span class="number">1</span>)])</span><br><span class="line">    f_hat = (f / (grad_norm + torch.<span class="built_in">abs</span>(f)))</span><br><span class="line">    <span class="keyword">return</span> f_hat</span><br></pre></td></tr></table></figure>
+<p>从前面的代码中我们可以了解到，函数声明中的两个参数 <code>net_D</code>
+和 <code>x</code>
+分别是鉴别器网络和生成器生成的图片，下面逐行分析代码</p>
+<ol type="1">
+<li>第 7, 8 行: 将 x 的梯度计算打开，然后传入鉴别器中进行前向传播</li>
+<li>第 9, 10 行: 计算鉴别器输出对输入图像的导数</li>
+<li>第 11 行：将梯度值展平为二维并计算范数，实际上展平操作有些多余了，和
+<code>torch.norm(grad, p=2, dim=(1, 2, 3))</code> 是等价的</li>
+<li>第 12 行：调整梯度范数</li>
+<li>第 13 行：GN操作</li>
+</ol>
+<p>在解读代码之前，我以为GN是针对网络权重进行规范化的，在看完代码后，GN实质上还是对特征进行规范化，但GN没有改动特征图，而是只对网络的输出进行规范化来达到限制网络的Lipschitz常数的作用，这是一个值得借鉴的思路</p>
+<h3 id="gan-1">GAN</h3>
+<h4 id="训练">训练</h4>
+<p>借此机会分析一下 GAN 的训练过程，给代码加了详细的注释，据此对 GAN
+网络的训练有了更深的了解</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>():</span><br><span class="line">    <span class="comment"># 获取数据，最后的 looper 是一个可以无限循环的从 dataloader 中取数据的迭代器</span></span><br><span class="line">    dataset = get_dataset(<span class="string">&quot;cifar10.32&quot;</span>)</span><br><span class="line">    dataloader = torch.utils.data.DataLoader(</span><br><span class="line">        dataset=dataset,</span><br><span class="line">        batch_size=<span class="number">64</span> * <span class="number">5</span>,</span><br><span class="line">        shuffle=<span class="literal">True</span>,</span><br><span class="line">        num_workers=<span class="number">8</span>,</span><br><span class="line">        drop_last=<span class="literal">True</span>)</span><br><span class="line">    looper = infiniteloop(dataloader)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># model, 创建模型</span></span><br><span class="line">    net_G = net_G_models[<span class="string">&quot;resnet.32&quot;</span>](<span class="number">128</span>, <span class="number">1</span>).cuda()</span><br><span class="line">    ema_G = net_G_models[<span class="string">&quot;resnet.32&quot;</span>](<span class="number">128</span>, <span class="number">1</span>).cuda()</span><br><span class="line">    net_D = net_D_models[<span class="string">&quot;resnet.32&quot;</span>](<span class="number">1</span>).cuda()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ema, 权重衰减，将 源模型 按照 衰减比例 迁移到目标模型</span></span><br><span class="line">    <span class="comment"># 但这里衰减为 0 是将 源模型 完全复制到 目标模型</span></span><br><span class="line">    <span class="comment"># ema(source, target, decay)</span></span><br><span class="line">    ema(net_G, ema_G, decay=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># loss: HingeLoss()</span></span><br><span class="line">    loss_fn = loss_fns[<span class="string">&quot;hinge&quot;</span>]()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># optimizer, 常规优化器</span></span><br><span class="line">    optim_G = optim.Adam(net_G.parameters(), lr=<span class="number">0.0002</span>, betas=[<span class="number">0.0</span>, <span class="number">0.9</span>])</span><br><span class="line">    optim_D = optim.Adam(net_D.parameters(), lr=<span class="number">0.0004</span>, betas=[<span class="number">0.0</span>, <span class="number">0.9</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># scheduler, 其实就是一个线性下降的学习率控制方法</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">decay_rate</span>(<span class="params">step</span>):</span><br><span class="line">        period = <span class="built_in">max</span>(<span class="number">200000</span> - <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> - <span class="built_in">max</span>(step - <span class="number">0</span>, <span class="number">0</span>) / period</span><br><span class="line">    sched_G = optim.lr_scheduler.LambdaLR(optim_G, lr_lambda=decay_rate)</span><br><span class="line">    sched_D = optim.lr_scheduler.LambdaLR(optim_D, lr_lambda=decay_rate)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 统计一下两个网络的参数量(其实完全可以用个 sum 一行完成)</span></span><br><span class="line">    D_size = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> param <span class="keyword">in</span> net_D.parameters():</span><br><span class="line">        D_size += param.data.nelement()</span><br><span class="line">    G_size = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> param <span class="keyword">in</span> net_G.parameters():</span><br><span class="line">        G_size += param.data.nelement()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;D params: %d, G params: %d&#x27;</span> % (D_size, G_size))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># tensorboard 的记录器</span></span><br><span class="line">    writer = SummaryWriter(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>)</span><br><span class="line">    <span class="comment"># 加载断点(checkpoint)</span></span><br><span class="line">    <span class="keyword">if</span> FLAGS.resume:</span><br><span class="line">        ckpt = torch.load(os.path.join(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>, <span class="string">&#x27;model.pt&#x27;</span>))</span><br><span class="line">        net_G.load_state_dict(ckpt[<span class="string">&#x27;net_G&#x27;</span>])</span><br><span class="line">        net_D.load_state_dict(ckpt[<span class="string">&#x27;net_D&#x27;</span>])</span><br><span class="line">        ema_G.load_state_dict(ckpt[<span class="string">&#x27;ema_G&#x27;</span>])</span><br><span class="line">        optim_G.load_state_dict(ckpt[<span class="string">&#x27;optim_G&#x27;</span>])</span><br><span class="line">        optim_D.load_state_dict(ckpt[<span class="string">&#x27;optim_D&#x27;</span>])</span><br><span class="line">        sched_G.load_state_dict(ckpt[<span class="string">&#x27;sched_G&#x27;</span>])</span><br><span class="line">        sched_D.load_state_dict(ckpt[<span class="string">&#x27;sched_D&#x27;</span>])</span><br><span class="line">        fixed_z = ckpt[<span class="string">&#x27;fixed_z&#x27;</span>]</span><br><span class="line">        fixed_y = ckpt[<span class="string">&#x27;fixed_y&#x27;</span>]</span><br><span class="line">        <span class="comment"># start value</span></span><br><span class="line">        start = ckpt[<span class="string">&#x27;step&#x27;</span>] + <span class="number">1</span></span><br><span class="line">        best_IS, best_FID = ckpt[<span class="string">&#x27;best_IS&#x27;</span>], ckpt[<span class="string">&#x27;best_FID&#x27;</span>]</span><br><span class="line">        <span class="keyword">del</span> ckpt</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># sample fixed z 用于生成图片的随机数，每轮都输入到生成网络中，用于观察生成网络的生成图像变化</span></span><br><span class="line">        fixed_z = torch.randn(<span class="number">64</span>, <span class="number">128</span>).cuda()</span><br><span class="line">        fixed_y = torch.randint(<span class="number">1</span>, (<span class="number">64</span>,)).cuda()</span><br><span class="line">        <span class="comment"># start value</span></span><br><span class="line">        start, best_IS, best_FID = <span class="number">1</span>, <span class="number">0</span>, <span class="number">999</span></span><br><span class="line"></span><br><span class="line">        os.makedirs(os.path.join(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>, <span class="string">&#x27;sample&#x27;</span>))</span><br><span class="line">        <span class="comment"># 将配置文件记录下来</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>, <span class="string">&quot;flagfile.txt&quot;</span>), <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            f.write(FLAGS.flags_into_string())</span><br><span class="line">        <span class="comment"># 将一些数据集的图片上传到 tensorboard</span></span><br><span class="line">        real = <span class="built_in">next</span>(<span class="built_in">iter</span>(dataloader))[<span class="number">0</span>][:<span class="number">64</span>]</span><br><span class="line">        writer.add_image(<span class="string">&#x27;real_sample&#x27;</span>, make_grid((real + <span class="number">1</span>) / <span class="number">2</span>))</span><br><span class="line">        writer.flush()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># tqdm 一个显示进度条的小工具</span></span><br><span class="line">    <span class="keyword">with</span> trange(start, <span class="number">200000</span> + <span class="number">1</span>, ncols=<span class="number">0</span>,</span><br><span class="line">                initial=start - <span class="number">1</span>, total=<span class="number">200000</span>) <span class="keyword">as</span> pbar:</span><br><span class="line">        <span class="comment"># 开始训练</span></span><br><span class="line">        <span class="keyword">for</span> step <span class="keyword">in</span> pbar:</span><br><span class="line">            loss_sum = <span class="number">0</span></span><br><span class="line">            loss_real_sum = <span class="number">0</span></span><br><span class="line">            loss_fake_sum = <span class="number">0</span></span><br><span class="line">            loss_cr_sum = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># 读取数据，按照默认配置，读取的数据可以划分为 5 个 64 的 batch</span></span><br><span class="line">            x, y = <span class="built_in">next</span>(looper)</span><br><span class="line">            x = <span class="built_in">iter</span>(torch.split(x, <span class="number">64</span>))</span><br><span class="line">            y = <span class="built_in">iter</span>(torch.split(y, <span class="number">64</span>))</span><br><span class="line">            <span class="comment"># Discriminator 先训练鉴别器</span></span><br><span class="line">            <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">                optim_D.zero_grad()</span><br><span class="line">                <span class="comment"># 获取数据集的真实数据</span></span><br><span class="line">                x_real, y_real = <span class="built_in">next</span>(x).cuda(), <span class="built_in">next</span>(y).cuda()</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 使用生成器生成一些假图和假标签</span></span><br><span class="line">                <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">                    z_ = torch.randn(<span class="number">64</span>, <span class="number">128</span>).cuda()</span><br><span class="line">                    y_fake = torch.randint(<span class="number">1</span>, (<span class="number">64</span>,)).cuda()</span><br><span class="line">                    x_fake = net_G(z_, y_fake).detach()</span><br><span class="line">                <span class="comment"># 将真图和假图拼在一起组成一个 batch</span></span><br><span class="line">                x_real_fake = torch.cat([x_real, x_fake], dim=<span class="number">0</span>)</span><br><span class="line">                y_real_fake = torch.cat([y_real, y_fake], dim=<span class="number">0</span>)</span><br><span class="line">                <span class="comment"># 使用论文提出的 Norm 方法进行前向传播</span></span><br><span class="line">                pred = normalize_gradient(net_D, x_real_fake, y=y_real_fake)</span><br><span class="line">                <span class="comment"># 将输出结果划分，真图和假图的输出结果分开</span></span><br><span class="line">                pred_real, pred_fake = torch.split(pred, [x_real.shape[<span class="number">0</span>], x_fake.shape[<span class="number">0</span>]])</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 将真假图的输出传入损失函数计算返回总损失、真图损失和假图损失</span></span><br><span class="line">                loss, loss_real, loss_fake = loss_fn(pred_real, pred_fake)</span><br><span class="line">                <span class="comment"># consistency_loss 是对做了数据增强后的网络输出计算loss</span></span><br><span class="line">                <span class="keyword">if</span> FLAGS.cr &gt; <span class="number">0</span>:  <span class="comment"># 默认值 FLAGS.cr = 0</span></span><br><span class="line">                    loss_cr = consistency_loss(net_D, x_real, y_real, pred_real)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    loss_cr = torch.tensor(<span class="number">0.</span>)</span><br><span class="line">                loss_all = loss + FLAGS.cr * loss_cr</span><br><span class="line">                <span class="comment"># 反向传播并更新网络</span></span><br><span class="line">                loss_all.backward()</span><br><span class="line">                optim_D.step()</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 统计 loss</span></span><br><span class="line">                loss_sum += loss.cpu().item()</span><br><span class="line">                loss_real_sum += loss_real.cpu().item()</span><br><span class="line">                loss_fake_sum += loss_fake.cpu().item()</span><br><span class="line">                loss_cr_sum += loss_cr.cpu().item()</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 计算该轮训练中每个 batch 的 loss</span></span><br><span class="line">            loss = loss_sum / <span class="number">5</span></span><br><span class="line">            loss_real = loss_real_sum / <span class="number">5</span></span><br><span class="line">            loss_fake = loss_fake_sum / <span class="number">5</span></span><br><span class="line">            loss_cr = loss_cr_sum / <span class="number">5</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># 将 loss 发布到 tensorboard 上</span></span><br><span class="line">            writer.add_scalar(<span class="string">&#x27;loss&#x27;</span>, loss, step)</span><br><span class="line">            writer.add_scalar(<span class="string">&#x27;loss_real&#x27;</span>, loss_real, step)</span><br><span class="line">            writer.add_scalar(<span class="string">&#x27;loss_fake&#x27;</span>, loss_fake, step)</span><br><span class="line">            writer.add_scalar(<span class="string">&#x27;loss_cr&#x27;</span>, loss_cr, step)</span><br><span class="line"></span><br><span class="line">            pbar.set_postfix(</span><br><span class="line">                loss_real=<span class="string">&#x27;%.3f&#x27;</span> % loss_real,</span><br><span class="line">                loss_fake=<span class="string">&#x27;%.3f&#x27;</span> % loss_fake)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Generator 接下来训练生成器</span></span><br><span class="line">            <span class="comment"># 先将鉴别器的梯度缓存下来，并关掉梯度记录，训练完后再打开梯度记录并恢复缓存</span></span><br><span class="line">            <span class="keyword">with</span> module_no_grad(net_D):</span><br><span class="line">                <span class="comment"># 常规的深度网络训练，输入数据是随机产生的随机向量</span></span><br><span class="line">                optim_G.zero_grad()</span><br><span class="line">                z_ = torch.randn(<span class="number">128</span>, <span class="number">128</span>).cuda()</span><br><span class="line">                y_ = torch.randint(<span class="number">1</span>, (<span class="number">128</span>,)).cuda()</span><br><span class="line">                fake = net_G(z_, y_)</span><br><span class="line">                pred_fake = normalize_gradient(net_D, fake, y=y_)</span><br><span class="line">                loss = loss_fn(pred_fake)</span><br><span class="line">                loss.backward()</span><br><span class="line">                optim_G.step()</span><br><span class="line"></span><br><span class="line">            <span class="comment"># ema 生成器权重衰减</span></span><br><span class="line">            <span class="keyword">if</span> step &lt; <span class="number">0</span>:</span><br><span class="line">                decay = <span class="number">0</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                decay = <span class="number">0.999</span></span><br><span class="line">            ema(net_G, ema_G, decay)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># scheduler</span></span><br><span class="line">            sched_G.step()</span><br><span class="line">            sched_D.step()</span><br><span class="line"></span><br><span class="line">            <span class="comment"># sample from fixed z</span></span><br><span class="line">            <span class="comment"># 用固定的输入输入到生成器中产生假图并保存</span></span><br><span class="line">            <span class="keyword">if</span> step == <span class="number">1</span> <span class="keyword">or</span> step % FLAGS.sample_step == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">                    fake_net = net_G(fixed_z, fixed_y).cpu()</span><br><span class="line">                    fake_ema = ema_G(fixed_z, fixed_y).cpu()</span><br><span class="line">                grid_net = (make_grid(fake_net) + <span class="number">1</span>) / <span class="number">2</span></span><br><span class="line">                grid_ema = (make_grid(fake_ema) + <span class="number">1</span>) / <span class="number">2</span></span><br><span class="line">                writer.add_image(<span class="string">&#x27;sample_ema&#x27;</span>, grid_ema, step)</span><br><span class="line">                writer.add_image(<span class="string">&#x27;sample&#x27;</span>, grid_net, step)</span><br><span class="line">                save_image(</span><br><span class="line">                    grid_ema,</span><br><span class="line">                    os.path.join(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>, <span class="string">&#x27;sample&#x27;</span>, <span class="string">&#x27;%d.png&#x27;</span> % step))</span><br><span class="line"></span><br><span class="line">            <span class="comment"># evaluate IS, FID and save model</span></span><br><span class="line">            <span class="comment"># 验证并记录几个指标</span></span><br><span class="line">            <span class="keyword">if</span> step == <span class="number">1</span> <span class="keyword">or</span> step % FLAGS.eval_step == <span class="number">0</span>:</span><br><span class="line">                (IS, IS_std), FID = evaluate(net_G)</span><br><span class="line">                (IS_ema, IS_std_ema), FID_ema = evaluate(ema_G)</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> math.isnan(FID) <span class="keyword">and</span> <span class="keyword">not</span> math.isnan(best_FID):</span><br><span class="line">                    save_as_best = (FID &lt; best_FID)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    save_as_best = (IS &gt; best_IS)</span><br><span class="line">                <span class="keyword">if</span> save_as_best:</span><br><span class="line">                    best_IS = IS</span><br><span class="line">                    best_FID = FID</span><br><span class="line">                ckpt = &#123;</span><br><span class="line">                    <span class="string">&#x27;net_G&#x27;</span>: net_G.state_dict(),</span><br><span class="line">                    <span class="string">&#x27;net_D&#x27;</span>: net_D.state_dict(),</span><br><span class="line">                    <span class="string">&#x27;ema_G&#x27;</span>: ema_G.state_dict(),</span><br><span class="line">                    <span class="string">&#x27;optim_G&#x27;</span>: optim_G.state_dict(),</span><br><span class="line">                    <span class="string">&#x27;optim_D&#x27;</span>: optim_D.state_dict(),</span><br><span class="line">                    <span class="string">&#x27;sched_G&#x27;</span>: sched_G.state_dict(),</span><br><span class="line">                    <span class="string">&#x27;sched_D&#x27;</span>: sched_D.state_dict(),</span><br><span class="line">                    <span class="string">&#x27;fixed_y&#x27;</span>: fixed_y,</span><br><span class="line">                    <span class="string">&#x27;fixed_z&#x27;</span>: fixed_z,</span><br><span class="line">                    <span class="string">&#x27;best_IS&#x27;</span>: best_IS,</span><br><span class="line">                    <span class="string">&#x27;best_FID&#x27;</span>: best_FID,</span><br><span class="line">                    <span class="string">&#x27;step&#x27;</span>: step,</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> step == <span class="number">1</span> <span class="keyword">or</span> step % FLAGS.save_step == <span class="number">0</span>:</span><br><span class="line">                    torch.save(</span><br><span class="line">                        ckpt, os.path.join(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>, <span class="string">&#x27;%06d.pt&#x27;</span> % step))</span><br><span class="line">                <span class="keyword">if</span> save_as_best:</span><br><span class="line">                    torch.save(</span><br><span class="line">                        ckpt, os.path.join(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>, <span class="string">&#x27;best_model.pt&#x27;</span>))</span><br><span class="line">                torch.save(ckpt, os.path.join(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>, <span class="string">&#x27;model.pt&#x27;</span>))</span><br><span class="line">                metrics = &#123;</span><br><span class="line">                    <span class="string">&#x27;IS&#x27;</span>: IS,</span><br><span class="line">                    <span class="string">&#x27;IS_std&#x27;</span>: IS_std,</span><br><span class="line">                    <span class="string">&#x27;FID&#x27;</span>: FID,</span><br><span class="line">                    <span class="string">&#x27;IS_EMA&#x27;</span>: IS_ema,</span><br><span class="line">                    <span class="string">&#x27;IS_std_EMA&#x27;</span>: IS_std_ema,</span><br><span class="line">                    <span class="string">&#x27;FID_EMA&#x27;</span>: FID_ema,</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">for</span> name, value <span class="keyword">in</span> metrics.items():</span><br><span class="line">                    writer.add_scalar(name, value, step)</span><br><span class="line">                writer.flush()</span><br><span class="line">                <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(<span class="string">&quot;./logs/GN-GAN_CIFAR10_RES_0&quot;</span>, <span class="string">&#x27;eval.txt&#x27;</span>), <span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                    metrics[<span class="string">&#x27;step&#x27;</span>] = step</span><br><span class="line">                    f.write(json.dumps(metrics) + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">                k = <span class="built_in">len</span>(<span class="built_in">str</span>(<span class="number">200000</span>))</span><br><span class="line">                pbar.write(</span><br><span class="line">                    <span class="string">f&quot;<span class="subst">&#123;step:&#123;k&#125;</span>d&#125;/<span class="subst">&#123;<span class="number">200000</span>&#125;</span> &quot;</span></span><br><span class="line">                    <span class="string">f&quot;IS: <span class="subst">&#123;IS:<span class="number">6.3</span>f&#125;</span>(<span class="subst">&#123;IS_std:<span class="number">.3</span>f&#125;</span>), &quot;</span></span><br><span class="line">                    <span class="string">f&quot;FID: <span class="subst">&#123;FID:<span class="number">.3</span>f&#125;</span>, &quot;</span></span><br><span class="line">                    <span class="string">f&quot;IS_EMA: <span class="subst">&#123;IS_ema:<span class="number">6.3</span>f&#125;</span>(<span class="subst">&#123;IS_std_ema:<span class="number">.3</span>f&#125;</span>), &quot;</span></span><br><span class="line">                    <span class="string">f&quot;FID_EMA: <span class="subst">&#123;FID_ema:<span class="number">.3</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    writer.close()</span><br></pre></td></tr></table></figure>
+<h4 id="验证">验证</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">generate_images</span>(<span class="params">net_G</span>):</span><br><span class="line">    images = []</span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        <span class="comment"># tqdm 的进度条迭代，等价于 range</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> trange(<span class="number">0</span>, FLAGS.num_images, FLAGS.batch_size_G, ncols=<span class="number">0</span>, leave=<span class="literal">False</span>):</span><br><span class="line">            <span class="comment"># 产生一组随机数输入到生成器中生成假图</span></span><br><span class="line">            z = torch.randn(FLAGS.batch_size_G, FLAGS.z_dim).to(device)</span><br><span class="line">            y = torch.randint(FLAGS.n_classes, (FLAGS.batch_size_G,)).to(device)</span><br><span class="line">            fake = (net_G(z, y) + <span class="number">1</span>) / <span class="number">2</span></span><br><span class="line">            images.append(fake.cpu())</span><br><span class="line">    <span class="comment"># 将假图拼接起来返回</span></span><br><span class="line">    images = torch.cat(images, dim=<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> images[:FLAGS.num_images]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">evaluate</span>(<span class="params">net_G</span>):</span><br><span class="line">    <span class="comment"># 生成一组假图</span></span><br><span class="line">    images = generate_images(net_G=net_G)</span><br><span class="line">    <span class="comment"># 使用 pytorch_gan_metrics 库中的函数计算 IS 和 FID</span></span><br><span class="line">    (IS, IS_std), FID = get_inception_score_and_fid(images, FLAGS.fid_stats, verbose=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">del</span> images</span><br><span class="line">    <span class="keyword">return</span> (IS, IS_std), FID</span><br></pre></td></tr></table></figure>
+<h4 id="损失函数">损失函数</h4>
+<p>看看一些损失函数的实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BCEWithLogits</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.bce = nn.BCEWithLogitsLoss()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, pred_real, pred_fake=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> pred_fake <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            loss_real = <span class="variable language_">self</span>.bce(pred_real, torch.ones_like(pred_real))</span><br><span class="line">            loss_fake = <span class="variable language_">self</span>.bce(pred_fake, torch.zeros_like(pred_fake))</span><br><span class="line">            loss = loss_real + loss_fake</span><br><span class="line">            <span class="keyword">return</span> loss, loss_real, loss_fake</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            loss = <span class="variable language_">self</span>.bce(pred_real, torch.ones_like(pred_real))</span><br><span class="line">            <span class="keyword">return</span> loss</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HingeLoss</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, pred_real, pred_fake=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> pred_fake <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            loss_real = F.relu(<span class="number">1</span> - pred_real).mean()</span><br><span class="line">            loss_fake = F.relu(<span class="number">1</span> + pred_fake).mean()</span><br><span class="line">            loss = loss_real + loss_fake</span><br><span class="line">            <span class="keyword">return</span> loss, loss_real, loss_fake</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            loss = -pred_real.mean()</span><br><span class="line">            <span class="keyword">return</span> loss</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Wasserstein</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, pred_real, pred_fake=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> pred_fake <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            loss_real = pred_real.mean()</span><br><span class="line">            loss_fake = pred_fake.mean()</span><br><span class="line">            loss = -loss_real + loss_fake</span><br><span class="line">            <span class="keyword">return</span> loss, loss_real, loss_fake</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            loss = -pred_real.mean()</span><br><span class="line">            <span class="keyword">return</span> loss</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BCE</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.bce = nn.BCELoss()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, pred_real, pred_fake=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> pred_fake <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            loss_real = <span class="variable language_">self</span>.bce(</span><br><span class="line">                (pred_real + <span class="number">1</span>) / <span class="number">2</span>, torch.ones_like(pred_real))</span><br><span class="line">            loss_fake = <span class="variable language_">self</span>.bce(</span><br><span class="line">                (pred_fake + <span class="number">1</span>) / <span class="number">2</span>, torch.zeros_like(pred_fake))</span><br><span class="line">            loss = loss_real + loss_fake</span><br><span class="line">            <span class="keyword">return</span> loss, loss_real, loss_fake</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            loss = <span class="variable language_">self</span>.bce(</span><br><span class="line">                (pred_real + <span class="number">1</span>) / <span class="number">2</span>, torch.ones_like(pred_real))</span><br><span class="line">            <span class="keyword">return</span> loss</span><br></pre></td></tr></table></figure>
+<h2 id="references">References</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34287744">生成对抗网络（GAN）</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.twistedwg.com/2018/10/13/SNGAN.html">SN-GAN论文解读</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/389024283">详细解析深度学习中的
+Lipschitz 条件</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35586657/article/details/98478508">GAN的几种评价指标</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25071913">令人拍案叫绝的Wasserstein
+GAN</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/waitingwinter/article/details/105774720">详解
+pytorch 中的 autograd.grad() 函数</a></li>
+</ul>
+<hr>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-07/GNGAN.html" title="『论文笔记』Gradient Normalization for Generative Adversarial Networks">https://meteordream.github.io/Paper/2022-07/GNGAN.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Normalization/" rel="tag"><i class="fa fa-tag"></i> Normalization</a>
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/ICCV/" rel="tag"><i class="fa fa-tag"></i> ICCV</a>
+              <a href="/tags/GAN/" rel="tag"><i class="fa fa-tag"></i> GAN</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Gadget/2022-07/Hash%E6%A0%A1%E9%AA%8C.html" rel="prev" title="Hash校验">
+      <i class="fa fa-chevron-left"></i> Hash校验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/%E5%B0%8F%E6%8A%80%E5%B7%A7/2022-07/pdf%E4%B8%8E%E5%9B%BE%E7%89%87%E8%BD%AC%E6%8D%A2.html" rel="next" title="pdf与图片转换">
+      pdf与图片转换 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E4%BD%9C"><span class="nav-number">3.1.</span> <span class="nav-text">相关工作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gan"><span class="nav-number">4.1.</span> <span class="nav-text">GAN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%81%E6%98%8E%E5%92%8C%E6%8E%A8%E5%AF%BC"><span class="nav-number">4.2.</span> <span class="nav-text">证明和推导</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E6%9D%A1%E4%BB%B6%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90"><span class="nav-number">5.1.</span> <span class="nav-text">无条件图像生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E6%9D%A1%E4%BB%B6%E5%9B%BE%E5%83%8F%E7%94%9F%E6%88%90"><span class="nav-number">5.2.</span> <span class="nav-text">有条件图像生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E6%9D%A1%E4%BB%B6%E5%A4%A7%E5%B0%BA%E5%AF%B8%E5%9B%BE%E7%89%87%E7%94%9F%E6%88%90"><span class="nav-number">5.3.</span> <span class="nav-text">无条件大尺寸图片生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E7%90%865%E7%9A%84%E5%AE%9E%E9%AA%8C%E5%88%86%E6%9E%90"><span class="nav-number">5.4.</span> <span class="nav-text">定理5的实验分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="nav-number">5.5.</span> <span class="nav-text">消融实验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#code-analysis"><span class="nav-number">7.</span> <span class="nav-text">Code Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gan-1"><span class="nav-number">7.1.</span> <span class="nav-text">GAN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83"><span class="nav-number">7.1.1.</span> <span class="nav-text">训练</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">7.1.2.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">7.1.3.</span> <span class="nav-text">损失函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">8.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

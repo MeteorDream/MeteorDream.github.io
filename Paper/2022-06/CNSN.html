@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: CrossNorm and SelfNorm for Generalization under Distribution Shifts Author: Zhiqiang Tang Institution: Amazon Web Services Year: 2021 Journal: ICCV Source: ICCV 2021 open access, a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』CrossNorm and SelfNorm for Generalization under Distribution Shifts">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-06/CNSN.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: CrossNorm and SelfNorm for Generalization under Distribution Shifts Author: Zhiqiang Tang Institution: Amazon Web Services Year: 2021 Journal: ICCV Source: ICCV 2021 open access, a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/motivation.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/CNSN_Fig2.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/CNSN_Fig3.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/20220613110326.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/20220613110432.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/20220613110559.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/20220613110657.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/20220613110755.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/20220613110909.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/20220613110942.png">
+<meta property="article:published_time" content="2022-06-08T03:19:27.000Z">
+<meta property="article:modified_time" content="2022-11-03T09:40:28.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Normalization">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="ICCV">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-06/CNSN/motivation.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-06/CNSN.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』CrossNorm and SelfNorm for Generalization under Distribution Shifts | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-06/CNSN.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』CrossNorm and SelfNorm for Generalization under Distribution Shifts
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-08 11:19:27" itemprop="dateCreated datePublished" datetime="2022-06-08T11:19:27+08:00">2022-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-03 17:40:28" itemprop="dateModified" datetime="2022-11-03T17:40:28+08:00">2022-11-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-06/CNSN.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-06/CNSN.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: CrossNorm and SelfNorm for Generalization
+under Distribution Shifts</li>
+<li><strong>Author</strong>: Zhiqiang Tang</li>
+<li><strong>Institution</strong>: Amazon Web Services</li>
+<li><strong>Year</strong>: 2021</li>
+<li><strong>Journal</strong>: ICCV</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/ICCV2021/html/Tang_CrossNorm_and_SelfNorm_for_Generalization_Under_Distribution_Shifts_ICCV_2021_paper.html">ICCV
+2021 open access</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2102.02811">arxiv</a></li>
+<li><strong>Code</strong>: <a target="_blank" rel="noopener" href="https://github.com/amazon-research/crossnorm-selfnorm">Official
+implementation</a></li>
+<li><strong>Idea</strong>: 对 feature map
+通道的均值和方差做交换以提高泛化性鲁棒性</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Tang_2021_ICCV,</span><br><span class="line">    author    = &#123;Tang, Zhiqiang and Gao, Yunhe and Zhu, Yi and Zhang, Zhi and Li, Mu and Metaxas, Dimitris N.&#125;,</span><br><span class="line">    title     = &#123;CrossNorm and SelfNorm for Generalization Under Distribution Shifts&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)&#125;,</span><br><span class="line">    month     = &#123;October&#125;,</span><br><span class="line">    year      = &#123;2021&#125;,</span><br><span class="line">    pages     = &#123;52-61&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>传统的归一化方法通常假设训练集和测试集同分布，但在现实世界中分布偏移(distribution
+shifts)是很常见的，这导致在训练好的模型在一些新场景表现很差。在该文章中提出了
+CrossNorm 和 SelfNorm 两个方法来提高泛化性鲁棒性。CrossNorm 交换 feature
+maps 的通道均值方差来扩大训练集分布，SelfNorm
+使用注意力来重新校准训练集和测试集分布的统计差距。尽管两种方法方向不同，但彼此之间可以互补。</p>
+<h2 id="introduction">Introduction</h2>
+<p>所谓分布偏移(distribution shifts)举个 :chestnut:
+在一个城市中训练的驾驶模型放到另外一个城市可能就不好用了。</p>
+<p>作者解释了为什么 Normalization
+的方法在分布偏移中可以提升泛化性。其基本的思路包括两种：扩大训练集的分布和缩小测试集的分布。</p>
+<p>首先，扩大训练集的分布其实是一种数据增强的方法，并不符合传统
+Normalization 稳定和加速训练的目标。其灵感来源于观察到交换两张图片的 RGB
+通道的均值和方差能产生风格迁移的效果，如 图1(a)
+所示。由通道均值和方差编码的风格例如物体形状通常在识别任务中不太重要，所以改变风格也不用担心影响标签。据此作者提出了
+CrossNorm。</p>
+<p>SelfNorm 的灵感来源于一个类似的现象：调整图片 RGB
+通道的均值和方差能减少图片风格的差异，如 图1(b)
+所示。通过调整通道均值和方差，可以缩小测试集的分布，使得训练集和测试集的风格更加一致。</p>
+<figure>
+<img data-src="CNSN/motivation.png" alt="motivation">
+<figcaption aria-hidden="true">motivation</figcaption>
+</figure>
+<p>看起来 CrossNorm 和 SelfNorm 操作似乎是相反的，CrossNorm
+旨在进行风格强化，而SelfNorm旨在进行风格统一(style
+recalibration)，但两者的实现方式（修改通道统计量）和目标（提高泛化性和鲁棒性）基本相同。此外，CrossNorm
+可以对 SelfNorm 进行增强，CrossNorm 可以让 SelfNorm
+使用更多不同风格的样本进行训练。</p>
+<p>总的来说，这篇文章有三点重要的贡献：</p>
+<ul>
+<li>提出了一种与传统 Normalization 不一样的方向：在分布偏移的条件下使用
+Normalization 提高泛化性</li>
+<li>提出了 CrossNorm 和 SelfNorm
+这两种互补的方法用于提高泛化性和鲁棒性</li>
+<li>CrossNorm 和 SelfNorm 的鲁棒性能在不同领域都能达到 SOTA</li>
+</ul>
+<h2 id="method">Method</h2>
+<h3 id="相关工作对比">相关工作对比</h3>
+<h4 id="合成分布偏移下的泛化性">合成分布偏移下的泛化性</h4>
+<p>合成分布偏移主要指对已有图片进行一些修改得到偏移测试集。包括对抗样本(Adversarial
+examples)、图像破坏(image
+corruptions)等。而在这方面的研究有Stylized-ImageNet, AugMix, Adversarial
+noises training(ANT), unsupervised domain adaptation.</p>
+<p>对比
+Stylized-ImageNet<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Robert Geirhos, Patricia Rubisch, Claudio Michaelis, Matthias Bethge, Felix A Wichmann, and Wieland Brendel. Imagenet-trained cnns are biased towards texture; increasing shape bias improves accuracy and robustness. In Proceedings of the International Conference on Learning Representations, 2019.
+">[1]</span></a></sup>, CrossNorm 直接在目标 CNNs
+的特征空间上进行更有效的风格迁移，而 Stylized-ImageNet
+需要额外的风格数据集和预训练的风格迁移模型。其次，CrossNorm
+在清晰的和损坏的(corrupted)数据上都能提高性能，而 Stylized-ImageNet
+会损伤清晰图像的泛化性因为额外的风格会导致更大的训练分别偏移。</p>
+<p>此外，CrossNorm 和 Augmix, ANT 互不干扰，可以协同工作。</p>
+<h4 id="自然分别偏移下的泛化性">自然分别偏移下的泛化性</h4>
+<p>自然分布偏移是相对合成分布偏移定义的，指没有修改过的数据。典型的例子是视频，相邻的帧在人类看起来差别不大但深度模型却得到了不一样的结果。解决的方法有
+IBN<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Xingang Pan, Ping Luo, Jianping Shi, and Xiaoou Tang. Two at once: Enhancing learning and generalization capacities via ibn-net. In Proceedings of the European Conference on Computer Vision (ECCV), pages 464–479, 2018.
+">[2]</span></a></sup>, Domain
+randomization<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Xiangyu Yue, Yang Zhang, Sicheng Zhao, Alberto Sangiovanni-Vincentelli, Kurt Keutzer, and Boqing Gong. Domain randomization and pyramid consistency: Simulation-to-real generalization without accessing target domain data. In Proceedings of the IEEE International Conference on Computer Vision, pages 2100-2110, 2019.
+">[3]</span></a></sup>, 后者与 Stylized-ImageNet
+有着同样的问题，即需要预训练数据和预训练模型。</p>
+<p>相比之下，SelfNorm 通过风格统一打通了分布鸿沟(distribution gaps), 而
+CrossNorm 更有效更均衡的沟通了源数据集和目标数据集的性能。</p>
+<h4 id="normalization和attention">Normalization和Attention</h4>
+<p>有一些将注意力用到多种 Normalization 中的方法，SelfNorm
+仅仅是将注意力用到 Instance Normalization 中，使得 SelfNorm
+更关注重要的风格而抑制琐碎的风格，减少了因风格差异导致的分布鸿沟。</p>
+<h4 id="数据增强">数据增强</h4>
+<p>目前的数据增强方法主要包括标签保护(label-preserving)和标签扰动(label-perturbing)。</p>
+<p>标签保护有旋转，变色等视觉上的变换，标签扰动主要用于分类。</p>
+<p>CrossNorm
+也是一种数据增强的方法，并且很容易应用到各个领域和任务上，其目标是提高分布偏移下的泛化性和鲁棒性，这和许多传统的数据增强方法有些不同。</p>
+<h3 id="preliminary">Preliminary</h3>
+<p>CrossNorm 和 SelfNorm 都是基于 Instance Normalization 的。</p>
+<h4 id="instance-normalization">Instance Normalization</h4>
+<p>假设有 feature map <span class="math inline">𝒜 ∈ ℝ<sup><em>H</em> × <em>W</em></sup></span>,
+Instance Normalization 对 feature map 做 normalization
+并做一个仿射变换：</p>
+<p><span class="math display">$$
+\gamma \dfrac{\mathcal{A} - \mu_{\mathcal{A}}}{\sigma_{\mathcal{A}}} +
+\beta
+$$</span></p>
+<p><span class="math inline"><em>μ</em><sub>𝒜</sub></span> 和 <span class="math inline"><em>σ</em><sub>𝒜</sub></span> 能解码风格信息。</p>
+<h4 id="风格定义">风格定义</h4>
+<p>在这篇文章中，风格是指与感兴趣的语义内容相关的一些信息。SelfNorm
+起作用的原因可能是注意力可能有助于强调基本风格并抑制琐碎的风格。</p>
+<figure>
+<img data-src="CNSN/CNSN_Fig2.png" alt="CrossNorm and SelfNorm">
+<figcaption aria-hidden="true">CrossNorm and SelfNorm</figcaption>
+</figure>
+<h3 id="crossnorm">CrossNorm</h3>
+<p>CrossNorm 将 <span class="math inline">𝒜</span> 通道的 <span class="math inline"><em>μ</em><sub>𝒜</sub></span> 和 <span class="math inline"><em>σ</em><sub>𝒜</sub></span> 和 <span class="math inline">ℬ</span> 通道的 <span class="math inline"><em>μ</em><sub>ℬ</sub></span> 和 <span class="math inline"><em>σ</em><sub>ℬ</sub></span> 进行交换</p>
+<p><span class="math display">$$
+\sigma_{\mathcal{B}}
+\frac{\mathcal{A}-\mu_{\mathcal{A}}}{\sigma_{\mathcal{A}}}+\mu_{\mathcal{B}}
+\quad \sigma_{\mathcal{A}}
+\frac{\mathcal{B}-\mu_{\mathcal{B}}}{\sigma_{\mathcal{B}}}+\mu_{\mathcal{A}}
+$$</span></p>
+<p>CrossNorm 包括三种变换：</p>
+<ul>
+<li><strong>1-instance mode</strong>: 对于 CNNs, 对 <span class="math inline">𝒳 ∈ ℝ<sup><em>C</em> × <em>H</em> × <em>W</em></sup></span>,
+CrossNorm 交换通道 <span class="math inline"><em>C</em></span> 的统计量:
+<span class="math inline">{(𝒜, ℬ) ∈ (𝒳<sub><em>i</em>, :,:</sub>, 𝒳<sub><em>j</em>, :,:</sub>) ∣ <em>i</em> ≠ <em>j</em>, 0 &lt; <em>i</em>, <em>j</em> &lt; <em>C</em>}</span>.</li>
+<li><strong>2-instance mode</strong>: 给出两个 Instance <span class="math inline">𝒳, 𝒴 ∈ ℝ<sup><em>C</em> × <em>H</em> × <em>W</em></sup></span>,
+CrossNorm 交换其对应通道的统计量使 <span class="math inline">𝒜</span> 和
+<span class="math inline">ℬ</span> 变为: <span class="math inline">{(𝒜, ℬ) ∈ (𝒳<sub><em>i</em>, :,:</sub>, 𝒴<sub><em>i</em>, :,:</sub>) ∣ 0 &lt; <em>i</em> &lt; <em>C</em>}</span></li>
+<li><strong>Crop</strong>: 局部交换，<span class="math inline">{(𝒜, ℬ) ∈ (crop (𝒜), crop (ℬ)) ∣ <em>r</em><sub>crop
+</sub> ≥ <em>t</em>}</span>，其面积比例不低于 <span class="math inline"><em>t</em></span>.</li>
+</ul>
+<h3 id="selfnorm">SelfNorm</h3>
+<p>SelfNorm 将 IN 中的 <span class="math inline"><em>β</em></span> 和
+<span class="math inline"><em>γ</em></span> 替换为 <span class="math inline"><em>μ</em><sub>𝒜</sub><sup>′</sup> = <em>f</em>(<em>μ</em><sub>𝒜</sub>, <em>σ</em><sub>𝒜</sub>)<em>μ</em><sub>𝒜</sub></span>
+和 <span class="math inline"><em>σ</em><sub>𝒜</sub><sup>′</sup> = <em>g</em>(<em>μ</em><sub>𝒜</sub>, <em>σ</em><sub>𝒜</sub>)<em>σ</em><sub>𝒜</sub></span>,
+如上图所示, 其中的 <span class="math inline"><em>f</em></span> 和 $g $
+表示注意力函数。调整后的 Feature Map 为：</p>
+<p><span class="math display">$$
+\sigma_{\mathcal{A}}^{\prime}
+\frac{\mathcal{A}-\mu_{\mathcal{A}}}{\sigma_{\mathcal{A}}}+\mu_{\mathcal{A}}^{\prime}
+$$</span></p>
+<p>在具体的实现中，使用了两个全连接层来实现 <span class="math inline"><em>f</em></span> 和 <span class="math inline"><em>g</em></span> 两个注意力函数。</p>
+<h4 id="与-se-模块的区别">与 SE 模块的区别</h4>
+<p>SE 模块<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Jie Hu, Li Shen, and Gang Sun. Squeeze-and-excitation networks. In Proceedings of the IEEE conference on computer vision and pattern recognition, pages 7132–7141, 2018.
+">[4]</span></a></sup>是 SENet 中提出的一种基于通道注意力的模块。</p>
+<ol type="1">
+<li>SE 模块依赖通道间相关性，而 SelfNorm 单独处理每个通道</li>
+<li>SE 模块针对的是通道特征而 SelfNorm 处理的是通道的统计量</li>
+<li>SE 模块的复杂度为 <span class="math inline"><em>O</em>(<em>C</em><sup>2</sup>)</span>, SelfNorm
+的复杂度为 <span class="math inline"><em>O</em>(<em>C</em>)</span>, 其中
+<span class="math inline"><em>C</em></span> 是通道数量</li>
+</ol>
+<h2 id="detail">Detail</h2>
+<figure>
+<img data-src="CNSN/CNSN_Fig3.png" alt="train_flow">
+<figcaption aria-hidden="true">train_flow</figcaption>
+</figure>
+<p>CrossNorm 只在训练时使用，SelfNorm 在训练和测试时都使用。SelfNorm
+是可学习模块，需要经过训练才能工作。CrossNorm 可以增强 SelfNorm
+的性能，因为 CrossNorm 可以对风格进行增强来使得 SelfNorm
+对更多风格起作用。两种方法协同工作提高了泛化能力鲁棒性。</p>
+<p>模块设计：CrossNorm 和 SelfNorm
+都能灵活使用，但插入到模型中什么位置有待研究：后面进行了消融实验，附录中展示了这方面的具体研究。例如，在
+Resnet 中插入到残差块中。</p>
+<h2 id="experiment">Experiment</h2>
+<p>文中实验部分展示了 6
+项实验结果，文中的排版是先逐一介绍用到的数据集，再详细说明每个实验的一些实验参数设置及实验结论。</p>
+<p>总的参数设置：文中指出模型参数设置与Augmix开源仓库的超参数是一致的。所有模型结构中都是CN放在SN前面，论文附录中探究了CNSN放在位置的影响，实验结果展示中CNSN放在残差块后面。实验中激活CrossNorm，CrossNorm使用2-instance与Crop结合的模式，threshold设为0.1。（后续其他类型）</p>
+<h3 id="分类任务">分类任务</h3>
+<p>数据集：CIFAR-10, CIFAR-100, ImageNet, CIFAR-10-C, CIFAR-100-C,
+ImageNet-C</p>
+<p>数据集简介：CIFAR的两个数据集是分类中常用数据集，CIFAR-10 有 60000
+张图片，10个分类，每类6000张长宽均为32的三通道彩色图像，其中50000张为训练集，10000张为测试集。CIFAR-100与CIFAR-10类似，但有100分类，每个分类600张图片。ImageNet包含14197122张图片，是一个超大的分类数据集。而后续的带有
+-C
+的数据集是在原数据集的基础上添加了一些干扰，用于验证模型的泛化性和鲁棒性，例如下图所示：</p>
+<figure>
+<img data-src="CNSN/20220613110326.png" alt="ImageNet-C-examples">
+<figcaption aria-hidden="true">ImageNet-C-examples</figcaption>
+</figure>
+<p>实验结果：</p>
+<figure>
+<img data-src="CNSN/20220613110432.png" alt="Expreiment1">
+<figcaption aria-hidden="true">Expreiment1</figcaption>
+</figure>
+<p>第一个表格是CIFAR-10，CIFAR-100的实验结果，第二个表格是ImageNet的实验结果,
+实验中设置了 Basic 作为基线，六种数据增强的方法对比，CrossNorm,
+SelfNorm,单独的效果，结合的效果，以及与 Augmix结合的效果。</p>
+<p>实验结论：CNSN与Augmix结合后的效果达到了
+SOTA，鲁棒性和泛化性有显著提高，并且对原图的性能也有所提高。</p>
+<h3 id="半监督分类">半监督分类</h3>
+<p>数据集：CIFAR-10</p>
+<p>参数设置：模型设置与SOTA的FixMatch<sup id="fnref:8"><a href="#fn:8" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Kihyuk Sohn, David Berthelot, Chun-Liang Li, Zizhao Zhang, Nicholas Carlini, Ekin D Cubuk, Alex Kurakin, Han Zhang, and Colin Raffel. Fixmatch: Simplifying semisupervised learning with consistency and confidence. arXiv preprint arXiv:2001.07685, 2020.">[8]</span></a></sup>
+设置相同。使用28-2 Wide-Resnet训练了1024 epochs, 使用 SGD
+优化，动量0.9，学习率0.03，权重衰减5e-4，生成伪标签比例为0.95，未标记数据的权重损失为1，使用随机数种子为
+1 的随机数生成器分别随机采集250，4000个标签(检查过了原文确实是
+4000，但表格中是 1000?)</p>
+<p>实验结果：</p>
+<figure>
+<img data-src="CNSN/20220613110559.png" alt="Experiment2">
+<figcaption aria-hidden="true">Experiment2</figcaption>
+</figure>
+<p>实验结论：CN降低了分类错误率</p>
+<h3 id="合成数据集到真实数据集的泛化">合成数据集到真实数据集的泛化</h3>
+<p>数据集：GTA5，Cityscapes</p>
+<p>数据集介绍：GTA5是合成的城市场景数据集，有12403训练数据，6382验证数据，6181测试数据，Cityscapes是真实的城市场景数据集，有超过2975500训练数据和1525测试数据。</p>
+<p>参数设置：以Resnet50 为 backbone的FAN，80 epochs，batch
+size为16，使用ImageNet的预训练权重初始化，在源域和目标域都进行测试
+实验结果：</p>
+<figure>
+<img data-src="CNSN/20220613110657.png" alt="Experiment3">
+<figcaption aria-hidden="true">Experiment3</figcaption>
+</figure>
+<p>实验结果：CNSN都能有效提高在目标域的准确率。CN能让网络学习到更多域不变的特征，SN能让网络更加关注跨域的通用特征，二者结合达到SOTA的结果。</p>
+<h3 id="nlp的跨数据集泛化性">NLP的跨数据集泛化性</h3>
+<p>数据集：IMDb, SST-2</p>
+<p>数据集介绍：IMDb是一个二元情感分析数据集，由来自互联网电影数据库的
+50,000
+条评论组成，有25000条正面评论和25000条负面评论。SST-2也是电影评论，包含
+9613条训练数据和1821条测试数据。</p>
+<p>参数设置：使用GloVe 词嵌入和卷积神经网络。使用Adam优化器训练20
+epochs。</p>
+<p>实验结果：</p>
+<figure>
+<img data-src="CNSN/20220613110755.png" alt="Experiment4">
+<figcaption aria-hidden="true">Experiment4</figcaption>
+</figure>
+<p>实验结论：实验结果表明CNSN在NLP领域也是有用的而不仅仅局限于计算机视觉，尽管在NLP方面确实像图像一般的直观解释，均值和方差在NLP数据中也能通过减少分布偏移提高泛化性能。</p>
+<h3 id="域适应">域适应</h3>
+<p>数据集：Office-31</p>
+<p>数据集介绍：Office-31有三个域31个分类4652张图片。三个域分别为：Amazon
+(A) ( amazon.com images), Webcam (W) ( web camera images) 和 DSLR (D)
+(digital SLR camera images)</p>
+<p>参数设置：使用ResNet 50, Batch size 32, Adam
+优化器，学习率1e-5，权重衰减2.5e-5，训练 100 epochs</p>
+<p>实验结果：</p>
+<figure>
+<img data-src="CNSN/20220613110909.png" alt="Experiment5">
+<figcaption aria-hidden="true">Experiment5</figcaption>
+</figure>
+<p>实验结论：可见D-&gt;A 和 W-&gt;A 略差与
+AdaBN，论文解释这可能是因为D和W域的图片都比A少得多的原因。</p>
+<h3 id="可视化">可视化</h3>
+<figure>
+<img data-src="CNSN/20220613110942.png" alt="Experiment6">
+<figcaption aria-hidden="true">Experiment6</figcaption>
+</figure>
+<h2 id="conclusion">Conclusion</h2>
+<p>这篇文章解释了如何针对分布偏移使用 Normalization
+提高泛化性能，并以此提出了 CrossNorm 和 SelfNorm 这两种简单有效互补的
+Normalization
+的方法。他们的广泛应用说明了一种适用于视觉和语言等多个领域的通用方法。由于
+CrossNorm 和 SelfNorm
+非常简单，因此还有很大的改进空间，一个可能的方向是探索更好的风格表示形式，因为这两种方法中使用的平均值和方差并不是编码各种风格的最佳方法。</p>
+<h2 id="others">Others</h2>
+<h3 id="分类任务论文复现">分类任务论文复现</h3>
+<table>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 9%">
+<col style="width: 4%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">CIFAR-10/ResNeXt</th>
+<th style="text-align: center;">论文结果</th>
+<th style="text-align: center;">复现结果</th>
+<th style="text-align: center;">gaussian_noise</th>
+<th style="text-align: center;">shot_noise</th>
+<th style="text-align: center;">impulse_noise</th>
+<th style="text-align: center;">defocus_blur</th>
+<th style="text-align: center;">glass_blur</th>
+<th style="text-align: center;">motion_blur</th>
+<th style="text-align: center;">zoom_blur</th>
+<th style="text-align: center;">snow</th>
+<th style="text-align: center;">frost</th>
+<th style="text-align: center;">fog</th>
+<th style="text-align: center;">brightness</th>
+<th style="text-align: center;">contrast</th>
+<th style="text-align: center;">elastic_transform</th>
+<th style="text-align: center;">pixelate</th>
+<th style="text-align: center;">jpeg_compression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CN</td>
+<td style="text-align: center;">22.4</td>
+<td style="text-align: center;">22.198</td>
+<td style="text-align: center;">49.670</td>
+<td style="text-align: center;">38.062</td>
+<td style="text-align: center;">41.364</td>
+<td style="text-align: center;">11.866</td>
+<td style="text-align: center;">42.872</td>
+<td style="text-align: center;">16.354</td>
+<td style="text-align: center;">13.992</td>
+<td style="text-align: center;">14.136</td>
+<td style="text-align: center;">17.364</td>
+<td style="text-align: center;">9.160</td>
+<td style="text-align: center;">5.850</td>
+<td style="text-align: center;">15.582</td>
+<td style="text-align: center;">14.104</td>
+<td style="text-align: center;">22.148</td>
+<td style="text-align: center;">20.444</td>
+</tr>
+<tr>
+<td style="text-align: center;">SN</td>
+<td style="text-align: center;">21.5</td>
+<td style="text-align: center;">22.231</td>
+<td style="text-align: center;">47.288</td>
+<td style="text-align: center;">36.036</td>
+<td style="text-align: center;">41.730</td>
+<td style="text-align: center;">13.860</td>
+<td style="text-align: center;">33.526</td>
+<td style="text-align: center;">18.486</td>
+<td style="text-align: center;">17.746</td>
+<td style="text-align: center;">13.454</td>
+<td style="text-align: center;">16.322</td>
+<td style="text-align: center;">10.868</td>
+<td style="text-align: center;">5.612</td>
+<td style="text-align: center;">19.632</td>
+<td style="text-align: center;">14.798</td>
+<td style="text-align: center;">24.338</td>
+<td style="text-align: center;">19.774</td>
+</tr>
+<tr>
+<td style="text-align: center;">CNSN</td>
+<td style="text-align: center;">15.7</td>
+<td style="text-align: center;">16.240</td>
+<td style="text-align: center;">36.868</td>
+<td style="text-align: center;">29.218</td>
+<td style="text-align: center;">28.374</td>
+<td style="text-align: center;">7.922</td>
+<td style="text-align: center;">32.194</td>
+<td style="text-align: center;">10.224</td>
+<td style="text-align: center;">10.670</td>
+<td style="text-align: center;">10.456</td>
+<td style="text-align: center;">11.320</td>
+<td style="text-align: center;">7.638</td>
+<td style="text-align: center;">4.900</td>
+<td style="text-align: center;">8.348</td>
+<td style="text-align: center;">11.540</td>
+<td style="text-align: center;">16.116</td>
+<td style="text-align: center;">17.810</td>
+</tr>
+<tr>
+<td style="text-align: center;">CNSN+AugMix</td>
+<td style="text-align: center;">9.1</td>
+<td style="text-align: center;">9.816</td>
+<td style="text-align: center;">23.406</td>
+<td style="text-align: center;">16.838</td>
+<td style="text-align: center;">10.686</td>
+<td style="text-align: center;">5.080</td>
+<td style="text-align: center;">16.332</td>
+<td style="text-align: center;">6.272</td>
+<td style="text-align: center;">6.132</td>
+<td style="text-align: center;">7.720</td>
+<td style="text-align: center;">7.498</td>
+<td style="text-align: center;">7.070</td>
+<td style="text-align: center;">4.662</td>
+<td style="text-align: center;">5.696</td>
+<td style="text-align: center;">8.238</td>
+<td style="text-align: center;">10.580</td>
+<td style="text-align: center;">11.024</td>
+</tr>
+</tbody>
+</table>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 8%">
+<col style="width: 4%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">CIFAR-10/WideResnet</th>
+<th style="text-align: center;">论文结果</th>
+<th style="text-align: center;">复现结果</th>
+<th style="text-align: center;">gaussian_noise</th>
+<th style="text-align: center;">shot_noise</th>
+<th style="text-align: center;">impulse_noise</th>
+<th style="text-align: center;">defocus_blur</th>
+<th style="text-align: center;">glass_blur</th>
+<th style="text-align: center;">motion_blur</th>
+<th style="text-align: center;">zoom_blur</th>
+<th style="text-align: center;">snow</th>
+<th style="text-align: center;">frost</th>
+<th style="text-align: center;">fog</th>
+<th style="text-align: center;">brightness</th>
+<th style="text-align: center;">contrast</th>
+<th style="text-align: center;">elastic_transform</th>
+<th style="text-align: center;">pixelate</th>
+<th style="text-align: center;">jpeg_compression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CN</td>
+<td style="text-align: center;">21.6</td>
+<td style="text-align: center;">21.408</td>
+<td style="text-align: center;">44.486</td>
+<td style="text-align: center;">34.366</td>
+<td style="text-align: center;">36.794</td>
+<td style="text-align: center;">11.802</td>
+<td style="text-align: center;">41.776</td>
+<td style="text-align: center;">15.260</td>
+<td style="text-align: center;">14.742</td>
+<td style="text-align: center;">16.056</td>
+<td style="text-align: center;">18.702</td>
+<td style="text-align: center;">9.564</td>
+<td style="text-align: center;">6.758</td>
+<td style="text-align: center;">15.392</td>
+<td style="text-align: center;">14.566</td>
+<td style="text-align: center;">19.614</td>
+<td style="text-align: center;">21.244</td>
+</tr>
+<tr>
+<td style="text-align: center;">SN</td>
+<td style="text-align: center;">20.8</td>
+<td style="text-align: center;">22.239</td>
+<td style="text-align: center;">42.722</td>
+<td style="text-align: center;">32.722</td>
+<td style="text-align: center;">38.284</td>
+<td style="text-align: center;">14.006</td>
+<td style="text-align: center;">40.336</td>
+<td style="text-align: center;">17.296</td>
+<td style="text-align: center;">20.452</td>
+<td style="text-align: center;">15.174</td>
+<td style="text-align: center;">17.536</td>
+<td style="text-align: center;">10.692</td>
+<td style="text-align: center;">6.420</td>
+<td style="text-align: center;">17.052</td>
+<td style="text-align: center;">15.180</td>
+<td style="text-align: center;">25.820</td>
+<td style="text-align: center;">19.900</td>
+</tr>
+<tr>
+<td style="text-align: center;">CNSN</td>
+<td style="text-align: center;">16.9</td>
+<td style="text-align: center;">17.705</td>
+<td style="text-align: center;">34.008</td>
+<td style="text-align: center;">27.156</td>
+<td style="text-align: center;">29.102</td>
+<td style="text-align: center;">10.712</td>
+<td style="text-align: center;">32.454</td>
+<td style="text-align: center;">14.176</td>
+<td style="text-align: center;">13.944</td>
+<td style="text-align: center;">13.344</td>
+<td style="text-align: center;">13.798</td>
+<td style="text-align: center;">9.446</td>
+<td style="text-align: center;">6.342</td>
+<td style="text-align: center;">10.424</td>
+<td style="text-align: center;">13.812</td>
+<td style="text-align: center;">17.488</td>
+<td style="text-align: center;">19.364</td>
+</tr>
+<tr>
+<td style="text-align: center;">CNSN+AugMix</td>
+<td style="text-align: center;">9.9</td>
+<td style="text-align: center;">10.334</td>
+<td style="text-align: center;">16.078</td>
+<td style="text-align: center;">12.750</td>
+<td style="text-align: center;">13.368</td>
+<td style="text-align: center;">6.820</td>
+<td style="text-align: center;">16.680</td>
+<td style="text-align: center;">7.730</td>
+<td style="text-align: center;">8.320</td>
+<td style="text-align: center;">9.974</td>
+<td style="text-align: center;">9.400</td>
+<td style="text-align: center;">8.594</td>
+<td style="text-align: center;">6.304</td>
+<td style="text-align: center;">7.788</td>
+<td style="text-align: center;">9.974</td>
+<td style="text-align: center;">9.284</td>
+<td style="text-align: center;">11.948</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 8%">
+<col style="width: 4%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">CIFAR-100/ResNeXt</th>
+<th style="text-align: center;">论文结果</th>
+<th style="text-align: center;">复现结果</th>
+<th style="text-align: center;">gaussian_noise</th>
+<th style="text-align: center;">shot_noise</th>
+<th style="text-align: center;">impulse_noise</th>
+<th style="text-align: center;">defocus_blur</th>
+<th style="text-align: center;">glass_blur</th>
+<th style="text-align: center;">motion_blur</th>
+<th style="text-align: center;">zoom_blur</th>
+<th style="text-align: center;">snow</th>
+<th style="text-align: center;">frost</th>
+<th style="text-align: center;">fog</th>
+<th style="text-align: center;">brightness</th>
+<th style="text-align: center;">contrast</th>
+<th style="text-align: center;">elastic_transform</th>
+<th style="text-align: center;">pixelate</th>
+<th style="text-align: center;">jpeg_compression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CN</td>
+<td style="text-align: center;">47.0</td>
+<td style="text-align: center;">47.260</td>
+<td style="text-align: center;">78.618</td>
+<td style="text-align: center;">69.512</td>
+<td style="text-align: center;">69.922</td>
+<td style="text-align: center;">33.790</td>
+<td style="text-align: center;">75.954</td>
+<td style="text-align: center;">39.732</td>
+<td style="text-align: center;">38.330</td>
+<td style="text-align: center;">40.506</td>
+<td style="text-align: center;">44.618</td>
+<td style="text-align: center;">30.610</td>
+<td style="text-align: center;">23.782</td>
+<td style="text-align: center;">37.952</td>
+<td style="text-align: center;">35.586</td>
+<td style="text-align: center;">41.180</td>
+<td style="text-align: center;">48.812</td>
+</tr>
+<tr>
+<td style="text-align: center;">SN</td>
+<td style="text-align: center;">47.6</td>
+<td style="text-align: center;">47.997</td>
+<td style="text-align: center;">79.672</td>
+<td style="text-align: center;">71.686</td>
+<td style="text-align: center;">73.314</td>
+<td style="text-align: center;">33.044</td>
+<td style="text-align: center;">75.340</td>
+<td style="text-align: center;">39.538</td>
+<td style="text-align: center;">38.660</td>
+<td style="text-align: center;">39.186</td>
+<td style="text-align: center;">44.788</td>
+<td style="text-align: center;">32.080</td>
+<td style="text-align: center;">23.086</td>
+<td style="text-align: center;">39.244</td>
+<td style="text-align: center;">35.680</td>
+<td style="text-align: center;">45.662</td>
+<td style="text-align: center;">48.978</td>
+</tr>
+<tr>
+<td style="text-align: center;">CNSN</td>
+<td style="text-align: center;">40.8</td>
+<td style="text-align: center;">43.801</td>
+<td style="text-align: center;">73.700</td>
+<td style="text-align: center;">65.756</td>
+<td style="text-align: center;">59.370</td>
+<td style="text-align: center;">31.342</td>
+<td style="text-align: center;">67.804</td>
+<td style="text-align: center;">35.724</td>
+<td style="text-align: center;">35.908</td>
+<td style="text-align: center;">36.300</td>
+<td style="text-align: center;">41.322</td>
+<td style="text-align: center;">31.842</td>
+<td style="text-align: center;">23.684</td>
+<td style="text-align: center;">35.180</td>
+<td style="text-align: center;">34.150</td>
+<td style="text-align: center;">37.200</td>
+<td style="text-align: center;">47.728</td>
+</tr>
+<tr>
+<td style="text-align: center;">CNSN+AugMix</td>
+<td style="text-align: center;">30.8</td>
+<td style="text-align: center;">30.951</td>
+<td style="text-align: center;">45.748</td>
+<td style="text-align: center;">38.604</td>
+<td style="text-align: center;">31.990</td>
+<td style="text-align: center;">23.392</td>
+<td style="text-align: center;">43.006</td>
+<td style="text-align: center;">25.914</td>
+<td style="text-align: center;">25.154</td>
+<td style="text-align: center;">29.000</td>
+<td style="text-align: center;">30.484</td>
+<td style="text-align: center;">30.074</td>
+<td style="text-align: center;">23.406</td>
+<td style="text-align: center;">26.362</td>
+<td style="text-align: center;">28.220</td>
+<td style="text-align: center;">28.964</td>
+<td style="text-align: center;">33.952</td>
+</tr>
+</tbody>
+</table>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 8%">
+<col style="width: 4%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">CIFAR-100/WideResnet</th>
+<th style="text-align: center;">论文结果</th>
+<th style="text-align: center;">复现结果</th>
+<th style="text-align: center;">gaussian_noise</th>
+<th style="text-align: center;">shot_noise</th>
+<th style="text-align: center;">impulse_noise</th>
+<th style="text-align: center;">defocus_blur</th>
+<th style="text-align: center;">glass_blur</th>
+<th style="text-align: center;">motion_blur</th>
+<th style="text-align: center;">zoom_blur</th>
+<th style="text-align: center;">snow</th>
+<th style="text-align: center;">frost</th>
+<th style="text-align: center;">fog</th>
+<th style="text-align: center;">brightness</th>
+<th style="text-align: center;">contrast</th>
+<th style="text-align: center;">elastic_transform</th>
+<th style="text-align: center;">pixelate</th>
+<th style="text-align: center;">jpeg_compression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CN</td>
+<td style="text-align: center;">48.8</td>
+<td style="text-align: center;">48.746</td>
+<td style="text-align: center;">73.252</td>
+<td style="text-align: center;">65.216</td>
+<td style="text-align: center;">70.956</td>
+<td style="text-align: center;">36.542</td>
+<td style="text-align: center;">72.472</td>
+<td style="text-align: center;">42.398</td>
+<td style="text-align: center;">40.956</td>
+<td style="text-align: center;">43.528</td>
+<td style="text-align: center;">45.922</td>
+<td style="text-align: center;">35.672</td>
+<td style="text-align: center;">28.604</td>
+<td style="text-align: center;">41.594</td>
+<td style="text-align: center;">39.472</td>
+<td style="text-align: center;">44.764</td>
+<td style="text-align: center;">49.848</td>
+</tr>
+<tr>
+<td style="text-align: center;">SN</td>
+<td style="text-align: center;">47.4</td>
+<td style="text-align: center;">48.566</td>
+<td style="text-align: center;">69.794</td>
+<td style="text-align: center;">62.508</td>
+<td style="text-align: center;">65.500</td>
+<td style="text-align: center;">38.666</td>
+<td style="text-align: center;">67.574</td>
+<td style="text-align: center;">44.872</td>
+<td style="text-align: center;">44.434</td>
+<td style="text-align: center;">43.138</td>
+<td style="text-align: center;">45.806</td>
+<td style="text-align: center;">39.208</td>
+<td style="text-align: center;">29.574</td>
+<td style="text-align: center;">46.144</td>
+<td style="text-align: center;">39.172</td>
+<td style="text-align: center;">45.652</td>
+<td style="text-align: center;">46.450</td>
+</tr>
+<tr>
+<td style="text-align: center;">CNSN</td>
+<td style="text-align: center;">43.7</td>
+<td style="text-align: center;">43.824</td>
+<td style="text-align: center;">66.338</td>
+<td style="text-align: center;">58.518</td>
+<td style="text-align: center;">62.782</td>
+<td style="text-align: center;">33.332</td>
+<td style="text-align: center;">63.888</td>
+<td style="text-align: center;">37.150</td>
+<td style="text-align: center;">37.336</td>
+<td style="text-align: center;">38.766</td>
+<td style="text-align: center;">40.762</td>
+<td style="text-align: center;">33.342</td>
+<td style="text-align: center;">27.216</td>
+<td style="text-align: center;">35.388</td>
+<td style="text-align: center;">36.128</td>
+<td style="text-align: center;">41.220</td>
+<td style="text-align: center;">45.194</td>
+</tr>
+<tr>
+<td style="text-align: center;">CNSN+AugMix</td>
+<td style="text-align: center;">33.4</td>
+<td style="text-align: center;">34.111</td>
+<td style="text-align: center;">47.370</td>
+<td style="text-align: center;">41.012</td>
+<td style="text-align: center;">37.932</td>
+<td style="text-align: center;">26.336</td>
+<td style="text-align: center;">45.620</td>
+<td style="text-align: center;">28.840</td>
+<td style="text-align: center;">28.586</td>
+<td style="text-align: center;">32.798</td>
+<td style="text-align: center;">35.010</td>
+<td style="text-align: center;">31.750</td>
+<td style="text-align: center;">26.884</td>
+<td style="text-align: center;">31.330</td>
+<td style="text-align: center;">31.778</td>
+<td style="text-align: center;">30.380</td>
+<td style="text-align: center;">36.034</td>
+</tr>
+</tbody>
+</table>
+<p><del>其中黄色标注的行是标题，标题中第一栏标明了使用的数据集和模型，蓝色栏是论文中给出的实验数据，绿色栏是论文复现得到的结果，</del>(因为原本的图片太模糊了，所以转为了
+markdown
+内置表格样式)，后面15列是论文结果复现中CIFAR-10-C和CIFAR-100-C下各个子数据集单独的测试结果，复现结果是对这15个子集取平均值得到的。</p>
+<p>可见在结果复现中我们得到了与论文展示结果十分接近的结果，证明了论文提出的方法的有效性。</p>
+<p>通过对代码分析和结果复现，进一步加深了对论文方法的理解，也对论文提出方法的效果有更进一步的了解</p>
+<p>一些细节：</p>
+<p>Step 1. 将作者提供的开源代码 git 到本地或服务器并打开对应文件夹</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git https://github.com/amazon-research/crossnorm-selfnorm.git</span><br></pre></td></tr></table></figure>
+<p>Step 2.
+按照作者给出的要求配置环境（我的服务器上已有配置好的环境，所以这一步跳过了）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">conda create --name cnsn python=3.7</span><br><span class="line">conda activate cnsn</span><br><span class="line">conda install numpy</span><br><span class="line">conda install pytorch==1.2.0 torchvision==0.4.0 cudatoolkit=10.0 -c pytorch</span><br></pre></td></tr></table></figure>
+<p>Step 3. 下载所需测试数据集，解压到指定位置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p ./data</span><br><span class="line">curl -O https://zenodo.org/record/2535967/files/CIFAR-10-C.tar</span><br><span class="line">curl -O https://zenodo.org/record/3555552/files/CIFAR-100-C.tar</span><br><span class="line">tar -xvf CIFAR-100-C.tar -C data/</span><br><span class="line">tar -xvf CIFAR-10-C.tar -C data/</span><br></pre></td></tr></table></figure>
+<p>Step 4. 修改 cifar10-scripts 中的 sh
+脚本文件参数，运行得到实验结果</p>
+<p>这里的修改参数指存放数据集的路径，使用的GPU编号，以及对显存占用过大的训练减小Batchsize等</p>
+<p>受设备限制，这里只复现 CIFAR-10 和 CIFAR-100 的结果，ImageNet
+不进行复现</p>
+<h3 id="源码解析">源码解析</h3>
+<p>在开源代码中很容易找到 CNSN 的核心实现源码
+(cnsn.py)，我们对其进行分步解析</p>
+<p>导入库，这个没什么好说的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<p>第一个函数，主要功能是计算给出 tensor 的通道均值和方差，输入 tensor
+维度为 <span class="math inline">(<em>B</em>, <em>C</em>, <em>H</em>, <em>W</em>)</span>,
+分别表示批量大小，通道数和 Feature map
+的长宽。注意到计算是为了防止除零错，给方差加上了一个小常数 eps，默认值为
+1e-5，返回值的维度均为 <span class="math inline">(<em>B</em>, <em>C</em>, 1, 1)</span>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">calc_ins_mean_std</span>(<span class="params">x, eps=<span class="number">1e-5</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;extract feature map statistics&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># eps is a small value added to the variance to avoid divide-by-zero.</span></span><br><span class="line">    size = x.size()</span><br><span class="line">    <span class="keyword">assert</span> (<span class="built_in">len</span>(size) == <span class="number">4</span>)</span><br><span class="line">    N, C = size[:<span class="number">2</span>]</span><br><span class="line">    var = x.contiguous().view(N, C, -<span class="number">1</span>).var(dim=<span class="number">2</span>) + eps</span><br><span class="line">    std = var.sqrt().view(N, C, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">    mean = x.contiguous().view(N, C, -<span class="number">1</span>).mean(dim=<span class="number">2</span>).view(N, C, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> mean, std</span><br></pre></td></tr></table></figure>
+<p>第二个函数，给出原风格的 feature map 为 content_feat，目标 feature
+map 为 style_feat，按照论文中 CrossNorm 的方法将 style_feat 的风格迁移到
+content_feat 上。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">instance_norm_mix</span>(<span class="params">content_feat, style_feat</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;replace content statistics with style statistics&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">assert</span> (content_feat.size()[:<span class="number">2</span>] == style_feat.size()[:<span class="number">2</span>])</span><br><span class="line">    size = content_feat.size()</span><br><span class="line">    style_mean, style_std = calc_ins_mean_std(style_feat)</span><br><span class="line">    content_mean, content_std = calc_ins_mean_std(content_feat)</span><br><span class="line"></span><br><span class="line">    normalized_feat = (content_feat - content_mean.expand(size)) / content_std.expand(size)</span><br><span class="line">    <span class="keyword">return</span> normalized_feat * style_std.expand(size) + style_mean.expand(size)</span><br></pre></td></tr></table></figure>
+<p>第三个函数，随机对给定的张量裁剪出一小块范围，若裁剪的大小未达到指定的比例
+bbx_thres，则重新裁剪，直到达到指定的要求，最后返回裁剪区域的两个坐标.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">cn_rand_bbox</span>(<span class="params">size, beta, bbx_thres</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;sample a bounding box for cropping.&quot;&quot;&quot;</span></span><br><span class="line">    W = size[<span class="number">2</span>]</span><br><span class="line">    H = size[<span class="number">3</span>]</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        ratio = np.random.beta(beta, beta)</span><br><span class="line">        cut_rat = np.sqrt(ratio)</span><br><span class="line">        cut_w = np.<span class="built_in">int</span>(W * cut_rat)</span><br><span class="line">        cut_h = np.<span class="built_in">int</span>(H * cut_rat)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># uniform</span></span><br><span class="line">        cx = np.random.randint(W)</span><br><span class="line">        cy = np.random.randint(H)</span><br><span class="line"></span><br><span class="line">        bbx1 = np.clip(cx - cut_w // <span class="number">2</span>, <span class="number">0</span>, W)</span><br><span class="line">        bby1 = np.clip(cy - cut_h // <span class="number">2</span>, <span class="number">0</span>, H)</span><br><span class="line">        bbx2 = np.clip(cx + cut_w // <span class="number">2</span>, <span class="number">0</span>, W)</span><br><span class="line">        bby2 = np.clip(cy + cut_h // <span class="number">2</span>, <span class="number">0</span>, H)</span><br><span class="line"></span><br><span class="line">        ratio = <span class="built_in">float</span>(bbx2 - bbx1) * (bby2 - bby1) / (W * H)</span><br><span class="line">        <span class="keyword">if</span> ratio &gt; bbx_thres:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bbx1, bby1, bbx2, bby2</span><br></pre></td></tr></table></figure>
+<p>第四个函数，是 CrossNorm
+的主要实现，具体来说，是第二种和第三种模式的混合实现（实际上第一种模式也可以看作这种实现的一个特例），依次可以实现论文中提到的
+CrossNorm
+的三种模式（即单张图片通道交换，不同图片对应通道交换，局部交换-包含风格和语义两部分），其首先使用了
+torch.randperm 函数获得了打乱顺序的 feature
+map，随后看参数是否需要局部裁剪，若需要风格局部裁剪则调用上一个函数获取裁剪的坐标进行裁剪，chan
+控制是否进行单张图片的通道交换（即第一种模式），随后是语义的局部裁剪，这里主要通过
+mask 矩阵实现。随后是 lam
+控制的是否进行类似权重衰减的迭代操作，最后返回结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">cn_op_2ins_space_chan</span>(<span class="params">x, crop=<span class="string">&#x27;neither&#x27;</span>, beta=<span class="number">1</span>, bbx_thres=<span class="number">0.1</span>, lam=<span class="literal">None</span>, chan=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;2-instance crossnorm with cropping.&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">assert</span> crop <span class="keyword">in</span> [<span class="string">&#x27;neither&#x27;</span>, <span class="string">&#x27;style&#x27;</span>, <span class="string">&#x27;content&#x27;</span>, <span class="string">&#x27;both&#x27;</span>]</span><br><span class="line">    ins_idxs = torch.randperm(x.size()[<span class="number">0</span>]).to(x.device)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> crop <span class="keyword">in</span> [<span class="string">&#x27;style&#x27;</span>, <span class="string">&#x27;both&#x27;</span>]:</span><br><span class="line">        bbx3, bby3, bbx4, bby4 = cn_rand_bbox(x.size(), beta=beta, bbx_thres=bbx_thres)</span><br><span class="line">        x2 = x[ins_idxs, :, bbx3:bbx4, bby3:bby4]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        x2 = x[ins_idxs]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> chan:</span><br><span class="line">        chan_idxs = torch.randperm(x.size()[<span class="number">1</span>]).to(x.device)</span><br><span class="line">        x2 = x2[:, chan_idxs, :, :]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> crop <span class="keyword">in</span> [<span class="string">&#x27;content&#x27;</span>, <span class="string">&#x27;both&#x27;</span>]:</span><br><span class="line">        x_aug = torch.zeros_like(x)</span><br><span class="line">        bbx1, bby1, bbx2, bby2 = cn_rand_bbox(x.size(), beta=beta, bbx_thres=bbx_thres)</span><br><span class="line">        x_aug[:, :, bbx1:bbx2, bby1:bby2] = instance_norm_mix(content_feat=x[:, :, bbx1:bbx2, bby1:bby2], style_feat=x2)</span><br><span class="line"></span><br><span class="line">        mask = torch.ones_like(x, requires_grad=<span class="literal">False</span>)</span><br><span class="line">        mask[:, :, bbx1:bbx2, bby1:bby2] = <span class="number">0.</span></span><br><span class="line">        x_aug = x * mask + x_aug</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        x_aug = instance_norm_mix(content_feat=x, style_feat=x2)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> lam <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        x = x * lam + x_aug * (<span class="number">1</span>-lam)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        x = x_aug</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p>第一个类定义是 CrossNorm层 的实现：使用functools.partial定义了
+CrossNorm
+实现的具体操作函数（该函数可以理解为一个装饰器，对传入函数设定默认值，返回包装后的函数，这里传入的是上一个定义的函数，即
+CrossNorm 的具体实现），另一个参数是控制 CrossNorm
+层是否其作用，forward是前向传播，即在模型处于训练且 CrossNorm
+激活的条件下才进行 CrossNorm 操作，并在操作后取消激活。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CrossNorm</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;CrossNorm module&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, crop=<span class="literal">None</span>, beta=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(CrossNorm, <span class="variable language_">self</span>).__init__()</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.active = <span class="literal">False</span></span><br><span class="line">        <span class="variable language_">self</span>.cn_op = functools.partial(cn_op_2ins_space_chan,</span><br><span class="line">                                       crop=crop, beta=beta)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.training <span class="keyword">and</span> <span class="variable language_">self</span>.active:</span><br><span class="line"></span><br><span class="line">            x = <span class="variable language_">self</span>.cn_op(x)</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.active = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p>第二个类定义了 SelfNorm
+层，初始化中定义了两个全连接层（卷积Conv1d实现）和两个BatchNorm层，forward
+前向传播函数展示了 SelfNorm 如何作用：首先计算输入 feature map
+的均值和方差，将其降维后连接得到了 <span class="math inline">(<em>B</em>, <em>C</em>, 2)</span> 的
+statistics，随后分别先后输入到1维卷积（这里可以看出为什么说是卷积实现的全连接，因为是在每个通道上计算一个
+<span class="math inline">2 × 1</span>
+的全连接，外在表现是卷积操作）和BatchNorm层实现的简单注意力变化层，得到新的均值和方差，对输入做归一化和用新的均值和方差进行逆归一化操作，这里将两边合为一步并进行了计算的化简，最后将得到的结果进行前向传递返回。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SelfNorm</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;SelfNorm module&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, chan_num, is_two=<span class="literal">False</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(SelfNorm, <span class="variable language_">self</span>).__init__()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># channel-wise fully connected layer</span></span><br><span class="line">        <span class="variable language_">self</span>.g_fc = nn.Conv1d(chan_num, chan_num, kernel_size=<span class="number">2</span>,</span><br><span class="line">                              bias=<span class="literal">False</span>, groups=chan_num)</span><br><span class="line">        <span class="variable language_">self</span>.g_bn = nn.BatchNorm1d(chan_num)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> is_two <span class="keyword">is</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="variable language_">self</span>.f_fc = nn.Conv1d(chan_num, chan_num, kernel_size=<span class="number">2</span>,</span><br><span class="line">                                  bias=<span class="literal">False</span>, groups=chan_num)</span><br><span class="line">            <span class="variable language_">self</span>.f_bn = nn.BatchNorm1d(chan_num)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="variable language_">self</span>.f_fc = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        b, c, _, _ = x.size()</span><br><span class="line"></span><br><span class="line">        mean, std = calc_ins_mean_std(x, eps=<span class="number">1e-12</span>)</span><br><span class="line"></span><br><span class="line">        statistics = torch.cat((mean.squeeze(<span class="number">3</span>), std.squeeze(<span class="number">3</span>)), -<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        g_y = <span class="variable language_">self</span>.g_fc(statistics)</span><br><span class="line">        g_y = <span class="variable language_">self</span>.g_bn(g_y)</span><br><span class="line">        g_y = torch.sigmoid(g_y)</span><br><span class="line">        g_y = g_y.view(b, c, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.f_fc <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            f_y = <span class="variable language_">self</span>.f_fc(statistics)</span><br><span class="line">            f_y = <span class="variable language_">self</span>.f_bn(f_y)</span><br><span class="line">            f_y = torch.sigmoid(f_y)</span><br><span class="line">            f_y = f_y.view(b, c, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> x * g_y.expand_as(x) + mean.expand_as(x) * (f_y.expand_as(x)-g_y.expand_as(x))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> x * g_y.expand_as(x)</span><br></pre></td></tr></table></figure>
+<p>第三个类定义将 CrossNorm 和 SelfNorm
+打包到一起作为一个类，没有其他额外需要注意的地方。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CNSN</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;A module to combine CrossNorm and SelfNorm&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, crossnorm, selfnorm</span>):</span><br><span class="line">        <span class="built_in">super</span>(CNSN, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.crossnorm = crossnorm</span><br><span class="line">        <span class="variable language_">self</span>.selfnorm = selfnorm</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.crossnorm <span class="keyword">and</span> <span class="variable language_">self</span>.crossnorm.active:</span><br><span class="line">            x = <span class="variable language_">self</span>.crossnorm(x)</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.selfnorm:</span><br><span class="line">            x = <span class="variable language_">self</span>.selfnorm(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h3 id="不足之处">不足之处</h3>
+<ol type="1">
+<li>SelfNorm
+的注意力十分简单，可以考虑更加有效的注意力机制实现方式，例如文中提到的SE模块。</li>
+<li>CrossNorm
+作为一种增强方法，可以考虑同时作为图片数据增强方法加入到数据预处理中。</li>
+<li>论文中CrossNorm 和 SelfNorm
+都是放在一起的，若将两个模块分开放在模型的不同位置，例如 CrossNorm
+放在卷积前，SelfNorm 放在残差前是否会有更好的表现呢？</li>
+<li>CrossNorm 和 SelfNorm
+只能增强已有分类的未知风格，而没有针对未知类别进行增强。可以考虑结合无监督和半监督的方法来增强对未知类别的分类能力。</li>
+</ol>
+<h3 id="探索性研究">探索性研究</h3>
+<ol type="1">
+<li>实验结果展示 CrossNorm 和 SelfNorm 结合 Augmix
+会有极大的增益，那么能否将一些已有的方法结合达到类似的效果呢？例如MixtureNorm<sup id="fnref:5"><a href="#fn:5" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Kalayeh, M.M., Shah, M.: Training faster by separating modes of variation in batch-normalized models. IEEE Trans. Pattern Anal. Mach. Intell. 42, 1-1 (2019).
+">[5]</span></a></sup> 和
+SwitchableNorm<sup id="fnref:6"><a href="#fn:6" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Luo, P., Ren, J., Peng, Z.: Differentiable learning-to-normalize via switchable normalization. CoRR abs/1806.10779 (2018)
+">[6]</span></a></sup> 这样的方法。</li>
+<li>将注意力与Normalization结合的方法也是值得探究的点。AttentiveNorm<sup id="fnref:7"><a href="#fn:7" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="X. Li, W. Sun, and T. Wu, “Attentive Normalization,” in Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics), 2020, vol. 12362 LNCS, pp. 70–87.
+">[7]</span></a></sup> 是一个有意思的例子。</li>
+<li>在对抗样本的攻防方面 CrossNorm 和 SelfNorm
+简单的测试展现了不错的效果，可以考虑如何在对抗中提高攻击和防御。</li>
+<li>文中只使用了简单的风格变换，可以考虑使用对抗生成网络来生成更精细的风格变换和迁移，以进一步提高网络的鲁棒性和泛化性。</li>
+<li>能否和无监督或半监督的聚类相关算法结合改进提高网络的性能呢？</li>
+<li>在文中的变换只使用了一阶统计量，是否可以结合二阶统计量或更高阶的统计量进行优化改进呢？或者说更高阶的统计量是否也表达了一些特点的语义信息，通过对这些语义信息进行迁移和扩增是否对网络的性能，鲁棒性和泛化性有益呢？</li>
+</ol>
+<hr>
+<h2 id="references">References</h2>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记
+<div id="footnotes">
+<hr>
+<div id="footnotelist">
+<ol style="list-style: none; padding-left: 0; margin-left: 40px">
+<li id="fn:1">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Robert
+Geirhos, Patricia Rubisch, Claudio Michaelis, Matthias Bethge, Felix A
+Wichmann, and Wieland Brendel. Imagenet-trained cnns are biased towards
+texture; increasing shape bias improves accuracy and robustness. In
+Proceedings of the International Conference on Learning Representations,
+2019.<a href="#fnref:1" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:2">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Xingang
+Pan, Ping Luo, Jianping Shi, and Xiaoou Tang. Two at once: Enhancing
+learning and generalization capacities via ibn-net. In Proceedings of
+the European Conference on Computer Vision (ECCV), pages 464–479,
+2018.<a href="#fnref:2" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:3">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Xiangyu
+Yue, Yang Zhang, Sicheng Zhao, Alberto Sangiovanni-Vincentelli, Kurt
+Keutzer, and Boqing Gong. Domain randomization and pyramid consistency:
+Simulation-to-real generalization without accessing target domain data.
+In Proceedings of the IEEE International Conference on Computer Vision,
+pages 2100-2110, 2019.<a href="#fnref:3" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:4">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Jie
+Hu, Li Shen, and Gang Sun. Squeeze-and-excitation networks. In
+Proceedings of the IEEE conference on computer vision and pattern
+recognition, pages 7132–7141, 2018.<a href="#fnref:4" rev="footnote">
+↩︎</a></span>
+</li>
+<li id="fn:5">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">5.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Kalayeh,
+M.M., Shah, M.: Training faster by separating modes of variation in
+batch-normalized models. IEEE Trans. Pattern Anal. Mach. Intell. 42, 1-1
+(2019).<a href="#fnref:5" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:6">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">6.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Luo,
+P., Ren, J., Peng, Z.: Differentiable learning-to-normalize via
+switchable normalization. CoRR abs/1806.10779
+(2018)<a href="#fnref:6" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:7">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">7.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">X.
+Li, W. Sun, and T. Wu, “Attentive Normalization,” in Lecture Notes in
+Computer Science (including subseries Lecture Notes in Artificial
+Intelligence and Lecture Notes in Bioinformatics), 2020, vol. 12362
+LNCS, pp. 70–87.<a href="#fnref:7" rev="footnote"> ↩︎</a></span>
+</li>
+<li id="fn:8">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">8.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Kihyuk
+Sohn, David Berthelot, Chun-Liang Li, Zizhao Zhang, Nicholas Carlini,
+Ekin D Cubuk, Alex Kurakin, Han Zhang, and Colin Raffel. Fixmatch:
+Simplifying semisupervised learning with consistency and confidence.
+arXiv preprint arXiv:2001.07685, 2020.<a href="#fnref:8" rev="footnote">
+↩︎</a></span>
+</li>
+</ol>
+</div>
+</div>
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-06/CNSN.html" title="『论文笔记』CrossNorm and SelfNorm for Generalization under Distribution Shifts">https://meteordream.github.io/Paper/2022-06/CNSN.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Normalization/" rel="tag"><i class="fa fa-tag"></i> Normalization</a>
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/ICCV/" rel="tag"><i class="fa fa-tag"></i> ICCV</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-06/1037_%E6%9C%89%E6%95%88%E7%9A%84%E5%9B%9E%E6%97%8B%E9%95%96(%E7%AE%80%E5%8D%95).html" rel="prev" title="『LeetCode』1037 有效的回旋镖">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』1037 有效的回旋镖
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-06/497_%E9%9D%9E%E9%87%8D%E5%8F%A0%E7%9F%A9%E5%BD%A2%E4%B8%AD%E7%9A%84%E9%9A%8F%E6%9C%BA%E7%82%B9(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』497 非重叠矩形中的随机点">
+      『LeetCode』497 非重叠矩形中的随机点 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E4%BD%9C%E5%AF%B9%E6%AF%94"><span class="nav-number">4.1.</span> <span class="nav-text">相关工作对比</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%88%E6%88%90%E5%88%86%E5%B8%83%E5%81%8F%E7%A7%BB%E4%B8%8B%E7%9A%84%E6%B3%9B%E5%8C%96%E6%80%A7"><span class="nav-number">4.1.1.</span> <span class="nav-text">合成分布偏移下的泛化性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E5%88%86%E5%88%AB%E5%81%8F%E7%A7%BB%E4%B8%8B%E7%9A%84%E6%B3%9B%E5%8C%96%E6%80%A7"><span class="nav-number">4.1.2.</span> <span class="nav-text">自然分别偏移下的泛化性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#normalization%E5%92%8Cattention"><span class="nav-number">4.1.3.</span> <span class="nav-text">Normalization和Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">4.1.4.</span> <span class="nav-text">数据增强</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#preliminary"><span class="nav-number">4.2.</span> <span class="nav-text">Preliminary</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#instance-normalization"><span class="nav-number">4.2.1.</span> <span class="nav-text">Instance Normalization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A3%8E%E6%A0%BC%E5%AE%9A%E4%B9%89"><span class="nav-number">4.2.2.</span> <span class="nav-text">风格定义</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crossnorm"><span class="nav-number">4.3.</span> <span class="nav-text">CrossNorm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#selfnorm"><span class="nav-number">4.4.</span> <span class="nav-text">SelfNorm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E-se-%E6%A8%A1%E5%9D%97%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.4.1.</span> <span class="nav-text">与 SE 模块的区别</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#detail"><span class="nav-number">5.</span> <span class="nav-text">Detail</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">6.</span> <span class="nav-text">Experiment</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E4%BB%BB%E5%8A%A1"><span class="nav-number">6.1.</span> <span class="nav-text">分类任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%88%86%E7%B1%BB"><span class="nav-number">6.2.</span> <span class="nav-text">半监督分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%B0%E7%9C%9F%E5%AE%9E%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E6%B3%9B%E5%8C%96"><span class="nav-number">6.3.</span> <span class="nav-text">合成数据集到真实数据集的泛化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nlp%E7%9A%84%E8%B7%A8%E6%95%B0%E6%8D%AE%E9%9B%86%E6%B3%9B%E5%8C%96%E6%80%A7"><span class="nav-number">6.4.</span> <span class="nav-text">NLP的跨数据集泛化性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E9%80%82%E5%BA%94"><span class="nav-number">6.5.</span> <span class="nav-text">域适应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-number">6.6.</span> <span class="nav-text">可视化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">8.</span> <span class="nav-text">Others</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E4%BB%BB%E5%8A%A1%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0"><span class="nav-number">8.1.</span> <span class="nav-text">分类任务论文复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="nav-number">8.2.</span> <span class="nav-text">源码解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%B6%B3%E4%B9%8B%E5%A4%84"><span class="nav-number">8.3.</span> <span class="nav-text">不足之处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A2%E7%B4%A2%E6%80%A7%E7%A0%94%E7%A9%B6"><span class="nav-number">8.4.</span> <span class="nav-text">探索性研究</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">9.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

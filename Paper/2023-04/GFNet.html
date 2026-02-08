@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Global Filter Networks for Image Classification Author: Yongming Rao, Wenliang Zhao Institution: 清华大学 Year: 2021 Journal: NeurIPS Source: NeurIPS, Arxiv, Project Page, Github, Open">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Global Filter Networks for Image Classification">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2023-04/GFNet.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Global Filter Networks for Image Classification Author: Yongming Rao, Wenliang Zhao Institution: 清华大学 Year: 2021 Journal: NeurIPS Source: NeurIPS, Arxiv, Project Page, Github, Open">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/fig1.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230421164343276.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230422145843401.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230423144450779.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230423144532948.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230423144548297.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230423144607101.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230423144711986.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230423144723996.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/image-20230423144748419.png">
+<meta property="article:published_time" content="2023-04-18T02:29:14.000Z">
+<meta property="article:modified_time" content="2023-04-23T06:50:09.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="注意力">
+<meta property="article:tag" content="NIPS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2023-04/GFNet/fig1.svg">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2023-04/GFNet.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Global Filter Networks for Image Classification | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2023-04/GFNet.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Global Filter Networks for Image Classification
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-18 10:29:14" itemprop="dateCreated datePublished" datetime="2023-04-18T10:29:14+08:00">2023-04-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-23 14:50:09" itemprop="dateModified" datetime="2023-04-23T14:50:09+08:00">2023-04-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2023-04/GFNet.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2023-04/GFNet.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Global Filter Networks for Image
+Classification</li>
+<li><strong>Author</strong>: Yongming Rao, Wenliang Zhao</li>
+<li><strong>Institution</strong>: 清华大学</li>
+<li><strong>Year</strong>: 2021</li>
+<li><strong>Journal</strong>: NeurIPS</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper/2021/hash/07e87c2f4fc7f7c96116d8e2a92790f5-Abstract.html">NeurIPS</a>,
+<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2107.00645">Arxiv</a>, <a target="_blank" rel="noopener" href="https://gfnet.ivg-research.xyz/">Project Page</a>, <a target="_blank" rel="noopener" href="https://github.com/raoyongming/GFNet">Github</a>, <a target="_blank" rel="noopener" href="https://openreview.net/forum?id=K_Mnsw5VoOW">OpenReview</a></li>
+<li><strong>Cite</strong>: Rao Y, Zhao W, Zhu Z, et al. Global filter
+networks for image classification[J]. Advances in neural information
+processing systems, 2021, 34: 980-993.</li>
+<li><strong>Idea</strong>:
+提出了一种全局滤波网络，由傅里叶变换和可学习的一组滤波器代替
+self-attention，更高效</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@article&#123;rao2021global,</span><br><span class="line">  title=&#123;Global Filter Networks for Image Classification&#125;,</span><br><span class="line">  author=&#123;Rao, Yongming and Zhao, Wenliang and Zhu, Zheng and Lu, Jiwen and Zhou, Jie&#125;,</span><br><span class="line">  journal=&#123;Advances in Neural Information Processing Systems&#125;,</span><br><span class="line">  volume=&#123;34&#125;,</span><br><span class="line">  year=&#123;2021&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>作者提出了全局滤波器网络(Global Filter Networks,
+<strong>GFNet</strong>)，可以替代 transformer 中的 self-attention
+层且其计算时间复杂度更优。</p>
+<h2 id="introduction">Introduction</h2>
+<p>Transformer 和纯 MLP 网络的一个问题是其对于 token
+数量的增加计算复杂度是二次方增加的，这带来了一些限制。</p>
+<p>作者提出了一种新的结构 GFNet
+只需要对数线性复杂度就能达到相近的效果，其中的基本观点是学习频域中空间位置之间的相互作用。作者将
+token
+之间的交互建模为一组可学习的全局滤波器用于输入特征的频谱，由于全局滤波器能覆盖所有频段，所以该模型能同时捕获长短期交互。</p>
+<p>作者提出的框架基本基于视觉 transformer 仅仅用三个关键操作替换了
+self-attention
+层：二维离散傅里叶变换、频域特征和全局滤波器之间的逐元素乘法、二维逆傅里叶变换。FFT的时间复杂度是
+<span class="math inline">𝒪(<em>L</em>log <em>L</em>)</span> 比
+self-attention 和 MLP 更有效。因此其对于 token 长度 <span class="math inline"><em>L</em></span> 不敏感所以对大的 feature map 和类
+CNN 结构的网络兼容性较好。</p>
+<figure>
+<img data-src="GFNet/fig1.svg" alt="fig1">
+<figcaption aria-hidden="true">fig1</figcaption>
+</figure>
+<p>时间复杂度的比较如下表：</p>
+<figure>
+<img data-src="GFNet/image-20230421164343276.png" alt="image-20230421164343276">
+<figcaption aria-hidden="true">image-20230421164343276</figcaption>
+</figure>
+<h2 id="method">Method</h2>
+<h3 id="离散傅里叶变换">离散傅里叶变换</h3>
+<p>首先作者介绍了离散傅里叶变换(DFT)，对于 1D 离散傅里叶变换，给定长度为
+<span class="math inline"><em>N</em></span> 的复数序列 <span class="math inline"><em>x</em>[<em>n</em>], 0 ≤ <em>n</em> ≤ <em>N</em> − 1</span>,
+1D 离散傅里叶变换可以表示为 <span class="math display">$$
+X[k]=\sum_{n=0}^{N-1} x[n] e^{-j(2\pi / N) k n} := \sum_{n=0}^{N-1} x[n]
+W_N^{kn}
+$$</span> 其中 <span class="math inline"><em>j</em></span> 是虚数单位且
+<span class="math inline"><em>W</em><sub><em>N</em></sub> = <em>e</em><sup>−<em>j</em>(2<em>π</em>/<em>N</em>)</sup></span>.
+因为 <span class="math inline"><em>X</em>[<em>k</em>]</span> 在长度
+<span class="math inline"><em>N</em></span> 的间隔上重复，所以只需要在
+<span class="math inline"><em>N</em></span> 个连续点 <span class="math inline"><em>k</em> = 0, 1, …, <em>N</em> − 1</span> 采样
+<span class="math inline"><em>X</em>[<em>k</em>]</span> 的值即可。这里
+<span class="math inline"><em>X</em>[<em>k</em>]</span> 表示序列 <span class="math inline"><em>x</em>[<em>n</em>]</span> 在频域 <span class="math inline"><em>ω</em><sub><em>k</em></sub> = 2<em>π</em><em>k</em>/<em>N</em></span>
+的频谱。</p>
+<p>因为 DFT 是一一对应的转换，所以给定 DFT <span class="math inline"><em>X</em>[<em>k</em>]</span> 可以通过逆 DFT(IDFT)
+恢复原始信号 <span class="math inline"><em>x</em>[<em>n</em>]</span> :
+<span class="math display">$$
+x[n] = \frac{1}{N} \sum_{k=0}^{N - 1}X[k]e^{j(2\pi/N)kn}.
+$$</span> 对于实数输入 <span class="math inline"><em>x</em>[<em>n</em>]</span>, 可以证明其 DFT
+是共轭对称的，即 <span class="math inline"><em>X</em>[<em>N</em> − <em>k</em>] = <em>X</em><sup>*</sup>[<em>k</em>]</span>.
+同样的对共轭对称的 <span class="math inline"><em>X</em>[<em>k</em>]</span>
+进行逆傅里叶变换我们能得到实离散信号。这说明一半的DFT <span class="math inline">{<em>X</em>[<em>k</em>] : 0 ≤ <em>k</em> ≤ ⌈<em>N</em>/2⌉}</span>
+就包含了 <span class="math inline"><em>x</em>[<em>n</em>]</span>
+的全部频域特征信息。</p>
+<p>DFT 广泛用于建模信号处理主要是因为有两个优点：</p>
+<ol type="1">
+<li>输入输出都是离散的过程，易于用计算机进行处理</li>
+<li>存在有效的算法计算DFT：FFT 利用<span class="math inline"><em>W</em><sub><em>N</em></sub><sup><em>k</em><em>n</em></sup></span>
+对称和周期的性质将 DFT 的计算量由 <span class="math inline">𝒪(<em>N</em><sup>2</sup>)</span> 减少到了 <span class="math inline">𝒪(<em>N</em>log <em>N</em>)</span>，类似的逆傅里叶变换同样有高效的逆快速傅里叶变换算法</li>
+</ol>
+<p>将 DFT 用于二维的信号：给定二维信号 <span class="math inline"><em>X</em>[<em>m</em>, <em>n</em>], 0 ≤ <em>m</em> ≤ <em>M</em> − 1, 0 ≤ <em>n</em> ≤ <em>N</em> − 1</span>
+二维 DFT <span class="math inline"><em>x</em>[<em>m</em>, <em>n</em>]</span> 如下：
+<span class="math display">$$
+X[u, v] = \sum_{m=0}^{M-1}\sum_{n=0}^{N-1}x[m,
+n]e^{-j2\pi\left(\frac{um}{M}+\frac{vn}{N}\right)}.
+$$</span></p>
+<p>2D DFT 可以视为 1D DFT 在两个维度的应用，同理2D DFT 对实输入 <span class="math inline"><em>x</em>[<em>m</em>, <em>n</em>]</span>
+满足共轭对称的性质 <span class="math inline"><em>X</em>[<em>M</em> − <em>u</em>, <em>N</em> − <em>v</em>] = <em>X</em><sup>*</sup>[<em>u</em>, <em>v</em>]</span>,
+同样可以使用 FFT 加速运算。</p>
+<h3 id="gfnet">GFNet</h3>
+<p>结构如图所示，一个基础的模块包含：</p>
+<ol type="1">
+<li>全局滤波层，可以高效交换空间信息</li>
+<li>一个前向传播网络</li>
+</ol>
+<p>对于全局滤波层，给定 token <span class="math inline"><em>x</em> ∈ ℝ<sup><em>H</em> × <em>W</em> × <em>D</em></sup></span>,首先使用
+2D DFT 在空间维度将 <span class="math inline"><em>x</em></span>
+转换到频域： <span class="math display"><em>X</em> = ℱ[<em>x</em>] ∈ ℂ<sup><em>H</em> × <em>W</em> × <em>D</em></sup>,</span>
+其中 <span class="math inline">ℱ[⋅]</span> 表示 2D DFT，得到的 <span class="math inline"><em>X</em></span> 是一个复数。随后将可学习的滤波器
+<span class="math inline"><em>K</em> ∈ ℂ<sup><em>H</em> × <em>W</em> × <em>D</em></sup></span>
+与 <span class="math inline"><em>X</em></span> 相乘： <span class="math display"><em>X̃</em> = <em>K</em> ⊙ <em>X</em>,</span> 其中
+<span class="math inline">⊙</span> 是逐元素乘法，滤波器 <span class="math inline"><em>K</em></span> 称为全局滤波器是因为它与 <span class="math inline"><em>X</em></span>
+有相同的维度，可以代表频域中任意滤波器。最后应用逆傅里叶变换将 <span class="math inline"><em>X̃</em></span> 变换会空域并更新 token <span class="math display"><em>x</em> ← ℱ<sup>−1</sup>[<em>X̃</em>].</span>
+作者提出的全局滤波层是受到数字图像处理中的频率滤波的启发，可以看作是一组针对不同隐藏维度的频率滤波器。可以证明全局滤波层等价与一个逐深度的全局循环卷积，其滤波核大小为
+<span class="math inline"><em>H</em> × <em>W</em></span>.
+虽然全局滤波器也可以解释为空域操作，但作者认为全局滤波器具有更清晰的模式，也倾向于捕捉频域的关系。同时，还有一个优势是全局滤波层比空域操作更高效。</p>
+<p>因为输入的 <span class="math inline"><em>x</em></span> 都是实数，即
+<span class="math inline"><em>X</em>[<em>H</em> − <em>u</em>, <em>W</em> − <em>v</em>,  : ] = <em>X</em><sup>*</sup>[<em>H</em>, <em>W</em>,  : ]</span>
+共轭对称，所以只用一半的信息即可： <span class="math display"><em>X</em><sub><em>r</em></sub> = <em>X</em>[:,0 : <em>Ŵ</em>] := ℱ<sub><em>r</em></sub>[<em>x</em>],  <em>Ŵ</em> = ⌈<em>W</em>/2⌉,</span>
+其中 <span class="math inline">ℱ<sub><em>r</em></sub></span>
+表示用于实输入的 2D DFT. 在这种方式下全局过滤核为 <span class="math inline"><em>K</em><sub><em>r</em></sub> ∈ ℂ<sup><em>H</em> × <em>Ŵ</em> × <em>D</em></sup></span>,
+同样可以减少一半的参数，同样可以保证 <span class="math inline">ℱ<sub><em>r</em></sub><sup>−1</sup>[<em>K</em><sub><em>r</em></sub> ⊙ <em>X</em><sub><em>r</em></sub>]</span>
+也是实数，可以与 <span class="math inline"><em>x</em></span>
+直接做残差连接。并且实现也很简单：</p>
+<figure>
+<img data-src="GFNet/image-20230422145843401.png" alt="image-20230422145843401">
+<figcaption aria-hidden="true">image-20230422145843401</figcaption>
+</figure>
+<p>对比已有的 Transformer 和 MLP 网络，GFNet 有以下优势：</p>
+<ol type="1">
+<li>高效，计算复杂度为 <span class="math inline">𝒪(<em>L</em>log <em>L</em>)</span> 比 Transformer 和
+MLP 的 <span class="math inline">𝒪(<em>L</em><sup>2</sup>)</span>
+更高效</li>
+<li>可拓展性。傅里叶变换是无需参数的，而全局滤波器 <span class="math inline"><em>K</em><sup>′</sup> ∈ ℂ<sup><em>H</em><sup>′</sup> × <em>W</em><sup>′</sup> × <em>D</em></sup></span>
+可以很容易的通过插值的方式对于任意尺寸的输入拓展，这是由 DFT
+的性质保证的：全局滤波器 <span class="math inline"><em>K</em>[<em>u</em>, <em>v</em>]</span>
+的每一个元素对应滤波器在 <span class="math inline"><em>ω</em><sub><em>u</em></sub> = 2<em>π</em><em>u</em>/<em>H</em>, <em>ω</em><sub><em>v</em></sub> = 2<em>π</em><em>v</em>/<em>W</em></span>
+的频谱，全局滤波器 <span class="math inline"><em>K</em></span>
+可以看作一个连续的频谱 <span class="math inline"><em>K</em>(<em>ω</em><sub><em>u</em></sub>, <em>ω</em><sub><em>v</em></sub>)</span>
+其中 <span class="math inline"><em>ω</em><sub><em>u</em></sub>, <em>ω</em><sub><em>v</em></sub> ∈ [0, 2<em>π</em>]</span>，因此改变输入图像的分辨率等价于改变
+<span class="math inline"><em>K</em>(<em>ω</em><sub><em>u</em></sub>, <em>ω</em><sub><em>v</em></sub>)</span>
+的采样间隔。</li>
+</ol>
+<p>作者还根据 CNN 的分层架构模式设计了几种变体：</p>
+<figure>
+<img data-src="GFNet/image-20230423144450779.png" alt="image-20230423144450779">
+<figcaption aria-hidden="true">image-20230423144450779</figcaption>
+</figure>
+<h2 id="experiment">Experiment</h2>
+<p>ImageNet</p>
+<figure>
+<img data-src="GFNet/image-20230423144532948.png" alt="image-20230423144532948">
+<figcaption aria-hidden="true">image-20230423144532948</figcaption>
+</figure>
+<figure>
+<img data-src="GFNet/image-20230423144548297.png" alt="image-20230423144548297">
+<figcaption aria-hidden="true">image-20230423144548297</figcaption>
+</figure>
+<p>迁移学习</p>
+<figure>
+<img data-src="GFNet/image-20230423144607101.png" alt="image-20230423144607101">
+<figcaption aria-hidden="true">image-20230423144607101</figcaption>
+</figure>
+<p>效率对比</p>
+<figure>
+<img data-src="GFNet/image-20230423144711986.png" alt="image-20230423144711986">
+<figcaption aria-hidden="true">image-20230423144711986</figcaption>
+</figure>
+<figure>
+<img data-src="GFNet/image-20230423144723996.png" alt="image-20230423144723996">
+<figcaption aria-hidden="true">image-20230423144723996</figcaption>
+</figure>
+<p>消融及可视化实验</p>
+<figure>
+<img data-src="GFNet/image-20230423144748419.png" alt="image-20230423144748419">
+<figcaption aria-hidden="true">image-20230423144748419</figcaption>
+</figure>
+<h2 id="conclusion">Conclusion</h2>
+<p>提出了全局滤波网络
+GFNet，一种简单高效的结构。作者使用二维傅里叶变换和逆傅里叶变换以及一组可学习的全局滤波器来代替
+Transformer 中的 self-attention 层，且效率更好。</p>
+<h2 id="others">Others</h2>
+<p>代码实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GlobalFilter</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, dim, h=<span class="number">14</span>, w=<span class="number">8</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.complex_weight = nn.Parameter(torch.randn(h, w, dim, <span class="number">2</span>, dtype=torch.float32) * <span class="number">0.02</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        B, H, W, C = x.shape</span><br><span class="line">        x = torch.fft.rfft2(x, dim=(<span class="number">1</span>, <span class="number">2</span>), norm=<span class="string">&#x27;ortho&#x27;</span>)</span><br><span class="line">        weight = torch.view_as_complex(<span class="variable language_">self</span>.complex_weight)</span><br><span class="line">        x = x * weight</span><br><span class="line">        x = torch.fft.irfft2(x, s=(H, W), dim=(<span class="number">1</span>, <span class="number">2</span>), norm=<span class="string">&#x27;ortho&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p>显然作者使用的是旧版的 <code>pytorch</code> 的 <code>fft</code>
+函数库的函数，输出会多一个大小为 2
+的维度，分别表示实部和虚部部分，而在新版的 <code>fft</code>
+函数库中的函数输出的是复数类型的，所以处理起来更简单了。</p>
+<hr>
+<p><strong>如有错漏，欢迎指正！如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2023-04/GFNet.html" title="『论文笔记』Global Filter Networks for Image Classification">https://meteordream.github.io/Paper/2023-04/GFNet.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B/" rel="tag"><i class="fa fa-tag"></i> 注意力</a>
+              <a href="/tags/NIPS/" rel="tag"><i class="fa fa-tag"></i> NIPS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Paper/2023-04/FDA.html" rel="prev" title="『论文笔记』FDA - Fourier Domain Adaptation for Semantic Segmentation">
+      <i class="fa fa-chevron-left"></i> 『论文笔记』FDA - Fourier Domain Adaptation for Semantic Segmentation
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Paper/2023-05/LogitNorm.html" rel="next" title="『论文笔记』Mitigating Neural Network Overconfidence with Logit Normalization">
+      『论文笔记』Mitigating Neural Network Overconfidence with Logit Normalization <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2"><span class="nav-number">4.1.</span> <span class="nav-text">离散傅里叶变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gfnet"><span class="nav-number">4.2.</span> <span class="nav-text">GFNet</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">7.</span> <span class="nav-text">Others</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

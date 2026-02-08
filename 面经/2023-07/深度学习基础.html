@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简介 一些关于深度学习的基础知识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『面经』深度学习基础">
+<meta property="og:url" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="简介 一些关于深度学习的基础知识。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/022ed39e-a493-4f7b-8a3a-9476dcfc3c3f.gif">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230708144530420.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230708144834321.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230708145106003.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230708151931479.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230708151924403.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230708151908154.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/8f80b17b-e75f-4d59-9101-45a03aece3a1.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230708170713189.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/d9db62a8-3889-4598-a482-5751f5907d7f.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/cc2f4a60-46fe-40f6-b6c8-011c46b3013d.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/4468c482-612e-4afe-aa72-1208520ab3db.jpg">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/08410a98-a160-4805-b96b-bb00508b4688.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230706154720417.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/9ee39aa5-ba2b-4ab8-821b-337517e00c79.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/6673500b-e928-4e08-9db8-0f575c98ef58.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/image-20230727154116260.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/7f695b9d-bb97-4327-b9b4-00cd165d21a5.png">
+<meta property="og:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/7ac68b67-df56-425d-a7b3-6c4d35e90d5c.png">
+<meta property="article:published_time" content="2023-07-06T07:12:01.000Z">
+<meta property="article:modified_time" content="2023-07-06T07:12:01.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/深度学习基础/022ed39e-a493-4f7b-8a3a-9476dcfc3c3f.gif">
+
+<link rel="canonical" href="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『面经』深度学习基础 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『面经』深度学习基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-06 15:12:01" itemprop="dateCreated datePublished" datetime="2023-07-06T15:12:01+08:00">2023-07-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9D%A2%E7%BB%8F/" itemprop="url" rel="index"><span itemprop="name">面经</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>24k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>22 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="简介">简介</h2>
+<p>一些关于深度学习的基础知识。</p>
+<span id="more"></span>
+<hr>
+<h2 id="基本网络结构">基本网络结构</h2>
+<h3 id="卷积">卷积</h3>
+<figure>
+<img data-src="深度学习基础/022ed39e-a493-4f7b-8a3a-9476dcfc3c3f.gif" alt="img">
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ul>
+<li>假设输入为 <span class="math inline">(<em>B</em>, <em>C</em>, <em>H</em>, <em>W</em>)</span>,
+卷积核为 <span class="math inline">(<em>C</em><sub><em>i</em><em>n</em></sub>, <em>C</em><sub><em>o</em><em>u</em><em>t</em></sub>, <em>k</em><em>s</em><sub>1</sub>, <em>k</em><em>s</em><sub>2</sub>)</span>,
+则有 <span class="math inline"><em>C</em><sub><em>i</em><em>n</em></sub> × <em>C</em><sub><em>o</em><em>u</em><em>t</em></sub></span>
+个不同参数的 <span class="math inline"><em>k</em><em>s</em><sub>1</sub> × <em>k</em><em>s</em><sub>2</sub></span>
+的卷积核、</li>
+<li>需要了解怎么计算输出特征图的大小（自行理解，强行记忆不太好）
+<ul>
+<li>对大小为 <span class="math inline"><em>H</em> × <em>W</em></span> 的
+feature map，考虑卷积核大小为 <span class="math inline"><em>h</em> × <em>w</em></span>, 填充(padding) 为
+<span class="math inline"><em>a</em></span>, 步长(stride) 为 <span class="math inline"><em>b</em></span>, 则：<span class="math inline">$\left\{\begin{array}{c}H^{\prime}=\frac{H+2 *
+a-h}{b}+1 \\ W^{\prime}=\frac{W+2 *
+a-w}{b}+1\end{array}\right.$</span></li>
+</ul></li>
+<li>局部连接：不是全连接，而是使用size相对input小的kernel在局部感受视野内进行连接（点积运算）</li>
+<li>权值共享：在一个卷积核运算中，每次都运算一个感受视野，通过滑动遍历的把整个输入都卷积完成，而不是每移动一次就更换卷积核参数</li>
+</ul>
+<h3 id="x1卷积">1x1卷积</h3>
+<p>作用:</p>
+<ol type="1">
+<li>降维和升维</li>
+<li>不同通道信息交互(cross-channel correlations and spatial
+correlations)
+<ul>
+<li><span class="math inline">1 × 1</span> 卷积其实是对不同 channel
+间的信息进行了线性组合</li>
+<li>深度可分离卷积(depth-wise seperable
+convolution)实现了对cross-channel correlation和spatial
+correlation的彻底解耦</li>
+</ul></li>
+<li>增加非线性特征：后接非线性激活函数</li>
+</ol>
+<h3 id="池化">池化</h3>
+<figure>
+<img data-src="深度学习基础/image-20230708144530420.png" alt="image-20230708144530420">
+<figcaption aria-hidden="true">image-20230708144530420</figcaption>
+</figure>
+<p>作用：</p>
+<ol type="1">
+<li>特征不变形：池化操作是模型更加关注是否存在某些特征而不是特征具体的位置。</li>
+<li>特征降维：池化相当于在空间范围内做了维度约减，从而使模型可以抽取更加广范围的特征。同时减小了下一层的输入大小，进而减少计算量和参数个数。</li>
+<li>在一定程度上防止过拟合，更方便优化。</li>
+</ol>
+<p>池化的大小计算和卷积类似</p>
+<h3 id="特征融合">特征融合</h3>
+<p>特征融合有两种常用方式：</p>
+<ol type="1">
+<li><span class="math inline"><em>a</em><em>d</em><em>d</em></span>
+操作，例如 ResNet 中的残差连接</li>
+<li><span class="math inline"><em>c</em><em>o</em><em>n</em><em>c</em><em>a</em><em>t</em><em>e</em></span>
+操作，例如 UNet 中的连接</li>
+</ol>
+<p>联系：对于 <span class="math inline"><em>C</em><em>o</em><em>n</em><em>c</em><em>a</em><em>t</em></span>
+的操作，通道数相同且后面带卷积的话，<span class="math inline"><em>a</em><em>d</em><em>d</em></span> 等价于<span class="math inline"><em>c</em><em>o</em><em>n</em><em>c</em><em>a</em><em>t</em></span>
+之后对应通道共享同一个卷积核，采用 <span class="math inline"><em>a</em><em>d</em><em>d</em></span>
+操作，我们相当于加入一种先验。当两个分支的特征信息比较相似，可以用 <span class="math inline"><em>a</em><em>d</em><em>d</em></span> 来代替 <span class="math inline"><em>c</em><em>o</em><em>n</em><em>c</em><em>a</em><em>t</em></span>，这样可以更节省参数量。</p>
+<p>区别：</p>
+<ul>
+<li>对于 <span class="math inline"><em>C</em><em>o</em><em>n</em><em>c</em><em>a</em><em>t</em></span>
+操作而言，通道数的合并，也就是说描述图像本身的特征增加了，而每一特征下的信息是没有增加。</li>
+<li>对于 <span class="math inline"><em>a</em><em>d</em><em>d</em></span>
+层更像是信息之间的叠加。这里有个先验，<span class="math inline"><em>a</em><em>d</em><em>d</em></span> 前后的 <span class="math inline"><em>t</em><em>e</em><em>n</em><em>s</em><em>o</em><em>r</em></span>
+语义是相似的。</li>
+</ul>
+<h3 id="注意力机制">注意力机制</h3>
+<figure>
+<img data-src="深度学习基础/image-20230708144834321.png" alt="image-20230708144834321">
+<figcaption aria-hidden="true">image-20230708144834321</figcaption>
+</figure>
+<p>这张图主要是针对于机器翻译中用的，在翻译的时候，每一个输出<span class="math inline"><em>Q</em><em>u</em><em>e</em><em>r</em><em>y</em></span>需要于输入<span class="math inline"><em>K</em><em>e</em><em>y</em></span>的各个元素计算相似度，再与<span class="math inline"><em>V</em><em>a</em><em>l</em><em>u</em><em>e</em></span>
+进行加权求和～</p>
+<p>对于<span class="math inline"><em>C</em><em>V</em></span>领域中，我们一般都是用矩阵运算了，不像<span class="math inline"><em>N</em><em>L</em><em>P</em></span>中的任务，需要按照时刻进行，<span class="math inline"><em>C</em><em>V</em></span>中的任务，就是一个矩阵运算。</p>
+<p>用公式来概括性地描述就是： <span class="math display"> Attention ( Q,
+S ) =  Similarity ( Q, <em>K</em>) *  V </span>
+划重点，我们有不同的方法来衡量相似度，这里我们主要有以下几种方案来衡量相似度：
+<span class="math display">$$
+\begin{array}{r}
+\text { 点积: Similarity }\left(\text { Q }, \mathrm{K}\right)=\text { Q
+} \cdot \mathrm{K} \\
+\text { Cosine相似性: } \text { Similarity }\left(\text { Q },
+K\right)=\frac{\text { Q } \cdot K}{\mid \text { Q }|\cdot| K \mid} \\
+M L P \text { 网络: Similarity }\left(\text { Q, } K \right)=M L
+P\left(\text { Q }, K\right)
+\end{array}
+$$</span>
+当有了相似度之后，我们需要对其进行归一化，将原始计算分值整理成所有元素权重之和为1的概率分布，越重要的部分，越大！越不重要的部分，越小。我们采用<span class="math inline"><em>S</em><em>o</em><em>f</em><em>t</em><em>m</em><em>a</em><em>x</em></span>为主，当然也有一些使用<span class="math inline"><em>S</em><em>i</em><em>g</em><em>m</em><em>o</em><em>i</em><em>d</em></span>这样来进行运算，都是ok的～</p>
+<p>因此，这个权重<span class="math inline"><em>M</em><em>a</em><em>s</em><em>k</em></span>的值可以这么计算：
+<span class="math display">$$
+Mask = \operatorname{softmax}\left(\frac{Q K^{T} }{\sqrt{d_{k} }}\right)
+$$</span> 其中<span class="math inline">$\sqrt{d_{k}
+}$</span>表明将数据进行下缩放，防止过大了。</p>
+<p>最后就是得到<span class="math inline"><em>A</em><em>t</em><em>t</em><em>e</em><em>n</em><em>t</em><em>i</em><em>o</em><em>n</em></span>的输出了：
+<span class="math display"> Attention
+(<em>Q</em>, <em>K</em>, <em>V</em>) = <em>M</em><em>a</em><em>s</em><em>k</em> * <em>V</em></span></p>
+<h4 id="non-local-attention">Non-local Attention</h4>
+<figure>
+<img data-src="深度学习基础/image-20230708145106003.png" alt="image-20230708145106003">
+<figcaption aria-hidden="true">image-20230708145106003</figcaption>
+</figure>
+<p>输入特征<span class="math inline"><em>x</em></span>，通过<span class="math inline">1 * 1</span>卷积来得到<span class="math inline"><em>K</em><em>e</em><em>y</em>, <em>Q</em><em>u</em><em>e</em><em>r</em><em>y</em>, <em>V</em><em>a</em><em>l</em><em>u</em><em>e</em></span>，这里的三个矩阵是不同的，因此上文中是<strong>假设
+</strong>相同。</p>
+<p>其中代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Self_Attn</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot; Self attention Layer&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,in_dim,activation</span>):</span><br><span class="line">        <span class="built_in">super</span>(Self_Attn,<span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.chanel_in = in_dim</span><br><span class="line">        <span class="variable language_">self</span>.activation = activation</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.query_conv = nn.Conv2d(in_channels = in_dim , out_channels = in_dim//<span class="number">8</span> , kernel_size= <span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.key_conv = nn.Conv2d(in_channels = in_dim , out_channels = in_dim//<span class="number">8</span> , kernel_size= <span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.value_conv = nn.Conv2d(in_channels = in_dim , out_channels = in_dim , kernel_size= <span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.gamma = nn.Parameter(torch.zeros(<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.softmax  = nn.Softmax(dim=-<span class="number">1</span>) <span class="comment">#</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">            inputs :</span></span><br><span class="line"><span class="string">                x : input feature maps( B X C X W X H)</span></span><br><span class="line"><span class="string">            returns :</span></span><br><span class="line"><span class="string">                out : self attention value + input feature </span></span><br><span class="line"><span class="string">                attention: B X N X N (N is Width*Height)</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        m_batchsize,C,width ,height = x.size()</span><br><span class="line">        proj_query  = <span class="variable language_">self</span>.query_conv(x).view(m_batchsize,-<span class="number">1</span>,width*height).permute(<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>) <span class="comment"># B X CX(N)</span></span><br><span class="line">        proj_key =  <span class="variable language_">self</span>.key_conv(x).view(m_batchsize,-<span class="number">1</span>,width*height) <span class="comment"># B X C x (*W*H)</span></span><br><span class="line">        energy =  torch.bmm(proj_query,proj_key) <span class="comment"># transpose check</span></span><br><span class="line">        attention = <span class="variable language_">self</span>.softmax(energy) <span class="comment"># BX (N) X (N) </span></span><br><span class="line">        proj_value = <span class="variable language_">self</span>.value_conv(x).view(m_batchsize,-<span class="number">1</span>,width*height) <span class="comment"># B X C X N</span></span><br><span class="line"></span><br><span class="line">        out = torch.bmm(proj_value,attention.permute(<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>) )</span><br><span class="line">        out = out.view(m_batchsize,C,width,height)</span><br><span class="line">        </span><br><span class="line">        out = <span class="variable language_">self</span>.gamma*out + x</span><br><span class="line">        <span class="keyword">return</span> out,attention</span><br></pre></td></tr></table></figure>
+<p>代码看上去还是比较容易懂得，主要就是 <span class="math inline"><em>t</em><em>o</em><em>r</em><em>c</em><em>h</em>.<em>b</em><em>m</em><em>m</em>()</span>
+函数，它可以将纬度为 <span class="math inline"><em>B</em> × <em>N</em> × <em>C</em></span> 矩阵与
+<span class="math inline"><em>B</em> × <em>C</em> × <em>N</em></span>
+的矩阵相乘的到 <span class="math inline"><em>B</em> × <em>N</em> × <em>N</em></span>
+的矩阵。再使用 <span class="math inline"><em>S</em><em>o</em><em>f</em><em>t</em><em>m</em><em>a</em><em>x</em></span>
+来得到归一化之后的矩阵，结合残差，得到最后的输出！</p>
+<h4 id="cbam">CBAM</h4>
+<p><span class="math inline"><em>C</em><em>B</em><em>A</em><em>M</em></span>由<span class="math inline"><em>C</em><em>h</em><em>a</em><em>n</em><em>n</em><em>e</em><em>l</em></span>
+<span class="math inline"><em>A</em><em>t</em><em>t</em><em>e</em><em>n</em><em>t</em><em>i</em><em>o</em><em>n</em></span>与<span class="math inline"><em>S</em><em>p</em><em>a</em><em>t</em><em>i</em><em>a</em><em>l</em></span>
+<span class="math inline"><em>A</em><em>t</em><em>t</em><em>e</em><em>n</em><em>t</em><em>i</em><em>o</em><em>n</em></span>组合而成。</p>
+<figure>
+<img data-src="深度学习基础/image-20230708151931479.png" alt="image-20230708151931479">
+<figcaption aria-hidden="true">image-20230708151931479</figcaption>
+</figure>
+<p>其中的<span class="math inline"><em>C</em><em>h</em><em>a</em><em>n</em><em>n</em><em>e</em><em>l</em></span>
+<span class="math inline"><em>A</em><em>t</em><em>t</em><em>e</em><em>n</em><em>t</em><em>i</em><em>o</em><em>n</em></span>
+模块，主要是从C x H x w 的纬度，学习到一个C x 1 x 1的权重矩阵。</p>
+<p>论文中的图如下：</p>
+<figure>
+<img data-src="深度学习基础/image-20230708151924403.png" alt="image-20230708151924403">
+<figcaption aria-hidden="true">image-20230708151924403</figcaption>
+</figure>
+<p>代码示例如下：</p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ChannelAttentionModule</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, channel, reduction=<span class="number">16</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(ChannelAttentionModule, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        mid_channel = channel // reduction</span><br><span class="line">        <span class="variable language_">self</span>.avg_pool = nn.AdaptiveAvgPool2d(<span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.max_pool = nn.AdaptiveMaxPool2d(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.shared_MLP = nn.Sequential(</span><br><span class="line">            nn.Linear(in_features=channel, out_features=mid_channel),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>),</span><br><span class="line">            nn.Linear(in_features=mid_channel, out_features=channel)</span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.sigmoid = nn.Sigmoid()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        avgout = <span class="variable language_">self</span>.shared_MLP(<span class="variable language_">self</span>.avg_pool(x).view(x.size(<span class="number">0</span>),-<span class="number">1</span>)).unsqueeze(<span class="number">2</span>).unsqueeze(<span class="number">3</span>)</span><br><span class="line">        maxout = <span class="variable language_">self</span>.shared_MLP(<span class="variable language_">self</span>.max_pool(x).view(x.size(<span class="number">0</span>),-<span class="number">1</span>)).unsqueeze(<span class="number">2</span>).unsqueeze(<span class="number">3</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.sigmoid(avgout + maxout)</span><br></pre></td></tr></table></figure></p>
+<p>当然，我们可以使用<span class="math inline"><em>Q</em><em>u</em><em>e</em><em>r</em><em>y</em>, <em>V</em><em>a</em><em>l</em><em>u</em><em>e</em>, <em>K</em><em>e</em><em>y</em></span>的形式来对它进行修改成一个统一架构，只要我们可以学习到一个在通道纬度上的分布矩阵就好。</p>
+<p>如下方伪代码，<span class="math inline"><em>k</em><em>e</em><em>y</em>, <em>v</em><em>a</em><em>l</em><em>u</em><em>e</em>, <em>q</em><em>u</em><em>e</em><em>r</em><em>y</em></span>
+均为<span class="math inline">1 * 1</span>卷积生成。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># key: (N, C, H, W)</span></span><br><span class="line"><span class="comment"># query: (N, C, H, W)</span></span><br><span class="line"><span class="comment"># value: (N, C, H, W)</span></span><br><span class="line">key = key_conv(x)</span><br><span class="line">query = query_conv(x)</span><br><span class="line">value = value_conv(x)</span><br><span class="line"></span><br><span class="line">mask = nn.softmax(torch.bmm(key.view(N, C, H*W), query.view(N, C, H*W).permute(<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>)))</span><br><span class="line">out = (mask * value.view(N, C, H*W)).view(N, C, H, W)</span><br></pre></td></tr></table></figure>
+<p>对于<span class="math inline"><em>S</em><em>p</em><em>a</em><em>t</em><em>i</em><em>a</em><em>l</em></span>
+<span class="math inline"><em>A</em><em>t</em><em>t</em><em>e</em><em>n</em><em>t</em><em>i</em><em>o</em><em>n</em></span>，如图所示：</p>
+<figure>
+<img data-src="深度学习基础/image-20230708151908154.png" alt="image-20230708151908154">
+<figcaption aria-hidden="true">image-20230708151908154</figcaption>
+</figure>
+<p>参考代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SpatialAttentionModule</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(SpatialAttentionModule, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.conv2d = nn.Conv2d(in_channels=<span class="number">2</span>, out_channels=<span class="number">1</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">1</span>, padding=<span class="number">3</span>)</span><br><span class="line">        <span class="variable language_">self</span>.sigmoid = nn.Sigmoid()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        avgout = torch.mean(x, dim=<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        maxout, _ = torch.<span class="built_in">max</span>(x, dim=<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        out = torch.cat([avgout, maxout], dim=<span class="number">1</span>)</span><br><span class="line">        out = <span class="variable language_">self</span>.sigmoid(<span class="variable language_">self</span>.conv2d(out))</span><br><span class="line">        <span class="keyword">return</span> out</span><br></pre></td></tr></table></figure>
+<p>采用<span class="math inline"><em>Q</em><em>u</em><em>e</em><em>r</em><em>y</em>, <em>K</em><em>e</em><em>y</em>, <em>V</em><em>a</em><em>l</em><em>u</em><em>e</em></span>的框架来进行改写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">key = key_conv(x)</span><br><span class="line">query = query_conv(x)</span><br><span class="line">value = value_conv(x)</span><br><span class="line"></span><br><span class="line">b, c, h, w = t.size()</span><br><span class="line">query = query.view(b, c, -<span class="number">1</span>).permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">key = key.view(b, c, -<span class="number">1</span>)</span><br><span class="line">value = value.view(b, c, -<span class="number">1</span>).permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">att = torch.bmm(query, key)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="variable language_">self</span>.use_scale:</span><br><span class="line">		att = att.div(c**<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">att = <span class="variable language_">self</span>.softmax(att)</span><br><span class="line">x = torch.bmm(att, value)</span><br><span class="line"></span><br><span class="line">x = x.permute(<span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">x = x.contiguous()</span><br><span class="line">x = x.view(b, c, h, w)</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="激活函数">激活函数</h2>
+<hr>
+<h2 id="损失函数">损失函数</h2>
+<hr>
+<h2 id="优化器">优化器</h2>
+<hr>
+<h2 id="正则化">正则化</h2>
+<h3 id="dropout">Dropout</h3>
+<p>目前来说，<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>有两种。第一种就是传统的<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>方案。另一种，就是我们的吴恩达老师所讲的<span class="math inline"><em>I</em><em>n</em><em>v</em><em>e</em><em>r</em><em>t</em><em>e</em><em>d</em></span>
+<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>了。
+这两种方案本质上没什么区别，在实现的过程中是有区别的，接下来我们会详细进行比较。</p>
+<p>这里先给出其数学公式：</p>
+<p><span class="math inline"><em>T</em><em>r</em><em>a</em><em>i</em><em>n</em><em>i</em><em>n</em><em>g</em></span>
+<span class="math inline"><em>P</em><em>h</em><em>a</em><em>s</em><em>e</em></span>
+: <span class="math display"><strong>y</strong> = <em>f</em>(<strong>W</strong><strong>x</strong>) ∘ <strong>m</strong>,  <em>m</em><sub><em>i</em></sub> ∼ Bernoulli (<em>p</em>)</span>
+<span class="math inline"><em>T</em><em>e</em><em>s</em><em>t</em><em>i</em><em>n</em><em>g</em></span>
+<span class="math inline"><em>P</em><em>h</em><em>a</em><em>s</em><em>e</em></span>
+: <span class="math display"><strong>y</strong> = (1 − <em>p</em>)<em>f</em>(<strong>W</strong><strong>x</strong>)</span></p>
+<p>首先，看下<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>论文中给出的图像，了解下<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>究竟干了个啥。</p>
+<figure>
+<img data-src="深度学习基础/8f80b17b-e75f-4d59-9101-45a03aece3a1.png" alt="img">
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>概括来说：<strong>Dropout提供了一种有效地近似组合指数级的不同经典网络架构的方法。</strong></p>
+<p>将<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>应用到神经网络中，相当于从该网络中采样一些子网络。这些子网络由所有在<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>操作后存活下来的单元节点组成。如果一个神经网络有<span class="math inline"><em>n</em></span>个节点，则能够产生<span class="math inline">2<sup><em>n</em></sup></span>中可能的子网络。在测试阶段，我们不是直接将这些指数级的子网络显式的取平均预测，而是采用一种近似的方法：仅使用单个神经网络，该网络的权重是先前训练的网络权重乘以失活概率<span class="math inline"><em>p</em></span>。这样做可以使得在训练阶段隐藏层的期望输出（在随机丢弃神经元的分布）同测试阶段是一致的。这样可以使得这<span class="math inline">2<sup><em>n</em></sup></span>个网络可以共享权重。</p>
+<ol type="1">
+<li><span class="math inline"><em>I</em><em>n</em><em>v</em><em>e</em><em>r</em><em>t</em><em>e</em><em>d</em></span>
+<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span></li>
+</ol>
+<p>先看下<span class="math inline"><em>I</em><em>n</em><em>v</em><em>e</em><em>r</em><em>t</em><em>e</em><em>d</em></span>
+<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>的实现代码，假设，我们的输入是<span class="math inline"><em>x</em></span>，<span class="math inline"><em>p</em></span>表示随机丢弃的概率, <span class="math inline">1 − <em>p</em></span>表示的是神经元保存的概率。则<span class="math inline"><em>I</em><em>n</em><em>v</em><em>e</em><em>r</em><em>t</em><em>e</em><em>d</em></span>
+<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>的实现过程如下代码所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dropout</span>(<span class="params">x, p</span>):</span><br><span class="line">    <span class="keyword">if</span> p &lt; <span class="number">0.</span> <span class="keyword">or</span> p &gt;<span class="number">1.</span></span><br><span class="line">        <span class="comment"># 边界条件，在写代码的时候，一定要仔细！！！p为随机丢弃的概率</span></span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">&quot;The p must be in interval [0, 1]&quot;</span>)</span><br><span class="line">    retain_prob =<span class="number">1.</span> -p</span><br><span class="line">    <span class="comment">#我们通过binomial函数，生成与x一样的维数向量。</span></span><br><span class="line">    <span class="comment"># binomial函数就像抛硬币一样，每个神经元扔一次，所以n=1</span></span><br><span class="line">    <span class="comment"># sample为生成的一个0与1构成的mask,0表示抛弃，1表示保留</span></span><br><span class="line">    sample =np.random.binomial(n=<span class="number">1</span>, p=retain_prob, size=x.shape)</span><br><span class="line">    x *= sample <span class="comment"># 与0相乘，表示将该神经元Drop掉</span></span><br><span class="line">    x /= retain_prob</span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p><strong>这里解释下，为什么在后面还需要进行 x/=retain_prob
+的操作？</strong></p>
+<p>假设该层是输入，它的期望是<span class="math inline"><em>a</em></span>，在不使用<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>的时候，它的期望依旧是<span class="math inline"><em>a</em></span>。如果该层进行了<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>,
+相当于有<span class="math inline"><em>p</em></span>的概率被丢弃，<span class="math inline">1 − <em>p</em></span>的概率被保留，则此层的期望为<span class="math inline">(1 − <em>p</em>) * <em>a</em> * 1 + <em>p</em> * <em>a</em> * 0 = (1 − <em>p</em>) * <em>a</em></span>,为了保证输入与输出的期望一致，我们需要进行代码中<span class="math inline"><em>x</em>/ = <em>r</em><em>e</em><em>t</em><em>a</em><em>i</em><em>n</em>_<em>p</em><em>r</em><em>o</em><em>b</em></span>这一步。</p>
+<ol start="2" type="1">
+<li>传统<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span></li>
+</ol>
+<p>对于传统的<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>，在训练的时候，我们不需要进行<span class="math inline"><em>x</em>/ = <em>r</em><em>e</em><em>t</em><em>a</em><em>i</em><em>n</em>_<em>p</em><em>r</em><em>o</em><em>b</em></span>的这一步，直接进行神经元<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em></span>操作。此时，假设输入<span class="math inline"><em>x</em></span>的期望是<span class="math inline"><em>a</em></span>，则此时的输出期望为<span class="math inline">(1 − <em>p</em>) * <em>a</em></span>。我们在测试的时候，整个神经元是保留的，因此输出期望为<span class="math inline"><em>a</em></span>。为了让输入与输出的期望一致，则在测试的阶段，需要乘以<span class="math inline">(1 − <em>p</em>)</span>,使其期望值保持<span class="math inline">(1 − <em>p</em>) * <em>a</em></span>。</p>
+<p>传统的dropout和Inverted-dropout虽然在具体实现步骤上有一些不同，但从数学原理上来看，其正则化功能是相同的，那么为什么现在大家都用Inverted-dropout了呢？主要是有两点原因：</p>
+<ul>
+<li><p>测试阶段的模型性能很重要，特别是对于上线的产品，模型已经训练好了，只要执行测试阶段的推断过程，那对于用户来说，推断越快用户体验就越好了，而Inverted-dropout把保持期望一致的关键步骤转移到了训练阶段，节省了测试阶段的步骤，提升了速度。</p></li>
+<li><p>dropout方法里的 <span class="math inline"><em>p</em></span>是一个可能需要调节的超参数，用Inverted-dropout的情况下，当你要改变 <span class="math inline"><em>p</em></span> 的时候，只需要修改训练阶段的代码，而测试阶段的推断代码没有用到 <span class="math inline"><em>p</em></span> ，就不需要修改了，降低了写错代码的概率。</p></li>
+</ul>
+<h4 id="dropconnect">DropConnect</h4>
+<p>与 dropout 类似但对象是网络权重而不是特征图</p>
+<p>这里给出一个<strong>Github</strong>上面针对卷积核的2D
+<strong>DropConnect</strong>操作。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.nn.modules.conv <span class="keyword">import</span> _ConvNd,_pair</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DropConnectConv2D</span>(<span class="title class_ inherited__">_ConvNd</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_channels, out_channels, kernel_size, stride=<span class="number">1</span>,</span></span><br><span class="line"><span class="params">                 padding=<span class="number">0</span>, dilation=<span class="number">1</span>, groups=<span class="number">1</span>,</span></span><br><span class="line"><span class="params">                 bias=<span class="literal">True</span>, padding_mode=<span class="string">&#x27;zeros&#x27;</span>, p=<span class="number">0.5</span></span>):</span><br><span class="line">        kernel_size = _pair(kernel_size)</span><br><span class="line">        stride = _pair(stride)</span><br><span class="line">        padding = _pair(padding)</span><br><span class="line">        dilation = _pair(dilation)</span><br><span class="line">        <span class="built_in">super</span>(DropConnectConv2D, <span class="variable language_">self</span>).__init__(</span><br><span class="line">            in_channels, out_channels, kernel_size, stride, padding, dilation,</span><br><span class="line">            <span class="literal">False</span>, _pair(<span class="number">0</span>), groups, bias, padding_mode)</span><br><span class="line">        <span class="variable language_">self</span>.dropout = nn.Dropout(p)</span><br><span class="line">        <span class="variable language_">self</span>.p = p</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_conv_forward</span>(<span class="params">self, <span class="built_in">input</span>, weight</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.padding_mode != <span class="string">&#x27;zeros&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> F.conv2d(F.pad(<span class="built_in">input</span>, <span class="variable language_">self</span>._reversed_padding_repeated_twice, mode=<span class="variable language_">self</span>.padding_mode),</span><br><span class="line">                            weight, <span class="variable language_">self</span>.bias, <span class="variable language_">self</span>.stride,</span><br><span class="line">                            _pair(<span class="number">0</span>), <span class="variable language_">self</span>.dilation, <span class="variable language_">self</span>.groups)</span><br><span class="line">        <span class="keyword">return</span> F.conv2d(<span class="built_in">input</span>, weight, <span class="variable language_">self</span>.bias, <span class="variable language_">self</span>.stride,</span><br><span class="line">                        <span class="variable language_">self</span>.padding, <span class="variable language_">self</span>.dilation, <span class="variable language_">self</span>.groups)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>._conv_forward(<span class="built_in">input</span>, <span class="variable language_">self</span>.dropout(<span class="variable language_">self</span>.weight) * <span class="variable language_">self</span>.p)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    conv = DropConnectConv2D(<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">1</span>,bias=<span class="literal">False</span>).train()</span><br><span class="line">    conv.weight.data = torch.ones_like(conv.weight)</span><br><span class="line"></span><br><span class="line">    a = torch.ones([<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">3</span>])</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">    <span class="built_in">print</span>(conv(a))</span><br></pre></td></tr></table></figure>
+<p>上面的代码，我们其实只需要主要看下<span class="math inline"><em>s</em><em>e</em><em>l</em><em>f</em>.<em>d</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em>(<em>s</em><em>e</em><em>l</em><em>f</em>.<em>w</em><em>e</em><em>i</em><em>g</em><em>h</em><em>t</em>) * <em>s</em><em>e</em><em>l</em><em>f</em>.<em>p</em></span>这么一部分代码。</p>
+<h4 id="spatial-dropout">Spatial Dropout</h4>
+<p>考虑特征图的相邻位置有强关联，所以一次性 drop 整个通道的特征图</p>
+<h4 id="stochastic-depth">Stochastic Depth</h4>
+<p>这个 drop 的是 ResNet 的模块</p>
+<figure>
+<img data-src="深度学习基础/image-20230708170713189.png" alt="image-20230708170713189">
+<figcaption aria-hidden="true">image-20230708170713189</figcaption>
+</figure>
+<p>若网络总共有 <span class="math inline"><em>L</em></span> 个<span class="math inline"><em>b</em><em>l</em><em>o</em><em>c</em><em>k</em></span>，我们给每个<span class="math inline"><em>b</em><em>l</em><em>o</em><em>c</em><em>k</em></span>都加上了一个概率
+<span class="math inline"><em>p</em><sub><em>l</em></sub></span> 。</p>
+<p>在训练时： 根据<span class="math inline"><em>p</em><sub><em>l</em></sub></span> 用一个<span class="math inline"><em>b</em><em>e</em><em>r</em><em>n</em><em>o</em><em>u</em><em>l</em><em>l</em><em>i</em></span>随机变量生成每个<span class="math inline"><em>b</em><em>l</em><em>o</em><em>c</em><em>k</em></span>的激活状态
+<span class="math inline"><em>b</em><sub><em>l</em></sub></span>，最终把
+<span class="math inline"><em>R</em><em>e</em><em>s</em><em>N</em><em>e</em><em>t</em></span>
+的 <span class="math inline"><em>b</em><em>o</em><em>t</em><em>t</em><em>l</em><em>e</em><em>n</em><em>e</em><em>c</em><em>k</em></span>
+<span class="math inline"><em>b</em><em>l</em><em>o</em><em>c</em><em>k</em></span>，从<span class="math inline"><em>H</em><sub><em>l</em></sub> = ReL <em>U</em>(<em>f</em><sub><em>l</em></sub>(<em>H</em><sub><em>l</em> − 1</sub>) + <em>i</em><em>d</em><em>t</em><em>e</em><em>n</em><em>t</em><em>i</em><em>t</em><em>y</em>(<em>H</em><sub><em>l</em> − 1</sub>))</span>调整成了<span class="math inline"><em>H</em><sub><em>l</em></sub> = ReLU (<em>b</em><sub><em>l</em></sub><em>f</em><sub><em>l</em></sub>(<em>H</em><sub><em>l</em> − 1</sub>) + <em>i</em><em>d</em><em>t</em><em>e</em><em>n</em><em>t</em><em>i</em><em>t</em><em>y</em>(<em>H</em><sub><em>l</em> − 1</sub>))</span>。</p>
+<p>其中，当<span class="math inline"><em>b</em><sub><em>l</em></sub> = 0</span>时，表明这个<span class="math inline"><em>b</em><em>l</em><em>o</em><em>c</em><em>k</em></span>未被激活，此时<span class="math inline"><em>H</em><sub><em>l</em></sub> = ReL <em>U</em>(<em>i</em><em>d</em><em>e</em><em>n</em><em>t</em><em>i</em><em>t</em><em>y</em>(<em>H</em><sub><em>l</em> − 1</sub>))</span>。特别地是。其中<span class="math inline"><em>p</em><sub><em>l</em></sub></span>是从<span class="math inline"><em>p</em><sub>0</sub> = 1</span>线性衰减到<span class="math inline"><em>p</em><sub><em>L</em></sub> = 0.5</span>，即<span class="math inline">$p_{l}=1-\frac{l}{L}\left(1-p_{L}\right)$</span>。</p>
+<p>在预测的时候：</p>
+<p><span class="math inline"><em>b</em><em>l</em><em>o</em><em>c</em><em>k</em></span>被定义为：
+<span class="math inline"><em>H</em><sub><em>l</em></sub><sup><em>T</em><em>e</em><em>s</em><em>t</em></sup> = ReL <em>U</em>(<em>p</em><sub><em>l</em></sub><em>f</em><sub><em>l</em></sub>(<em>H</em><sub><em>l</em> − 1</sub><sup>Test
+</sup>) + <em>i</em><em>d</em><em>e</em><em>n</em><em>t</em><em>i</em><em>t</em><em>y</em>(<em>H</em><sub><em>l</em> − 1</sub><sup>Test
+</sup>))</span>。<strong>相当于将<span class="math inline"><em>p</em><sub><em>l</em></sub></span>与该层的残差做了一个权值融合了。</strong></p>
+<p><strong>个人觉得这样<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em></span>有以下两个好处</strong>：</p>
+<ul>
+<li>这种引入随机变量的设计有效的克服了过拟合使模型有了更好的泛化能力。这种<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em></span>的方式，本质上一种模型融合的方案。由于训练时模型的深度随机，预测时模型的深度确定，事实上是在测试时把不同深度的模型融合了起来。</li>
+<li>以往的<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>o</em><em>u</em><em>t</em></span>或者<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em><em>C</em><em>o</em><em>n</em><em>n</em><em>e</em><em>c</em><em>t</em></span>都主要是在全连接层进行，这里是对整个网络进行<span class="math inline"><em>D</em><em>r</em><em>o</em><em>p</em></span>的。</li>
+</ul>
+<p>这里给出一个参考代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BottleNeck</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_channels, out_channels, stride</span>):</span><br><span class="line">        <span class="built_in">super</span>(BottleNeck, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.conv1 = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(out_channels),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.conv2 = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=<span class="number">3</span>, stride=stride, padding=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d(out_channels),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.conv3 = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_channels=out_channels, out_channels=(out_channels * <span class="number">4</span>), kernel_size=<span class="number">1</span>),</span><br><span class="line">            nn.BatchNorm2d((out_channels * <span class="number">4</span>)),</span><br><span class="line">            nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.relu = nn.ReLU(inplace=<span class="literal">True</span>)</span><br><span class="line">        <span class="variable language_">self</span>.downsample = nn.Sequential(</span><br><span class="line">            nn.Conv2d(in_channels=in_channels, out_channels=(out_channels * <span class="number">4</span>), kernel_size=<span class="number">1</span>, stride=stride),</span><br><span class="line">            nn.BatchNorm2d((out_channels * <span class="number">4</span>))</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, active</span>):      </span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.training:</span><br><span class="line">            <span class="keyword">if</span> active == <span class="number">1</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;active&quot;</span>)</span><br><span class="line">                identity = x</span><br><span class="line">                identity = <span class="variable language_">self</span>.downsample(identity)</span><br><span class="line">                x = <span class="variable language_">self</span>.conv1(x)</span><br><span class="line">                x = <span class="variable language_">self</span>.conv2(x)</span><br><span class="line">                x = <span class="variable language_">self</span>.conv3(x)</span><br><span class="line">                x = x + identity</span><br><span class="line">                x = <span class="variable language_">self</span>.relu(x)</span><br><span class="line">                <span class="keyword">return</span>(x)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;inactive&quot;</span>)</span><br><span class="line">                x = <span class="variable language_">self</span>.downsample(x)</span><br><span class="line">                x = <span class="variable language_">self</span>.relu(x)</span><br><span class="line">                <span class="keyword">return</span>(x)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            identity = x</span><br><span class="line">            identity = <span class="variable language_">self</span>.downsample(identity)</span><br><span class="line">            x = <span class="variable language_">self</span>.conv1(x)</span><br><span class="line">            x = <span class="variable language_">self</span>.conv2(x)</span><br><span class="line">            x = <span class="variable language_">self</span>.conv3(x)</span><br><span class="line">            x = <span class="variable language_">self</span>.prob * x + identity</span><br><span class="line">            x = <span class="variable language_">self</span>.relu(x)</span><br><span class="line">            <span class="keyword">return</span>(x)</span><br></pre></td></tr></table></figure>
+<h3 id="l1与l2正则化">L1与L2正则化</h3>
+<p>正则化(<span class="math inline"><em>R</em><em>e</em><em>g</em><em>u</em><em>l</em><em>a</em><em>r</em><em>i</em><em>z</em><em>a</em><em>t</em><em>i</em><em>o</em><em>n</em></span>)
+是机器学习中<strong>对原始损失函数引入惩罚项</strong>，以防止过拟合或提高模型泛化性能的一类方法的统称。所谓惩罚是指对损失函数中的某些参数做一些限制。此时目标函数变成了<strong>原始损失函数+惩罚项</strong>，常用的正则项一般有两种，英文称作
+<span class="math inline"><em>l</em><sub>1</sub> − <em>n</em><em>o</em><em>r</em><em>m</em></span>
+和 <span class="math inline"><em>l</em><sub>2</sub> − <em>n</em><em>o</em><em>r</em><em>m</em></span>，中文称作
+<span class="math inline"><em>L</em>1</span> 正则化和 <span class="math inline"><em>L</em>2</span> 正则化，或者 <span class="math inline"><em>L</em>1</span> 范数和 <span class="math inline"><em>L</em>2</span> 范数（实际是 <span class="math inline"><em>L</em>2</span> 范数的平方）。</p>
+<p>对于线性回归模型，使用 <span class="math inline"><em>L</em>1</span>
+正则化的模型叫做 <span class="math inline"><em>L</em><em>a</em><em>s</em><em>s</em><em>o</em></span>
+回归，使用 <span class="math inline"><em>L</em>2</span> 正则化的模型叫做
+<span class="math inline"><em>R</em><em>i</em><em>d</em><em>g</em><em>e</em></span>
+回归（岭回归）。</p>
+<h4 id="l1正则化">L1正则化</h4>
+<p>假设带有<span class="math inline"><em>L</em>1</span>正则化的目标函数为：</p>
+<p><span class="math display"><em>J</em> = <em>J</em><sub>0</sub> + ||<em>W</em>||<sub>1</sub> = <em>J</em><sub>0</sub> + <em>α</em>∑|<em>w</em>|         (1)</span></p>
+<p>其中，<span class="math inline"><em>J</em><sub>0</sub></span>为原始的损失函数，<span class="math inline"><em>α</em>∑|<em>w</em>|</span>为L1正则化项，<span class="math inline"><em>α</em></span>为正则化系数，<span class="math inline"><em>w</em></span> 表示特征的系数（<span class="math inline"><em>x</em></span>的参数），可以看到正则化项是对系数做了限制。<span class="math inline"><em>L</em>1</span> 正则化是指权值向量 <span class="math inline"><em>w</em></span> 中各个元素的绝对值之和，通常表示为
+<span class="math inline">∥<em>w</em>∥<sub>1</sub></span>。</p>
+<p><span class="math inline"><em>L</em>1</span>
+范数符合拉普拉斯分布，是不完全可微的。表现在图像上会有很多角出现。这些角和目标函数的接触机会远大于其他部分。就会造成最优值出现在坐标轴上，因此就会导致某一维的权重为<span class="math inline">0</span> ，产生稀疏权重矩阵，进而防止过拟合。</p>
+<p><span class="math inline"><em>L</em>1</span>正则化项相当于对原始损失函数<span class="math inline"><em>J</em><sub>0</sub></span>做了一个约束。我们令<span class="math inline"><em>L</em> = <em>α</em>∑|<em>w</em>|</span>，那么整个目标函数可以写成：
+<span class="math display"><em>J</em> = <em>J</em><sub>0</sub> + <em>L</em>     (2)</span></p>
+<p>我们的目的就是求出在约束条件<span class="math inline"><em>L</em></span>下，<span class="math inline"><em>J</em><sub>0</sub></span>取最小值的解。为了方便理解，我们考虑二维的情况，此时<span class="math inline"><em>L</em> = |<em>w</em><sub>1</sub>|+|<em>w</em><sub>2</sub>|</span></p>
+<figure>
+<img data-src="深度学习基础/d9db62a8-3889-4598-a482-5751f5907d7f.png" alt="L1正则化图示">
+<figcaption aria-hidden="true">L1正则化图示</figcaption>
+</figure>
+<p>图中等高线是 <span class="math inline"><em>J</em><sub>0</sub></span>
+的等高线，黑色菱形是 <span class="math inline"><em>L</em></span>
+函数的图形。图中当等高线 <span class="math inline"><em>J</em><sub>0</sub></span> 与 <span class="math inline"><em>L</em></span>
+图形首次相交的地方就是最优解。上图中 <span class="math inline"><em>J</em><sub>0</sub></span> 与 <span class="math inline"><em>L</em></span>
+在一个顶点处相交，这个顶点就是最优解 <span class="math inline"><em>w</em><sup>∗</sup></span>。</p>
+<p>拓展到多维，<span class="math inline"><em>L</em></span>
+函数就会有很多突出的角（二维情况下四个，多维情况下更多），<span class="math inline"><em>J</em><sub>0</sub></span>
+与这些角接触的概率远大于与 <span class="math inline"><em>L</em></span>
+其它部位接触的概率（这是很直觉的想象，突出的角比直线的边离等值线更近），而在这些角的位置上使很多权重为
+<span class="math inline">0</span>。所以在最优解处，<span class="math inline"><em>L</em>1</span>
+正则化就可以产生稀疏模型，进而可以用于特征选择。</p>
+<p><span class="math inline"><em>α</em></span>正则化系数，可以控制 <span class="math inline"><em>L</em></span> 图形的大小，<span class="math inline"><em>α</em></span>越小，<span class="math inline"><em>L</em></span> 图形越大，<span class="math inline"><em>α</em></span>越大，<span class="math inline"><em>L</em></span> 图形越小。</p>
+<p><span class="math inline"><em>L</em>1</span>正则化对所有参数的惩罚力度都一样，可以让一部分权重变为
+<span class="math inline">0</span>，去除某些特征（权重为 <span class="math inline">0</span> 则等效于去除），因此产生稀疏模型。</p>
+<p><strong>那么稀疏模型有什么好处呢？</strong></p>
+<p>稀疏化正则化项一个最重要的优势就在于<strong>实现特征的自动选择</strong>。所谓稀疏性，说白了就是模型的很多参数是
+<span class="math inline">0</span>。通常机器学习中特征数量很多，例如文本处理时，如果将一个词组（<span class="math inline"><em>t</em><em>e</em><em>r</em><em>m</em></span>）作为一个特征，那么特征数量会达到上万个（<span class="math inline"><em>b</em><em>i</em><em>g</em><em>r</em><em>a</em><em>m</em></span>）。但是只有少数特征对该模型有贡献，绝大部分特征是没有贡献的。在最小化目标函数时，需要考虑这些额外的特征，虽然能获得更小的训练误差，但在预测阶段，模型会考虑这些无用的特征，从而可能干扰模型的正确预测。</p>
+<p>这种模型就是所谓的泛化性能不强，有过拟合的嫌疑。如果通过稀疏化正则化项得到一个稀疏模型，很多参数是<span class="math inline">0</span>，此时我们就可以只关注系数是非零值的特征。这相当于<strong>对模型进行了一次特征选择，只留下一些比较重要的特征</strong>，提高模型的泛化能力，降低过拟合的可能。这就是稀疏模型与特征选择的关系。</p>
+<h4 id="l2正则化">L2正则化</h4>
+<p>假设带有<span class="math inline"><em>L</em>2</span>正则化的目标函数为： <span class="math display"><em>J</em> = <em>J</em><sub>0</sub> + ||<em>w</em>||<sub>2</sub><sup>2</sup> = <em>J</em><sub>0</sub> + <em>α</em>∑<em>w</em><sup>2</sup>         (3)</span>
+同<span class="math inline"><em>L</em>1</span>正则化，<span class="math inline"><em>w</em></span> 表示特征的系数（ <span class="math inline"><em>x</em></span>
+的参数），可以看到正则化项是对系数做了限制。<span class="math inline"><em>L</em>2</span>正则化是指权值向量 <span class="math inline"><em>w</em></span>
+中各个元素的平方和然后再求平方根（可以看到 <span class="math inline"><em>R</em><em>i</em><em>d</em><em>g</em><em>e</em></span>
+回归的<span class="math inline"><em>L</em>2</span>正则化项有平方符号），通常表示为
+<span class="math inline">∥<em>w</em>∥<sub>2</sub></span>。</p>
+<p><span class="math inline"><em>L</em>2</span>
+范数符合高斯分布，是完全可微的。和 <span class="math inline"><em>L</em>1</span>
+相比，图像上为一个圆。一般最优值不会在坐标轴上出现。在最小化正则项时，参数不断趋向于
+<span class="math inline">0</span>，但并不是 <span class="math inline">0</span>。</p>
+<p>如下图：</p>
+<figure>
+<img data-src="深度学习基础/cc2f4a60-46fe-40f6-b6c8-011c46b3013d.png" alt="L2正则化图示">
+<figcaption aria-hidden="true">L2正则化图示</figcaption>
+</figure>
+<p>相比于<span class="math inline"><em>L</em>1</span>正则化，<span class="math inline"><em>L</em>2</span>正则化的函数 <span class="math inline"><em>L</em></span> 与 <span class="math inline"><em>J</em><sub>0</sub></span>
+第一次相交的地方出现在具有稀疏性的位置的概率就变得非常小了。这就从直观上来解释了为什么<span class="math inline"><em>L</em>1</span>正则化能产生稀疏性，而<span class="math inline"><em>L</em>2</span>正则化不能产生稀疏性的原因了。</p>
+<p><span class="math inline"><em>L</em>2</span>正则化的作用：主要是<strong>为了防止过拟合</strong>。</p>
+<p>拟合过程中通常都倾向于让权值尽可能小，<strong>最后构造一个所有参数都比较小的模型</strong>。因为一般认为参数值小的模型比较简单，泛化能力强，能适应不同的数据集，也在一定程度上避免了过拟合现象。可以设想一下对于一个线性回归方程，若参数很大，那么只要数据偏移一点点，就会对结果造成很大的影响；但如果参数足够小，数据偏移得多一点也不会对结果造成什么影响，专业一点的说法是抗扰动能力强。</p>
+<p>越是复杂的模型，越是尝试对所有样本进行拟合，包括异常点。这就会造成在较小的区间中产生较大的波动，这个较大的波动也会反映在这个区间的导数比较大。只有越大的参数才可能产生较大的导数。因此参数越小，模型就越简单。</p>
+<p><strong>为什么<span class="math inline"><em>L</em>2</span>正则化能够得到值很小的参数？？？</strong></p>
+<p>我们通过线性回归，来看一下<span class="math inline"><em>L</em>2</span>正则化解决过拟合问题。</p>
+<p>假设要求解的参数为<span class="math inline"><em>θ</em></span>，<span class="math inline"><em>h</em><sub><em>θ</em></sub>(<em>x</em>)</span>
+是假设函数。线性回归一般使用平方差损失函数。单个样本的平方差是<span class="math inline">(<em>h</em><sub><em>θ</em></sub>(<em>x</em>) − <em>y</em>)<sup>2</sup></span>，如果考虑所有样本，损失函数是对每个样本的平方差求和，假设有
+<span class="math inline"><em>m</em></span>
+个样本，线性回归的损失函数如下， <span class="math display">$$
+J(\theta) = \frac{1}{2m} \sum^m_{i=1} (h_{\theta}(x^{(i)}) - y^{(i)})^2
+\ \ \ \ \ \ \ \ (4)
+$$</span></p>
+<p>其梯度下降算法公式为： <span class="math display">$$
+\theta_j = \theta_j - \alpha
+\frac{1}{m}[\sum_{i=1}^m(h_{\theta}(x^{(i)}-y^{(i)})x_j^{(i)}] \ \ \ \ \
+\ \ \ (5)
+$$</span></p>
+<p>加入<span class="math inline"><em>L</em>2</span>正则化后，其损失函数为 <span class="math display">$$
+J(\theta) = \frac{1}{2}\sum^m_{i=1}((h_{\theta}(x^{(i)}) - y^{(i)})^2 +
+\lambda\sum^m_{i=1}\theta_j^2) \ \ \ \ \ \ \ \ (6)
+$$</span> 其梯度下降算法公式为： <span class="math display">$$
+\theta_j = \theta_j - (\alpha
+\frac{1}{m}[\sum_{i=1}^m(h_{\theta}(x^{(i)}-y^{(i)})x_j^{(i)}] + \lambda
+\theta_j)=\theta_j(1-\alpha\frac{\lambda}{m}) - (\alpha
+\frac{1}{m}\sum_{i=1}^m(h_{\theta}(x^{(i)}-y^{(i)})x_j^{(i)})
+\ \ \ \ \ \ \ \ (7)
+$$</span> 可以看到，由于学习率 <span class="math inline"><em>α</em> &gt; 0, <em>λ</em> &gt; 0</span>，且这两个值一般都是很小的正数，所以
+<span class="math inline">$0&lt; 1-\alpha\frac{\lambda}{m} &lt;
+1$</span>，所以每次 <span class="math inline"><em>θ</em></span>
+在更新的时候都会减小，<span class="math inline"><em>λ</em></span>
+越大，衰减的越快，这也是<span class="math inline"><em>L</em>2</span>正则化可以获得更小的权重值的原因。</p>
+<p>正如在线性回归中的应用，<span class="math inline"><em>L</em>2</span>
+正则化就是在损失函数中加入一个 <span class="math inline"><em>L</em>2</span> 范数和一个超参数 <span class="math inline"><em>λ</em></span>，<span class="math inline"><em>L</em>2</span>范数用 <span class="math inline">∥<em>w</em>∥<sup>2</sup></span>
+这种符号表示，它的意思是对于向量 <span class="math inline"><em>w</em></span>
+中的各个数先求平方再加和。线性回归中加入的对于 <span class="math inline"><em>θ</em><sub><em>j</em></sub></span>
+求平方和就是一个 <span class="math inline"><em>L</em>2</span>
+范数。超参数<span class="math inline"><em>λ</em></span>
+则用于控制参数惩罚的程度。</p>
+<p>我们在举个例子，来展示<span class="math inline"><em>L</em>2</span>正则化如何解决过拟合的现象</p>
+<figure>
+<img data-src="深度学习基础/4468c482-612e-4afe-aa72-1208520ab3db.jpg" alt="来源：吴恩达机器学习课程">
+<figcaption aria-hidden="true">来源：吴恩达机器学习课程</figcaption>
+</figure>
+<p>将上述公式分为两部分，左边部分即为原始的损失函数，右边部分为 <span class="math inline"><em>L</em>2</span>
+正则化项（注意：正则化项中不包含<span class="math inline"><em>θ</em><sub>0</sub></span>）。<span class="math inline"><em>λ</em></span>
+为超参数，是人为设定的。为了最小化整个损失函数，那么就要减小 <span class="math inline"><em>θ</em><sub>1</sub></span> ~ <span class="math inline"><em>θ</em><sub><em>n</em></sub></span>
+的值。对于上图中的那种过拟合状态，加入正则项后，<span class="math inline"><em>θ</em><sub>1</sub></span> ~ <span class="math inline"><em>θ</em><sub><em>n</em></sub></span>减小，也就是使得权重衰减，这样就会降低高阶项对于整个函数的影响，使得估计函数变得比较平滑。</p>
+<p>可以想象一种极端的情况，如果<span class="math inline"><em>λ</em></span> 为无穷大，那么 <span class="math inline"><em>θ</em><sub>1</sub></span> ~ <span class="math inline"><em>θ</em><sub><em>n</em></sub></span>
+趋近于0，那么整个式子就只剩一个<span class="math inline"><em>θ</em><sub>0</sub></span>，为一条和 y
+轴垂直的直线，这种状态为严重的欠拟合状态。可以看到，当<span class="math inline"><em>λ</em></span>为0时，即为原来的状态，此时过拟合。所以会有一个恰当的<span class="math inline"><em>λ</em></span>使得模型处于既不过拟合又不欠拟合的状态。</p>
+<p>在未加入<span class="math inline"><em>L</em>2</span>正则化发生过拟合时，拟合函数需要顾忌每一个点，最终形成的拟合函数波动很大，在某些很小的区间里，函数值的变化很剧烈，也就是某些
+<span class="math inline"><em>w</em></span> 值非常大。为此，<span class="math inline"><em>L</em>2</span>
+正则化的加入惩罚了权重变大的趋势,逼迫所有 <span class="math inline"><em>w</em></span> 尽可能趋向零但不为零（<span class="math inline"><em>L</em>2</span>正则化的导数趋于零），导致权重较为平滑。</p>
+<h4 id="直观理解">直观理解</h4>
+<p>假设只有一个参数为<span class="math inline"><em>w</em></span>，损失函数为<span class="math inline"><em>L</em>(<em>w</em>)</span>，分别加上<span class="math inline"><em>L</em>1</span>正则项和<span class="math inline"><em>L</em>2</span>正则项后有：</p>
+<p><span class="math display">$$
+J_{L1}(w)=L(w) +\lambda|w| \\
+J_{L2}(w)=L(w)+\lambda w^{2}
+$$</span> 这里，假设<span class="math inline"><em>L</em>(<em>w</em>)</span>在0处的导数值为<span class="math inline"><em>d</em><sub>0</sub></span>，即： <span class="math display">$$
+\left.\frac{\partial L(w)}{\partial w}\right|_{w=0}=d_{0}
+$$</span> 这时，可以推导使用<span class="math inline"><em>L</em>1</span>正则和<span class="math inline"><em>L</em>2</span>正则时的导数。</p>
+<p>当引入<span class="math inline"><em>L</em>2</span>正则项，在<span class="math inline">0</span>处的导数：<span class="math inline">$\left.\frac{\partial J_{L 2}(w)}{\partial
+w}\right|_{w=0}=d_{0}+2 \times \lambda \times w=d_{0}$</span></p>
+<p>引入<span class="math inline"><em>L</em>1</span>正则项，在<span class="math inline">0</span>处的导数： <span class="math display">$$
+\begin{array}{l}
+\left.\frac{\partial J_{L 1}(w)}{\partial w}\right|_{w=0^{-}
+}=d_{0}-\lambda \\
+\left.\frac{\partial J_{L 1}(w)}{\partial w}\right|_{w=0^{+}
+}=d_{0}+\lambda
+\end{array}
+$$</span> 可见，引入<span class="math inline"><em>L</em>2</span>正则时，损失函数在0处的导数仍是<span class="math inline"><em>d</em><sub>0</sub></span> ，无变化。</p>
+<p>而引入<span class="math inline"><em>L</em>1</span>正则后，损失函数在<span class="math inline">0</span>处的导数有一个突变。从<span class="math inline"><em>d</em><sub>0</sub> − <em>λ</em></span>到<span class="math inline"><em>d</em><sub>0</sub> + <em>λ</em></span>。若<span class="math inline"><em>d</em><sub>0</sub> − <em>λ</em></span>与<span class="math inline"><em>d</em><sub>0</sub> + <em>λ</em></span>异号，则在<span class="math inline">0</span>处会是一个极小值点。因此，优化时，很可能优化到该极小值点上，即<span class="math inline"><em>w</em> = 0</span>处。</p>
+<p>当然，这里只解释了有一个参数的情况，如果有更多的参数，也是类似的。因此，用L1正则更容易产生稀疏解。</p>
+<h4 id="先验概率看l1更稀疏">先验概率看L1更稀疏</h4>
+<p>假设，我们的数据数据是稀疏的,不妨就认为它来自某种<span class="math inline"><em>l</em><em>a</em><em>p</em><em>l</em><em>a</em><em>c</em><em>e</em></span>分布。其中<span class="math inline"><em>l</em><em>a</em><em>p</em><em>l</em><em>a</em><em>c</em><em>e</em></span>的概率密度函数图像如下图所示：</p>
+<p><img data-src="深度学习基础/08410a98-a160-4805-b96b-bb00508b4688.png" style="zoom:50%;"></p>
+<p>再看看<span class="math inline"><em>l</em><em>a</em><em>p</em><em>l</em><em>a</em><em>c</em><em>e</em></span>分布的概率密度函数:
+<span class="math display">$$
+f(x \mid \mu, b)=\frac{1}{2 b} \exp \left(-\frac{|x-\mu|}{b}\right)
+$$</span> 如果取对数,剩下的是一个一次项<span class="math inline">|<em>x</em> − <em>u</em>|</span>,这就是<span class="math inline"><em>L</em>1</span>范式。所以用<span class="math inline"><em>L</em>1</span>范式去正则,就假定了你的数据是稀疏的<span class="math inline"><em>l</em><em>a</em><em>p</em><em>l</em><em>a</em><em>c</em><em>e</em></span>分布。</p>
+<h4 id="总结">总结</h4>
+<ul>
+<li><span class="math inline"><em>L</em>1</span>正则化项是模型各个参数的绝对值之和。<span class="math inline"><em>L</em>2</span>正则化项是模型各个参数的平方和的开方值。</li>
+<li><span class="math inline"><em>L</em>1</span>正则化可以使部分权重为<span class="math inline">0</span>，产生稀疏权值矩阵，即产生一个稀疏模型，可以用于特征选择；一定程度上，<span class="math inline"><em>L</em>1</span>也可以防止过拟合，当<span class="math inline"><em>L</em>1</span>的正则化系数很小时，得到的最优解会很小，可以达到和<span class="math inline"><em>L</em>2</span>正则化类似的效果。</li>
+<li><span class="math inline"><em>L</em>2</span>正则化通过权重衰减，可以使所有的权重趋向于<span class="math inline">0</span>，但不为<span class="math inline">0</span>，导致模型权重参数较小且较为平滑，防止模型过拟合（<span class="math inline"><em>o</em><em>v</em><em>e</em><em>r</em><em>f</em><em>i</em><em>t</em><em>t</em><em>i</em><em>n</em><em>g</em></span>）；</li>
+<li><span class="math inline"><em>L</em>2</span>正则化的效果是对原最优解的每个元素进行不同比例的放缩；<span class="math inline"><em>L</em>1</span>正则化则会使原最优解的元素产生不同量的偏移，并使某些元素为<span class="math inline">0</span>，从而产生稀疏性。</li>
+</ul>
+<h3 id="标签平滑">标签平滑</h3>
+<p>标签平滑（Label
+Smoothing）：在训练时即假设标签可能存在错误，避免“过分”相信训练样本的标签。当目标函数为交叉熵时，这一思想有非常简单的实现，称为标签平滑（Label
+Smoothing）。</p>
+<p>为了达到这个目标，我们很自然想到的方法是：在每次迭代时，并不直接将(<span class="math inline"><em>x</em><sub><em>i</em></sub></span>,<span class="math inline"><em>y</em><sub><em>i</em></sub></span>)放入训练集，而是设置一个错误率
+<span class="math inline"><em>ϵ</em></span>，以 1-<span class="math inline"><em>ϵ</em></span> 的概率将(<span class="math inline"><em>x</em><sub><em>i</em></sub></span>,<span class="math inline"><em>y</em><sub><em>i</em></sub></span>)代入训练，以
+<span class="math inline"><em>ϵ</em></span> 的概率将(<span class="math inline"><em>x</em><sub><em>i</em></sub>, 1 − <em>y</em><sub><em>i</em></sub></span>)代入训练。这样，模型在训练时，既有正确标签输入，又有错误标签输入，可以想象，如此训练出来的模型不会“全力匹配”每一个标签，而只是在一定程度上匹配。这样，即使真的出现错误标签，模型受到的影响就会更小。</p>
+<p>具体实现来说：对于标签为 <span class="math inline">1</span>
+的类别我们将标签设置为 <span class="math inline">1 − <em>ϵ</em></span>，对于标签为 <span class="math inline">0</span> 的类别我们将标签设置为 <span class="math inline"><em>ϵ</em></span>.</p>
+<p>下面我们给出在使用标签平滑时的 <span class="math inline"><em>s</em><em>o</em><em>f</em><em>t</em><em>m</em><em>a</em><em>x</em></span>
+损失的代码实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">cross_entropy_loss</span>(<span class="params">preds, target, reduction</span>):</span><br><span class="line">    logp = F.log_softmax(preds, dim=<span class="number">1</span>)</span><br><span class="line">    loss = torch.<span class="built_in">sum</span>(-logp * target, dim=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> reduction == <span class="string">&#x27;none&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> loss</span><br><span class="line">    <span class="keyword">elif</span> reduction == <span class="string">&#x27;mean&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> loss.mean()</span><br><span class="line">    <span class="keyword">elif</span> reduction == <span class="string">&#x27;sum&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> loss.<span class="built_in">sum</span>()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(</span><br><span class="line">            <span class="string">&#x27;`reduction` must be one of \&#x27;none\&#x27;, \&#x27;mean\&#x27;, or \&#x27;sum\&#x27;.&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># one-hot编码</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">onehot_encoding</span>(<span class="params">labels, n_classes</span>):</span><br><span class="line">    <span class="keyword">return</span> torch.zeros(labels.size(<span class="number">0</span>), n_classes).to(labels.device).scatter_(</span><br><span class="line">        dim=<span class="number">1</span>, index=labels.view(-<span class="number">1</span>, <span class="number">1</span>), value=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">label_smoothing</span>(<span class="params">preds, targets,epsilon=<span class="number">0.1</span></span>):</span><br><span class="line">	<span class="comment">#preds为网络最后一层输出的logits</span></span><br><span class="line">	<span class="comment">#targets为未one-hot的真实标签</span></span><br><span class="line">    n_classes = preds.size(<span class="number">1</span>)</span><br><span class="line">    device = preds.device</span><br><span class="line"></span><br><span class="line">    onehot = onehot_encoding(targets, n_classes).<span class="built_in">float</span>().to(device)</span><br><span class="line">    targets = onehot * (<span class="number">1</span> - epsilon) + torch.ones_like(onehot).to(</span><br><span class="line">        device) * epsilon / n_classes</span><br><span class="line">    loss = cross_entropy_loss(preds, targets, reduction=<span class="string">&quot;mean&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> loss</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="技巧">技巧</h2>
+<h3 id="增加batchsize">增加BatchSize</h3>
+<p>在Backbone不变的情况下，若显存有限，如何增大训练时的batch size？</p>
+<ul>
+<li>使用inplace操作，比如relu激活函数，我们可以使用inplace=True</li>
+<li>每次循环结束时候，我们可以手动删除loss，但是这样的操作，效果有限。</li>
+<li>使用float16混合精度计算，据有关人士测试过，使用apex，能够节省将近50%的显存，但是还是要小心mean与sum会溢出的操作。</li>
+<li>训练过程中的显存占用包括前向与反向所保存的值，所以在我们不需要bp的forward的时候，我们可以使用torch.no_grad()。</li>
+<li>如使用将batchsize=32这样的操作，分成两份，进行forward，再进行backward，不过这样会影响batchnorm与batch
+size相关的层。yolo系列cfg文件里面有一个参数就是将batchsize分成几个sub
+batchsize的。</li>
+<li>使用pooling，减小特征图的size，如使用GAP等来代替FC等。</li>
+<li>optimizer的变换使用，理论上，显寸占用情况 sgd &lt; momentum &lt;
+adam，可以从计算公式中看出有额外的中间变量。</li>
+<li>梯度累加，需要适当学习率，对 BN 也有显著影响</li>
+</ul>
+<p>总的来说最有效的还是<strong>混合精度</strong>和<strong>梯度累加</strong>。</p>
+<hr>
+<h2 id="模型">模型</h2>
+<h3 id="反向传播bp">反向传播（BP）</h3>
+<p>反向传播（Back
+Propagation）是一种网络学习方法，主要特定是<strong>信号前向传递，误差反向传播</strong>，通过不断调节网络权重值，使得网络的最终输出与期望输出尽可能接近，以达到训练的目的。</p>
+<p>举个简单的例子：</p>
+<figure>
+<img data-src="深度学习基础/image-20230706154720417.png" alt="image-20230706154720417">
+<figcaption aria-hidden="true">image-20230706154720417</figcaption>
+</figure>
+<p><span class="math inline"><em>x</em></span>是网络的输入，<span class="math inline"><em>y</em></span> 是网络的输出，<span class="math inline"><em>w</em></span>
+是网络学习到的参数。我们的目标是通过更新 <span class="math inline"><em>w</em></span> 寻找一个 <span class="math inline"><em>f</em><sub><em>w</em></sub>(<em>x</em>) = <em>y</em></span>
+，即： <span class="math display">min<sub><em>w</em></sub>∑<sub><em>x</em></sub>∥<em>f</em><sub><em>w</em></sub>(<em>x</em>) − <em>y</em>∥<sup>2</sup></span>
+将 <span class="math inline"><em>E</em> = ∑<sub><em>x</em></sub>∥<em>f</em><sub><em>w</em></sub>(<em>x</em>) − <em>y</em>∥<sup>2</sup></span>
+记为损失项，我们的目标是寻找能使损失 <span class="math inline"><em>E</em></span> 最小的参数 <span class="math inline"><em>w</em></span>。具体而言，常用的经典方法为梯度下降法，即随机生成一个
+<span class="math inline"><em>w</em></span>
+然后向着梯度下降的方向更新优化： <span class="math display">$$
+w^{+}=w-\eta \cdot \frac{\partial E}{\partial w}
+$$</span> 这里 <span class="math inline"><em>w</em></span>
+是一个随机初始化的权重，<span class="math inline">$\frac{\partial
+E}{\partial w}$</span> 是表示当前误差对权重<span class="math inline"><em>w</em></span>的梯度。<span class="math inline"><em>η</em></span>
+是表示的学习率，通常不会很大，都是0.01以下的值，用来控制更新的步长。</p>
+<p>链式求导应该很简单就不说了。</p>
+<hr>
+<h2 id="评价指标">评价指标</h2>
+<h3 id="iou">IOU</h3>
+<h4 id="目标检测中的iou">目标检测中的IOU</h4>
+<p>假设，我们有两个框，<span class="math inline"><em>r</em><em>e</em><em>c</em>1</span>与<span class="math inline"><em>r</em><em>e</em><em>c</em>2</span>，我们要计算其<span class="math inline"><em>I</em><em>O</em><em>U</em></span>。其中<span class="math inline"><em>I</em><em>O</em><em>U</em></span>的计算公式为，其交叉面积<span class="math inline"><em>I</em><em>n</em><em>t</em><em>e</em><em>r</em><em>s</em><em>e</em><em>c</em><em>t</em><em>i</em><em>o</em><em>n</em></span>除以其并集<span class="math inline"><em>U</em><em>n</em><em>i</em><em>o</em><em>n</em></span>。</p>
+<p><img src="/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/9ee39aa5-ba2b-4ab8-821b-337517e00c79.png"></p>
+<p><span class="math inline"><em>I</em><em>O</em><em>U</em></span>的数学公式为：
+<span class="math display">$$
+I o U=\frac{S_{rec1} \cap S_{rec2} }{S_{rec1} + S_{rec2} - S_{rec1}
+\bigcap S_{rec2} }
+$$</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">compute_iou</span>(<span class="params">rec1, rec2</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    computing IoU</span></span><br><span class="line"><span class="string">    param rec1: (y0, x0, y1, x1) , which reflects (top, left, bottom, right)</span></span><br><span class="line"><span class="string">    param rec2: (y0, x0, y1, x1) , which reflects (top, left, bottom, right)</span></span><br><span class="line"><span class="string">    return : scale value of IoU</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    S_rec1 =(rec1[<span class="number">2</span>] -rec1[<span class="number">0</span>]) *(rec1[<span class="number">3</span>] -rec1[<span class="number">1</span>])</span><br><span class="line">    S_rec2 =(rec2[<span class="number">2</span>] -rec2[<span class="number">0</span>]) *(rec2[<span class="number">3</span>] -rec2[<span class="number">1</span>])</span><br><span class="line">    <span class="comment">#computing the sum area</span></span><br><span class="line">    sum_area =S_rec1 +S_rec2</span><br><span class="line">    <span class="comment">#find the each edge of interest rectangle</span></span><br><span class="line">    left_line =<span class="built_in">max</span>(rec1[<span class="number">1</span>], rec2[<span class="number">1</span>])</span><br><span class="line">    right_line =<span class="built_in">min</span>(rec1[<span class="number">3</span>], rec2[<span class="number">3</span>])</span><br><span class="line">    top_line =<span class="built_in">max</span>(rec1[<span class="number">0</span>], rec2[<span class="number">0</span>])</span><br><span class="line">    bottom_line =<span class="built_in">min</span>(rec1[<span class="number">2</span>], rec2[<span class="number">2</span>])</span><br><span class="line">    <span class="comment">#judge if there is an intersect</span></span><br><span class="line">    <span class="keyword">if</span> left_line &gt;=right_line <span class="keyword">or</span> top_line &gt;=bottom_line:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">            intersect =(right_line -left_line) +(bottom_line -top_line)</span><br><span class="line">            <span class="keyword">return</span> intersect /(sum_area -intersect)</span><br></pre></td></tr></table></figure>
+<p>这里我们主要讨论下这个<code>if</code>判断，我们以横轴 <span class="math inline"><em>x</em></span> 方向为例，其中对 <span class="math inline"><em>y</em></span>
+纵轴方向是一样的，我们来判断两个框重合与否。其中 <span class="math inline"><em>x</em><sub>0</sub></span> 为 <span class="math inline"><em>r</em><em>e</em><em>c</em>1</span> 左上角的
+<span class="math inline"><em>x</em></span> 坐标，<span class="math inline"><em>x</em><sub>1</sub></span> 是 <span class="math inline"><em>r</em><em>e</em><em>c</em>1</span> 右下角的
+<span class="math inline"><em>x</em></span> 坐标。<span class="math inline"><em>A</em><sub>0</sub></span> 为 <span class="math inline"><em>r</em><em>e</em><em>c</em>2</span> 的左上角
+<span class="math inline"><em>x</em></span> 坐标，<span class="math inline"><em>A</em><sub>1</sub></span> 是 <span class="math inline"><em>r</em><em>e</em><em>c</em>2</span> 的右下角
+<span class="math inline"><em>x</em></span> 坐标。</p>
+<p><img src="/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/6673500b-e928-4e08-9db8-0f575c98ef58.png"></p>
+<h4 id="语义分割中的iou">语义分割中的IOU</h4>
+<p><span class="math display">$$
+IOU = \frac{\text { target } \bigwedge \text { prediction } }{target
+\bigcup prediction}
+$$</span></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">compute_ious</span>(<span class="params">pred, label, classes</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;computes iou for one ground truth mask and predicted mask&#x27;&#x27;&#x27;</span></span><br><span class="line">    ious = [] <span class="comment"># 记录每一类的iou</span></span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> classes:</span><br><span class="line">        label_c = (label == c) <span class="comment"># label_c为true/false矩阵</span></span><br><span class="line">        pred_c = (pred == c)</span><br><span class="line">        intersection = np.logical_and(pred_c, label_c).<span class="built_in">sum</span>()</span><br><span class="line">        union = np.logical_or(pred_c, label_c).<span class="built_in">sum</span>()</span><br><span class="line">        <span class="keyword">if</span> union == <span class="number">0</span>:</span><br><span class="line">            ious.append(<span class="built_in">float</span>(<span class="string">&#x27;nan&#x27;</span>))  </span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            ious.append(intersection / union)</span><br><span class="line">    <span class="keyword">return</span> np.nanmean(ious) <span class="comment">#返回当前图片里所有类的mean iou</span></span><br></pre></td></tr></table></figure>
+<p>其中，对于 <span class="math inline"><em>l</em><em>a</em><em>b</em><em>e</em><em>l</em></span>
+与 <span class="math inline"><em>p</em><em>r</em><em>e</em><em>d</em></span>
+有多种形式。如识别目标为 4 类，那么 <span class="math inline"><em>l</em><em>a</em><em>b</em><em>e</em><em>l</em></span>
+的形式可以是一张图片对应一份 <span class="math inline"><em>m</em><em>a</em><em>s</em><em>k</em>[0，1，2，3，4]</span>，其中
+<span class="math inline">0</span> 为背景，我们省略，则 <span class="math inline"><em>c</em><em>l</em><em>a</em><em>s</em><em>s</em></span>
+可以为 <span class="math inline">[1, 2, 3, 4]</span>。也可以是对应四份二进制 <span class="math inline"><em>m</em><em>a</em><em>s</em><em>k</em>[0，1]</span>,
+这四层 <span class="math inline"><em>m</em><em>a</em><em>s</em><em>k</em></span>
+的取值为 <span class="math inline">0/1</span>。<span class="math inline"><em>c</em><em>l</em><em>a</em><em>s</em><em>s</em></span>
+为 <span class="math inline">[1]</span> 。</p>
+<h3 id="nms">NMS</h3>
+<p>Non-Maximum-Suppression(<strong>非极大值抑制</strong>): 当两个 box
+空间位置非常接近，就以 score更高的那个作为基准，看 IOU
+即重合度如何，如果与其重合度超过阈值，就抑制 score 更小的 box，只保留
+score 大的就 Box，其它的 Box 就都应该过滤掉。对于 NMS
+而言，适合于水平框，针对各种不同形状的框，会有不同的 NMS
+来进行处理。</p>
+<p>参考代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">NMS</span>(<span class="params">dets, thresh</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Pure Python NMS baseline.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># tl_x,tl_y,br_x,br_y及score</span></span><br><span class="line">    x1 = dets[:, <span class="number">0</span>]</span><br><span class="line">    y1 = dets[:, <span class="number">1</span>]</span><br><span class="line">    x2 = dets[:, <span class="number">2</span>]</span><br><span class="line">    y2 = dets[:, <span class="number">3</span>]</span><br><span class="line">    scores = dets[:, <span class="number">4</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment">#计算每个检测框的面积，并对目标检测得分进行降序排序</span></span><br><span class="line">    areas = (x2 - x1 + <span class="number">1</span>) * (y2 - y1 + <span class="number">1</span>)</span><br><span class="line">    order = scores.argsort()[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    keep = []   <span class="comment">#保留框的结果集合</span></span><br><span class="line">    <span class="keyword">while</span> order.size &gt; <span class="number">0</span>:</span><br><span class="line">        i = order[<span class="number">0</span>]</span><br><span class="line">        keep.append(i)　　<span class="comment">#保留该类剩余box中得分最高的一个</span></span><br><span class="line">        <span class="comment"># 计算最高得分矩形框与剩余矩形框的相交区域</span></span><br><span class="line">        xx1 = np.maximum(x1[i], x1[order[<span class="number">1</span>:]])</span><br><span class="line">        yy1 = np.maximum(y1[i], y1[order[<span class="number">1</span>:]])</span><br><span class="line">        xx2 = np.minimum(x2[i], x2[order[<span class="number">1</span>:]])</span><br><span class="line">        yy2 = np.minimum(y2[i], y2[order[<span class="number">1</span>:]])</span><br><span class="line"></span><br><span class="line">       <span class="comment">#计算相交的面积,不重叠时面积为0</span></span><br><span class="line">        w = np.maximum(<span class="number">0.0</span>, xx2 - xx1 + <span class="number">1</span>)</span><br><span class="line">        h = np.maximum(<span class="number">0.0</span>, yy2 - yy1 + <span class="number">1</span>)</span><br><span class="line">        inter = w * h</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#计算IoU：重叠面积 /（面积1+面积2-重叠面积）</span></span><br><span class="line">        ovr = inter / (areas[i] + areas[order[<span class="number">1</span>:]] - inter)</span><br><span class="line"></span><br><span class="line">        <span class="comment">#保留IoU小于阈值的box</span></span><br><span class="line">        inds = np.where(ovr &lt;= thresh)[<span class="number">0</span>]</span><br><span class="line">        order = order[inds + <span class="number">1</span>]   <span class="comment">#注意这里索引加了1,因为ovr数组的长度比order数组的长度少一个</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> keep</span><br></pre></td></tr></table></figure>
+<h4 id="softnms">SoftNMS</h4>
+<p>说到 Soft NMS，首先需要了解传统 NMS
+有哪些缺点。其主要缺点包括如下：</p>
+<ul>
+<li><strong>物体重叠</strong>：有一个最高分数的框，如果使用 NMS
+的话就会把其他置信度稍低，但是表示另一个物体的预测框删掉（由于和最高置信度的框
+overlap 过大）</li>
+<li><strong>所有的 bbox
+都预测不准</strong>：不是所有的框都那么精准，有时甚至会出现某个物体周围的所有框都标出来了，但是都不准的情况</li>
+<li>传统的 NMS
+方法是基于分类分数的，<strong>只有最高分数的预测框能留下来，但是大多数情况下
+IoU
+和分类分数不是强相关</strong>，很多分类标签置信度高的框都位置都不是很准</li>
+</ul>
+<p>Soft NMS 主要是针对 NMS 过度删除框的问题。Soft-NMS 吸取了 NMS
+的教训，在算法执行过程中不是简单的对 IoU
+大于阈值的检测框删除，而是降低得分。算法流程同 NMS
+相同，但是对原置信度得分使用函数运算，目标是降低置信度得分。其算法步骤如下：</p>
+<figure>
+<img data-src="深度学习基础/image-20230727154116260.png" alt="image-20230727154116260">
+<figcaption aria-hidden="true">image-20230727154116260</figcaption>
+</figure>
+<p>红色的部分表示原始 NMS 算法，绿色部分表示 Soft-NMS
+算法，区别在于，绿色的框只是把<span class="math inline"><em>s</em><sub><em>i</em></sub></span>降低了，而不是把<span class="math inline"><em>b</em><sub><em>i</em></sub></span>直接去掉，极端情况下，如果<span class="math inline"><em>f</em></span>只返回<span class="math inline">0</span>，那么等同于普通的NMS。</p>
+<p><span class="math inline"><em>b</em><sub><em>i</em></sub></span>为待处理 BBox
+框，<span class="math inline">ℬ</span>为待处理 BBox 框集合，<span class="math inline"><em>s</em><sub><em>i</em></sub></span>是<span class="math inline"><em>b</em><sub><em>i</em></sub></span>框更新得分，<span class="math inline"><em>N</em><sub><em>t</em></sub></span>是 NMS
+的阈值，<span class="math inline"><em>D</em></span> 集合用来放最终的
+BBox，<span class="math inline"><em>f</em></span>是置信度得分的重置函数。<span class="math inline"><em>b</em><sub><em>i</em></sub></span>和<span class="math inline">ℳ</span>的 IOU越大，<span class="math inline"><em>b</em><sub><em>i</em></sub></span>的得分<span class="math inline"><em>s</em><sub><em>i</em></sub></span>就下降的越厉害。</p>
+<p><span class="math inline"><em>f</em></span>函数是为了降低目标框的置信度，满足条件，如果<span class="math inline"><em>b</em><sub><em>i</em></sub></span>和<span class="math inline">ℳ</span>的 IoU 越大，<span class="math inline"><em>f</em>(<em>i</em><em>o</em><em>u</em>(ℳ, <em>b</em><em>i</em>))</span>就应该越小，
+Soft-NMS提出了两种<span class="math inline"><em>f</em></span>函数：</p>
+<p>经典的 NMS 算法将 IOU 大于阈值的窗口的得分全部置为 0，可表述如下：
+<span class="math display">$$
+s_i = \left\{\begin{matrix}
+s_i,  &amp;iou(\mathcal{M},b_i) &lt; N_t\\
+0,  &amp;iou(\mathcal{M}, b_i) \geq N_t
+\end{matrix}\right.
+$$</span>
+论文中置信度重置函数有两种形式改进，<strong>一种是线性加权的</strong>：
+<span class="math display">$$
+s_i = \left\{\begin{matrix}
+s_i,  &amp;iou(\mathcal{M},b_i) &lt; N_t\\
+s_i(1-iou(\mathcal{M},b_i)),  &amp;iou(\mathcal{M}, b_i) \geq N_t
+\end{matrix}\right.
+$$</span> 一种是高斯加权形式： <span class="math display">$$
+s_{i}=s_{i} e^{-\frac{\mathrm{iou}\left(\mathcal{M},
+b_{i}\right)^{2}}{\sigma}}, \forall b_{i} \notin \mathcal{D}
+$$</span> SoftNMS算法的优点如下：</p>
+<ul>
+<li><p>该方案可以很方便地引入到object
+detection算法中，不需要重新训练原有的模型;</p></li>
+<li><p><strong>soft-NMS在训练中采用传统的NMS方法，可以仅在推断代码中实现soft-NMS</strong>。</p></li>
+<li><p>NMS 是 Soft-NMS特殊形式，当得分重置函数采用二值化函数时，Soft-NMS
+和 NMS 是相同的。soft-NMS 算法是一种更加通用的非最大抑制算法。</p></li>
+</ul>
+<p>这里提供一个<span class="math inline"><em>g</em><em>i</em><em>t</em><em>h</em><em>u</em><em>b</em></span>
+中的<span class="math inline"><em>C</em><em>y</em><em>t</em><em>h</em><em>o</em><em>n</em></span>代码展示:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">cpu_soft_nms</span>(<span class="params">np.ndarray[<span class="built_in">float</span>, ndim=<span class="number">2</span>] boxes, <span class="built_in">float</span> sigma=<span class="number">0.5</span>, <span class="built_in">float</span> Nt=<span class="number">0.3</span>, <span class="built_in">float</span> threshold=<span class="number">0.001</span>, unsigned <span class="built_in">int</span> method=<span class="number">0</span></span>):</span><br><span class="line">    cdef unsigned <span class="built_in">int</span> N = boxes.shape[<span class="number">0</span>]</span><br><span class="line">    cdef <span class="built_in">float</span> iw, ih, box_area</span><br><span class="line">    cdef <span class="built_in">float</span> ua</span><br><span class="line">    cdef <span class="built_in">int</span> pos = <span class="number">0</span></span><br><span class="line">    cdef <span class="built_in">float</span> maxscore = <span class="number">0</span></span><br><span class="line">    cdef <span class="built_in">int</span> maxpos = <span class="number">0</span></span><br><span class="line">    cdef <span class="built_in">float</span> x1,x2,y1,y2,tx1,tx2,ty1,ty2,ts,area,weight,ov</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 在i之后找到confidence最高的框，标记为max_pos</span></span><br><span class="line">        maxscore = boxes[i, <span class="number">4</span>]</span><br><span class="line">        maxpos = i</span><br><span class="line"> </span><br><span class="line">        tx1 = boxes[i,<span class="number">0</span>]</span><br><span class="line">        ty1 = boxes[i,<span class="number">1</span>]</span><br><span class="line">        tx2 = boxes[i,<span class="number">2</span>]</span><br><span class="line">        ty2 = boxes[i,<span class="number">3</span>]</span><br><span class="line">        ts = boxes[i,<span class="number">4</span>]</span><br><span class="line"> </span><br><span class="line">        pos = i + <span class="number">1</span></span><br><span class="line">	    <span class="comment"># 找到max的框</span></span><br><span class="line">        <span class="keyword">while</span> pos &lt; N:</span><br><span class="line">            <span class="keyword">if</span> maxscore &lt; boxes[pos, <span class="number">4</span>]:</span><br><span class="line">                maxscore = boxes[pos, <span class="number">4</span>]</span><br><span class="line">                maxpos = pos</span><br><span class="line">            pos = pos + <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 交换max_pos位置和i位置的数据</span></span><br><span class="line">	    <span class="comment"># add max box as a detection </span></span><br><span class="line">        boxes[i,<span class="number">0</span>] = boxes[maxpos,<span class="number">0</span>]</span><br><span class="line">        boxes[i,<span class="number">1</span>] = boxes[maxpos,<span class="number">1</span>]</span><br><span class="line">        boxes[i,<span class="number">2</span>] = boxes[maxpos,<span class="number">2</span>]</span><br><span class="line">        boxes[i,<span class="number">3</span>] = boxes[maxpos,<span class="number">3</span>]</span><br><span class="line">        boxes[i,<span class="number">4</span>] = boxes[maxpos,<span class="number">4</span>]</span><br><span class="line"> </span><br><span class="line">	    <span class="comment"># swap ith box with position of max box</span></span><br><span class="line">        boxes[maxpos,<span class="number">0</span>] = tx1</span><br><span class="line">        boxes[maxpos,<span class="number">1</span>] = ty1</span><br><span class="line">        boxes[maxpos,<span class="number">2</span>] = tx2</span><br><span class="line">        boxes[maxpos,<span class="number">3</span>] = ty2</span><br><span class="line">        boxes[maxpos,<span class="number">4</span>] = ts</span><br><span class="line"> </span><br><span class="line">        tx1 = boxes[i,<span class="number">0</span>]</span><br><span class="line">        ty1 = boxes[i,<span class="number">1</span>]</span><br><span class="line">        tx2 = boxes[i,<span class="number">2</span>]</span><br><span class="line">        ty2 = boxes[i,<span class="number">3</span>]</span><br><span class="line">        ts = boxes[i,<span class="number">4</span>]</span><br><span class="line">        <span class="comment"># 交换完毕</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 开始循环</span></span><br><span class="line">        pos = i + <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> pos &lt; N:</span><br><span class="line">            <span class="comment"># 先记录内层循环的数据bi</span></span><br><span class="line">            x1 = boxes[pos, <span class="number">0</span>]</span><br><span class="line">            y1 = boxes[pos, <span class="number">1</span>]</span><br><span class="line">            x2 = boxes[pos, <span class="number">2</span>]</span><br><span class="line">            y2 = boxes[pos, <span class="number">3</span>]</span><br><span class="line">            s = boxes[pos, <span class="number">4</span>]</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 计算iou</span></span><br><span class="line">            area = (x2 - x1 + <span class="number">1</span>) * (y2 - y1 + <span class="number">1</span>)</span><br><span class="line">            iw = (<span class="built_in">min</span>(tx2, x2) - <span class="built_in">max</span>(tx1, x1) + <span class="number">1</span>) <span class="comment"># 计算两个框交叉矩形的宽度，如果宽度小于等于0，即没有相交，因此不需要判断</span></span><br><span class="line">            <span class="keyword">if</span> iw &gt; <span class="number">0</span>:</span><br><span class="line">                ih = (<span class="built_in">min</span>(ty2, y2) - <span class="built_in">max</span>(ty1, y1) + <span class="number">1</span>) <span class="comment"># 同理</span></span><br><span class="line">                <span class="keyword">if</span> ih &gt; <span class="number">0</span>:</span><br><span class="line">                    ua = <span class="built_in">float</span>((tx2 - tx1 + <span class="number">1</span>) * (ty2 - ty1 + <span class="number">1</span>) + area - iw * ih) <span class="comment">#计算union面积</span></span><br><span class="line">                    ov = iw * ih / ua <span class="comment">#iou between max box and detection box</span></span><br><span class="line"> </span><br><span class="line">                    <span class="keyword">if</span> method == <span class="number">1</span>: <span class="comment"># linear</span></span><br><span class="line">                        <span class="keyword">if</span> ov &gt; Nt: </span><br><span class="line">                            weight = <span class="number">1</span> - ov</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            weight = <span class="number">1</span></span><br><span class="line">                    <span class="keyword">elif</span> method == <span class="number">2</span>: <span class="comment"># gaussian</span></span><br><span class="line">                        weight = np.exp(-(ov * ov)/sigma)</span><br><span class="line">                    <span class="keyword">else</span>: <span class="comment"># original NMS</span></span><br><span class="line">                        <span class="keyword">if</span> ov &gt; Nt: </span><br><span class="line">                            weight = <span class="number">0</span></span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            weight = <span class="number">1</span></span><br><span class="line"> </span><br><span class="line">                    boxes[pos, <span class="number">4</span>] = weight*boxes[pos, <span class="number">4</span>]</span><br><span class="line">		    </span><br><span class="line">		            <span class="comment"># if box score falls below threshold, discard the box by swapping with last box</span></span><br><span class="line">		            <span class="comment"># update N</span></span><br><span class="line">                    <span class="keyword">if</span> boxes[pos, <span class="number">4</span>] &lt; threshold:</span><br><span class="line">                        boxes[pos,<span class="number">0</span>] = boxes[N-<span class="number">1</span>, <span class="number">0</span>]</span><br><span class="line">                        boxes[pos,<span class="number">1</span>] = boxes[N-<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">                        boxes[pos,<span class="number">2</span>] = boxes[N-<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line">                        boxes[pos,<span class="number">3</span>] = boxes[N-<span class="number">1</span>, <span class="number">3</span>]</span><br><span class="line">                        boxes[pos,<span class="number">4</span>] = boxes[N-<span class="number">1</span>, <span class="number">4</span>]</span><br><span class="line">                        N = N - <span class="number">1</span></span><br><span class="line">                        pos = pos - <span class="number">1</span></span><br><span class="line"> </span><br><span class="line">            pos = pos + <span class="number">1</span></span><br><span class="line"> </span><br><span class="line">    keep = [i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N)]</span><br><span class="line">    <span class="keyword">return</span> keep</span><br></pre></td></tr></table></figure>
+<h3 id="softernms">SofterNMS</h3>
+<p>Softer NMS 的改进：</p>
+<ul>
+<li><p>针对分类置信度和框的 IoU 不是强相关的问题，构建一种 IoU
+的置信度，来建模有多大把握认为当前框和 GT 是重合的。</p></li>
+<li><p>针对所有的框单独拿出来都不准的问题，文章中提出一种方法，根据 IoU
+置信度加权合并多个框优化最终生成框。</p></li>
+</ul>
+<p>Softer-NMS 文章对预测框建模，以下公式中 <span class="math inline"><em>x</em></span> 表示偏移前的预测框，<span class="math inline"><em>x</em><sub><em>e</em></sub></span>
+表示偏移后的预测框，输出的 <span class="math inline"><em>x</em><sub><em>g</em></sub></span> 表示 GT
+框，使用高斯函数对预测框建模: <span class="math display">$$
+P_{\Theta}(x)=\frac{1}{2 \pi \sigma^{2}}e^{-\frac{(x-x_{e})^2}{2
+\sigma^{2}}}
+$$</span> 对于 GT 框建模：使用<span class="math inline"><em>d</em><em>e</em><em>l</em><em>t</em><em>a</em></span>分布(<strong>即标准方差为<span class="math inline">0</span>的高斯分布极限</strong>)。 <span class="math display"><em>P</em><sub><em>D</em></sub>(<em>x</em>) = <em>δ</em>(<em>x</em> − <em>x</em><sub><em>g</em></sub>)</span>
+对于<span class="math inline"><em>d</em><em>e</em><em>l</em><em>t</em><em>a</em></span>分布，当<span class="math inline"><em>σ</em></span>越小，其函数图像就会越瘦高，同时，当<span class="math inline"><em>σ</em></span>越小，表示网络越确定，可以使用<span class="math inline">1 − <em>σ</em></span>就可以作为网络的置信度。</p>
+<p>同时，论文使用<span class="math inline"><em>K</em><em>L</em></span>散度来最小化<span class="math inline"><em>B</em><em>o</em><em>u</em><em>n</em><em>d</em><em>i</em><em>n</em><em>g</em></span>
+<span class="math inline"><em>b</em><em>o</em><em>x</em></span> <span class="math inline"><em>r</em><em>e</em><em>g</em><em>r</em><em>e</em><em>s</em><em>s</em><em>i</em><em>o</em><em>n</em></span>
+<span class="math inline"><em>l</em><em>o</em><em>s</em><em>s</em></span>。既<span class="math inline"><em>B</em><em>o</em><em>u</em><em>n</em><em>d</em><em>i</em><em>n</em><em>g</em></span>
+<span class="math inline"><em>b</em><em>o</em><em>x</em></span>的高斯分布和<span class="math inline"><em>g</em><em>r</em><em>o</em><em>u</em><em>n</em><em>d</em></span>
+<span class="math inline"><em>t</em><em>r</em><em>u</em><em>t</em><em>h</em></span>的狄拉克<span class="math inline"><em>d</em><em>e</em><em>l</em><em>t</em><em>a</em></span>分布的<span class="math inline"><em>K</em><em>L</em></span>散度。直观上解释，<span class="math inline"><em>K</em><em>L</em></span> <span class="math inline"><em>L</em><em>o</em><em>s</em><em>s</em></span>使得<span class="math inline"><em>B</em><em>o</em><em>u</em><em>n</em><em>d</em><em>i</em><em>n</em><em>g</em></span>
+<span class="math inline"><em>b</em><em>o</em><em>x</em></span>预测呈高斯分布，且与<span class="math inline"><em>g</em><em>r</em><em>o</em><em>u</em><em>n</em><em>d</em></span>
+<span class="math inline"><em>t</em><em>r</em><em>u</em><em>t</em><em>h</em></span>相近。而将包围框预测的标准差看作置信度。</p>
+<p>如<span class="math inline"><em>f</em><em>a</em><em>s</em><em>t</em><em>e</em><em>r</em></span>
+<span class="math inline"><em>r</em><em>c</em><em>n</em><em>n</em></span>中添加了<span class="math inline"><em>s</em><em>o</em><em>f</em><em>t</em><em>e</em><em>r</em></span>
+<span class="math inline"><em>n</em><em>m</em><em>s</em></span>之后的示意图如图所示：</p>
+<p><img src="/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/7f695b9d-bb97-4327-b9b4-00cd165d21a5.png"></p>
+<p>多加了一个<span class="math inline"><em>σ</em></span>预测，也就是<span class="math inline"><em>b</em><em>o</em><em>x</em></span> <span class="math inline"><em>s</em><em>t</em><em>d</em></span>，而<span class="math inline"><em>B</em><em>o</em><em>x</em></span>的预测其实就是上面公式中的<span class="math inline"><em>x</em><sub><em>e</em></sub></span>。</p>
+<p>因此，整个计算过程如下：</p>
+<ol type="1">
+<li>计算<span class="math inline"><em>x</em><sub><em>e</em></sub></span>与<span class="math inline"><em>x</em></span>的2范数距离和<span class="math inline"><em>σ</em></span>计算出<span class="math inline"><em>P</em><sub><em>θ</em></sub>(<em>x</em>)</span>.</li>
+<li>通过<span class="math inline"><em>x</em><sub><em>g</em></sub></span>与<span class="math inline"><em>x</em></span>的2范数距离算出<span class="math inline"><em>P</em><sub><em>D</em></sub></span>.</li>
+<li>使用<span class="math inline"><em>P</em><sub><em>D</em></sub></span>与<span class="math inline"><em>P</em><sub><em>θ</em></sub></span>计算<span class="math inline"><em>K</em><em>L</em><em>s</em></span>散度作为<span class="math inline"><em>l</em><em>o</em><em>s</em><em>s</em></span>，最小化<span class="math inline"><em>K</em><em>L</em><em>L</em><em>o</em><em>s</em><em>s</em></span>。</li>
+</ol>
+<p>关于坐标回归的损失函数： <span class="math display">$$
+\begin{array}{l}
+L_{r e g}=D_{K L}\left(P_{D}(x) \| P_{\Theta}(x)\right) \\
+=\int P_{D}(x) \log \frac{P_{D}(x)}{P_{\Theta}(x)} d x \\
+=-\int P_{D}(x) \log P_{\Theta}(x) d x+\int P_{D}(x) \log P_{D}(x) d x
+\\
+=-\int P_{D}(x) \log P_{\Theta}(x) d x+H\left(P_{D}(x)\right) \\
+=-\log P_{\Theta}\left(x_{g}\right)+H\left(P_{D}(x)\right) \\
+=\frac{\left(x_{g}-x_{e}\right)^{2}}{2 \sigma^{2}}+\frac{1}{2} \log
+\left(\sigma^{2}\right)+\frac{1}{2} \log (2 \pi)+H\left(P_{D}(x)\right)
+\end{array}
+$$</span> 而后面两项是与<span class="math inline"><em>x</em><sub><em>e</em></sub></span>无关，可以去掉～
+<span class="math display">$$
+L_{\text {reg
+}}=\alpha\left(\left|x_{g}-x_{e}\right|-\frac{1}{2}\right)-\frac{1}{2}
+\log (\alpha+\epsilon)
+$$</span> 因此，计算过程如下图所示：</p>
+<p><img src="/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/7ac68b67-df56-425d-a7b3-6c4d35e90d5c.png"></p>
+<p>网络预测出来的结果是<span class="math inline"><em>x</em>1<sub><em>i</em></sub>, <em>y</em>1<sub><em>i</em></sub>, <em>x</em>2<sub><em>i</em></sub>, <em>y</em>2<sub><em>i</em></sub>, <em>σ</em><em>x</em>1<sub><em>i</em></sub>, <em>σ</em><em>x</em>2<sub><em>i</em></sub>, <em>σ</em><em>x</em>3<sub><em>i</em></sub>, <em>σ</em><em>x</em>4<sub><em>i</em></sub></span>。前面四个为坐标，而后面四个是坐标的<span class="math inline"><em>σ</em></span>。</p>
+<p>上表中的蓝色的是Soft-NMS，只是降低了 <span class="math inline">𝒮</span>
+的权值。重点看绿色的，绿字第一行表示拿出所有与 <span class="math inline">ℬ</span> 的 <span class="math inline"><em>I</em><em>o</em><em>U</em></span> 大于 <span class="math inline"><em>N</em><sub><em>t</em></sub></span> 的框（用
+<span class="math inline"><em>i</em><em>d</em><em>x</em></span>
+表示），然后将所有这些框做一个加权，<span class="math inline">ℬ[<em>i</em><em>d</em><em>x</em>]/𝒞[<em>i</em><em>d</em><em>x</em>]</span>
+其实是 <span class="math inline">ℬ[<em>i</em><em>d</em><em>x</em>] * 1/𝒞[<em>i</em><em>d</em><em>x</em>]</span>，后者是置信度
+<span class="math inline">$\frac{1}{\sigma^{2}}$</span>，并使用 <span class="math inline"><em>s</em><em>u</em><em>m</em></span>
+做了归一化。需要注意的是，Softer-NMS 算法中，<span class="math inline">ℬ</span>
+是不变的，Softer-NMS只调整每个框的位置，而不筛选框。</p>
+<hr>
+<h2 id="一些问题">一些问题</h2>
+<hr>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.d2l.ai/">动手学深度学习</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cntofu.com/book/85/index.html">机器学习原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/zonechen1994/CV_Interview" class="uri">https://github.com/zonechen1994/CV_Interview</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/%E9%9D%A2%E7%BB%8F/2023-07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80.html" title="『面经』深度学习基础">https://meteordream.github.io/面经/2023-07/深度学习基础.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2023-07/2178_%E6%8B%86%E5%88%86%E6%88%90%E6%9C%80%E5%A4%9A%E6%95%B0%E7%9B%AE%E7%9A%84%E6%AD%A3%E5%81%B6%E6%95%B0%E4%B9%8B%E5%92%8C(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』2178 拆分成最多数目的正偶数之和">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』2178 拆分成最多数目的正偶数之和
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2023-07/167_%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C_II_-_%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』167 两数之和 II - 输入有序数组">
+      『LeetCode』167 两数之和 II - 输入有序数组 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">基本网络结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%B7%E7%A7%AF"><span class="nav-number">2.1.</span> <span class="nav-text">卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#x1%E5%8D%B7%E7%A7%AF"><span class="nav-number">2.2.</span> <span class="nav-text">1x1卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%A0%E5%8C%96"><span class="nav-number">2.3.</span> <span class="nav-text">池化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E8%9E%8D%E5%90%88"><span class="nav-number">2.4.</span> <span class="nav-text">特征融合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-number">2.5.</span> <span class="nav-text">注意力机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#non-local-attention"><span class="nav-number">2.5.1.</span> <span class="nav-text">Non-local Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cbam"><span class="nav-number">2.5.2.</span> <span class="nav-text">CBAM</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">激活函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">优化器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">6.</span> <span class="nav-text">正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dropout"><span class="nav-number">6.1.</span> <span class="nav-text">Dropout</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dropconnect"><span class="nav-number">6.1.1.</span> <span class="nav-text">DropConnect</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spatial-dropout"><span class="nav-number">6.1.2.</span> <span class="nav-text">Spatial Dropout</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#stochastic-depth"><span class="nav-number">6.1.3.</span> <span class="nav-text">Stochastic Depth</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#l1%E4%B8%8El2%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">6.2.</span> <span class="nav-text">L1与L2正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#l1%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">6.2.1.</span> <span class="nav-text">L1正则化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#l2%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">6.2.2.</span> <span class="nav-text">L2正则化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3"><span class="nav-number">6.2.3.</span> <span class="nav-text">直观理解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%88%E9%AA%8C%E6%A6%82%E7%8E%87%E7%9C%8Bl1%E6%9B%B4%E7%A8%80%E7%96%8F"><span class="nav-number">6.2.4.</span> <span class="nav-text">先验概率看L1更稀疏</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.2.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E7%AD%BE%E5%B9%B3%E6%BB%91"><span class="nav-number">6.3.</span> <span class="nav-text">标签平滑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E5%B7%A7"><span class="nav-number">7.</span> <span class="nav-text">技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0batchsize"><span class="nav-number">7.1.</span> <span class="nav-text">增加BatchSize</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B"><span class="nav-number">8.</span> <span class="nav-text">模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%ADbp"><span class="nav-number">8.1.</span> <span class="nav-text">反向传播（BP）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%84%E4%BB%B7%E6%8C%87%E6%A0%87"><span class="nav-number">9.</span> <span class="nav-text">评价指标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iou"><span class="nav-number">9.1.</span> <span class="nav-text">IOU</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E4%B8%AD%E7%9A%84iou"><span class="nav-number">9.1.1.</span> <span class="nav-text">目标检测中的IOU</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%AD%E4%B9%89%E5%88%86%E5%89%B2%E4%B8%AD%E7%9A%84iou"><span class="nav-number">9.1.2.</span> <span class="nav-text">语义分割中的IOU</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nms"><span class="nav-number">9.2.</span> <span class="nav-text">NMS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#softnms"><span class="nav-number">9.2.1.</span> <span class="nav-text">SoftNMS</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#softernms"><span class="nav-number">9.3.</span> <span class="nav-text">SofterNMS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98"><span class="nav-number">10.</span> <span class="nav-text">一些问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">11.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

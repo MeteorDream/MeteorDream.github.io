@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言 学习 Shell 语言的一些笔记。 Shell 是一种命令行语言，也可以作为一种脚本语言，Linux 中的命令行窗口就是 Shell 的界面，所以有必要稍微了解一些 Shell 的基本语法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shell">
+<meta property="og:url" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-10/Shell.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="前言 学习 Shell 语言的一些笔记。 Shell 是一种命令行语言，也可以作为一种脚本语言，Linux 中的命令行窗口就是 Shell 的界面，所以有必要稍微了解一些 Shell 的基本语法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-18T12:24:30.000Z">
+<meta property="article:modified_time" content="2022-10-18T12:24:30.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Shell">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-10/Shell.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Shell | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-10/Shell.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Shell
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-10-18 20:24:30" itemprop="dateCreated datePublished" datetime="2022-10-18T20:24:30+08:00">2022-10-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">编程基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-10/Shell.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-10/Shell.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="前言">前言</h2>
+<p>学习 Shell 语言的一些笔记。</p>
+<p>Shell 是一种命令行语言，也可以作为一种脚本语言，Linux
+中的命令行窗口就是 Shell 的界面，所以有必要稍微了解一些 Shell
+的基本语法。</p>
+<span id="more"></span>
+<h2 id="基本语法">基本语法</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">echo &quot;Hello World !&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="疑难解答">疑难解答</h2>
+<ul>
+<li>传参时因为有特殊符号所以报错，如
+<code>python .\markdown_editor.py --title -p 929_独特的电子邮件地址(简单).md</code>
+中的括号
+<ul>
+<li>给参数加上引号强制其为字符串即可
+<code>python .\markdown_editor.py --title -p "929_独特的电子邮件地址(简单).md"</code></li>
+</ul></li>
+</ul>
+<h2 id="基本数据类型">基本数据类型</h2>
+<h3 id="注释">注释</h3>
+<ul>
+<li>单行注释: <code>#</code> 开头</li>
+</ul>
+<h3 id="输出">输出</h3>
+<ul>
+<li><code>echo</code> + 输出内容</li>
+<li>一行写不下使用 <code>\</code> 换行继续写</li>
+<li>换行 <code>echo -e abc\n</code>, <code>-e</code> 表示使用转义</li>
+<li>末尾不换行 <code>echo -e abc\c</code></li>
+<li>显示日期 <code>echo `date`</code></li>
+<li>还可以用 <code>printf</code> 类似 C 语言
+<code>printf "%d - %d = $a\n" 12 123 #输出12 - 123 = 1231</code></li>
+</ul>
+<h4 id="重定向">重定向</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">命令</th>
+<th style="text-align: center;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>command &gt; file</code></td>
+<td style="text-align: center;">将输出重定向到 file</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>command &lt; file</code></td>
+<td style="text-align: center;">将输入重定向到 file</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>command &gt;&gt; file</code></td>
+<td style="text-align: center;">将输出以追加的方式重定向到 file</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>n &gt; file</code></td>
+<td style="text-align: center;">将文件描述符为 n 的文件重定向到
+file</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>n &gt;&gt; file</code></td>
+<td style="text-align: center;">将文件描述符为 n
+的文件以追加的方式重定向到 file</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>n &gt;&amp; m</code></td>
+<td style="text-align: center;">将输出文件 m 和 n 合并</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>n &lt;&amp; m</code></td>
+<td style="text-align: center;">将输入文件 m 和 n 合并</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>&lt;&lt; tag</code></td>
+<td style="text-align: center;">将开始标记 tag 和结束标记 tag
+之间的内容作为输入</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>默认文件描述符：0 - 标准输入文件(stdin), 1 - 标准输出文件(stdout), 2
+- 标准错误文件(stderr)</p>
+</blockquote>
+<p>屏蔽输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">command &gt; /dev/null # 屏蔽输出</span><br><span class="line">command &gt; /dev/null 2&gt;&amp;1 # 屏蔽 stdout 和 stderr</span><br></pre></td></tr></table></figure>
+<p><code>/dev/null</code>
+是一个特殊的文件，写入到它的内容都会被丢弃；如果尝试从该文件读取内容，那么什么也读不到。但是
+<code>/dev/null</code>
+文件非常有用，将命令的输出重定向到它，会起到”禁止输出”的效果。</p>
+<h3 id="变量">变量</h3>
+<ul>
+<li>变量的定义: <code>a=1</code>, <code>b="xyz"</code>
+很基础的赋值语句即可,注意：等号中间不要加空格</li>
+<li>使用变量: 前面使用 <code>$</code> 符号如 <code>$&#123;a&#125;</code>,
+<code>$b</code> 均可，大括号不是必须的，但建议都加上</li>
+<li>只读变量: <code>readonly a</code></li>
+<li>删除变量: <code>unset a</code></li>
+</ul>
+<h3 id="字符串">字符串</h3>
+<ul>
+<li>定义: 例如
+<code>a='string'</code>，可以是单引号、双引号、没有引号，但单引号是“绝对”字符串，不能使用变量和转义符</li>
+<li>字符串拼接：直接连在一起写即可,
+<code>string$&#123;a&#125;"string2"</code></li>
+<li>获取字符串长度：<code>$&#123;#a&#125;</code></li>
+<li>字符串截取：<code>$&#123;a:0:4&#125;</code> 表示截取索引 0 开始的 4
+个字符</li>
+<li>运算（下面均返回布尔值）
+<ul>
+<li><code>=</code> 比较运算 <code>[ $a = $b ]</code></li>
+<li><code>!=</code></li>
+<li><code>-z</code> 长度为 0 返回 <code>true</code>,
+<code>[ -z $a ]</code></li>
+<li><code>-n</code> 长度不为 0, <code>[ -n $a ]</code></li>
+<li><code>$</code> 字符串不为空, <code>[ $a ]</code></li>
+</ul></li>
+</ul>
+<h3 id="数组">数组</h3>
+<ul>
+<li>定义: <code>a=(x1 x2 x3 x4)</code></li>
+<li>赋值: <code>a[0]=x5</code></li>
+<li>取值: <code>$&#123;a[0]&#125;</code>, 取所有元素 <code>$&#123;s[@]&#125;</code>, 对数组
+<code>$&#123;a&#125;</code> 等价于 <code>$&#123;a[0]&#125;</code></li>
+<li>获取长度: <code>$&#123;#a[@]&#125;</code> 或 <code>$&#123;#a[*]&#125;</code></li>
+</ul>
+<h3 id="基本运算符">基本运算符</h3>
+<ul>
+<li>算术运算符： <code>+-/%</code>, 乘法 <code>\*</code>, 赋值
+<code>=</code>, 相等 <code>==</code>, 不等 <code>!=</code>.
+<ul>
+<li>不能直接运行，需要使用命令 <code>expr</code>, 例如
+<code>expr 1 + 1</code></li>
+<li><strong>运算符与值之间要有空格</strong>，例如
+<code>expr 1 + 1</code>.</li>
+<li>如果要获取运算结果的话要用反引号 <code>`</code> 包围运算表达式，例如
+<code>d=`expr 1 + 1`</code></li>
+<li>条件表达式之间也要空格 <code>[ $a == $b ]</code></li>
+</ul></li>
+<li>关系运算符：<code>-eq</code>, <code>-ne</code>,
+<code>-gt</code>(大于), <code>-lt</code>, <code>-ge</code>,
+<code>-le</code>(小于等于)</li>
+<li>布尔运算：<code>!</code>(非), <code>-o</code>(或),
+<code>-a</code>(与)</li>
+<li>逻辑运算：<code>&amp;&amp;</code>(逻辑与), <code>||</code>
+(逻辑或)</li>
+</ul>
+<blockquote>
+<p>注：逻辑运算要加双层中括号</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">布尔运算</span></span><br><span class="line">if [ $a -lt 100 -a $b -gt 15 ]</span><br><span class="line">then</span><br><span class="line">   echo &quot;$a 小于 100 且 $b 大于 15 : 返回 true&quot;</span><br><span class="line">else</span><br><span class="line">   echo &quot;$a 小于 100 且 $b 大于 15 : 返回 false&quot;</span><br><span class="line">fi</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">逻辑运算</span></span><br><span class="line">if [[ $a -lt 100 &amp;&amp; $b -gt 100 ]]</span><br><span class="line">then</span><br><span class="line">   echo &quot;返回 true&quot;</span><br><span class="line">else</span><br><span class="line">   echo &quot;返回 false&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<h3 id="文件运算符">文件运算符</h3>
+<table>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 68%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">操作符</th>
+<th style="text-align: center;">说明</th>
+<th style="text-align: center;">举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>-b file</code></td>
+<td style="text-align: center;">检测文件是否是块设备文件，如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -b $file ]</code> 返回
+false</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-c file</code></td>
+<td style="text-align: center;">检测文件是否是字符设备文件，如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -c $file ]</code> 返回
+false</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-d file</code></td>
+<td style="text-align: center;">检测文件是否是目录，如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -d $file ]</code> 返回
+false</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-f file</code></td>
+<td style="text-align: center;">检测文件是否是普通文件（既不是目录，也不是设备文件），如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -f $file ]</code> 返回 true</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-g file</code></td>
+<td style="text-align: center;">检测文件是否设置了 SGID
+位，如果是，则返回 true。</td>
+<td style="text-align: center;"><code>[ -g $file ]</code> 返回
+false</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-k file</code></td>
+<td style="text-align: center;">检测文件是否设置了粘着位(Sticky
+Bit)，如果是，则返回 true。</td>
+<td style="text-align: center;"><code>[ -k $file ]</code> 返回
+false</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-p file</code></td>
+<td style="text-align: center;">检测文件是否是有名管道，如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -p $file ]</code> 返回
+false</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-u file</code></td>
+<td style="text-align: center;">检测文件是否设置了 SUID
+位，如果是，则返回 true。</td>
+<td style="text-align: center;"><code>[ -u $file ]</code> 返回
+false</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-r file</code></td>
+<td style="text-align: center;">检测文件是否可读，如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -r $file ]</code> 返回 true</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-w file</code></td>
+<td style="text-align: center;">检测文件是否可写，如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -w $file ]</code> 返回 true</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-x file</code></td>
+<td style="text-align: center;">检测文件是否可执行，如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -x $file ]</code> 返回 true</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-s file</code></td>
+<td style="text-align: center;">检测文件是否为空（文件大小是否大于0），不为空返回
+true。</td>
+<td style="text-align: center;"><code>[ -s $file ]</code> 返回 true</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>-e fil</code>e</td>
+<td style="text-align: center;">检测文件（包括目录）是否存在，如果是，则返回
+true。</td>
+<td style="text-align: center;"><code>[ -e $file ]</code> 返回 true</td>
+</tr>
+</tbody>
+</table>
+<h2 id="流程控制">流程控制</h2>
+<p>基本的流程控制有三种：循环、条件、顺序</p>
+<h3 id="条件语句">条件语句</h3>
+<h4 id="if语句">if语句</h4>
+<p><code>if else fi</code> 的使用方法如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">if condition1</span><br><span class="line">then</span><br><span class="line">    command1</span><br><span class="line">elif condition2 </span><br><span class="line">then </span><br><span class="line">    command2</span><br><span class="line">else</span><br><span class="line">    commandN</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<p>可以写成一行，用分号分隔开</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if [ $(ps -ef | grep -c &quot;ssh&quot;) -gt 1 ]; then echo &quot;true&quot;; fi</span><br></pre></td></tr></table></figure>
+<p>因为逻辑运算比较麻烦，所以可以使用 <code>((comdition))</code>
+简化运算，双括号内的条件类似 C 语言不再有空格限制</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">a=10</span><br><span class="line">b=20</span><br><span class="line">if (( $a == $b ))</span><br><span class="line">then</span><br><span class="line">   echo &quot;a 等于 b&quot;</span><br><span class="line">elif (( $a &gt; $b ))</span><br><span class="line">then</span><br><span class="line">   echo &quot;a 大于 b&quot;</span><br><span class="line">elif (( $a &lt; $b ))</span><br><span class="line">then</span><br><span class="line">   echo &quot;a 小于 b&quot;</span><br><span class="line">else</span><br><span class="line">   echo &quot;没有符合的条件&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<h4 id="case语句">case语句</h4>
+<p><code>case ... esac</code> 类似 <code>switch ... case</code> 语句</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">case 值 in</span><br><span class="line">模式1)</span><br><span class="line">    command1</span><br><span class="line">    command2</span><br><span class="line">    ...</span><br><span class="line">    commandN</span><br><span class="line">    ;;</span><br><span class="line">模式2)</span><br><span class="line">    command1</span><br><span class="line">    command2</span><br><span class="line">    ...</span><br><span class="line">    commandN</span><br><span class="line">    ;;</span><br><span class="line">esac</span><br></pre></td></tr></table></figure>
+<p><code>;;</code> 类似于 <code>break</code></p>
+<h3 id="循环语句">循环语句</h3>
+<h4 id="for循环">for循环</h4>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for var in item1 item2 ... itemN</span><br><span class="line">do</span><br><span class="line">    command1</span><br><span class="line">    command2</span><br><span class="line">    ...</span><br><span class="line">    commandN</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<p>同样可以使用双括号简化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for((index=0; index &lt; 6; index++))</span><br><span class="line">do</span><br><span class="line">    command1</span><br><span class="line">    command2</span><br><span class="line">    ...</span><br><span class="line">    commandN</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h4 id="while循环">while循环</h4>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while condition</span><br><span class="line">do</span><br><span class="line">    command</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<p>同样可以使用双括号简化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int=1</span><br><span class="line">while(( $int&lt;=5 ))</span><br><span class="line">do</span><br><span class="line">    echo $int</span><br><span class="line">    let &quot;int++&quot;</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h4 id="until循环">until循环</h4>
+<p>类似与其他语言中的 <code>do...while</code> 循环，</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">until condition</span><br><span class="line">do</span><br><span class="line">    command</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="控制语句">控制语句</h3>
+<p><code>break</code>, <code>continue</code> 与其他语言的没什么变化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">while :</span><br><span class="line">do</span><br><span class="line">    echo -n &quot;输入 1 到 5 之间的数字: &quot;</span><br><span class="line">    read aNum</span><br><span class="line">    case $aNum in</span><br><span class="line">        1|2|3|4|5) echo &quot;你输入的数字为 $aNum!&quot;</span><br><span class="line">        ;;</span><br><span class="line">        *) echo &quot;你输入的数字不是 1 到 5 之间的!&quot;</span><br><span class="line">            continue</span><br><span class="line">            echo &quot;游戏结束&quot;</span><br><span class="line">        ;;</span><br><span class="line">    esac</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="退出">退出</h3>
+<p>想要提前退出不执行后续代码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exit 1</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="命令行参数">命令行参数</h2>
+<p>可以在运行脚本的时候传递参数，例如
+<code>bash example.sh a b c</code></p>
+<p>那么如何获取传递的参数呢？其实很类似变量的使用，即
+<code>$1 $2 $3</code>, 还有 <code>$0</code> 表示含路径的文件名</p>
+<table>
+<colgroup>
+<col style="width: 6%">
+<col style="width: 93%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">参数处理</th>
+<th style="text-align: center;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>$#</code></td>
+<td style="text-align: center;">传递到脚本的参数个数</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>$*</code></td>
+<td style="text-align: center;">以一个单字符串显示所有向脚本传递的参数。
+如<code>"$*"</code>用「“」括起来的情况、以<code>"$1 $2 … $n"</code>的形式输出所有参数。</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>$$</code></td>
+<td style="text-align: center;">脚本运行的当前进程ID号</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>$!</code></td>
+<td style="text-align: center;">后台运行的最后一个进程的ID号</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>$@</code></td>
+<td style="text-align: center;">与<code>$*</code>相同，但是使用时加引号，并在引号中返回每个参数。
+如<code>"$@"</code>用「“」括起来的情况、以<code>"$1" "$2" … "$n"</code>
+的形式输出所有参数。</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>$?</code></td>
+<td style="text-align: center;">显示最后命令的退出状态。0表示没有错误，其他任何值表明有错误。</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>差不多了，毕竟只是写写简单的脚本，再复杂一些的内容可以通过 Python,
+C++ 等语言完成，就到此为止吧，后面有遇到什么问题的话再补充</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-10/Shell.html" title="Shell">https://meteordream.github.io/编程基础/2022-10/Shell.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Shell/" rel="tag"><i class="fa fa-tag"></i> Shell</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-10/904_%E6%B0%B4%E6%9E%9C%E6%88%90%E7%AF%AE(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』904 水果成篮">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』904 水果成篮
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-10/1700_%E6%97%A0%E6%B3%95%E5%90%83%E5%8D%88%E9%A4%90%E7%9A%84%E5%AD%A6%E7%94%9F%E6%95%B0%E9%87%8F(%E7%AE%80%E5%8D%95).html" rel="next" title="『LeetCode』1700 无法吃午餐的学生数量">
+      『LeetCode』1700 无法吃午餐的学生数量 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">基本语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%96%91%E9%9A%BE%E8%A7%A3%E7%AD%94"><span class="nav-number">3.</span> <span class="nav-text">疑难解答</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">基本数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E9%87%8A"><span class="nav-number">4.1.</span> <span class="nav-text">注释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">4.2.</span> <span class="nav-text">输出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">4.2.1.</span> <span class="nav-text">重定向</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F"><span class="nav-number">4.3.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">4.4.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">4.5.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">4.6.</span> <span class="nav-text">基本运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">4.7.</span> <span class="nav-text">文件运算符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">流程控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="nav-number">5.1.</span> <span class="nav-text">条件语句</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#if%E8%AF%AD%E5%8F%A5"><span class="nav-number">5.1.1.</span> <span class="nav-text">if语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#case%E8%AF%AD%E5%8F%A5"><span class="nav-number">5.1.2.</span> <span class="nav-text">case语句</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5"><span class="nav-number">5.2.</span> <span class="nav-text">循环语句</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#for%E5%BE%AA%E7%8E%AF"><span class="nav-number">5.2.1.</span> <span class="nav-text">for循环</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#while%E5%BE%AA%E7%8E%AF"><span class="nav-number">5.2.2.</span> <span class="nav-text">while循环</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#until%E5%BE%AA%E7%8E%AF"><span class="nav-number">5.2.3.</span> <span class="nav-text">until循环</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5"><span class="nav-number">5.3.</span> <span class="nav-text">控制语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%80%E5%87%BA"><span class="nav-number">5.4.</span> <span class="nav-text">退出</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="nav-number">6.</span> <span class="nav-text">命令行参数</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

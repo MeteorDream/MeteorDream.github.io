@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文回顾了一系列不花哨的、实实在在的方法，讨论ConvNets和ViT预训练模型如何在小样本数据上更好的fine-tuning。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『转载』如何更好应对小样本图像数据">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2023-02/%E5%A6%82%E4%BD%95%E6%9B%B4%E5%A5%BD%E5%BA%94%E5%AF%B9%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="本文回顾了一系列不花哨的、实实在在的方法，讨论ConvNets和ViT预训练模型如何在小样本数据上更好的fine-tuning。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-16757548125193.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-16757548270126.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-16757548394249.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575485113712.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575490233615.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575493911818.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575515141323.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575517036526.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575518408929.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575519722532.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575524054935.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575555768238.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575560020341.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575562200044.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640-167575614029747.png">
+<meta property="article:published_time" content="2023-02-07T07:21:44.000Z">
+<meta property="article:modified_time" content="2023-02-07T07:21:44.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="小样本学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据/640.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2023-02/%E5%A6%82%E4%BD%95%E6%9B%B4%E5%A5%BD%E5%BA%94%E5%AF%B9%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『转载』如何更好应对小样本图像数据 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2023-02/%E5%A6%82%E4%BD%95%E6%9B%B4%E5%A5%BD%E5%BA%94%E5%AF%B9%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『转载』如何更好应对小样本图像数据
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-02-07 15:21:44" itemprop="dateCreated datePublished" datetime="2023-02-07T15:21:44+08:00">2023-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2023-02/%E5%A6%82%E4%BD%95%E6%9B%B4%E5%A5%BD%E5%BA%94%E5%AF%B9%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2023-02/%E5%A6%82%E4%BD%95%E6%9B%B4%E5%A5%BD%E5%BA%94%E5%AF%B9%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>本文回顾了一系列不花哨的、实实在在的方法，讨论ConvNets和ViT预训练模型如何在小样本数据上更好的fine-tuning。</p>
+<span id="more"></span>
+<blockquote>
+<p>以下文章来源于皮皮嬉 ，作者嬉嬉皮</p>
+<p>文章来源地址：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/nUvY2WxE_jiLb-7vp464gw" class="uri">https://mp.weixin.qq.com/s/nUvY2WxE_jiLb-7vp464gw</a></p>
+</blockquote>
+<p>常规迁移学习中，源域和目标域间的分布偏移问题可以通过fine-tuning缓解。但在小样本问题中，可供fine-tuning的有标签数据不足(也就是常说的每个小样本任务中的support
+set)，分布偏移问题难以解决，因此面对小样本问题时，fine-tuning策略是需要额外关照的。本文回顾了一系列不花哨的、实实在在的方法，讨论ConvNets和ViT预训练模型如何在小样本数据上更好的fine-tuning。我们首先回顾两种baseline，再以此做一些延申。</p>
+<h2 id="baseline">Baseline</h2>
+<p>基于ConvNets经典的小样本图像分类文章[10]证明了基于距离分类器的baseline++可以打败很多sota
+meta-learning方法，验证了迁移学习在该项任务中的超能力。baseline及其改进版baseline++在微调时都固定了特征提取器(body)权重，而只微调分类器，二者只在分类器设计上有区别。标准的迁移学习pipeline中，全量的微调在有标签数据太少时效果不如linear
+probing，如下图，纵轴为全量fine-tuning准确率减去linear
+probing准确率的结果，横轴为不同数据集，不同颜色的柱状图标识不同的有标签数据量。我们看到在k很小时linear
+probing是更优的选择，k变大时，全量fine-tuning会逐渐夺回优势。</p>
+<figure>
+<img data-src="如何更好应对小样本图像数据/640.png" alt="图片">
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>我们首先介绍<strong>baseline的流程：</strong></p>
+<ol type="1">
+<li>先用特征提取器+线性分类器 <span class="math inline"><em>W</em><sub><em>b</em></sub></span>在基类数据上使用交叉熵从头开始训练;</li>
+<li>再使用固定的特征提取器+新的可训练的线性分类器<span class="math inline"><em>W</em><sub><em>n</em></sub></span>在当前小样本任务中的有标签数据进行
+fine-tune, 损失函数仍是交叉熵分类损失。</li>
+</ol>
+<p><strong>baseline的改进版baseline++</strong>
+训练过程与baseline一致，仍有<span class="math inline"><em>W</em><sub><em>b</em></sub></span>和<span class="math inline"><em>W</em><sub><em>n</em></sub></span>，但不再使用线性分类器。以<span class="math inline"><em>W</em><sub><em>b</em></sub> ∈ ℝ<sup><em>d</em> × <em>c</em></sup></span>为例，可视为c个类别的d维原型表示，所以可以通过计算样本特征与它的余弦相似度并使用softmax得到最终的预测概率分布。得到的预测结果仍使用交叉熵分类损失。该分类器相比线性分类器可以进一步减少类内差异。</p>
+<p>下表对比了baseline，baseline++与经典元学习算法的对比，注意使用了数据增强。结果上看，baseline是打不过元学习算法的，而baseline++则可以掰掰手腕，这说明了在小样本分类问题中减少类内差异的重要性。</p>
+<figure>
+<img data-src="如何更好应对小样本图像数据/640-16757548125193.png" alt="图片">
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>不过上表基于较浅的四层卷积网络进行实验的，当网络更deep且源域与目标域域间分布差异不大时，上表几种元学习和迁移学习方法的性能差异会缩小，但如果网络deep但域间差异较大，基于迁移学习的策略还是会呈现出优势，如下图：(ProtoNet还是稳健，不愧经典广流传)</p>
+<figure>
+<img data-src="如何更好应对小样本图像数据/640-16757548270126.png" alt="图片">
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>基于ResNet-18和更大的跨域问题时，也显示出了迁移学习策略baseline&amp;baseline++的优势(下表)。元学习方法的meta-training阶段是在基类数据进行的，故其learn
+to
+learn能力也局限在基类分布内，正如我们看到的，在跨域问题时，在分布外learn
+to
+learn能力受到了影响。而baseline是对每个小样本任务重新初始化的分类器，一定程度上减少了分布偏移的影响。虽然baseline++也重新初始化了分类器，但可能是因为额外降低类内差异影响了跨域问题中的适应性，导致baseline++不如baseline(但也比大部分对比的元学习算法好一些)。</p>
+<p><img data-src="如何更好应对小样本图像数据/640-16757548394249.png" alt="图片" style="zoom:50%;"></p>
+<p>再如下图，随着域差异的增大，基于少数新类数据的自适应变得越来越重要。</p>
+<p><img data-src="如何更好应对小样本图像数据/640-167575485113712.png" alt="图片" style="zoom:50%;"></p>
+<p><strong>另外一个有意思的事情。</strong>MAML[11]中有inner-loop和outer-loop设定，其中inner-loop蕴含着对当前任务中支持集样本的fine-tune，在MAML中称为对当前任务的fast
+adaptation，所以这一步的梯度下降不会执行太多次，不然就不fast了，在MAML原文实验中是训练时5次测试时10次。而baseline&amp;baseline++这俩方法在fine-tune时都训练了100次迭代，那么如果我们放弃MAML中的快速适应，转而像baseline&amp;baseline++一样增大其inner-loop中对支持集的迭代次数会发生什么？</p>
+<p><img data-src="如何更好应对小样本图像数据/640-167575490233615.png" alt="图片" style="zoom:80%;"></p>
+<p>可见MAML增大inner-loop中的迭代次数后性能有明显的提升，<strong>这引出的思考是如何在获取快速适应能力的同时又能保证如fine-tuner一样有力的性能表现。</strong></p>
+<hr>
+<h2 id="fine-tuning和meta-learning如何强强联手">Fine-tuning和Meta-learning如何强强联手</h2>
+<p><img data-src="如何更好应对小样本图像数据/640-167575493911818.png" alt="图片" style="zoom:50%;"></p>
+<p>上图横轴为适应成本，以适应单个任务所需的乘加累积操作数(MACs)来衡量，纵轴为视觉任务适应基准测试在18个数据集上的平均分类精度。</p>
+<p>上图说明的是，<strong>fine-tuners实现了比meta-learner更高的分类精度，但适应成本更高</strong>。阻碍fine-tuners快速自适应能力的主要瓶颈是需要在整个网络参数上进行多次梯度调整，只fine-tune分类头虽能提速但又会牺牲性能，全量的fine-tune又会在小样本数据上有比较严重的过拟合。</p>
+<p>另外我们在上一节中讨论过全量fine-tuning和linear
+probing之间的关系(下表)，其实二者都是极端的，一个全量，一个只微调分类头，那自然就会引导我们讨论折中的方案：<strong>对特征提取器(body)也动动手脚。</strong></p>
+<p><img data-src="如何更好应对小样本图像数据/640.png" alt="img" style="zoom: 80%;"></p>
+<p>在拥有pretrained特征提取器后，<strong>寻找一种快速适应特征提取器的方法是潜在的解决方案。</strong></p>
+<p><strong>UpperCaSE[9]给出的方案是：用meta-learner在outer-loop中学习特征提取器，用fine-tuner在inner-loop中学习分类头。</strong></p>
+<ol type="1">
+<li>adjusting the body of the network in a single forward pass over the
+context</li>
+<li>reserving the use of expensive fine-tuning routines for the linear
+head</li>
+</ol>
+<p>当然特征提取器的学习不是全量更新的，<strong>其中原始预训练的参数是固定住的，而会meta-train额外附加的参数</strong>，这里的思路是预训练模型对应任务无关的泛化性较强的特征，而附加的参数是task-specific的，即：</p>
+<p>attach task-specific weights to a learned task-agnostic model, and
+estimate them from scratch given the support set.</p>
+<p>UpperCaSE中的CaSE如下图，左侧SE中的Spatial Pooling +
+MLP就是附着在卷积主干上的参数，但SE是基于instance的，如果我们希望在meta-learning下应用SE，最好能够融合每个小样本任务内的上下文信息，所以CaSE额外增加了Context
+Pooling用以捕捉每个任务内的上下文信息，最终elementwise乘回去<span class="math inline"><em>γ</em></span>用来调整主干feature
+map通道之间的关系，即利用任务上下文信息使特征提取器拥有task-specific能力。</p>
+<figure>
+<img data-src="如何更好应对小样本图像数据/640-167575515141323.png" alt="图片">
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>CaSE的优化是在outer-loop中进行的，也就是说CaSE的参数在所有任务中共享task-common。</p>
+<p>inner-loop中就是去fine-tune分类头的参数，所以分类头的参数是task-specific的，如下algorithm中所示，在每个inner-loop开始前，分类头参数是重新初始化为0的，这样使分类头足够task-specific且不受其他任务干扰，与工作[13]一致，该工作证明了在每个inner-loop开始前重新初始化分类器为0等同于将MAML框架近似为对比学习，使query特征趋近于同类support，远离异类support。</p>
+<figure>
+<img data-src="如何更好应对小样本图像数据/640-167575517036526.png" alt="图片">
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>测试时，CaSE参数不再更新，如上面框架图最右侧说明。</p>
+<figure>
+<img data-src="如何更好应对小样本图像数据/640-167575518408929.png" alt="图片">
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>最后，torch-style模型核心代码可以更直观的看下实现以及元训练和元测试时的区别：</p>
+<p><img data-src="如何更好应对小样本图像数据/640-167575519722532.png" alt="图片" style="zoom:80%;"></p>
+<p>这种将部分参数附着在预训练网络上的工作是解决小样本问题行之有效的途径之一，类似的方案还有[6]，该方法在ResNet中的每一个module上attach了一个task-specific模块，并在支持集上微调。下图为该方法的结构，其中<span class="math inline"><em>r</em><sub><em>α</em></sub></span>为attach到resnet中的参数,
+<span class="math inline"><em>A</em><sub><em>β</em></sub></span>是task-specific分类器参数。</p>
+<figure>
+<img data-src="如何更好应对小样本图像数据/640-167575524054935.png" alt="图片">
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>我们看到CaSE是将上下文信息pooling后用来赋予task-specific能力，但从实现中看到是对channels之间关系的调整，<strong>于是我们可以思考分布差异问题是否影响着channels间关系的正确性。</strong></p>
+<hr>
+<h2 id="channel-matters-in-convnets">Channel Matters in ConvNets</h2>
+<p>在ConvNet的global average
+pooling后，<strong>不同channels代表着不同的模式</strong>[1][2]。但神经网络会过拟合预训练数据channels间关系，当源域和目标域出现分布偏移时将不再适用。常规的迁移学习有条件用充足的目标域数据做fine-tune来克服分布偏移，但在小样本问题中可没这么优越的条件。那么分布偏移(包括类别、领域、粒度)为什么会对模型造成影响呢？我们以类别为例说明该问题。假设我们在预训练时关注昆虫类别，他们会经常出现在叶子上面，但此时叶子特征并不是模型需要考虑的判别信息。那么当该模型需要去在目标域中判别叶子(植物)类别时，模型并不能很好的掌握其判别信息。而模型对这些判别信息的权衡，蕴含在channels之间。那么如果我们可以调整channels间的关系，就可以令模型调整对对判别模式的关注度，提升目标域数据的分类性能。这也是为什么上文介绍的CaSE会重新加权channel之间的关系。</p>
+<p><strong>一种无learnable参数的方法也可供我们参考</strong>，我们可以定义如下函数[3]分别作用于每个channel：
+<span class="math display">$$
+\phi_{k}(\lambda)=\left\{\begin{array}{ll}
+\frac{1}{\ln ^{k}\left(\frac{1}{\lambda}+1\right)}, &amp; \lambda&gt;0
+\\
+0, &amp; \lambda=0
+\end{array}\right.
+$$</span> 注意该函数的输入<span class="math inline"><em>λ</em> ≥ 0</span> , 意味着我们需要使用 ReLU。当
+<span class="math inline"><em>λ</em> &lt; 0</span> 时,
+性能会有所下降。且该函数仅在源域和目标域有明显的分布偏移时奏效。根据该函数导数信息：
+<span class="math display">$$
+\begin{array}{c}
+\phi_{k}^{\prime}(\lambda)&gt;0, \lim_{\lambda \rightarrow 0^{+}}
+\phi_{k}^{\prime}(\lambda)=+\infty, \\
+\exists t&gt;0, \quad \text { s.t. } \quad \forall \lambda \in(0, t),
+\phi_{k}^{\prime \prime}(\lambda)&lt;0,
+\end{array}
+$$</span>
+一阶导的正性保证了channels间的相对关系不会发生改变，二阶导的负性保证了channels间的gaps能得到缩减。说白了就是令channels间分布更加平滑，抑制高数值channels，放大低数值channels。该函数带来的性能提升见下表，少量的负面影响是因为源域和目标域间分布差异不明显，平滑处理反而是过度的。</p>
+<figure>
+<img data-src="如何更好应对小样本图像数据/640-167575555768238.png" alt="图片">
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>这种parameter-less的思路很实用，类似的还有[7][8]，这里不过多介绍。</p>
+<p><strong>既然channel
+matters，还有什么关于分布差异的要素是重要的吗？</strong></p>
+<hr>
+<h2 id="bn-matters-in-convnets">BN Matters in ConvNets</h2>
+<p>上文提到了分布偏移问题，是说源域和目标域之间的分布差异大，而BatchNorm的统计信息又包含了领域分布知识[15]，所以我们也可以通过关注BN的行为缓解分布偏移问题，提升预训练模型在小样本问题上的表现[14]。</p>
+<p>BN首先对输入进行normalization(记为Feature Normalization,
+FN)，再通过affine参数对normalized feature进行scale和shift。</p>
+<p>下表中：BN表示预训练时使用BN，微调时只微调分类头；FN表示预训练时只是用FN，微调时只微调分类头；BN✖️表示预训练使用BN，微调时微调分类头+affine参数；FN✖️表示预训练使用FN，微调时微调分类头+affine参数；</p>
+<p><img data-src="如何更好应对小样本图像数据/640-167575560020341.png" alt="图片" style="zoom:67%;"></p>
+<p>我们看到：affine参数的微调会带来task-specific收益，pretrain时若仅使用FN还会带来进一步收益。该结果也启发我们在小样本问题中，对源域分布信息的弱化以及对目标域分布信息的增强可能是行之有效的。</p>
+<p>另外，既然全量的微调会造成过拟合，微调特征提取器中的BN的参数这种partial形式带来了可观的收益，附着上一些额外参数也是很OK的，那么对其他部分参数的微调又会如何呢？是不是只要不是全量的，而是部分的，就能权衡好过拟合和task-specific之间的平衡？Partial
+is better than
+all[16]这项工作通过演化搜索来寻找在当前任务中微调哪部分参数，下表Searched表示其实验结果，性能收益也是比较稳定的。</p>
+<p><img data-src="如何更好应对小样本图像数据/640-167575562200044.png" alt="图片" style="zoom:80%;"></p>
+<h2 id="vit如何在小样本域fine-tuning">ViT如何在小样本域fine-tuning</h2>
+<p>聊完了ConvNets，我们看看ViT for few-shot learning。</p>
+<p><strong>我们参考LT+NCC的范式：Linear Transformation + Nearest
+Centroid Classifier</strong></p>
+<p>给定pretrained ViT <span class="math inline"><em>f</em><sub><em>θ</em></sub></span>
+和一个few-shot episode <span class="math inline">𝒯</span>
+(或者说一个小样本任务), 在将 <span class="math inline"><em>f</em><sub><em>θ</em></sub></span> 应用至 <span class="math inline">𝒯</span> 时, 其所有参数均冻结住, 用来提取 <span class="math inline">𝒯</span> 中的support sample的特征: <span class="math inline"><em>x</em><sub><em>i</em></sub><sup>supp</sup> = <em>f</em><sub><em>θ</em></sub>(<em>I</em><sub><em>i</em></sub><sup>supp</sup>)</span>。然后,
+对每个<span class="math inline">𝒯</span> , 我们定义一个learnable linear
+transformation <span class="math inline"><em>ϕ</em> : <em>x̂</em><sub><em>i</em></sub><sup>supp</sup> = <em>ϕ</em>(<em>x</em><sub><em>i</em></sub><sup>supp</sup>)</span>,
+得到的特征应用 NCC+Cross-entropy的损失函数训练 <span class="math inline"><em>ϕ</em></span>: <span class="math display">$$
+\begin{gathered}
+\bar{x}_c=\frac{1}{\sum_{i=1}^{N_c} \mathbf{1}_{y_i^{\text {supp}}}=c}
+\sum_{i=1}^{N_s} \hat{x}_i^{\text {supp}} \mathbf{1}_{y_i^{\text
+{supp}}=c} \quad \hat{y}_i^{\text {supp}}(c)=\frac{\exp
+\left(d\left(\hat{x}_i^{\text {supp }},
+\bar{x}_c\right)\right)}{\sum_{c=1}^N \exp \left(d\left(\hat{x}_i^{\text
+{supp }}, \bar{x}_c\right)\right)} \\
+\ell_{C E}=-y^{\text {supp }} \cdot \log \hat{y}^{\text {supp }}
+\end{gathered}
+$$</span> 上面fine-tuning结束后，<span class="math inline"><em>ϕ</em></span> 可以应用至当前 <span class="math inline">𝒯</span> 的query并用NCC完成对query的预测。</p>
+<p><strong>以上为LT+NCC范式[4]。</strong></p>
+<p>但它的缺陷是仅有linear
+transformation的参数可以fine-tuning，不够task-specific，而在ViT中能够得到task-specific
+embedding的关键之一在MSA中，所以可以在MSA中附上一些task-specific元素，在fine-tuning时仍然冻结pretrained的<span class="math inline"><em>f</em><sub><em>θ</em></sub></span>，然后去fine-tuning附着上的参数，比如下图中彩色部分，就是将task-specific参数拼接到MSA中[5]。</p>
+<p><img data-src="如何更好应对小样本图像数据/640-167575614029747.png" alt="图片" style="zoom:50%;"></p>
+<p>在few-shot
+learning中，最常被用于代表某个任务特性的是原型，所以[5]用attentive原型实现了上图中的<span class="math inline"><em>θ</em><sub><em>p</em></sub></span>，进而将当前任务的信息提供给MSA。我们看到，这样的思路在前面几节中也都有提及，证明了该系列方案的有效性。</p>
+<p>除了LT+NCC的范式，还可以做点什么？我们知道token间的依赖关系依赖于更多的数据量的大量训练，那既然few-shot问题中更多的数据量不显示，我们是不是可以给token间依赖关系加个速。</p>
+<p>我们看到本文回顾的方法共性是：<strong>微调部分参数</strong>，部分参数可能是某些特定的，比如BN[14]和分类头，也可能是搜索出来的[16]，还可能是额外附着上去的[5][9][6]。这些方法所讨论的关键词是：over
+fitting和task-specific的权衡、fast
+adaptation和accuracy的权衡，其本质还是源域和小样本目标域间的分布偏移问题。当然一定会有区别于本文脉络的其他思路，还需持续保持关注。</p>
+<hr>
+<h2 id="参考文献">参考文献</h2>
+<ol type="1">
+<li>Zhou, B., Khosla, A., Lapedriza, ` A., Oliva, A., and Torralba, A.
+Object detectors emerge in deep scene cnns. In International Conference
+on Learning Representations, 2015.</li>
+<li>Bau, D., Zhou, B., Khosla, A., Oliva, A., and Torralba, A. Network
+dissection: Quantifying interpretability of deep visual representations.
+In Proceedings of the IEEE conference on computer vision and pattern
+recognition, pp. 6541–6549, 2017.</li>
+<li>Luo, Xu, Jing Xu, and Zenglin Xu. “Channel importance matters in
+few-shot image classification.” International conference on machine
+learning. PMLR, 2022.</li>
+<li>Li, Wei-Hong, Xialei Liu, and Hakan Bilen. “Universal representation
+learning from multiple domains for few-shot classification.” Proceedings
+of the IEEE/CVF International Conference on Computer Vision. 2021.</li>
+<li>Xu, Chengming, et al. “Exploring Efficient Few-shot Adaptation for
+Vision Transformers.” arXiv preprint arXiv:2301.02419(2023).</li>
+<li>Li, Wei-Hong, Xialei Liu, and Hakan Bilen. “Cross-domain Few-shot
+Learning with Task-specific Adapters.” <em>Proceedings of the IEEE/CVF
+Conference on Computer Vision and Pattern Recognition.</em>2022.</li>
+<li>Liu, Jinlu, Liang Song, and Yongqiang Qin. “Prototype rectification
+for few-shot learning.” European Conference on Computer Vision.
+Springer, Cham, 2020.</li>
+<li>Cui, Wentao, and Yuhong Guo. “Parameterless transductive feature
+re-representation for few-shot learning.” International Conference on
+Machine Learning. PMLR, 2021.</li>
+<li>Patacchiola, Massimiliano, et al. “Contextual Squeeze-and-Excitation
+for Efficient Few-Shot Image Classification.” Advances in Neural
+Information Processing Systems, 2022.</li>
+<li>Chen, Wei-Yu, et al. “A closer look at few-shot classification.”
+arXiv preprint arXiv:1904.04232 (2019).</li>
+<li>Finn, Chelsea, Pieter Abbeel, and Sergey Levine. “Model-agnostic
+meta-learning for fast adaptation of deep networks.” International
+conference on machine learning. PMLR, 2017.</li>
+<li>Kim, Yujin and Oh, Jaehoon and Kim, Sungnyun and Yun, Se-Young,How
+to Fine-tune Models with Few Samples: Update, Data Augmentation, and
+Test-time Augmentation,arxiv.2205.07874, 2022</li>
+<li>Chia-Hsiang Kao, Wei-Chen Chiu, Pin-Yu Chen,MAML is a Noisy
+Contrastive Learner in Classification,ICLR 2022</li>
+<li>Yazdanpanah, Moslem, et al. “Revisiting Learnable Affines for Batch
+Norm in Few-Shot Transfer Learning.” Proceedings of the IEEE/CVF
+Conference on Computer Vision and Pattern Recognition. 2022.</li>
+<li>Yanghao Li, Naiyan Wang, Jianping Shi, Jiaying Liu, and Xiaodi Hou.
+Revisiting batch normalization for practical domain adaptation. arXiv
+preprint arXiv:1603.04779, 2016.</li>
+<li>Shen, Zhiqiang, et al. “Partial is better than all: revisiting
+fine-tuning strategy for few-shot learning.” Proceedings of the AAAI
+Conference on Artificial Intelligence. Vol. 35. No. 11. 2021.</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2023-02/%E5%A6%82%E4%BD%95%E6%9B%B4%E5%A5%BD%E5%BA%94%E5%AF%B9%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE.html" title="『转载』如何更好应对小样本图像数据">https://meteordream.github.io/Paper/2023-02/如何更好应对小样本图像数据.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 小样本学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Paper/2023-01/FFDI.html" rel="prev" title="『论文笔记』Domain Generalization via Frequency-domain-based FeatureDisentanglement and Interaction">
+      <i class="fa fa-chevron-left"></i> 『论文笔记』Domain Generalization via Frequency-domain-based FeatureDisentanglement and Interaction
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Paper/2023-02/ACVC.html" rel="next" title="『论文笔记』Attention Consistency on Visual Corruptions for Single-Source Domain Generalization">
+      『论文笔记』Attention Consistency on Visual Corruptions for Single-Source Domain Generalization <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#baseline"><span class="nav-number">1.</span> <span class="nav-text">Baseline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fine-tuning%E5%92%8Cmeta-learning%E5%A6%82%E4%BD%95%E5%BC%BA%E5%BC%BA%E8%81%94%E6%89%8B"><span class="nav-number">2.</span> <span class="nav-text">Fine-tuning和Meta-learning如何强强联手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#channel-matters-in-convnets"><span class="nav-number">3.</span> <span class="nav-text">Channel Matters in ConvNets</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bn-matters-in-convnets"><span class="nav-number">4.</span> <span class="nav-text">BN Matters in ConvNets</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vit%E5%A6%82%E4%BD%95%E5%9C%A8%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%9F%9Ffine-tuning"><span class="nav-number">5.</span> <span class="nav-text">ViT如何在小样本域fine-tuning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

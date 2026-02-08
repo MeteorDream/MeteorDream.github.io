@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Defending Against Universal Adversarial Patches by Clipping Feature Norms Author: Cheng Yu, Jiansheng Chen, Youze Xue, Yuyang Liu, Weitao Wan, Jiayu Bao, Huimin Ma Institution:  De">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Defending Against Universal Adversarial Patches by Clipping Feature Norms">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-11/FNC.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Defending Against Universal Adversarial Patches by Clipping Feature Norms Author: Cheng Yu, Jiansheng Chen, Youze Xue, Yuyang Liu, Weitao Wan, Jiayu Bao, Huimin Ma Institution:  De">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/FNC/image-20221105214830593.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/FNC/image-20221105220258695.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/FNC/image-20221106123840868.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/FNC/image-20221106124458963.png">
+<meta property="article:published_time" content="2022-11-03T13:46:49.000Z">
+<meta property="article:modified_time" content="2022-11-03T13:46:49.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="Norm">
+<meta property="article:tag" content="ICCV">
+<meta property="article:tag" content="对抗攻防">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-11/FNC/image-20221105214830593.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-11/FNC.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Defending Against Universal Adversarial Patches by Clipping Feature Norms | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-11/FNC.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Defending Against Universal Adversarial Patches by Clipping Feature Norms
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-03 21:46:49" itemprop="dateCreated datePublished" datetime="2022-11-03T21:46:49+08:00">2022-11-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-11/FNC.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-11/FNC.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Defending Against Universal Adversarial
+Patches by Clipping Feature Norms</li>
+<li><strong>Author</strong>: Cheng Yu, Jiansheng Chen, Youze Xue, Yuyang
+Liu, Weitao Wan, Jiayu Bao, Huimin Ma</li>
+<li><strong>Institution</strong>:
+<ul>
+<li>Department of Electronic Engineering, Tsinghua University,
+China</li>
+<li>Beijing National Research Center for Information Science and
+Technology, China</li>
+<li>University of Science and Technology Beijing, China</li>
+</ul></li>
+<li><strong>Year</strong>: 2021</li>
+<li><strong>Journal</strong>: ICCV</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/ICCV2021/html/Yu_Defending_Against_Universal_Adversarial_Patches_by_Clipping_Feature_Norms_ICCV_2021_paper.html">Open
+access</a>，<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/ICCV2021/supplemental/Yu_Defending_Against_Universal_ICCV_2021_supplemental.zip">Supplemental</a>(注：开源代码在补充材料中
+(゜▽゜*) ), <a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/9710818">IEEE</a></li>
+<li><strong>Cite</strong>: Cheng Yu, Jiansheng Chen, Youze Xue, Yuyang
+Liu, Weitao Wan, Jiayu Bao, Huimin Ma; Proceedings of the IEEE/CVF
+International Conference on Computer Vision (ICCV), 2021,
+pp. 16434-16442</li>
+<li><strong>Idea</strong>:
+从实验和数学推导证明了对抗补丁会导致特征范数变大并提出了特征范数裁剪的方法来防御对抗补丁攻击</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@InProceedings&#123;Yu_2021_ICCV,</span><br><span class="line">    author    = &#123;Yu, Cheng and Chen, Jiansheng and Xue, Youze and Liu, Yuyang and Wan, Weitao and Bao, Jiayu and Ma, Huimin&#125;,</span><br><span class="line">    title     = &#123;Defending Against Universal Adversarial Patches by Clipping Feature Norms&#125;,</span><br><span class="line">    booktitle = &#123;Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)&#125;,</span><br><span class="line">    month     = &#123;October&#125;,</span><br><span class="line">    year      = &#123;2021&#125;,</span><br><span class="line">    pages     = &#123;16434-16442&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>针对通用对抗补丁(universal adversarial patches)
+作者从实验和数学两方面说明了通用对抗补丁通常会导致常见CNN计算的深度特征向量的范数非常大，据此作者提出了一种简单有效的防御方法
+FNC (Feature norm clipping)。</p>
+<h2 id="introduction">Introduction</h2>
+<p>所谓通用对抗补丁就是一种局部的特殊图案，无论原始图片是什么，无论对抗块放置在图片的什么地方，都能对网络产生误导（原文<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Adversarial Patch](https://arxiv.org/pdf/1712.09665.pdf)">[1]</span></a></sup>称这是利用了一般神经网络在有很多不同对象的分类任务中通常只会给出最显著的那个，即对抗补丁是一种“很强”的目标使其掩盖了原有图像中的分类目标）。在这篇文章中，作者从数学上指出了通用对抗补丁为什么具备这样的性质。实验中发现通用对抗补丁在前向传播的时候通常会导致局部空间特征向量的范数显著大于其他特征向量。<strong>在CNN常用的全局平均池化下，通常大范数的特征向量会在最终结果中起到决定性作用。</strong>这种现象通常只在对抗补丁这样局部对抗扰动中存在，这导致
+CNN
+的有效感受野大大缩小。另一方面，其他部分的特征并不受影响，这也要求对抗补丁具备大的特征范数。</p>
+<p>这篇文章的贡献如下：</p>
+<ol type="1">
+<li>分析了通用对抗补丁对深度特征表示的影响，数学上阐明了局部补丁区域存在大范数的现象</li>
+<li>提出了简单有效的方法 FNC
+通过限制产生大的特征范数来削弱通用对抗补丁参数的影响</li>
+<li>效果很好</li>
+</ol>
+<h2 id="method">Method</h2>
+<p><strong>先给出一些必要的简单定义</strong>：</p>
+<p>补丁对抗样本 <span class="math inline">$\hat{\mathbf{x} }$</span>
+由原始样本 <span class="math inline">$\tilde{\mathbf{x} }$</span>
+通过以下公式生成 <span class="math display">$$
+\hat{\mathbf{x} }=(\mathbf{1}-\mathbf{M}) \odot \tilde{\mathbf{x}
+}+\mathbf{M} \odot A(p, t)
+$$</span> 其中 <span class="math inline">⊙</span> 表示哈达玛积(Hadamard
+product，其实就是矩阵对应位置相乘)，<span class="math inline"><strong>M</strong> ∈ {0, 1}<sup><em>H</em> × <em>W</em> × <em>C</em></sup></span>
+是补丁位置的二进制掩码，<span class="math inline"><em>A</em>(<em>p</em>, <em>t</em>)</span> 是将补丁
+<span class="math inline"><em>p</em></span> 做一个几何变换 <span class="math inline"><em>t</em></span> 并放置到 <span class="math inline"><strong>M</strong></span>
+所指示的位置，其优化过程如下式所示 <span class="math display">$$
+\max _p \mathbb{E}_{\tilde{\mathbf{x} } \sim X, t \sim T} \log
+\operatorname{Pr}(\hat{y} \mid \hat{\mathbf{x} })
+$$</span> 即最大化分类损失，使得模型分类错误。</p>
+<p><strong>接下来根据有效感受野理论推导对抗补丁产生大特征范数的原因</strong>：</p>
+<p>所谓有效感受野(<strong>ERF</strong>)的定义是每个输入的点能影响输出的范围，具体而言，通过计算偏导数
+<span class="math inline">∂<em>y</em><sub>0, 0</sub>/∂<em>x</em><sub><em>i</em>, <em>j</em></sub></span>
+的期望得到。ERF理论指出 ERF 的概率密度函数收敛到 2 维高斯分布 <span class="math inline"><em>Φ</em><sub><em>N</em></sub></span>，其中 <span class="math inline"><em>Ω</em><sub><em>n</em></sub></span>
+是由卷积层权重分布决定的随机变量： <span class="math display">$$
+\Phi_N \sim \mathcal{N}\left(0, \sum_{n=1}^N
+\operatorname{Var}\left[\Omega_n\right]\right)
+$$</span>
+当然这只是理论上的，实际上感受野是远远比理论要小很多的，但确实符合二维高斯分布函数即由中心向外围递减。</p>
+<p>假设用一个函数 <span class="math inline"><em>f</em> : ℝ<sup><em>H</em> × <em>W</em> × <em>C</em></sup> → ℝ<sup><em>h</em> × <em>w</em> × <em>c</em></sup></span>
+表示计算最后一层特征(final feature map,
+<strong>FFM</strong>)得到的输入感受野，用 <span class="math inline"><em>f</em><sub><em>i</em>, <em>j</em>, <em>k</em></sub>(<em>x</em>)</span>
+表示 <span class="math inline"><em>i</em>, <em>j</em></span> 位置第
+<span class="math inline"><em>k</em></span> 通道的感受野，考虑 <span class="math inline">$L=\{\hat{\mathbf{x} } + \gamma (\hat{\mathbf{x} } -
+\tilde{\mathbf{x} })\}, \gamma : 0 \rightarrow 1$</span>
+路径而推导到第二行的公式 <span class="math display">$$
+\begin{aligned}
+&amp;f_{i, j, k}(\hat{\mathbf{x} })-f_{i, j, k}(\tilde{\mathbf{x}
+})=\int_L \nabla_{\mathbf{x} } f_{i, j, k} \cdot d \mathbf{x} \\
+&amp;=\left(\int_0^1 \nabla_{\tilde{\mathbf{x} }+\gamma(\hat{\mathbf{x}
+}-\tilde{\mathbf{x} })} f_{i, j, k} d \gamma\right)
+\cdot(\hat{\mathbf{x} }-\tilde{\mathbf{x} }) \\
+&amp;=\mathbb{E}_{\gamma \sim
+\mathcal{U}(0,1)}\left[\nabla_{\tilde{\mathbf{x}
+}+\gamma(\hat{\mathbf{x} }-\tilde{\mathbf{x} })} f_{i, j, k}\right]
+\cdot(\hat{\mathbf{x} }-\tilde{\mathbf{x} })
+\end{aligned}
+$$</span> 注意到 ERF 是输出 <span class="math inline">(0, 0)</span>
+的梯度图的期望，因此最后的期望项近似与 <span class="math inline"><em>t</em><em>r</em><sub><em>i</em>, <em>j</em></sub>(<em>E</em><em>R</em><em>F</em>)</span>
+， 而迹也是 <span class="math inline">(<em>i</em>, <em>j</em>)</span>
+的转置。因此有 <span class="math display">$$
+\begin{aligned}
+\left\|\mathbf{f}_{i, j}^*\right\| &amp;
+\approx\left(c\left(\operatorname{tr}_{i, j}(\mathrm{ERF})
+\cdot(\hat{\mathbf{x} }-\tilde{\mathbf{x}
+})\right)^2\right)^{\frac{1}{2} } \\
+&amp; \propto \sum t r_{i, j}(\mathrm{ERF}) \odot(\hat{\mathbf{x}
+}-\tilde{\mathbf{x} }) .
+\end{aligned}
+$$</span> 其中 <span class="math inline">$\mathbf{f}^*_{(i, j)} =
+\mathbf{f}_{i, j}(\hat{\mathbf{x} }) - \mathbf{f}_{i,
+j}(\tilde{\mathbf{x} })$</span>, 而 <span class="math inline">$(\hat{\mathbf{x} }-\tilde{\mathbf{x} })$</span>
+在除了补丁区域外的地方为 <span class="math inline">0</span>, 从 ERF
+的性质，我们能得到 <span class="math inline">∑<em>t</em><em>r</em><sub><em>i</em>, <em>j</em></sub>(ERF)</span>
+是以 <span class="math inline">(<em>i</em>, <em>j</em>)</span>
+为中心的高斯函数在有限区域的加权和。可以证明 <span class="math inline">∥<strong>f</strong><sub><em>i</em>, <em>j</em></sub><sup>*</sup>∥</span>
+在空间上分布为具有相同方差但中心不同的高斯函数的加权和。因此，它具有与高斯函数相同的平方指数衰减率。由于补丁远小于图像，因此
+<span class="math inline">∥<strong>f</strong><sub><em>i</em>, <em>j</em></sub><sup>*</sup>∥</span>
+在图像中也具有这样的平方指数中心属性。</p>
+<p>然后我们考虑分类器层，因为最后的特征是 FFM
+通过全局平均池化后送入全连接层的，所以最终分类概率为 <span class="math display">$$
+\mathcal{F}(y \mid \hat{\mathbf{x} })=\frac{1}{h w} \sum_{i,
+j}\left(\tilde{\mathbf{f} }_{i, j}^{\top} \mathbf{w}_y+\mathbf{f}_{i,
+j}^*{ }^{\top} \mathbf{w}_y\right)+b_y
+$$</span> 对于通用对抗补丁，<span class="math inline">$\mathcal{F}(\hat
+y \mid \hat{\mathbf{x} }) &gt; \mathcal{F}(\tilde y \mid \hat{\mathbf{x}
+})$</span>. 进一步假设 <span class="math inline">∥<strong>w</strong><sub><em>ŷ</em></sub>∥ ≤ ∥<strong>w</strong><sub><em>ỹ</em></sub>∥</span>
+，因为原图像是操作分类到 <span class="math inline"><em>ỹ</em></span>
+的，所以有 <span class="math inline">$\tilde{\mathbf{f} }_{i, j}^{\top}
+\mathbf{w}_\hat y / \tilde{\mathbf{f} }_{i, j}^{\top} \mathbf{w}_\tilde
+y \approx 0$</span>, 因此成功的补丁可以用下式描述： <span class="math display">$$
+\begin{aligned}
+0&lt;&amp; \mathcal{F}(\hat{y} \mid \hat{\mathbf{x}
+})-\mathcal{F}(\tilde{y} \mid \hat{\mathbf{x} }) \\
+=&amp; \frac{1}{h w} \sum_{i, j}\left(\tilde{\mathbf{f} }_{i, j}^{\top}
+\mathbf{w}_{\hat{y} }+\mathbf{f}_{i, j}^*{ }^{\top} \mathbf{w}_{\hat{y}
+}-\tilde{\mathbf{f} }_{i, j}^{\top} \mathbf{w}_{\tilde{y}
+}-\mathbf{f}_{i, j}^*{ }^{\top} \mathbf{w}_{\tilde{y}
+}\right)+b_{\hat{y} }-b_{\tilde{y} } \\
+\approx &amp; \frac{1}{h w} \sum_{i, j}\left(\mathbf{f}_{i, j}^*{
+}^{\top} \mathbf{w}_{\hat{y} }-\tilde{\mathbf{f} }_{i, j}^{\top}
+\mathbf{w}_{\tilde{y} }-\mathbf{f}_{i, j}^* \mathbf{w}_{\tilde{y}
+}\right) \\
+\leq &amp; \frac{1}{h w} \sum_{i, j}\left\|\mathbf{w}_{\tilde{y}
+}\right\|\left(\left\|\mathbf{f}_{i, j}^*\right\|\left(\cos
+\left(\mathbf{f}_{i, j}^*, \mathbf{w}_{\hat{y} }\right)-\cos
+\left(\mathbf{f}_{i, j}^*, \mathbf{w}_{\tilde{y}
+}\right)\right)\right.\left.-\left\|\tilde{\mathbf{f} }_{i, j}\right\|
+\cos \left(\tilde{\mathbf{f} }_{i, j}, \mathbf{w}_{\tilde{y}
+}\right)\right)
+\end{aligned}
+$$</span> 最后我们设法估计 <span class="math inline">max<sub><em>i</em>, <em>j</em></sub>∥<em>f</em><sub><em>i</em>, <em>j</em></sub><sup>*</sup>∥/<em>m</em><em>e</em><em>a</em><em>n</em><sub><em>i</em>, <em>j</em></sub>∥<em>f̃</em><sub><em>i</em>, <em>j</em></sub>∥</span>.
+直观上看 相比于 <span class="math inline">∥<em>f̃</em><sub><em>i</em>, <em>j</em></sub>∥</span>
+来说 <span class="math inline">∥<em>f</em><sub><em>i</em>, <em>j</em></sub><sup>*</sup>∥</span>
+显然更中心且衰减得更快，这是受 <span class="math inline">cos </span>
+相似度的限制,所以他们的比例显然更大，这导致了在补丁区域的 <span class="math inline"><strong>f</strong>(<em>x̂</em>)</span>
+具有更大的范数。假设 <span class="math inline"><em>w</em><sub><em>ŷ</em></sub></span> 与 <span class="math inline"><em>w</em><sub><em>ỹ</em></sub></span> 正交，这在
+CNN 中近似成立
+（这个有点迷惑，为什么能近似成立）。在数学上，边界由余弦相似度 <span class="math inline">$\cos (\tilde{\mathbf f}_{i, j}, \mathbf W_{\tilde
+y})$</span> 和 <span class="math inline">(cos (<strong>f</strong><sub><em>i</em>, <em>j</em></sub><sup>*</sup>, <strong>w</strong><sub><em>ŷ</em></sub>) − cos (<strong>f</strong><sub><em>i</em>, <em>j</em></sub><sup>*</sup>, <strong>w</strong><sub><em>ỹ</em></sub>))</span>
+决定，其分别表示模型训练和补丁生成过程的饱和状态。这里假设二者充分训练后可以达到理论上界
+<span class="math inline">1</span> 和 <span class="math inline">$\sqrt
+2$</span>，这两个过程中通常都无法达到极限，但基于极限的比值得到的估计界限与实验结果非常吻合，因此上式可以进一步推得
+<span class="math display">$$
+\begin{aligned}
+0 &amp;&lt;\frac{1}{h w} \sum_{i, j}\left\|\mathbf{w}_{\tilde{y}
+}\right\|\left(\sqrt{2}\left\|\mathbf{f}_{i,
+j}^*\right\|-\left\|\tilde{\mathbf{f} }_{i, j}\right\|\right), \\
+\left\|\mathbf{f}_{i, j}^*\right\| &amp;=\max _{i,
+j}\left\|\mathbf{f}_{i, j}^*\right\| \frac{\sum t r_{i, j}(\mathrm{ERF})
+\odot(\hat{\mathbf{x} }-\tilde{\mathbf{x} })}{\max _{i, j} \sum
+\operatorname{tr}_{i, j}(\mathrm{ERF}) \odot(\hat{\mathbf{x}
+}-\tilde{\mathbf{x} })}
+\end{aligned}
+$$</span> 最后就能得到预估的下界 <span class="math display">$$
+\frac{\max _{i, j}\left\|\mathbf{f}_{i,
+j}^*\right\|}{\operatorname{mean}_{i, j}\left\|\tilde{\mathbf{f} }_{i,
+j}\right\|}&gt;\frac{h w}{\sqrt{2} } \frac{\max _{i, j} \sum t r_{i,
+j}(\mathrm{ERF}) \odot(\hat{\mathbf{x} }-\tilde{\mathbf{x} })}{\sum_{i,
+j} \sum t r_{i, j}(\mathrm{ERF}) \odot(\hat{\mathbf{x}
+}-\tilde{\mathbf{x} })}
+$$</span> 记 <span class="math inline">ℛ = max<sub><em>i</em>, <em>j</em></sub>∥<strong>f</strong><sub><em>i</em>, <em>j</em></sub><sup>*</sup>∥/mean<sub><em>i</em>, <em>j</em></sub>∥<em>f̃</em><sub><em>i</em>, <em>j</em></sub>∥</span>
+为特征范数增量比(Incremental Feature Norm Ratio,
+<strong>IFNR</strong>)，其最大值通常在补丁中心。其下界由上式给出并由下图的世界结果验证：</p>
+<figure>
+<img data-src="FNC/image-20221105214830593.png" alt="image-20221105214830593">
+<figcaption aria-hidden="true">image-20221105214830593</figcaption>
+</figure>
+<p>同样的结果可以推广到中间的特征，具体可以看原文，这里就不再推导了，下面表格是
+ResNet-50 中间层特征的 <span class="math inline">ℛ</span> 的均值</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Layer</th>
+<th style="text-align: center;">Conv2-3</th>
+<th style="text-align: center;">Conv3-4</th>
+<th style="text-align: center;">Conv4-6</th>
+<th style="text-align: center;">Conv5-3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Ratio</td>
+<td style="text-align: center;">1.05</td>
+<td style="text-align: center;">1.80</td>
+<td style="text-align: center;">2.98</td>
+<td style="text-align: center;">3.39</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img data-src="FNC/image-20221105220258695.png" alt="image-20221105220258695">
+<figcaption aria-hidden="true">image-20221105220258695</figcaption>
+</figure>
+<p>上图展示了对抗补丁使得 <span class="math inline">ℛ</span>
+以补丁为中心增大且随着模型的深度累计。</p>
+<h2 id="detail">Detail</h2>
+<p>根据上述分析，作者提出 FNC
+来约束不同层的特征范数来使模型具备防御对抗补丁攻击的能力。</p>
+<p>假设有级联卷积神经网络 <span class="math inline">{<em>D</em><sup>(<em>n</em>)</sup>}<sub><em>n</em> = 1</sub><sup><em>N</em></sup></span>
+和特征图 <span class="math inline">{<em>f</em><sup>(<em>n</em>)</sup> ∈ ℝ<sup><em>h</em><sup>(<em>n</em>)</sup> × <em>w</em><sup>(<em>n</em>)</sup> × <em>c</em><sup>(<em>n</em>)</sup></sup>}</span>
+其中 <span class="math inline"><em>N</em></span>
+表示级联模块数量。前向传播可以表示为 <span class="math display">$$
+\begin{aligned}
+&amp;\mathbf{f}^{(1)}=D^{(1)}(\mathbf{x}), \quad
+\mathbf{f}(\mathbf{x})=\mathbf{f}^{(N)} \\
+&amp;\mathbf{f}^{(n+1)}=D^{(n+1)}\left(\mathbf{f}^{(n)}\right) \text {
+for } n=1,2, \ldots, N-1
+\end{aligned}
+$$</span> 对 <span class="math inline"><em>f</em><sup>(<em>n</em>)</sup></span> 应用 FNC
+的计算方法如下所示，其中 <span class="math inline"><em>α</em></span>
+是裁剪参数，随后将 <span class="math inline"><em>g</em><sup>(<em>n</em>)</sup></span> 传入下一个
+CNN 模块中计算 <span class="math inline"><em>f</em><sup>(<em>n</em> + 1)</sup></span> <span class="math display">$$
+\begin{aligned}
+\mathbf{g}_{i, j}^{(n)} &amp;=\frac{\mathbf{f}_{i, j}^{(n)}
+}{\left\|\mathbf{f}_{i, j}^{(n)}\right\|} \min
+\left(\left\|\mathbf{f}_{i, j}^{(n)}\right\|, \alpha \overline{\|
+\mathbf{f}^{(n)} \|}\right), \\
+\left\|\mathbf{f}^{(n)}\right\| &amp;=\frac{1}{h^{(n)} w^{(n)} }
+\sum_{i, j}\left\|\mathbf{f}_{i, j}^{(n)}\right\|,
+\end{aligned}
+$$</span> <img data-src="FNC/image-20221106123840868.png" alt="image-20221106123840868"></p>
+<p>因此 FNC
+通过梯度裁剪避免网络生成具有过大范数的特征向量，以此削弱对抗补丁的影响，接下来使用
+ERF 理论分析 FNC 的精确影响。</p>
+<figure>
+<img data-src="FNC/image-20221106124458963.png" alt="image-20221106124458963">
+<figcaption aria-hidden="true">image-20221106124458963</figcaption>
+</figure>
+<p>特征向量的雅克比矩阵如下式所示，其中 <span class="math inline">$\frac{\alpha
+\overline{\left\|\mathbf{f}^{(n)}\right\|} }{\left\|\mathbf{f}_{i,
+j}^{(n)}\right\|}$</span> 是小于 1 的，<span class="math inline">(<strong>I</strong> − <strong>P</strong><sub><em>i</em>, <em>j</em></sub><sup>(<em>n</em>)</sup>)</span>
+是 <span class="math inline"><strong>f</strong><sub><em>i</em>, <em>j</em></sub><sup>(<em>n</em>)</sup></span>
+在正交方向的投影矩阵，因此之后梯度的范数不会增加 。 <span class="math display">$$
+\begin{array}{l}
+\frac{\partial \mathbf{g}_{i, j}^{(n)} }{\partial \mathbf{f}_{i,
+j}^{(n)} }=\frac{\alpha \overline{\left\|\mathbf{f}^{(n)}\right\|}
+}{\left\|\mathbf{f}_{i, j}^{(n)}\right\|}\left(\mathbf{I}-\mathbf{P}_{i,
+j}^{(n)}\right)+\varepsilon_{i, j, i, j}^{(n)}, \frac{\partial
+\mathbf{g}_{i, j}^{(n)} }{\partial \mathbf{f}_{i^{\prime}, j^{\prime}
+}^{(n)} }=\varepsilon_{i, j, i^{\prime}, j^{\prime} }^{(n)} \\
+\mathbf{P}_{i, j}^{(n)}=\frac{\mathbf{f}_{i, j}^{(n)} \mathbf{f}_{i,
+j}^{(n)^{T} } }{\left\|\mathbf{f}_{i, j}^{(n)}\right\|^{2} },
+\varepsilon_{i, j, i^{\prime}, j^{\prime} }^{(n)}=\frac{\alpha}{h^{(n)}
+w^{(n)} } \frac{\mathbf{f}_{i, j}^{(n)} \mathbf{f}_{i^{\prime},
+j^{\prime} }^{(n)} }{\left\|\mathbf{f}_{i,
+j}^{(n)}\right\|\left\|\mathbf{f}_{i^{\prime}, j^{\prime}
+}^{(n)}\right\|} \approx \mathbf{0}
+\end{array}
+$$</span> 最后的结果就是被裁剪的范数至少会进行比例为 <span class="math inline">$\frac{\alpha
+\overline{\left\|\mathbf{f}^{(n)}\right\|} }{\left\|\mathbf{f}_{i,
+j}^{(n)}\right\|}$</span>
+的缩放，这意味着补丁对应区域的大范数特征向量会被 FNC
+裁剪，梯度范数会缩小，导致如图 4
+所示的补丁区域的位置明显比原来要暗得多。</p>
+<h2 id="experiment">Experiment</h2>
+<ul>
+<li>模型：ResNet-50, Inception-V3, MobileNet-V2, ResNet-110</li>
+<li>对抗补丁生成方法：AdvP, LaVAN</li>
+<li>FNC模块位置：每个级联模块（即残差块、inception 块、反残差块）</li>
+<li>对比的一些防御方法：Digital Watermarking(DW), Local Gradient
+Smoothing(LGS), PatchGuard, Defense against Occlusion Attacks(DOA)</li>
+<li>结果：都很不错，就不展示了，有兴趣可以看原文</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>这篇文章提出了通用对抗补丁会导致补丁区域具有大的特征范数的问题，并给出了数学解释，随后针对这一特点提出了
+FNC
+的对抗防御方法，这种方法开销不大，对原始模型的性能影响也很小，很容易与其他方法进行结合，效果很不错。</p>
+<h2 id="others">Others</h2>
+<h3 id="结果复现">结果复现</h3>
+<p>因为 ImageNet 太大了，所以将代码修改了一下丢到
+<strong>CIFAR10</strong> 上跑，其余参数不变，结果如下</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方法</th>
+<th style="text-align: center;">准确率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">baseline(clean)</td>
+<td style="text-align: center;">78.87</td>
+</tr>
+<tr>
+<td style="text-align: center;">Adversarial Patch attack</td>
+<td style="text-align: center;">69.98</td>
+</tr>
+<tr>
+<td style="text-align: center;">LaVAN attack</td>
+<td style="text-align: center;">70.82</td>
+</tr>
+</tbody>
+</table>
+<h3 id="代码分析">代码分析</h3>
+<p>基本代码是这样的，当然原代码中还有一些变体</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">clamp</span>(<span class="params">self, x, a=<span class="number">1.0</span></span>):</span><br><span class="line">    norm = torch.norm(x, dim=<span class="number">1</span>)</span><br><span class="line">    thre = a * norm.mean()</span><br><span class="line">    x = x / norm.unsqueeze(<span class="number">1</span>)</span><br><span class="line">    norm = torch.clamp_max(norm, <span class="built_in">max</span>=thre.item())</span><br><span class="line">    x = x * norm.unsqueeze(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p>其实也很好理解，就是先将特征的范数计算出来进行归一化操作，随后将范数进行裁剪后再变换回去，而裁剪的上限是范数的均值</p>
+<h2 id="references">References</h2>
+<hr>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+<div id="footnotes">
+<hr>
+<div id="footnotelist">
+<ol style="list-style: none; padding-left: 0; margin-left: 40px">
+<li id="fn:1">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1712.09665.pdf">Adversarial
+Patch</a><a href="#fnref:1" rev="footnote"> ↩︎</a></span>
+</li>
+</ol>
+</div>
+</div>
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-11/FNC.html" title="『论文笔记』Defending Against Universal Adversarial Patches by Clipping Feature Norms">https://meteordream.github.io/Paper/2022-11/FNC.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/Norm/" rel="tag"><i class="fa fa-tag"></i> Norm</a>
+              <a href="/tags/ICCV/" rel="tag"><i class="fa fa-tag"></i> ICCV</a>
+              <a href="/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E9%98%B2/" rel="tag"><i class="fa fa-tag"></i> 对抗攻防</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-11/Java%E5%9F%BA%E7%A1%80.html" rel="prev" title="Java基础">
+      <i class="fa fa-chevron-left"></i> Java基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/ReadingNote/2022-11/%E8%87%AA%E6%8E%A7%E5%8A%9B.html" rel="next" title="自控力">
+      自控力 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#detail"><span class="nav-number">5.</span> <span class="nav-text">Detail</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">6.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">8.</span> <span class="nav-text">Others</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%8E%B0"><span class="nav-number">8.1.</span> <span class="nav-text">结果复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">8.2.</span> <span class="nav-text">代码分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">9.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

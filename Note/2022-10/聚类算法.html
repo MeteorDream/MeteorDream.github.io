@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言 因为在研究中有涉及到聚类算法，所以对传统的一些聚类算法进行了一些研究、总结、测试。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聚类算法">
+<meta property="og:url" content="https://meteordream.github.io/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="前言 因为在研究中有涉及到聚类算法，所以对传统的一些聚类算法进行了一些研究、总结、测试。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/屏幕截图(2).png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/K_Mean++.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95/Bi-K-Mean.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/K_Mean++2.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95/Bi_K_Mean_2.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/Pytorch_K_Mean.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/K_Mean.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/K_Mean-16461349173805.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/K_Mean-16461351313307.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/K_Mean-16461352699518.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/K_Mean-16461340893914.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/K_Mean-16461423551849.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/DBSCAN.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/DBSCAN-164614544193310.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/DBSCAN-164614571469711.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/DBSCAN-164614623079212.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/DBSCAN-164614636472313.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/DBSCAN-164614656498014.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/SpectralCluster.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/SpectralCluster-164621719201515.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/SpectralCluster-164621812496616.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/SpectralCluster-164621838780217.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/Spectral_Cluster.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/AffinityPropagation.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/AffinityPropagation-164622482057318.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/AffinityPropagation-164622529345519.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/AgglomerativeClustering.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/AgglomerativeClustering-164628603719820.png">
+<meta property="og:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/AgglomerativeClustering-164628619701721.png">
+<meta property="article:published_time" content="2022-10-05T03:10:27.000Z">
+<meta property="article:modified_time" content="2022-10-05T03:10:27.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="聚类">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Note/2022-10/聚类算法/屏幕截图(2).png">
+
+<link rel="canonical" href="https://meteordream.github.io/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>聚类算法 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          聚类算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-10-05 11:10:27" itemprop="dateCreated datePublished" datetime="2022-10-05T11:10:27+08:00">2022-10-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Note/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="前言">前言</h2>
+<p>因为在研究中有涉及到聚类算法，所以对传统的一些聚类算法进行了一些研究、总结、测试。</p>
+<hr>
+<span id="more"></span>
+<h2 id="k-mean">K-Mean</h2>
+<p>先了解了一些聚类的算法，然后手动实现了 K-Mean 聚类代码，在 visdom
+上做了可视化测试，但结果却不是很好，经常出现分得很差的情况</p>
+<p>K-Mean 聚类的基本思想如下：</p>
+<ol type="1">
+<li>随机选择 <span class="math inline"><em>K</em></span>
+个位置作为聚类中心（11.08 更新：随机选要估计范围，改为随机选 <span class="math inline"><em>K</em></span> 个点作为聚类中心</li>
+<li>遍历点集，将点集分配到距离最近的聚类中心所在的聚类中（这里的聚类采用欧氏距离）</li>
+<li>重新计算聚类中心，新的聚类中心是聚类中的点的均值（这里万一是空集要怎么处理？）</li>
+<li>重复 step.2 和 step.3 直到没有聚类不再变化</li>
+</ol>
+<p>优点是算法简单，代价不大，缺点是容易陷入局部最小值，还得事先确定
+<span class="math inline"><em>K</em></span> 的大小</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time, math, sys, os, re</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">from</span> util <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Product_dots</span>(<span class="params">n: <span class="built_in">int</span>, m: <span class="built_in">int</span>, r: <span class="built_in">int</span>, s: <span class="built_in">int</span>, left: <span class="built_in">int</span> = -<span class="number">100</span>, right: <span class="built_in">int</span> = <span class="number">100</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;n 个中心，每个中心产生距离不超过 r 的 m 个随机点，每两个中心的距离不小于 s，中心的范围在 [left, right] 之间&quot;&quot;&quot;</span></span><br><span class="line">    center = <span class="built_in">list</span>()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            x, y = random.randint(left, right), random.randint(left, right)</span><br><span class="line">            <span class="keyword">for</span> i, j <span class="keyword">in</span> center:</span><br><span class="line">                <span class="keyword">if</span> (x - i) ** <span class="number">2</span> + (y - j) ** <span class="number">2</span> &lt; s * s:</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                center.append([x, y])</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    dots = <span class="built_in">list</span>()</span><br><span class="line">    <span class="keyword">for</span> x, y <span class="keyword">in</span> center:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">            dots.append([x + random.uniform(-<span class="number">1</span>, <span class="number">1</span>) * r, y + random.uniform(-<span class="number">1</span>, <span class="number">1</span>) * r])</span><br><span class="line">    <span class="keyword">return</span> center, dots</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">distance</span>(<span class="params">x, y, i, j</span>):</span><br><span class="line">    <span class="keyword">return</span> (x - i) ** <span class="number">2</span> + (y - j) ** <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">k_means</span>(<span class="params">k: <span class="built_in">int</span>, dots: <span class="type">List</span>[<span class="type">List</span>], center=<span class="literal">None</span></span>) -&gt; <span class="type">List</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;将点集分为 k 类, center 仅供测试使用&quot;&quot;&quot;</span></span><br><span class="line">    s = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k)]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> center:</span><br><span class="line">        center = [[random.randint(-<span class="number">100</span>, <span class="number">100</span>), random.randint(-<span class="number">100</span>, <span class="number">100</span>)] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k)]</span><br><span class="line"></span><br><span class="line">    vis = defaultdict(<span class="built_in">int</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        changed = <span class="literal">False</span></span><br><span class="line">        s = [<span class="built_in">list</span>() <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k)]</span><br><span class="line">        <span class="comment"># 计算每个点到所有中心中最近的那个的，分配到那个簇</span></span><br><span class="line">        <span class="keyword">for</span> x, y <span class="keyword">in</span> dots:</span><br><span class="line">            ind, dist = <span class="number">0</span>, <span class="built_in">float</span>(<span class="string">&#x27;inf&#x27;</span>)</span><br><span class="line">            <span class="keyword">for</span> i, (a, b) <span class="keyword">in</span> <span class="built_in">enumerate</span>(center):</span><br><span class="line">                d = distance(x, y, a, b)</span><br><span class="line">                <span class="keyword">if</span> d &lt; dist:</span><br><span class="line">                    ind, dist = i, d</span><br><span class="line">            s[ind].append([x, y])</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> ind == vis[<span class="built_in">str</span>(x) + <span class="string">&#x27;_&#x27;</span> + <span class="built_in">str</span>(y)]:</span><br><span class="line">                changed = <span class="literal">True</span></span><br><span class="line">                vis[<span class="built_in">str</span>(x) + <span class="string">&#x27;_&#x27;</span> + <span class="built_in">str</span>(y)] = ind</span><br><span class="line">        <span class="comment"># 重新计算中心</span></span><br><span class="line">        center = [[<span class="built_in">sum</span>(a <span class="keyword">for</span> a, _ <span class="keyword">in</span> t) / <span class="built_in">len</span>(t), <span class="built_in">sum</span>(b <span class="keyword">for</span> _, b <span class="keyword">in</span> t) / <span class="built_in">len</span>(t)] <span class="keyword">if</span> t <span class="keyword">else</span> [random.randint(-<span class="number">100</span>, <span class="number">100</span>), random.randint(-<span class="number">100</span>, <span class="number">100</span>)] <span class="keyword">for</span> t <span class="keyword">in</span> s]</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> changed:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> center, s</span><br><span class="line">            </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    center, dots = Product_dots(<span class="number">10</span>, <span class="number">50</span>, <span class="number">5</span>, <span class="number">20</span>)</span><br><span class="line">    plotter = VisdomPlotter()</span><br><span class="line">    color = np.array([<span class="number">255</span>,<span class="number">255</span>,<span class="number">255</span>],ndmin=<span class="number">2</span>)</span><br><span class="line">    <span class="comment"># for x, y in center:</span></span><br><span class="line">    <span class="comment">#     plotter.plot_scatter(np.array([x, y], ndmin=2), None, &#x27;x&#x27;, &#x27;y&#x27;, &#x27;K-Mean&#x27;, &#x27;center&#x27;, win=&#x27;before&#x27;)</span></span><br><span class="line">    <span class="comment"># for x, y in dots:</span></span><br><span class="line">    <span class="comment">#     plotter.plot_scatter(np.array([x, y], ndmin=2), legend=&#x27;dots&#x27;, win=&#x27;before&#x27;)</span></span><br><span class="line"></span><br><span class="line">    c, s = k_means(<span class="number">10</span>, dots)</span><br><span class="line">    <span class="keyword">for</span> x, y <span class="keyword">in</span> center:</span><br><span class="line">        plotter.plot_scatter(np.array([x, y], ndmin=<span class="number">2</span>), <span class="literal">None</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;K-Mean-class&#x27;</span>, <span class="string">&#x27;center&#x27;</span>, win=<span class="string">&#x27;after&#x27;</span>, color=color)</span><br><span class="line">    <span class="keyword">for</span> i, t <span class="keyword">in</span> <span class="built_in">enumerate</span>(s, start=<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> x, y <span class="keyword">in</span> t:</span><br><span class="line">            plotter.plot_scatter(np.array([x, y], ndmin=<span class="number">2</span>), legend=<span class="string">&#x27;type-&#x27;</span> + <span class="built_in">str</span>(i), win=<span class="string">&#x27;after&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    c, s = k_means(<span class="number">10</span>, dots, center)</span><br><span class="line">    <span class="keyword">for</span> x, y <span class="keyword">in</span> center:</span><br><span class="line">        plotter.plot_scatter(np.array([x, y], ndmin=<span class="number">2</span>), <span class="literal">None</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;K-Mean-对照&#x27;</span>, <span class="string">&#x27;center&#x27;</span>, win=<span class="string">&#x27;对照&#x27;</span>, color=color)</span><br><span class="line">    <span class="keyword">for</span> i, t <span class="keyword">in</span> <span class="built_in">enumerate</span>(s, start=<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> x, y <span class="keyword">in</span> t:</span><br><span class="line">            plotter.plot_scatter(np.array([x, y], ndmin=<span class="number">2</span>), legend=<span class="string">&#x27;type-&#x27;</span> + <span class="built_in">str</span>(i), win=<span class="string">&#x27;对照&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="k-mean-1">K-Mean++</h2>
+<blockquote>
+<p>然后继续对聚类的算法进行了一些研究，主要还是对 K-Mean
+的一些改进方法，包括 bi-K-Mean, K-Mean++。</p>
+</blockquote>
+<p>K-Mean++ 是对 K-Mean
+算法的第一步进行了改进，由于一个合理的初始聚类中心对结果有很大影响（K-Mean
+对初始敏感），根据聚类中心尽可能相互远离的原理，对 K-Mean
+选取中聚类中心指定了一种策略，具体思路如下：</p>
+<ol type="1">
+<li>先随机选择一个点作为聚类中心</li>
+<li>计算剩下所有点与聚类中心的最小聚类（多个聚类中心只记录最近那个的距离）</li>
+<li>根据上一步的距离设置概率（这里我觉得时候使用 softmax 函数）</li>
+<li>使用轮盘法选一个点作为聚类中心（可以理解为按概率大小随机选一个点）（为什么不直接选最远的呢，其实不难找到反例证明贪心是不正确的，但找最优解代价太大，折中下使用轮盘法随机选择）</li>
+<li>重复 step.2 ~ 4 直到有 <span class="math inline"><em>K</em></span>
+个聚类中心</li>
+</ol>
+<p>实践发现效果相当好，很多情况下甚至比 Bi-K-Mean 结果更好</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">distance</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;欧式距离（不开方）&quot;&quot;&quot;</span></span><br><span class="line">    d = x - y</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(d * d)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">k_means</span>(<span class="params">dots: <span class="type">List</span>[<span class="type">List</span>], k: <span class="built_in">int</span>, center=<span class="literal">None</span></span>) -&gt; <span class="type">List</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;将点集分为 k 类, numpy 版本，即点集是 n 维向量&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(dots) &lt;= k:</span><br><span class="line">        <span class="keyword">return</span> [[i] <span class="keyword">for</span> i <span class="keyword">in</span> dots] + [[] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k - <span class="built_in">len</span>(dots))]</span><br><span class="line"></span><br><span class="line">    s = <span class="literal">None</span></span><br><span class="line">    <span class="comment"># 计算聚类中心</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> center:</span><br><span class="line">        <span class="comment"># 随机选一个作为聚类中心</span></span><br><span class="line">        center = [dots[random.randint(<span class="number">0</span>, <span class="built_in">len</span>(dots) - <span class="number">1</span>)]]</span><br><span class="line">        <span class="comment"># 轮盘法选 k - 1 个点</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k - <span class="number">1</span>):</span><br><span class="line">            dist = [<span class="built_in">min</span>(math.sqrt(distance(x, c)) <span class="keyword">for</span> c <span class="keyword">in</span> center) <span class="keyword">for</span> x <span class="keyword">in</span> dots]</span><br><span class="line">            pro_dist = [math.exp(x) <span class="keyword">for</span> x <span class="keyword">in</span> dist]</span><br><span class="line">            sum_dist = <span class="built_in">sum</span>(pro_dist)</span><br><span class="line">            pro_dist = [x / sum_dist <span class="keyword">for</span> x <span class="keyword">in</span> pro_dist]</span><br><span class="line">            select_dist = <span class="built_in">list</span>(itertools.accumulate(pro_dist))</span><br><span class="line">            rnum = random.random()</span><br><span class="line">            <span class="keyword">for</span> i, j <span class="keyword">in</span> <span class="built_in">enumerate</span>(select_dist):</span><br><span class="line">                <span class="keyword">if</span> j &gt; rnum:</span><br><span class="line">                    rnum = i</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            center.append(dots[i])</span><br><span class="line"></span><br><span class="line">    vis = [<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> dots]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        changed = <span class="literal">False</span></span><br><span class="line">        s = [<span class="built_in">list</span>() <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k)]</span><br><span class="line">        <span class="comment"># 计算每个点到所有中心中最近的那个的，分配到那个簇</span></span><br><span class="line">        <span class="keyword">for</span> j, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(dots):</span><br><span class="line">            ind, dist = <span class="number">0</span>, <span class="built_in">float</span>(<span class="string">&#x27;inf&#x27;</span>)</span><br><span class="line">            <span class="keyword">for</span> i, y <span class="keyword">in</span> <span class="built_in">enumerate</span>(center):</span><br><span class="line">                d = distance(x, y)</span><br><span class="line">                <span class="keyword">if</span> d &lt; dist:</span><br><span class="line">                    ind, dist = i, d</span><br><span class="line">            s[ind].append(x)</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> ind == vis[j]:</span><br><span class="line">                changed = <span class="literal">True</span></span><br><span class="line">                vis[j] = ind</span><br><span class="line">        <span class="comment"># 重新计算中心</span></span><br><span class="line">        center = [<span class="built_in">sum</span>(t) / <span class="built_in">len</span>(t) <span class="keyword">if</span> t <span class="keyword">else</span> np.random.random(size=dots[<span class="number">0</span>].shape) <span class="keyword">for</span> t <span class="keyword">in</span> s]</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> changed:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> center, s</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>重写的方法基于 numpy 实现，这样后续如果要改为基于 Pytorch
+实现也会很容易</p>
+</blockquote>
+<p>Bi-K-Mean 是二分实现的 K-Mean，基本思路是：</p>
+<ol type="1">
+<li>选一个点作为聚类中心（或者说整个点集作为一个聚类）</li>
+<li>尝试将每个点集使用 K-Mean 一分为二，即 <span class="math inline"><em>K</em> = 2</span> 的 K-Mean 算法</li>
+<li>计算损失 SSE ，对损失最小的聚类进行拆分</li>
+<li>重复上面两步直到满 <span class="math inline"><em>K</em></span>
+个聚类</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">SequaredError</span>(<span class="params">dots</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;计算一簇聚类的 SSE&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> dots:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    center = <span class="built_in">sum</span>(dots) / <span class="built_in">len</span>(dots)</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(<span class="built_in">sum</span>((dot - center) ** <span class="number">2</span> <span class="keyword">for</span> dot <span class="keyword">in</span> dots))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Bi_K_means</span>(<span class="params">dots, k</span>):</span><br><span class="line">    <span class="comment"># 视为一个簇</span></span><br><span class="line">    s = [dots]</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(s) &lt; k:</span><br><span class="line">        c, p, ind = <span class="built_in">float</span>(<span class="string">&#x27;inf&#x27;</span>), <span class="literal">None</span>, -<span class="number">1</span></span><br><span class="line">        <span class="comment"># 对每个簇，计算一分为二的 SSE 改变值，选最小的作为新的簇</span></span><br><span class="line">        <span class="keyword">for</span> i, dot <span class="keyword">in</span> <span class="built_in">enumerate</span>(s):</span><br><span class="line">            old_sse = SequaredError(dot)</span><br><span class="line">            _, p2 = k_means(dot, <span class="number">2</span>)</span><br><span class="line">            new_sse = <span class="built_in">sum</span>(SequaredError(d) <span class="keyword">for</span> d <span class="keyword">in</span> p2)</span><br><span class="line">            <span class="keyword">if</span> new_sse - old_sse &lt; c:</span><br><span class="line">                c, p, ind = new_sse - old_sse, p2, i</span><br><span class="line">        tmp = <span class="built_in">list</span>()</span><br><span class="line">        <span class="keyword">for</span> i, dot <span class="keyword">in</span> <span class="built_in">enumerate</span>(s):</span><br><span class="line">            <span class="keyword">if</span> i == ind:</span><br><span class="line">                tmp.extend(p)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                tmp.append(dot)</span><br><span class="line">        s = tmp</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> s</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>网上的介绍所这种方法得到的结果是全局最优解，但测试以后发现并不是
+，因为将聚类拆分上是用了贪心的思想，容易证明这只是局部最优而非全局最优，实验中也发现很多时候该方法得到的损失和比
+K-Mean++ 的损失还要大，但相对而言优于 K-Mean</p>
+</blockquote>
+<p>随机生成聚类中心和点集的测试结果如图所示，K-Mean++
+效果与初始聚类一样，而 Bi-K-Mean 结果却相对较差</p>
+<figure>
+<img data-src="聚类算法/屏幕截图(2).png" alt="K-Mean">
+<figcaption aria-hidden="true">K-Mean</figcaption>
+</figure>
+<p>正态分布散点聚类结果如下图</p>
+<p><img data-src="聚类算法/K_Mean++.png" alt="K_Mean++"> <img src="/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95/Bi-K-Mean.png" alt="Bi-K-Mean"></p>
+<p>计算聚类中点到聚类中心聚类的平方和为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">K-Mean = <span class="number">53.31382575076519</span></span><br><span class="line">Bi_KMEAN = <span class="number">59.136002328973206</span></span><br></pre></td></tr></table></figure>
+<p>显然 Bi-K-Mean 的效果还不如 K-Mean++</p>
+<p><img data-src="聚类算法/K_Mean++2.png" alt="K_Mean++2"> <img src="/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95/Bi_K_Mean_2.png" alt="Bi_K_Mean_2"></p>
+<p>在高密度的点集下，可以明显看到 Bi-K-Mean 的聚类间边界分明成直线，而
+K-Mean++ 的边界就自然得多，并且从 SSE 上看也是 K-Mean++ 的效果更好</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">K-Mean = <span class="number">658.3800952519407</span></span><br><span class="line">Bi_KMEAN = <span class="number">774.3682173208291</span></span><br></pre></td></tr></table></figure>
+<h3 id="k-mean矩阵实现形式">K-Mean++矩阵实现形式</h3>
+<p>对 K-Mean++ 的代码进行了改造，使其能运行在输入为一个 <span class="math inline"><em>n</em> × <em>m</em></span>
+的矩阵上进行聚类（2021.11.11 返回值中增加了索引）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">distance</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;欧式距离（不开方）&quot;&quot;&quot;</span></span><br><span class="line">    d = x - y</span><br><span class="line">    <span class="keyword">return</span> torch.<span class="built_in">sum</span>(d * d)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">k_means</span>(<span class="params">dots, k: <span class="built_in">int</span></span>) -&gt; <span class="type">List</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;K-Mean++ 聚类 (提醒，数据要先做归一化处理避免在调用 softmax 函数时 math.exp 溢出错误, exp(507) 开始就会溢出)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        dots (tensor): 一个 n x m 的矩阵，表示 n 个 m 维的向量进行聚类</span></span><br><span class="line"><span class="string">        k (int): 聚类的数量</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        List[tensor]: k 个一维的中心点，k 个 s_k x m 的矩阵 (s_k 表示聚类中的向量数量)，dots 中的每个点属于哪个聚类</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    n, m = dots.size()</span><br><span class="line">    <span class="keyword">if</span> n &lt;= k:</span><br><span class="line">        <span class="keyword">return</span> [dots[i].unsqueeze(<span class="number">0</span>) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)] + [torch.tensor([[]]) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k - n)]</span><br><span class="line"></span><br><span class="line">    s = <span class="literal">None</span></span><br><span class="line">    <span class="comment"># 计算聚类中心</span></span><br><span class="line">    <span class="comment"># 随机选一个点作为聚类中心</span></span><br><span class="line">    center = [dots[random.randint(<span class="number">0</span>, n - <span class="number">1</span>)]]</span><br><span class="line">    <span class="comment"># 再用轮盘法选 k - 1 个点</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k - <span class="number">1</span>):</span><br><span class="line">        dist = [<span class="built_in">min</span>(math.sqrt(distance(dots[i], c)) <span class="keyword">for</span> c <span class="keyword">in</span> center) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line">        pro_dist = [math.exp(x) <span class="keyword">for</span> x <span class="keyword">in</span> dist]</span><br><span class="line">        sum_dist = <span class="built_in">sum</span>(pro_dist)</span><br><span class="line">        pro_dist = [x / sum_dist <span class="keyword">for</span> x <span class="keyword">in</span> pro_dist]</span><br><span class="line">        select_dist = <span class="built_in">list</span>(accumulate(pro_dist))</span><br><span class="line">        rnum = random.random()</span><br><span class="line">        <span class="keyword">for</span> i, j <span class="keyword">in</span> <span class="built_in">enumerate</span>(select_dist):</span><br><span class="line">            <span class="keyword">if</span> j &gt; rnum:</span><br><span class="line">                rnum = i</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        center.append(dots[rnum])</span><br><span class="line"></span><br><span class="line">    vis = [<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        changed = <span class="literal">False</span></span><br><span class="line">        s = [<span class="built_in">list</span>() <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(k)]</span><br><span class="line">        <span class="comment"># 计算每个点到所有中心中最近的那个的，分配到那个簇</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">            ind, dist = <span class="number">0</span>, <span class="built_in">float</span>(<span class="string">&#x27;inf&#x27;</span>)</span><br><span class="line">            <span class="keyword">for</span> i, y <span class="keyword">in</span> <span class="built_in">enumerate</span>(center):</span><br><span class="line">                d = distance(dots[j], y)</span><br><span class="line">                <span class="keyword">if</span> d &lt; dist:</span><br><span class="line">                    ind, dist = i, d</span><br><span class="line">            s[ind].append(dots[j])</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> ind == vis[j]:</span><br><span class="line">                changed = <span class="literal">True</span></span><br><span class="line">                vis[j] = ind</span><br><span class="line">        <span class="comment"># 重新计算中心</span></span><br><span class="line">        center = [<span class="built_in">sum</span>(t) / <span class="built_in">len</span>(t) <span class="keyword">if</span> t <span class="keyword">else</span> dots[random.randint(<span class="number">0</span>, n - <span class="number">1</span>)] <span class="keyword">for</span> t <span class="keyword">in</span> s]</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> changed:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> center, [torch.stack(t) <span class="keyword">for</span> t <span class="keyword">in</span> s], vis</span><br></pre></td></tr></table></figure>
+<p>测试代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    x = torch.randn(size=(<span class="number">5000</span>, <span class="number">2</span>))</span><br><span class="line">    center, s = k_means(x, <span class="number">10</span>)</span><br><span class="line">    plotter = VisdomPlotter()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i, d <span class="keyword">in</span> <span class="built_in">enumerate</span>(s):</span><br><span class="line">        plotter.plot_scatter(d, xlabel=<span class="string">&#x27;x&#x27;</span>, ylabel=<span class="string">&#x27;y&#x27;</span>, title=<span class="string">&#x27;Pytorch-K-Mean&#x27;</span>, legend=<span class="string">&#x27;type-&#x27;</span> + <span class="built_in">str</span>(i), win=<span class="string">&#x27;Pytorch-K-Mean&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>测试结果：</p>
+<figure>
+<img data-src="聚类算法/Pytorch_K_Mean.png" alt="Pytorch_K_Mean">
+<figcaption aria-hidden="true">Pytorch_K_Mean</figcaption>
+</figure>
+<p>显示了相对满意的聚类结果</p>
+<p>接下来考虑的是在网络的实现过程中如何确定聚类的数目</p>
+<hr>
+<h2 id="dbscan聚类算法">DBSCAN聚类算法</h2>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DBSCAN">DBSCAN</a>
+是一种基于密度的算法，基本想法是一定范围内的点都归到一个聚类，并且范围内的点可以继续拓展该聚类</p>
+<p>有两个参数 <span class="math inline"><em>ε</em></span> 和 <span class="math inline"><em>m</em><em>i</em><em>n</em><em>P</em><em>t</em><em>s</em></span>
+，分别表示邻域范围和形成高密度区域所需最少点数，伪代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">DBSCAN(D, eps, MinPts) &#123;</span><br><span class="line">   C = 0</span><br><span class="line">   for each point P in dataset D &#123;</span><br><span class="line">      if P is visited</span><br><span class="line">         continue next point</span><br><span class="line">      mark P as visited</span><br><span class="line">      NeighborPts = regionQuery(P, eps)</span><br><span class="line">      if sizeof(NeighborPts) &lt; MinPts</span><br><span class="line">         mark P as NOISE</span><br><span class="line">      else &#123;</span><br><span class="line">         C = next cluster</span><br><span class="line">         expandCluster(P, NeighborPts, C, eps, MinPts)</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">expandCluster(P, NeighborPts, C, eps, MinPts) &#123;</span><br><span class="line">   add P to cluster C</span><br><span class="line">   for each point P&#x27; in NeighborPts &#123; </span><br><span class="line">      if P&#x27; is not visited &#123;</span><br><span class="line">         mark P&#x27; as visited</span><br><span class="line">         NeighborPts&#x27; = regionQuery(P&#x27;, eps)</span><br><span class="line">         if sizeof(NeighborPts&#x27;) &gt;= MinPts</span><br><span class="line">            NeighborPts = NeighborPts joined with NeighborPts&#x27;</span><br><span class="line">      &#125;</span><br><span class="line">      if P&#x27; is not yet member of any cluster</span><br><span class="line">         add P&#x27; to cluster C</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">regionQuery(P, eps)</span><br><span class="line">   return all points within P&#x27;s eps-neighborhood (including P)</span><br></pre></td></tr></table></figure>
+<p>所有点被分成三类：核心点（<span class="math inline"><em>ε</em></span>-邻域范围内范围内有至少 <span class="math inline"><em>m</em><em>i</em><em>n</em><em>P</em><em>t</em><em>s</em></span>
+个点）、可达点（在核心点 <span class="math inline"><em>ε</em></span>-邻域
+范围内但不是核心点）、局外点（除了前两种以外的点）</p>
+<p>基本步骤：</p>
+<ol type="1">
+<li>点集中找到一个未被访问的点，检查是否是核心点，不是的话跳过，是的话建立一个新的聚类</li>
+<li>将 <span class="math inline"><em>ε</em></span>-邻域内的点都加入到该聚类</li>
+<li>对 聚类中的点，将其 <span class="math inline"><em>ε</em></span>-邻域内的点都加入聚类，直到聚类不再加点，这就是一个完整的聚类了</li>
+<li>重复上述步骤找到所以聚类，剩下的点是杂点</li>
+</ol>
+<hr>
+<h2 id="基于sklearn实现">基于sklearn实现</h2>
+<p>使用二维数据便于可视化</p>
+<h3 id="创建数据集">创建数据集</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> sklearn.cluster <span class="keyword">as</span> cluster</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">100</span>, <span class="number">100</span>))</span><br></pre></td></tr></table></figure>
+<p>使用二维数据，<span class="math inline">size = (<em>n</em><sub>sample</sub>, <em>n</em><sub>features</sub>)</span>，<span class="math inline"><em>n</em></span> 是样本数量, 数据范围 <span class="math inline">[0, 100]</span>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 点簇 数据</span></span><br><span class="line">cnt_centers = <span class="number">10</span>        <span class="comment"># 数据中心的数量</span></span><br><span class="line">cnt_each_centers = <span class="number">20</span>   <span class="comment"># 数据点的周围点的数量</span></span><br><span class="line">size = <span class="number">15</span></span><br></pre></td></tr></table></figure>
+<p><strong>点簇数据生成</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成样本中心</span></span><br><span class="line">centers = <span class="built_in">list</span>()</span><br><span class="line">centers_min_dist = (<span class="number">2</span> * size) ** <span class="number">2</span></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(cnt_centers):</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        x, y = random.random() * <span class="number">100</span>, random.random() * <span class="number">100</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">all</span>((x - i) ** <span class="number">2</span> + (y - j) ** <span class="number">2</span> &gt; centers_min_dist <span class="keyword">for</span> i, j <span class="keyword">in</span> centers):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    centers.append((x, y))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成样本</span></span><br><span class="line">dots_list = <span class="built_in">list</span>()</span><br><span class="line"><span class="keyword">for</span> x, y <span class="keyword">in</span> centers:</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(cnt_each_centers):</span><br><span class="line">        dx, dy = random.random() * size, random.random() * size</span><br><span class="line">        dots_list.append((x + dx, y + dy))</span><br><span class="line"></span><br><span class="line">random.shuffle(dots_list)</span><br><span class="line">dots = torch.tensor(dots_list)</span><br><span class="line"><span class="built_in">print</span>(dots.size())</span><br></pre></td></tr></table></figure>
+<p><strong>随机数据生成</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 随机数据点</span></span><br><span class="line">dots = torch.randn((<span class="number">50</span>, <span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(dots.size())</span><br></pre></td></tr></table></figure>
+<p><strong>环形数据簇</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 环形数据簇(3 个圆环)</span></span><br><span class="line">cnt_centers = <span class="number">3</span>         <span class="comment"># 数据中心的数量</span></span><br><span class="line">cnt_each_centers = <span class="number">5</span>   <span class="comment"># 数据点的周围点的数量</span></span><br><span class="line">size = <span class="number">10</span></span><br><span class="line">center_x, center_y = <span class="number">50</span>, <span class="number">50</span></span><br><span class="line">dots_list = <span class="built_in">list</span>()</span><br><span class="line"><span class="keyword">for</span> r, sample <span class="keyword">in</span> <span class="built_in">zip</span>([<span class="number">33</span>, <span class="number">66</span>, <span class="number">99</span>], [<span class="number">32</span>, <span class="number">64</span>, <span class="number">96</span>]):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(sample):</span><br><span class="line">        x, y = r * math.cos(<span class="number">2</span> * i * math.pi / (sample - <span class="number">1</span>)), r * math.sin(<span class="number">2</span> * i * math.pi / (sample - <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(cnt_each_centers):</span><br><span class="line">            dx, dy = random.random() * size, random.random() * size</span><br><span class="line">            dots_list.append((x + dx, y + dy))</span><br><span class="line"></span><br><span class="line">random.shuffle(dots_list)</span><br><span class="line">dots = torch.tensor(dots_list)</span><br><span class="line"><span class="built_in">print</span>(dots.size())</span><br></pre></td></tr></table></figure>
+<p><strong>螺旋数据簇（2簇）</strong></p>
+<p>实际上是两条阿基米德螺线，即 <span class="math inline"><em>r</em> = 10<em>θ</em></span>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 螺旋数据簇 （2 簇）</span></span><br><span class="line">cnt_centers = <span class="number">2</span>         <span class="comment"># 分类数</span></span><br><span class="line">cnt_each_centers = <span class="number">120</span>  <span class="comment"># 采样数量</span></span><br><span class="line">sample = <span class="number">5</span>              <span class="comment"># 采样点数</span></span><br><span class="line">size = <span class="number">8</span></span><br><span class="line">dots_list = <span class="built_in">list</span>()</span><br><span class="line">st, ed, cy = <span class="number">10</span>, <span class="number">100</span>, <span class="number">2.1</span> * <span class="number">2</span> * math.pi        <span class="comment"># 起始半径 10, 两圈后半径为100</span></span><br><span class="line">r_step = (ed - st) / cnt_each_centers</span><br><span class="line">c_step = cy / cnt_each_centers</span><br><span class="line"><span class="keyword">for</span> start <span class="keyword">in</span> [<span class="number">0</span>, math.pi]:</span><br><span class="line">    r, t = st, start</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(cnt_each_centers):</span><br><span class="line">        x, y = r * math.cos(t), r * math.sin(t)</span><br><span class="line">        r += r_step</span><br><span class="line">        t += c_step</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(sample):</span><br><span class="line">            dx, dy = random.random() * size, random.random() * size</span><br><span class="line">            dots_list.append((x + dx, y + dy))</span><br><span class="line"></span><br><span class="line">random.shuffle(dots_list)</span><br><span class="line">dots = torch.tensor(dots_list)</span><br><span class="line"><span class="built_in">print</span>(dots.size())</span><br></pre></td></tr></table></figure>
+<p><strong>绘图</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成色卡(彩虹渐变色)</span></span><br><span class="line"><span class="comment">#    红   橙   黄    绿   青    蓝   紫</span></span><br><span class="line"><span class="comment"># r: 255, 255, 255, 0  , 0  , 0  , 139</span></span><br><span class="line"><span class="comment"># g: 0  , 165, 255, 255, 255, 0  , 0</span></span><br><span class="line"><span class="comment"># b: 0  , 0  , 0  , 0  , 255, 255, 255</span></span><br><span class="line">color = <span class="built_in">list</span>()</span><br><span class="line">color_step = (cnt_centers - <span class="number">1</span>) / <span class="number">6</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">mid</span>(<span class="params">left, right, cur, l_color, r_color</span>):</span><br><span class="line">    <span class="keyword">if</span> l_color &lt; r_color:</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">int</span>(l_color + (cur - left) * (r_color - l_color) / (right - left))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">int</span>((right - cur) * (l_color - r_color) / (right - left))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(cnt_centers):</span><br><span class="line">    idx = <span class="built_in">int</span>(i // color_step)</span><br><span class="line">    <span class="keyword">if</span> idx == <span class="number">0</span>:</span><br><span class="line">        r, g, b = <span class="number">255</span>, mid(<span class="number">0</span>, color_step, i, <span class="number">0</span>, <span class="number">165</span>), <span class="number">0</span></span><br><span class="line">    <span class="keyword">elif</span> idx == <span class="number">1</span>:</span><br><span class="line">        r, g, b = <span class="number">255</span>, mid(color_step, color_step * <span class="number">2</span>, i, <span class="number">165</span>, <span class="number">255</span>), <span class="number">0</span></span><br><span class="line">    <span class="keyword">elif</span> idx == <span class="number">2</span>:</span><br><span class="line">        r, g, b = mid(color_step * <span class="number">2</span>, color_step * <span class="number">3</span>, i, <span class="number">255</span>, <span class="number">0</span>), <span class="number">255</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">elif</span> idx == <span class="number">3</span>:</span><br><span class="line">        r, g, b = <span class="number">0</span>, <span class="number">255</span>, mid(color_step * <span class="number">3</span>, color_step * <span class="number">4</span>, i, <span class="number">0</span>, <span class="number">255</span>)</span><br><span class="line">    <span class="keyword">elif</span> idx == <span class="number">4</span>:</span><br><span class="line">        r, g, b = <span class="number">0</span>, mid(color_step * <span class="number">4</span>, color_step * <span class="number">5</span>, i, <span class="number">255</span>, <span class="number">0</span>), <span class="number">255</span></span><br><span class="line">    <span class="keyword">elif</span> idx == <span class="number">5</span>:</span><br><span class="line">        r, g, b = mid(color_step * <span class="number">5</span>, cnt_centers, i, <span class="number">0</span>, <span class="number">139</span>), <span class="number">0</span>, <span class="number">255</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r, g, b = <span class="number">139</span>, <span class="number">0</span>, <span class="number">255</span></span><br><span class="line">    color.append(<span class="string">&quot;#&#123;:0^2&#125;&#123;:0^2&#125;&#123;:0^2&#125;&quot;</span>.<span class="built_in">format</span>(*<span class="built_in">map</span>((<span class="keyword">lambda</span> x: x[<span class="number">2</span>:]), <span class="built_in">map</span>(<span class="built_in">hex</span>, (r, g, b)))))</span><br><span class="line"><span class="built_in">print</span>(color)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 绘制原图</span></span><br><span class="line">plt.figure(figsize=(<span class="number">4</span>, <span class="number">4</span>), dpi=<span class="number">240</span>)</span><br><span class="line">plt.scatter(dots[:,<span class="number">0</span>], dots[:,<span class="number">1</span>], c=<span class="string">&#x27;#8b00ff&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;Befort&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">f&quot;1_<span class="subst">&#123;tag&#125;</span>_before.png&quot;</span>, dpi=<span class="number">240</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="k-means">K-Means</h3>
+<p>其实是 K-Mean++，不过也只是初始化方法不同而已</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先试试 K-Means</span></span><br><span class="line">label = cluster.KMeans(cnt_centers, ).fit_predict(dots)</span><br><span class="line">dots_cls = [color[lab] <span class="keyword">for</span> lab <span class="keyword">in</span> label]</span><br><span class="line">plt.figure(figsize=(<span class="number">4</span>, <span class="number">4</span>), dpi=<span class="number">240</span>)</span><br><span class="line">plt.scatter(dots[:,<span class="number">0</span>], dots[:,<span class="number">1</span>], c=dots_cls)</span><br><span class="line">plt.title(<span class="string">&quot;After&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">f&quot;2_<span class="subst">&#123;tag&#125;</span>_after.png&quot;</span>, dpi=<span class="number">240</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>结果是这样的</p>
+<p><strong>点簇（稀疏）</strong></p>
+<figure>
+<img data-src="聚类算法/K_Mean.png" alt="K_Mean">
+<figcaption aria-hidden="true">K_Mean</figcaption>
+</figure>
+<p><strong>点簇（密集）</strong></p>
+<figure>
+<img data-src="聚类算法/K_Mean-16461349173805.png" alt="K_Mean">
+<figcaption aria-hidden="true">K_Mean</figcaption>
+</figure>
+<p><strong>随机（稀疏）</strong> - 50 个点</p>
+<figure>
+<img data-src="聚类算法/K_Mean-16461351313307.png" alt="K_Mean">
+<figcaption aria-hidden="true">K_Mean</figcaption>
+</figure>
+<p><strong>随机（密集）</strong> - 5000 个点（仅运行 1.8 s）</p>
+<figure>
+<img data-src="聚类算法/K_Mean-16461352699518.png" alt="K_Mean">
+<figcaption aria-hidden="true">K_Mean</figcaption>
+</figure>
+<p><strong>环形数据簇</strong></p>
+<figure>
+<img data-src="聚类算法/K_Mean-16461340893914.png" alt="K_Mean">
+<figcaption aria-hidden="true">K_Mean</figcaption>
+</figure>
+<p><strong>螺旋数据簇</strong></p>
+<figure>
+<img data-src="聚类算法/K_Mean-16461423551849.png" alt="K_Mean">
+<figcaption aria-hidden="true">K_Mean</figcaption>
+</figure>
+<hr>
+<h3 id="dbscan">DBSCAN</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">label = cluster.DBSCAN(<span class="number">8</span>, min_samples=<span class="number">3</span>).fit_predict(dots)</span><br><span class="line">label = <span class="built_in">list</span>(lab <span class="keyword">for</span> lab <span class="keyword">in</span> label)</span><br><span class="line">cnt_centers = <span class="built_in">max</span>(label) + <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>因为是动态决定聚类数量的，所以运行聚类算法后才知道聚类数量，所以这里插入前面生成色卡的代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dots_cls = [color[lab] <span class="keyword">for</span> lab <span class="keyword">in</span> label]</span><br><span class="line">plt.figure(figsize=(<span class="number">4</span>, <span class="number">4</span>), dpi=<span class="number">240</span>)</span><br><span class="line">plt.scatter(dots[:,<span class="number">0</span>], dots[:,<span class="number">1</span>], c=dots_cls)</span><br><span class="line">plt.title(<span class="string">&quot;After&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">f&quot;2_<span class="subst">&#123;tag&#125;</span>_after.png&quot;</span>, dpi=<span class="number">240</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>注意：下图中紫色可能为异常数据（如果有异常数据的话），分类中标签为
+-1</p>
+<p><strong>螺旋数据簇</strong></p>
+<figure>
+<img data-src="聚类算法/DBSCAN.png" alt="DBSCAN">
+<figcaption aria-hidden="true">DBSCAN</figcaption>
+</figure>
+<p><strong>点簇</strong></p>
+<p>创建了 15 个聚类中心点，计算结果只有 8 个</p>
+<figure>
+<img data-src="聚类算法/DBSCAN-164614544193310.png" alt="DBSCAN">
+<figcaption aria-hidden="true">DBSCAN</figcaption>
+</figure>
+<p><strong>点簇（密集）</strong></p>
+<p>eps 为 3 才能分出 5 个类，为 5 的时候只有两类，更大则只有一类</p>
+<p>注意到 5 类中间有一个异常点</p>
+<figure>
+<img data-src="聚类算法/DBSCAN-164614571469711.png" alt="DBSCAN">
+<figcaption aria-hidden="true">DBSCAN</figcaption>
+</figure>
+<p><strong>随机点（密集）</strong></p>
+<p>对于随机点 DBSCAN 效果并不好，因为 eps 难以确定</p>
+<p>eps 为 0.5 的结果中只分了一类，剩下的都是异常点</p>
+<figure>
+<img data-src="聚类算法/DBSCAN-164614623079212.png" alt="DBSCAN">
+<figcaption aria-hidden="true">DBSCAN</figcaption>
+</figure>
+<p>eps 为 0.1 则分出了 50
+类，是一个失败的聚类，中间的大量分在一类而外围有大量异常点，所以说
+DBSCAN 不适合随机情况的聚类</p>
+<figure>
+<img data-src="聚类算法/DBSCAN-164614636472313.png" alt="DBSCAN">
+<figcaption aria-hidden="true">DBSCAN</figcaption>
+</figure>
+<p><strong>环形点簇</strong></p>
+<p>eps 设为 10 比较合理，太小就不止 3 类了</p>
+<figure>
+<img data-src="聚类算法/DBSCAN-164614656498014.png" alt="DBSCAN">
+<figcaption aria-hidden="true">DBSCAN</figcaption>
+</figure>
+<p><strong>总结</strong>：显然，DBSCAN
+更擅长中心距离比较大的情况，对于随机点效果非常差，除此之外的另外一个问题就是参数
+eps 不太容易处理</p>
+<hr>
+<h3 id="谱聚类">谱聚类</h3>
+<p>在 scikit-learn
+的类库中，<code>sklearn.cluster.SpectralClustering</code>实现了基于 Ncut
+的谱聚类，没有实现基于 RatioCut
+的切图聚类。同时，对于相似矩阵的建立，也只是实现了基于 K
+邻近法和全连接法的方式，没有基于 <span class="math inline"><em>ϵ</em></span>
+-邻近法的相似矩阵。最后一步的聚类方法则提供了两种，K-Mean s算法和
+discretize 算法。</p>
+<p>对于SpectralClustering的参数，我们主要需要调参的是相似矩阵建立相关的参数和聚类类别数目，它对聚类的结果有很大的影响。当然其他的一些参数也需要理解，在必要时需要修改默认参数。</p>
+<ul>
+<li><strong>n_clusters</strong>：代表我们在对谱聚类切图时降维到的维数，同时也是最后一步聚类算法聚类到的维数。也就是说scikit-learn中的谱聚类对这两个参数统一到了一起。简化了调参的参数个数。虽然这个值是可选的，但是一般还是推荐调参选择最优参数。</li>
+<li><strong>affinity</strong>:
+也就是我们的相似矩阵的建立方式。可以选择的方式有三类，第一类是
+<code>nearest_neighbors</code> 即K邻近法。第二类是
+<code>precomputed</code>
+即自定义相似矩阵。选择自定义相似矩阵时，需要自己调用 set_params
+来自己设置相似矩阵。第三类是全连接法，可以使用各种核函数来定义相似矩阵，还可以自定义核函数。最常用的是内置高斯核函数
+<code>rbf</code> 。其他比较流行的核函数有 <code>linear</code>
+即线性核函数, <code>poly</code> 即多项式核函数, <code>sigmoid</code> 即
+sigmoid 核函数。如果选择了这些核函数，
+对应的核函数参数在后面有单独的参数需要调。自定义核函数我没有使用过，这里就不多讲了。affinity默认是高斯核
+<code>rbf</code>。一般来说，相似矩阵推荐使用默认的高斯核函数。</li>
+<li>核函数参数<strong>gamma</strong>: 如果我们在 affinity
+参数使用了多项式核函数 <code>poly</code>，高斯核函数 <code>rbf</code>,
+或者 <code>sigmoid</code> 核函数，那么我们就需要对这个参数进行调参。
+<ul>
+<li>多项式核函数中这个参数对应 <span class="math inline"><em>K</em>(<em>x</em>, <em>z</em>) = (<em>γ</em><em>x</em> ⋅ <em>z</em> + <em>r</em>)<sup><em>d</em></sup></span>
+中的 <span class="math inline"><em>γ</em></span>
+。一般需要通过交叉验证选择一组合适的 <span class="math inline"><em>γ</em>, <em>r</em>, <em>d</em></span>.</li>
+<li>高斯核函数中这个参数对应 <span class="math inline"><em>K</em>(<em>x</em>, <em>z</em>) = <em>e</em><em>x</em><em>p</em>(−<em>γ</em>‖<em>x</em> − <em>z</em>‖<sup>2</sup>)</span>
+中的 <span class="math inline"><em>γ</em></span>
+。一般需要通过交叉验证选择合适的 <span class="math inline"><em>γ</em></span>.</li>
+<li>sigmoid核函数中这个参数对应 <span class="math inline"><em>K</em>(<em>x</em>, <em>z</em>) = <em>t</em><em>a</em><em>n</em><em>h</em>(<em>γ</em><em>x</em> ⋅ <em>z</em> + <em>r</em>)</span>
+中的 <span class="math inline"><em>γ</em></span>
+。一般需要通过交叉验证选择一组合适的 <span class="math inline"><em>γ</em>, <em>r</em></span>.</li>
+<li><span class="math inline"><em>γ</em></span>
+默认值为1.0，如果我们affinity使用<code>nearest_neighbors</code> 或者是
+<code>precomputed</code>，则这么参数无意义。</li>
+</ul></li>
+<li>核函数参数<strong>degree</strong>：如果我们在affinity参数使用了多项式核函数
+‘poly’，那么我们就需要对这个参数进行调参。这个参数对应 <span class="math inline"><em>K</em>(<em>x</em>, <em>z</em>) = (<em>γ</em><em>x</em> ⋅ <em>z</em> + <em>r</em>)<sup><em>d</em></sup></span>
+中的 <span class="math inline"><em>d</em></span>
+。默认是3。一般需要通过交叉验证选择一组合适的 <span class="math inline"><em>γ</em>, <em>r</em>, <em>d</em></span>.</li>
+<li>核函数参数<strong>coef0</strong>: 如果我们在 affinity
+参数使用了多项式核函数 <code>poly</code>，或者 <code>sigmoid</code>
+核函数，那么我们就需要对这个参数进行调参。
+<ul>
+<li>多项式核函数中这个参数对应 <span class="math inline"><em>K</em>(<em>x</em>, <em>z</em>) = (<em>γ</em><em>x</em> ⋅ <em>z</em> + <em>r</em>)<sup><em>d</em></sup></span>
+中的 <span class="math inline"><em>r</em></span>
+。一般需要通过交叉验证选择一组合适的 <span class="math inline"><em>γ</em>, <em>r</em>, <em>d</em></span>.</li>
+<li>sigmoid核函数中这个参数对应 <span class="math inline"><em>K</em>(<em>x</em>, <em>z</em>) = <em>t</em><em>a</em><em>n</em><em>h</em>(<em>γ</em><em>x</em> ⋅ <em>z</em> + <em>r</em>)</span>
+中的 <span class="math inline"><em>r</em></span>
+。一般需要通过交叉验证选择一组合适的 <span class="math inline"><em>γ</em>, <em>r</em></span>.</li>
+<li>coef0 默认为 0</li>
+</ul></li>
+<li><strong>kernel_params</strong>：如果affinity参数使用了自定义的核函数，则需要通过这个参数传入核函数的参数。</li>
+<li><strong>n_neighbors</strong>: 如果我们affinity参数指定为
+<code>nearest_neighbors</code>
+即K邻近法，则我们可以通过这个参数指定KNN算法的K的个数。默认是10.我们需要根据样本的分布对这个参数进行调参。如果我们affinity不使用
+<code>nearest_neighbors</code>，则无需理会这个参数。</li>
+<li><strong>eigen_solver</strong>:在降维计算特征值特征向量的时候使用的工具。有
+<code>None</code>,<code>arpack</code>, <code>lobpcg</code>,
+和<code>amg</code>4种选择。如果我们的样本数不是特别大，无需理会这个参数，使用
+<code>None</code>
+暴力矩阵特征分解即可,如果样本量太大，则需要使用后面的一些矩阵工具来加速矩阵特征分解。它对算法的聚类效果无影响。</li>
+<li><strong>eigen_tol</strong>：如果eigen_solver使用了
+<code>arpack</code>，则需要通过eigen_tol指定矩阵分解停止条件。</li>
+<li><strong>assign_labels</strong>：即最后的聚类方法的选择，有K-Means算法和
+discretize算法两种算法可以选择。一般来说，默认的K-Means算法聚类效果更好。但是由于K-Means算法结果受初始值选择的影响，可能每次都不同，如果我们需要算法结果可以重现，则可以使用discretize。</li>
+<li><strong>n_init</strong>：即使用K-Means时用不同的初始值组合跑K-Means聚类的次数，这个和K-Means类里面n_init的意义完全相同，默认是10，一般使用默认值就可以。如果你的n_clusters值较大，则可以适当增大这个值。</li>
+</ul>
+<p>从上面的介绍可以看出，需要调参的部分除了最后的类别数<strong>n_clusters</strong>，主要是相似矩阵<strong>affinity</strong>的选择，以及对应的相似矩阵参数。当我选定一个相似矩阵构建方法后，调参的过程就是对应的参数交叉选择的过程。对于K邻近法，需要对<strong>n_neighbors</strong>进行调参，对于全连接法里面最常用的高斯核函数rbf，则需要对<strong>gamma</strong>进行调参。</p>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pinard/p/6235920.html">用scikit-learn学习谱聚类</a>.</li>
+<li><a target="_blank" rel="noopener" href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.SpectralClustering.html">sklearn
+- API</a>.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 谱聚类</span></span><br><span class="line"><span class="keyword">for</span> i, g <span class="keyword">in</span> <span class="built_in">enumerate</span>((<span class="number">0.001</span>, <span class="number">0.01</span>, <span class="number">0.1</span>, <span class="number">1</span>)):</span><br><span class="line">    label = cluster.SpectralClustering(n_clusters=cnt_centers, gamma=g).fit_predict(dots)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Calinski-Harabasz Score with gamma = <span class="subst">&#123;g&#125;</span> , score: <span class="subst">&#123;metrics.calinski_harabasz_score(dots, label)&#125;</span>&quot;</span>)</span><br><span class="line">    dots_cls = [color[lab] <span class="keyword">for</span> lab <span class="keyword">in</span> label]</span><br><span class="line">    plt.figure(figsize=(<span class="number">4</span>, <span class="number">4</span>), dpi=<span class="number">240</span>)</span><br><span class="line">    plt.scatter(dots[:,<span class="number">0</span>], dots[:,<span class="number">1</span>], c=dots_cls)</span><br><span class="line">    plt.title(<span class="string">f&quot;After - <span class="subst">&#123;g&#125;</span>&quot;</span>)</span><br><span class="line">    plt.savefig(<span class="string">f&quot;2_<span class="subst">&#123;tag&#125;</span>_after_<span class="subst">&#123;i&#125;</span>.png&quot;</span>, dpi=<span class="number">240</span>)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<p>注：Calinski-Harbasz
+Score是<strong>通过评估类之间方差和类内方差来计算得分</strong>，越大代表着类自身越紧密，类与类之间越分散，即更优的聚类结果</p>
+<p><strong>点簇（密集）</strong></p>
+<figure>
+<img data-src="聚类算法/SpectralCluster.png" alt="SpectralCluster">
+<figcaption aria-hidden="true">SpectralCluster</figcaption>
+</figure>
+<p><strong>点簇（稀疏）</strong> - 10 类</p>
+<figure>
+<img data-src="聚类算法/SpectralCluster-164621719201515.png" alt="SpectralCluster">
+<figcaption aria-hidden="true">SpectralCluster</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.001</span> , score: <span class="number">341.04076775146785</span></span><br><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.01</span> , score: <span class="number">332.8219169560899</span></span><br><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.1</span> , score: <span class="number">225.9696799273274</span></span><br><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">1</span> , score: <span class="number">1.5146664858255785</span></span><br></pre></td></tr></table></figure>
+<p><strong>随机</strong></p>
+<figure>
+<img data-src="聚类算法/SpectralCluster-164621812496616.png" alt="SpectralCluster">
+<figcaption aria-hidden="true">SpectralCluster</figcaption>
+</figure>
+<p>2,4 是分 5 类，3,5 是分 8 类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.001</span> , score: <span class="number">62.846443848710194</span></span><br><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.001</span> , score: <span class="number">36.29822802071816</span></span><br><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.01</span> , score: <span class="number">100.08933581499709</span></span><br><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.01</span> , score: <span class="number">82.05754602148015</span></span><br></pre></td></tr></table></figure>
+<p><strong>环形数据簇</strong></p>
+<figure>
+<img data-src="聚类算法/SpectralCluster-164621838780217.png" alt="SpectralCluster">
+<figcaption aria-hidden="true">SpectralCluster</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.001</span> , score: <span class="number">789.9927004062297</span></span><br><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.01</span> , score: <span class="number">0.0017798081991424</span></span><br><span class="line">Calinski-Harabasz Score <span class="keyword">with</span> gamma = <span class="number">0.1</span> , score: <span class="number">181.06081887951328</span></span><br></pre></td></tr></table></figure>
+<p>这个时候 Calinski-Harabasz 评价不准，显然 0.01
+的时候效果最好，下面螺旋同理，就不记录了</p>
+<p><strong>螺旋数据簇</strong></p>
+<figure>
+<img data-src="聚类算法/Spectral_Cluster.png" alt="Spectral_Cluster">
+<figcaption aria-hidden="true">Spectral_Cluster</figcaption>
+</figure>
+<p>值得一提的是，前面的两个都是不到 1 秒就计算完成了，最后一个用了 1min
+49s 才计算出来</p>
+<p>测试得出的几个猜想：</p>
+<ul>
+<li>Calinski-Harabasz 分数不适合基于密度的聚类</li>
+<li>gmma 越小计算越快</li>
+<li>gamma 越大越倾向于基于密度聚类</li>
+</ul>
+<hr>
+<h3 id="近邻传播聚类">近邻传播聚类</h3>
+<p>近邻传播聚类，即 AP（Affinity Propagation） 聚类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Affinity Propagation 聚类</span></span><br><span class="line">tag = <span class="string">&quot;AffinityPropagation&quot;</span></span><br><span class="line">label = cluster.AffinityPropagation(damping=<span class="number">0.5</span>).fit_predict(dots)</span><br><span class="line">cnt_centers = <span class="built_in">max</span>(label) + <span class="number">2</span></span><br><span class="line"><span class="built_in">print</span>(cnt_centers - <span class="number">2</span>)</span><br><span class="line"><span class="comment"># 后面输出图像的代码和前面的几个一样，因为分开放在创建色卡步骤后面所以就忽略了</span></span><br></pre></td></tr></table></figure>
+<p>一个很大的缺点是复杂度很高，数据量大的时候相当慢，有分析指出每次迭代的复杂度是
+<span class="math inline"><em>O</em>(<em>n</em><sup>3</sup>)</span>.</p>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://scikit-learn.org/stable/modules/clustering.html#affinity-propagation">sklearn
+- user guide</a></li>
+<li><a target="_blank" rel="noopener" href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AffinityPropagation.html">sklearn
+api</a></li>
+</ul>
+<p><strong>点簇</strong></p>
+<figure>
+<img data-src="聚类算法/AffinityPropagation.png" alt="AffinityPropagation">
+<figcaption aria-hidden="true">AffinityPropagation</figcaption>
+</figure>
+<p>原 10 个中心点，聚类了 12 个类</p>
+<p><strong>随机（密集）</strong></p>
+<figure>
+<img data-src="聚类算法/AffinityPropagation-164622482057318.png" alt="AffinityPropagation">
+<figcaption aria-hidden="true">AffinityPropagation</figcaption>
+</figure>
+<p>本来打算 2500 个点的，结果跑了十分钟没跑出来就放弃了，改成了 500
+个点，1 秒钟就出结果了，24个聚类</p>
+<p><strong>环形点簇</strong></p>
+<figure>
+<img data-src="聚类算法/AffinityPropagation-164622529345519.png" alt="AffinityPropagation">
+<figcaption aria-hidden="true">AffinityPropagation</figcaption>
+</figure>
+<p>从左到右阻尼（damping）分别设置为
+0.5（默认）,0.98,0.75，虽然不知道为什么，但第一个比后面两个慢好多好多</p>
+<p>螺旋就不测了，点太多了估计要跑好久</p>
+<hr>
+<h3 id="层次聚类">层次聚类</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 层次聚类 Agglomerative Clustering.</span></span><br><span class="line">tag = <span class="string">&quot;AgglomerativeClustering&quot;</span></span><br><span class="line">label = cluster.AgglomerativeClustering(n_clusters=cnt_centers, linkage=<span class="string">&#x27;single&#x27;</span>).fit_predict(dots)</span><br><span class="line">dots_cls = [color[lab] <span class="keyword">for</span> lab <span class="keyword">in</span> label]</span><br><span class="line">plt.figure(figsize=(<span class="number">4</span>, <span class="number">4</span>), dpi=<span class="number">240</span>)</span><br><span class="line">plt.scatter(dots[:,<span class="number">0</span>], dots[:,<span class="number">1</span>], c=dots_cls)</span><br><span class="line">plt.title(<span class="string">f&quot;After - <span class="subst">&#123;tag&#125;</span> - single&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">f&quot;2_<span class="subst">&#123;tag&#125;</span>_after_3.png&quot;</span>, dpi=<span class="number">240</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><strong>环形簇</strong></p>
+<figure>
+<img data-src="聚类算法/AgglomerativeClustering.png" alt="AgglomerativeClustering">
+<figcaption aria-hidden="true">AgglomerativeClustering</figcaption>
+</figure>
+<p><strong>螺旋簇</strong></p>
+<figure>
+<img data-src="聚类算法/AgglomerativeClustering-164628603719820.png" alt="AgglomerativeClustering">
+<figcaption aria-hidden="true">AgglomerativeClustering</figcaption>
+</figure>
+<p><strong>点簇（密集）</strong> - 20类</p>
+<figure>
+<img data-src="聚类算法/AgglomerativeClustering-164628619701721.png" alt="AgglomerativeClustering">
+<figcaption aria-hidden="true">AgglomerativeClustering</figcaption>
+</figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Note/2022-10/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95.html" title="聚类算法">https://meteordream.github.io/Note/2022-10/聚类算法.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag"><i class="fa fa-tag"></i> 聚类</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-10/Python_Logging%E8%AF%A6%E8%A7%A3.html" rel="prev" title="『Python基础』Logging详解">
+      <i class="fa fa-chevron-left"></i> 『Python基础』Logging详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/%E9%AB%98%E7%B2%BE%E5%BA%A6.html" rel="next" title="『洛谷』高精度">
+      『洛谷』高精度 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#k-mean"><span class="nav-number">2.</span> <span class="nav-text">K-Mean</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#k-mean-1"><span class="nav-number">3.</span> <span class="nav-text">K-Mean++</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#k-mean%E7%9F%A9%E9%98%B5%E5%AE%9E%E7%8E%B0%E5%BD%A2%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">K-Mean++矩阵实现形式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dbscan%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">DBSCAN聚类算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Esklearn%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">基于sklearn实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">5.1.</span> <span class="nav-text">创建数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#k-means"><span class="nav-number">5.2.</span> <span class="nav-text">K-Means</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dbscan"><span class="nav-number">5.3.</span> <span class="nav-text">DBSCAN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%B1%E8%81%9A%E7%B1%BB"><span class="nav-number">5.4.</span> <span class="nav-text">谱聚类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%91%E9%82%BB%E4%BC%A0%E6%92%AD%E8%81%9A%E7%B1%BB"><span class="nav-number">5.5.</span> <span class="nav-text">近邻传播聚类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E8%81%9A%E7%B1%BB"><span class="nav-number">5.6.</span> <span class="nav-text">层次聚类</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

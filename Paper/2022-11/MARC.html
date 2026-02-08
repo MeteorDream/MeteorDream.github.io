@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Margin Calibration for Long-Tailed Visual Recognition Author: Yidong Wang, Bowen Zhang, Wenxin Hou, Zhen Wu, Jindong Wang, Takahiro Shinozaki Institution: 东京工业大学(Tokyo Institute of">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Margin Calibration for Long-Tailed Visual Recognition">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-11/MARC.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Margin Calibration for Long-Tailed Visual Recognition Author: Yidong Wang, Bowen Zhang, Wenxin Hou, Zhen Wu, Jindong Wang, Takahiro Shinozaki Institution: 东京工业大学(Tokyo Institute of">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/MARC/fig-logit-intro.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/MARC/fig-margin-intro.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/MARC/cifar10_acc.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/MARC/margin_intro.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/MARC/image-20221129112959308.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/MARC/image-20221129114645608.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-11/MARC/image-20221129114730056.png">
+<meta property="article:published_time" content="2022-11-21T02:28:34.000Z">
+<meta property="article:modified_time" content="2022-11-29T05:08:39.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Normalization">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="ACML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-11/MARC/fig-logit-intro.svg">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-11/MARC.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Margin Calibration for Long-Tailed Visual Recognition | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-11/MARC.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Margin Calibration for Long-Tailed Visual Recognition
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-21 10:28:34" itemprop="dateCreated datePublished" datetime="2022-11-21T10:28:34+08:00">2022-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-29 13:08:39" itemprop="dateModified" datetime="2022-11-29T13:08:39+08:00">2022-11-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-11/MARC.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-11/MARC.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Margin Calibration for Long-Tailed Visual
+Recognition</li>
+<li><strong>Author</strong>: Yidong Wang, Bowen Zhang, Wenxin Hou, Zhen
+Wu, Jindong Wang, Takahiro Shinozaki</li>
+<li><strong>Institution</strong>: 东京工业大学(Tokyo Institute of
+Technology)、Microsoft STCA、南京大学，微软亚研院</li>
+<li><strong>Year</strong>: 2022</li>
+<li><strong>Journal</strong>: ACML</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2112.07225">Arxiv</a></li>
+<li><strong>Cite</strong>: Wang Y, Zhang B, Hou W, et al. Margin
+calibration for long-tailed visual recognition[J]. arXiv preprint
+arXiv:2112.07225, 2021.</li>
+<li><strong>Idea</strong>: 提出校正边距的方法来提高长尾分布的性能</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@article&#123;wang2021margin,</span><br><span class="line">  title=&#123;Margin calibration for long-tailed visual recognition&#125;,</span><br><span class="line">  author=&#123;Wang, Yidong and Zhang, Bowen and Hou, Wenxin and Wu, Zhen and Wang, Jindong and Shinozaki, Takahiro&#125;,</span><br><span class="line">  journal=&#123;arXiv preprint arXiv:2112.07225&#125;,</span><br><span class="line">  year=&#123;2021&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>现有的长尾识别多数更加关注数据重采样和损失函数的优化，这篇文章提出了一个新的方向：分类边距。作者研究了边距与预测分数的关系并发现未校正的边距与预测分数是正相关的，以此提出了
+<strong>MARC</strong>(Margin Calibration) 方法来校正边距</p>
+<h2 id="introduction">Introduction</h2>
+<p>所谓长尾分布，即不同类别的样本数据不均衡，头部样本数量多性能好，尾部样本数量少性能比头部类差很多。解决长尾分布的常用方法是数据重采样和损失函数工程。数据重采样试图让训练数据均衡即对头部数据下采样和对尾部数据上采样，而损失重加权引入自适应加权损失来平衡不同类。为了平衡类间梯度，一些损失函数会通过调整预测分数来替代对损失加权的方法。但前面这些方法有研究指出会导致比较差的数据表征。</p>
+<p>有研究表面，边距和预测分数对分类性能有显著影响，而未校准的边距和预测分数之间的关系一直被忽略，其中边距(margin)
+是指数据点和决策边界的距离。如图所示，实验表明每个类的预测分数和边距是有相关性的，即头部类相比起尾部类有更大的边距和预测分数，因此有必要校准边距来获得平衡的预测分数。而最后一幅图显示未校准的边距和预测分数对于分类性能是有负面影响的。</p>
+<p><img data-src="MARC/fig-logit-intro.svg" alt="fig-logit-intro"> <img src="/Paper/2022-11/MARC/fig-margin-intro.svg" alt="fig-margin-intro"> <img src="/Paper/2022-11/MARC/cifar10_acc.svg" alt="cifar10_acc"></p>
+<p>针对校准偏移的边距，这篇文章提出了MARC
+边距校准方法。即使用一个简单的类特定校准函数来调整初始学习到的边距，参数量仅分类数量的两倍。上图显示了使用MARC
+校准后的结果。</p>
+<p>这篇文章的贡献如下：</p>
+<ol type="1">
+<li>在长尾识别领域首先基于边距方面研究了为校正与预测的关系，实验性的验证了未校正边距会降低预测准确率，这指导了算法的设计</li>
+<li>基于观察，提出了边距校正(<strong>MARC</strong>)方法，简单有效，参数量小</li>
+<li>三行代码实现，效果 SOTA</li>
+</ol>
+<h2 id="method">Method</h2>
+<h3 id="preliminaries">Preliminaries</h3>
+<p>用 <span class="math inline">𝒟 = {(<strong>x</strong><sub><em>i</em></sub>, <em>y</em><sub><em>i</em></sub>)}<sub><em>i</em> = 1</sub><sup><em>n</em></sup></span>
+表示训练集，其中 <span class="math inline"><em>y</em><sub><em>i</em></sub></span> 表示输入样本
+<span class="math inline"><strong>x</strong><sub><em>i</em></sub></span>
+的表标签。记 <span class="math inline">$n = \sum_{j=1}^K n_j$</span>
+为训练样本的总数，其中 <span class="math inline"><em>n</em><sub><em>j</em></sub></span> 是其中一个类
+<span class="math inline"><em>j</em></span> 的数量， <span class="math inline"><em>K</em></span> 表示类别总数。我们假设有 <span class="math inline"><em>n</em><sub>1</sub> &gt; <em>n</em><sub>2</sub> &gt; ⋯ &gt; <em>n</em><sub><em>K</em></sub></span>
+。</p>
+<p>模型包含两个部分：特征提取器 <span class="math inline"><em>f</em> : <strong>x</strong> ↦ <strong>z</strong></span>
+（参数为 <span class="math inline"><em>θ</em><sub><em>r</em></sub></span> ）和分类器
+<span class="math inline"><em>g</em> : <strong>z</strong> ↦ <em>y</em></span>
+（参数为 <span class="math inline"><em>θ</em><sub><em>c</em></sub></span> ），其中
+<span class="math inline"><strong>z</strong> ∈ ℝ<sup><em>p</em></sup></span>
+表示提取的特征， <span class="math inline"><em>p</em></span>
+是特征的维度。</p>
+<p><span class="math inline"><em>g</em></span> 对于类别 <span class="math inline"><em>j</em></span> 给出的分类分数为: <span class="math display"><em>η</em><sub><em>j</em></sub> = <em>g</em>(<strong>z</strong>) := <strong>W</strong><sub><em>j</em></sub><strong>z</strong> + <strong>b</strong><sub><em>j</em></sub></span></p>
+<p>而样本对于标签的概率为： <span class="math display">$$
+p(y=y_i|\mathbf{x}_i;\theta_r,\theta_c) =
+\frac{\exp(\eta_{y_i})}{\sum_{j=1}^K  \exp(\eta_j)}
+$$</span> 损失函数 <span class="math display">$$
+\ell(\mathbf{x}_i, y_i;\theta_r,\theta_c) = -\log
+\left(\frac{\exp(\eta_{y_i})}{\sum_{j=1}^K  \exp(\eta_j)} \right)
+$$</span> ### Margins</p>
+<p>下图展示了未校准的边距，即 <span class="math inline"><strong>z</strong><sub>1</sub></span>在超平面<span class="math inline"><em>H</em><sub><em>j</em></sub> ∈ ℝ<sup><em>p</em> − 1</sup></span>（<span class="math inline"><strong>W</strong><sub><em>j</em></sub><strong>z</strong> + <strong>b</strong><sub><em>j</em></sub> = 0</span>）
+的投影点到 <span class="math inline"><strong>z</strong><sub>1</sub></span> 的距离 <span class="math inline"><em>p</em><em>r</em><em>o</em><em>j</em><sub><strong>W</strong><sub><em>j</em></sub></sub>(<strong>z</strong><sub>1</sub> − <strong>z</strong><sub>0</sub>)</span>
+其中 <span class="math inline"><strong>z</strong><sub>0</sub></span>
+是超平面上一点</p>
+<figure>
+<img data-src="MARC/margin_intro.svg" alt="margin_intro">
+<figcaption aria-hidden="true">margin_intro</figcaption>
+</figure>
+<p>具体计算为： <span class="math display">$$
+\begin{split}
+    d_j &amp; =  \left\Vert  proj_{ \mathbf{W}_j }(\mathbf{z}_1 -
+\mathbf{z}_0) \right\Vert  \\
+    &amp; = \left\Vert \frac{ \mathbf{W}_j \cdot (\mathbf{z}_1 -
+\mathbf{z}_0)}{\mathbf{W}_j \cdot \mathbf{W}_j}  \mathbf{W}_j
+\right\Vert \\
+    &amp; = \frac{\mathbf{W}_j \cdot \mathbf{z}_1 - \mathbf{W}_j \cdot
+\mathbf{z}_0 }{\Vert  \mathbf{W}_j \Vert } \\
+    &amp; =\frac{\mathbf{W}_j \mathbf{z}_1+\mathbf{b}_j}{\Vert
+\mathbf{W}_j \Vert} \quad (\text{since} \ \mathbf{W}_j  \mathbf{z}_0 +
+\mathbf{b}_j = 0),
+\end{split}
+$$</span> 其中 <span class="math inline">‖⋅‖</span> 表示 <span class="math inline"><em>L</em>2</span> 范数. 因此, 预测分数概率 <span class="math inline"><strong>W</strong><sub><em>j</em></sub> ⋅ <strong>z</strong><sub>1</sub> + <strong>b</strong><sub><em>j</em></sub></span>
+可以表示为 <span class="math inline">‖<strong>W</strong><sub><em>j</em></sub>‖<em>d</em><sub><em>j</em></sub></span>，预测概率可以写为：
+<span class="math display">$$
+p(y=y_i|\mathbf{x}_i;\theta_r,\theta_c) =
+\frac{\exp(\eta_{y_i})}{\sum_{j=1}^K  \exp(\eta_j)} = \frac{\exp(\Vert
+\mathbf{W}_{y_i} \Vert d_{y_i})}{\sum_{j=1}^K  \exp(\Vert \mathbf{W}_j
+\Vert d_j)}
+$$</span> 我们的目标是让多样本类 <span class="math inline"><em>j</em></span> 和少样本类 <span class="math inline"><em>t</em></span> 分类概率接近，可以假设： <span class="math display"><em>η</em><sub><em>j</em></sub> = <em>η</em><sub><em>t</em></sub> = ‖<strong>W</strong><sub><em>j</em></sub>‖<em>d</em><sub><em>j</em></sub> = ‖<strong>W</strong><sub><em>t</em></sub>‖<em>d</em><sub><em>t</em></sub></span>
+当 <span class="math inline">‖<strong>W</strong><sub><em>j</em></sub>‖ = ‖<strong>W</strong><sub><em>t</em></sub>‖</span>
+时有 <span class="math inline"><em>d</em><sub><em>j</em></sub> &lt; <em>d</em><sub><em>t</em></sub></span>.
+此外实验中也观察到头部类比起尾部类更倾向于有大的边界和预测分数： <span class="math display">$$
+\begin{split}
+    &amp; \bar{d}_1 &gt;  \bar{d}_2 &gt; \cdots &gt; \bar{d}_K, \\
+    &amp; \bar{\eta}_1 &gt;  \bar{\eta}_2 &gt; \cdots &gt; \bar{\eta}_K,
+\\
+    &amp; \text{if} \quad  n_1  &gt;   n_2 &gt; \cdots &gt;  n_K,
+\end{split}    
+$$</span> <span class="math inline"><em>d̄</em><sub><em>j</em></sub></span> 和 <span class="math inline"><em>η̄</em><sub><em>j</em></sub></span>
+分别表示平均边距和预测分数。</p>
+<h3 id="marc">MARC</h3>
+<p>作者提出的 MARC 是对原始边距的修正： <span class="math display">$$
+\hat{d_j} = \omega_j \cdot d_j + \beta_j
+$$</span> 其中 <span class="math inline"><em>ω</em><sub><em>j</em></sub></span> 和 <span class="math inline"><em>β</em><sub><em>j</em></sub></span> 是针对类
+<span class="math inline"><em>j</em> ∈ [1, <em>K</em>]</span>
+的可学习参数。 边距预测分数的计算为: <span class="math display">$$
+\begin{split}
+   \Vert \mathbf{W}_j\Vert \hat{d_j} &amp;=\Vert \mathbf{W}_j\Vert (
+\omega_j \cdot d_j + \beta_j)\\
+   &amp; = \omega_j \cdot \Vert \mathbf{W}_j\Vert d_j + \beta_j \cdot
+\Vert \mathbf{W}_j\Vert \\
+   &amp; = \omega_j \cdot \eta_j  + \beta_j \cdot \Vert
+\mathbf{W}_j\Vert, \\
+\end{split}
+$$</span> <span class="math inline"><em>η</em><sub><em>j</em></sub></span>
+是初始固定的预测分数。校准过的预测概率分布为： <span class="math display">$$
+p(y=y_i|\mathbf{x}_i;\theta_r,\theta_c) = \frac{\exp(\omega_{y_i} \cdot
+\eta_{y_i}  + \beta_{y_i} \cdot \Vert
+\mathbf{W}_{y_i}\Vert)}{\sum_{j=1}^K  \exp(\omega_j \cdot \eta_j  +
+\beta_j \cdot \Vert \mathbf{W}_j\Vert)}.
+$$</span> 具体算法如下：</p>
+<figure>
+<img data-src="MARC/image-20221129112959308.png" alt="image-20221129112959308">
+<figcaption aria-hidden="true">image-20221129112959308</figcaption>
+</figure>
+<p>为了平衡训练时的梯度，作者将损失函数调整为： <span class="math display">$$
+\ell(\mathbf{x}_i, y_i;\tilde{\theta}_r,\tilde{\theta}_c,\omega,\beta) =
+        - U_{y_{i} } \cdot \log \left(\frac{\exp \left(\omega_{y_i}
+\cdot \eta_{y_i}  + \beta_{y_i} \cdot \Vert \mathbf{W}_{y_i}\Vert
+\right)}{\sum_{j=1}^K  \exp(\omega_j \cdot \eta_j  + \beta_j \cdot \Vert
+\mathbf{W}_j\Vert)} \right),
+$$</span> 其中 $_r $ 和 <span class="math inline"><em>θ̃</em><sub><em>c</em></sub></span>
+在训练过程中冻结. 分类权重 <span class="math inline"><em>y</em><sub><em>i</em></sub></span> 用下式计算:
+<span class="math display">$$
+U_{y_i} = K \cdot \frac{(1/n_{y_i})^\gamma}{\sum_{j=1}^K(1/n_j)^\gamma }
+$$</span> <span class="math inline"><em>γ</em></span>
+是一个超参数，<span class="math inline"><em>γ</em></span> 为 0
+表示所有类的权重都是 1 ，即没有做任何调整</p>
+<p>下面是几种分类边界调整方法的对比</p>
+<figure>
+<img data-src="MARC/image-20221129114645608.png" alt="image-20221129114645608">
+<figcaption aria-hidden="true">image-20221129114645608</figcaption>
+</figure>
+<h2 id="detail">Detail</h2>
+<figure>
+<img data-src="MARC/image-20221129114730056.png" alt="image-20221129114730056">
+<figcaption aria-hidden="true">image-20221129114730056</figcaption>
+</figure>
+<h2 id="experiment">Experiment</h2>
+<p>简单看看：</p>
+<ul>
+<li>数据集：CIFAR-10-LT, CIFAR-100-LT, ImageNet-LT, Places-LT,
+iNaturalist2018</li>
+<li>模型：ResNet32, ResNeXt50, ResNet152, ResNet50.</li>
+<li>总的来说对少数类的分类性能有显著改进，但对多数类的分类性能还是不可避免有所损害的</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>这篇文章研究了长尾分布中分类准确率与边界、预测分数的关系，并提出了边距校正来改进少数类的分类性能。</p>
+<blockquote>
+<p>本文研究了长尾视觉识别问题。具体来说，我们发现头类往往比尾类具有更大的边距和预测分数。受此发现的启发，我们提出了一个只有
+2K（K是类别数）可学习参数的边距校准函数，以获得长尾视觉识别中的平衡预测分数。尽管我们的方法实现起来非常简单，但大量实验表明，与以前的方法相比，MARC在不改变模型表示的情况下取得了有利的结果。我们希望我们对预测分数和边距的研究能够为模型表示和边距校准的联合优化提供经验。未来，我们的目标是发展一个统一的理论来更好地支持我们的算法设计，并将该算法应用于更多的长尾应用[1]。</p>
+</blockquote>
+<h2 id="references">References</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/KiP_QIWJp1Nq6BRo2jHg0w">ACML
+2022｜三行代码解决长尾不平衡类别分类</a></li>
+</ol>
+<hr>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-11/MARC.html" title="『论文笔记』Margin Calibration for Long-Tailed Visual Recognition">https://meteordream.github.io/Paper/2022-11/MARC.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Normalization/" rel="tag"><i class="fa fa-tag"></i> Normalization</a>
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/ACML/" rel="tag"><i class="fa fa-tag"></i> ACML</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-11/808_%E5%88%86%E6%B1%A4(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』808 分汤">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』808 分汤
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Paper/2022-11/Survey%20of%20FSL.html" rel="next" title="『论文笔记』小样本学习综述">
+      『论文笔记』小样本学习综述 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#preliminaries"><span class="nav-number">4.1.</span> <span class="nav-text">Preliminaries</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#marc"><span class="nav-number">4.2.</span> <span class="nav-text">MARC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#detail"><span class="nav-number">5.</span> <span class="nav-text">Detail</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">6.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">8.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

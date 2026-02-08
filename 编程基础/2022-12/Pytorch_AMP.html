@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言 本文的大部分内容来源于转载，出处参考文末参考资料。 AMP简介 题外话，我为什么要写这篇博客，就是因为我穷！没钱！租的服务器使用多GPU时一会钱就烧没了（gpu内存不用），急需要一种trick，来降低内存加速。 回到正题，如果我们使用的数据集较大，且网络较深，则会造成训练较慢，此时我们要想加速训练可以使用Pytorch的AMP（autocast与Gradscaler）；本文便是依据此写出的博">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『Pytorch』混合精度运算">
+<meta property="og:url" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-12/Pytorch_AMP.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="前言 本文的大部分内容来源于转载，出处参考文末参考资料。 AMP简介 题外话，我为什么要写这篇博客，就是因为我穷！没钱！租的服务器使用多GPU时一会钱就烧没了（gpu内存不用），急需要一种trick，来降低内存加速。 回到正题，如果我们使用的数据集较大，且网络较深，则会造成训练较慢，此时我们要想加速训练可以使用Pytorch的AMP（autocast与Gradscaler）；本文便是依据此写出的博">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-06T07:01:54.000Z">
+<meta property="article:modified_time" content="2022-12-06T07:01:54.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Pytorch">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-12/Pytorch_AMP.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『Pytorch』混合精度运算 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-12/Pytorch_AMP.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『Pytorch』混合精度运算
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-12-06 15:01:54" itemprop="dateCreated datePublished" datetime="2022-12-06T15:01:54+08:00">2022-12-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">编程基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-12/Pytorch_AMP.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-12/Pytorch_AMP.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>21k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>19 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="前言">前言</h2>
+<p>本文的大部分内容来源于转载，出处参考文末参考资料。</p>
+<h2 id="amp简介">AMP简介</h2>
+<p>题外话，我为什么要写这篇博客，就是因为<strong>我穷</strong>！<strong>没钱</strong>！租的服务器使用多GPU时一会钱就烧没了（gpu内存不用），急需要一种trick，来降低内存加速。</p>
+<p>回到正题，如果我们使用的<strong>数据集较大</strong>，且<strong>网络较深</strong>，则会造成<strong>训练较慢</strong>，此时我们要<strong>想加速训练</strong>可以使用<strong>Pytorch的AMP</strong>（<strong>autocast与Gradscaler</strong>）；本文便是依据此写出的博文，对<strong>Pytorch的AMP</strong>(<strong>autocast与Gradscaler</strong>进行对比)<strong>自动混合精度对模型训练加速</strong>。</p>
+<span id="more"></span>
+<p>注意Pytorch1.6+，已经内置torch.cuda.amp，因此便不需要加载NVIDIA的apex库（半精度加速），为方便我们便<strong>不使用NVIDIA的apex库</strong>(安装麻烦)，转而<strong>使用torch.cuda.amp</strong>。</p>
+<p><strong>AMP</strong> (Automatic mixed precision):
+自动混合精度，那<strong>什么是自动混合精度</strong>？</p>
+<p>先来梳理一下历史：先有NVIDIA的apex，之后NVIDIA的开发人员将其贡献到Pytorch
+1.6+产生了torch.cuda.amp[这是笔者梳理，可能有误，请留言]</p>
+<p>详细讲：默认情况下，大多数深度学习框架都采用32位浮点算法进行训练。2017年，NVIDIA研究了一种用于混合精度训练的方法（apex），该方法在训练网络时将单精度（FP32）与半精度(FP16)结合在一起，并使用相同的超参数实现了与FP32几乎相同的精度，且速度比之前快了不少</p>
+<p>之后，来到了AMP时代（特指torch.cuda.amp），此有两个关键词：<strong>自动</strong>与<strong>混合精度</strong>（Pytorch
+1.6+中的torch.cuda.amp）其中，<strong>自动</strong>表现在Tensor的dtype类型会自动变化，框架按需自动调整tensor的dtype，可能有些地方需要手动干预；<strong>混合精度</strong>表现在采用不止一种精度的Tensor,
+torch.FloatTensor与torch.HalfTensor。并且从名字可以看出torch.cuda.amp，这个功能<strong>只能在cuda上使用</strong>！</p>
+<p><strong>为什么我们要使用AMP自动混合精度</strong>？</p>
+<ol type="1">
+<li>减少显存占用（FP16优势）</li>
+<li>加快训练和推断的计算（FP16优势）</li>
+<li>张量核心的普及（NVIDIA Tensor Core），低精度（FP16优势）</li>
+<li>混合精度训练缓解舍入误差问题，（FP16有此劣势，但是FP32可以避免此）</li>
+<li>损失放大，可能使用混合精度还会出现无法收敛的问题[其原因时激活梯度值较小]，造成了溢出，则可以通过使用torch.cuda.amp.GradScaler放大损失来防止梯度的下溢</li>
+</ol>
+<p>申明此篇博文<strong>主旨</strong>为<strong>如何让网络模型加速训练</strong>，而非去了解其原理，且其以AlexNet为网络架构(其需要输入的图像大小为227x227x3)，CIFAR10为数据集，Adamw为梯度下降函数，学习率机制为ReduceLROnPlateau举例。使用的电脑是2060的拯救者，虽然渣，但是还是可以搞搞这些测试。</p>
+<p>本文从</p>
+<ol type="1">
+<li>没使用DDP与DP训练与评估代码（之后加入amp）</li>
+<li>分布式DP训练与评估代码（之后加入amp）</li>
+<li>单进程占用多卡DDP训练与评估代码（之后加入amp） 角度讲解</li>
+</ol>
+<h2 id="amp使用">AMP使用</h2>
+<h3 id="基本amp">基本AMP</h3>
+<h4 id="autocast">autocast</h4>
+<p>原本模型加入 autocast 的大致流程</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> autocast <span class="keyword">as</span> autocast</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"><span class="comment"># Create model, default torch.FloatTensor</span></span><br><span class="line">model = Net().cuda()</span><br><span class="line"> </span><br><span class="line"><span class="comment"># SGD,Adm, Admw,...</span></span><br><span class="line">optim = optim.XXX(model.parameters(),..)</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> imgs,targets <span class="keyword">in</span> dataloader:</span><br><span class="line">    imgs,targets = imgs.cuda(),targets.cuda()</span><br><span class="line"> </span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">with</span> autocast():</span><br><span class="line">        outputs = model(imgs)</span><br><span class="line">        loss = loss_fn(outputs,targets)</span><br><span class="line">   ...</span><br><span class="line">    optim.zero_grad()</span><br><span class="line">    loss.backward()</span><br><span class="line">    optim.step()</span><br><span class="line"> </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h4 id="autocast-and-gradscaler">autocast and GradScaler</h4>
+<p>原本模型加入 autocast 与 GradScaler 的大致流程</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> autocast <span class="keyword">as</span> autocast</span><br><span class="line"><span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> GradScaler <span class="keyword">as</span> GradScaler</span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"><span class="comment"># Create model, default torch.FloatTensor</span></span><br><span class="line">model = Net().cuda()</span><br><span class="line"> </span><br><span class="line"><span class="comment"># SGD,Adm, Admw,...</span></span><br><span class="line">optim = optim.XXX(model.parameters(),..)</span><br><span class="line">scaler = GradScaler()</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> imgs,targets <span class="keyword">in</span> dataloader:</span><br><span class="line">    imgs,targets = imgs.cuda(),targets.cuda()</span><br><span class="line">    ...</span><br><span class="line">    optim.zero_grad()</span><br><span class="line">    ....</span><br><span class="line">    <span class="keyword">with</span> autocast():</span><br><span class="line">        outputs = model(imgs)</span><br><span class="line">        loss = loss_fn(outputs,targets)</span><br><span class="line"> </span><br><span class="line">    scaler.scale(loss).backward()</span><br><span class="line">    scaler.step(optim)</span><br><span class="line">    scaler.update()</span><br></pre></td></tr></table></figure>
+<h3 id="分布式dp与amp">分布式DP与AMP</h3>
+<h4 id="基本流程">基本流程</h4>
+<p>不能仅仅按照基本 AMP 的方法实现，否则无效</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实现方法一</span></span><br><span class="line">Model(nn.Module):</span><br><span class="line"><span class="meta">	@autocast()</span></span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">		...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实现方法二</span></span><br><span class="line">Model(nn.Module):</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">		<span class="keyword">with</span> autocast():</span><br><span class="line">			...</span><br><span class="line">            </span><br><span class="line"><span class="comment"># 训练流程  </span></span><br><span class="line">...</span><br><span class="line">model = Model()</span><br><span class="line">model = torch.nn.DataParallel(model)</span><br><span class="line"><span class="keyword">with</span> autocast():</span><br><span class="line">    output = model(imgs)</span><br><span class="line">    loss = loss_fn(output)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h4 id="完整代码参考">完整代码参考</h4>
+<p>分布式 DP + autocast + GradScaler</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> alexnet <span class="keyword">import</span> alexnet</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> autocast <span class="keyword">as</span> autocast</span><br><span class="line"><span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> GradScaler <span class="keyword">as</span> GradScaler</span><br><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">parse_args</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;CV Train&#x27;</span>)</span><br><span class="line">    parser.add_mutually_exclusive_group()</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--dataset&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;CIFAR10&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;CIFAR10&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--dataset_root&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../data&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;Dataset root directory path&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--img_size&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">227</span>, <span class="built_in">help</span>=<span class="string">&#x27;image size&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--tensorboard&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;Use tensorboard for loss visualization&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--tensorboard_log&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../tensorboard&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;tensorboard folder&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--cuda&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;if is cuda available&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--batch_size&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">64</span>, <span class="built_in">help</span>=<span class="string">&#x27;batch size&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--lr&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">float</span>, default=<span class="number">1e-4</span>, <span class="built_in">help</span>=<span class="string">&#x27;learning rate&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--epochs&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">20</span>, <span class="built_in">help</span>=<span class="string">&#x27;Number of epochs to train.&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--checkpoint&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../checkpoint&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;Save .pth fold&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> parser.parse_args()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">args = parse_args()</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 1.Create SummaryWriter</span></span><br><span class="line"><span class="keyword">if</span> args.tensorboard:</span><br><span class="line">    writer = SummaryWriter(args.tensorboard_log)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 2.Ready dataset</span></span><br><span class="line"><span class="keyword">if</span> args.dataset == <span class="string">&#x27;CIFAR10&#x27;</span>:</span><br><span class="line">    train_dataset = torchvision.datasets.CIFAR10(root=args.dataset_root, train=<span class="literal">True</span>, transform=transforms.Compose(</span><br><span class="line">        [transforms.Resize(args.img_size), transforms.ToTensor()]), download=<span class="literal">True</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;Dataset is not CIFAR10&quot;</span>)</span><br><span class="line">cuda = torch.cuda.is_available()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;CUDA available: &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(cuda))</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 3.Length</span></span><br><span class="line">train_dataset_size = <span class="built_in">len</span>(train_dataset)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;the train dataset size is &#123;&#125;&quot;</span>.<span class="built_in">format</span>(train_dataset_size))</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 4.DataLoader</span></span><br><span class="line">train_dataloader = DataLoader(dataset=train_dataset, batch_size=args.batch_size)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 5.Create model</span></span><br><span class="line">model = alexnet()</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> args.cuda == cuda:</span><br><span class="line">    model = model.cuda()</span><br><span class="line">    model = torch.nn.DataParallel(model).cuda()</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    model = torch.nn.DataParallel(model)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 6.Create loss</span></span><br><span class="line">cross_entropy_loss = nn.CrossEntropyLoss()</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 7.Optimizer</span></span><br><span class="line">optim = torch.optim.AdamW(model.parameters(), lr=args.lr)</span><br><span class="line">scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, patience=<span class="number">3</span>, verbose=<span class="literal">True</span>)</span><br><span class="line">scaler = GradScaler()</span><br><span class="line"><span class="comment"># 8. Set some parameters to control loop</span></span><br><span class="line"><span class="comment"># epoch</span></span><br><span class="line"><span class="built_in">iter</span> = <span class="number">0</span></span><br><span class="line">t0 = time.time()</span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(args.epochs):</span><br><span class="line">    t1 = time.time()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot; -----------------the &#123;&#125; number of training epoch --------------&quot;</span>.<span class="built_in">format</span>(epoch))</span><br><span class="line">    model.train()</span><br><span class="line">    <span class="keyword">for</span> data <span class="keyword">in</span> train_dataloader:</span><br><span class="line">        loss = <span class="number">0</span></span><br><span class="line">        imgs, targets = data</span><br><span class="line">        optim.zero_grad()</span><br><span class="line">        <span class="keyword">if</span> args.cuda == cuda:</span><br><span class="line">            cross_entropy_loss = cross_entropy_loss.cuda()</span><br><span class="line">            imgs, targets = imgs.cuda(), targets.cuda()</span><br><span class="line">        <span class="keyword">with</span> autocast():</span><br><span class="line">            outputs = model(imgs)</span><br><span class="line">            loss_train = cross_entropy_loss(outputs, targets)</span><br><span class="line">            loss = loss_train.item() + loss</span><br><span class="line">        <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">            writer.add_scalar(<span class="string">&quot;train_loss&quot;</span>, loss_train.item(), <span class="built_in">iter</span>)</span><br><span class="line"> </span><br><span class="line">        scaler.scale(loss_train).backward()</span><br><span class="line">        scaler.step(optim)</span><br><span class="line">        scaler.update()</span><br><span class="line"> </span><br><span class="line">        <span class="built_in">iter</span> = <span class="built_in">iter</span> + <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">iter</span> % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(</span><br><span class="line">                <span class="string">&quot;Epoch: &#123;&#125; | Iteration: &#123;&#125; | lr: &#123;&#125; | loss: &#123;&#125; | np.mean(loss): &#123;&#125; &quot;</span></span><br><span class="line">                    .<span class="built_in">format</span>(epoch, <span class="built_in">iter</span>, optim.param_groups[<span class="number">0</span>][<span class="string">&#x27;lr&#x27;</span>], loss_train.item(),</span><br><span class="line">                            np.mean(loss)))</span><br><span class="line">    <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">        writer.add_scalar(<span class="string">&quot;lr&quot;</span>, optim.param_groups[<span class="number">0</span>][<span class="string">&#x27;lr&#x27;</span>], epoch)</span><br><span class="line">    scheduler.step(np.mean(loss))</span><br><span class="line">    t2 = time.time()</span><br><span class="line">    h = (t2 - t1) // <span class="number">3600</span></span><br><span class="line">    m = ((t2 - t1) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line">    s = ((t2 - t1) % <span class="number">3600</span>) % <span class="number">60</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;epoch &#123;&#125; is finished, and time is &#123;&#125;h&#123;&#125;m&#123;&#125;s&quot;</span>.<span class="built_in">format</span>(epoch, <span class="built_in">int</span>(h), <span class="built_in">int</span>(m), <span class="built_in">int</span>(s)))</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> epoch % <span class="number">1</span> == <span class="number">0</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Save state, iter: &#123;&#125; &quot;</span>.<span class="built_in">format</span>(epoch))</span><br><span class="line">        torch.save(model.state_dict(), <span class="string">&quot;&#123;&#125;/AlexNet_&#123;&#125;.pth&quot;</span>.<span class="built_in">format</span>(args.checkpoint, epoch))</span><br><span class="line"> </span><br><span class="line">torch.save(model.state_dict(), <span class="string">&quot;&#123;&#125;/AlexNet.pth&quot;</span>.<span class="built_in">format</span>(args.checkpoint))</span><br><span class="line">t3 = time.time()</span><br><span class="line">h_t = (t3 - t0) // <span class="number">3600</span></span><br><span class="line">m_t = ((t3 - t0) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line">s_t = ((t3 - t0) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;The finished time is &#123;&#125;h&#123;&#125;m&#123;&#125;s&quot;</span>.<span class="built_in">format</span>(<span class="built_in">int</span>(h_t), <span class="built_in">int</span>(m_t), <span class="built_in">int</span>(s_t)))</span><br><span class="line"><span class="keyword">if</span> args.tensorboard:</span><br><span class="line">    writer.close()</span><br></pre></td></tr></table></figure>
+<h3 id="分布式ddp与amp">分布式DDP与AMP</h3>
+<h4 id="autocast-1">autocast</h4>
+<p>训练部分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> alexnet <span class="keyword">import</span> alexnet</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.distributed <span class="keyword">as</span> dist</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> autocast <span class="keyword">as</span> autocast</span><br><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">parse_args</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;CV Train&#x27;</span>)</span><br><span class="line">    parser.add_mutually_exclusive_group()</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--rank&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">0</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--world_size&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">1</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--master_addr&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;127.0.0.1&quot;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--master_port&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;12355&quot;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--dataset&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;CIFAR10&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;CIFAR10&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--dataset_root&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../data&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;Dataset root directory path&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--img_size&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">227</span>, <span class="built_in">help</span>=<span class="string">&#x27;image size&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--tensorboard&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;Use tensorboard for loss visualization&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--tensorboard_log&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../tensorboard&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;tensorboard folder&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--cuda&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;if is cuda available&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--batch_size&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">64</span>, <span class="built_in">help</span>=<span class="string">&#x27;batch size&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--lr&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">float</span>, default=<span class="number">1e-4</span>, <span class="built_in">help</span>=<span class="string">&#x27;learning rate&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--epochs&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">20</span>, <span class="built_in">help</span>=<span class="string">&#x27;Number of epochs to train.&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--checkpoint&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../checkpoint&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;Save .pth fold&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> parser.parse_args()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">args = parse_args()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>():</span><br><span class="line">    dist.init_process_group(<span class="string">&quot;gloo&quot;</span>, init_method=<span class="string">&quot;tcp://&#123;&#125;:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(args.master_addr, args.master_port),</span><br><span class="line">                            rank=args.rank,</span><br><span class="line">                            world_size=args.world_size)</span><br><span class="line">    <span class="comment"># 1.Create SummaryWriter</span></span><br><span class="line">    <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">        writer = SummaryWriter(args.tensorboard_log)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 2.Ready dataset</span></span><br><span class="line">    <span class="keyword">if</span> args.dataset == <span class="string">&#x27;CIFAR10&#x27;</span>:</span><br><span class="line">        train_dataset = torchvision.datasets.CIFAR10(root=args.dataset_root, train=<span class="literal">True</span>, transform=transforms.Compose(</span><br><span class="line">            [transforms.Resize(args.img_size), transforms.ToTensor()]), download=<span class="literal">True</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Dataset is not CIFAR10&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    cuda = torch.cuda.is_available()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;CUDA available: &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(cuda))</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 3.Length</span></span><br><span class="line">    train_dataset_size = <span class="built_in">len</span>(train_dataset)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;the train dataset size is &#123;&#125;&quot;</span>.<span class="built_in">format</span>(train_dataset_size))</span><br><span class="line"> </span><br><span class="line">    train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)</span><br><span class="line">    <span class="comment"># 4.DataLoader</span></span><br><span class="line">    train_dataloader = DataLoader(dataset=train_dataset, batch_size=args.batch_size, sampler=train_sampler,</span><br><span class="line">                                  num_workers=<span class="number">2</span>,</span><br><span class="line">                                  pin_memory=<span class="literal">True</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 5.Create model</span></span><br><span class="line">    model = alexnet()</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> args.cuda == cuda:</span><br><span class="line">        model = model.cuda()</span><br><span class="line">        model = torch.nn.parallel.DistributedDataParallel(model).cuda()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        model = torch.nn.parallel.DistributedDataParallel(model)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 6.Create loss</span></span><br><span class="line">    cross_entropy_loss = nn.CrossEntropyLoss()</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 7.Optimizer</span></span><br><span class="line">    optim = torch.optim.AdamW(model.parameters(), lr=args.lr)</span><br><span class="line">    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, patience=<span class="number">3</span>, verbose=<span class="literal">True</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 8. Set some parameters to control loop</span></span><br><span class="line">    <span class="comment"># epoch</span></span><br><span class="line">    <span class="built_in">iter</span> = <span class="number">0</span></span><br><span class="line">    t0 = time.time()</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(args.epochs):</span><br><span class="line">        t1 = time.time()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot; -----------------the &#123;&#125; number of training epoch --------------&quot;</span>.<span class="built_in">format</span>(epoch))</span><br><span class="line">        model.train()</span><br><span class="line">        <span class="keyword">for</span> data <span class="keyword">in</span> train_dataloader:</span><br><span class="line">            loss = <span class="number">0</span></span><br><span class="line">            imgs, targets = data</span><br><span class="line">            <span class="keyword">if</span> args.cuda == cuda:</span><br><span class="line">                cross_entropy_loss = cross_entropy_loss.cuda()</span><br><span class="line">                imgs, targets = imgs.cuda(), targets.cuda()</span><br><span class="line">            <span class="keyword">with</span> autocast():</span><br><span class="line">                outputs = model(imgs)</span><br><span class="line">                loss_train = cross_entropy_loss(outputs, targets)</span><br><span class="line">            loss = loss_train.item() + loss</span><br><span class="line">            <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">                writer.add_scalar(<span class="string">&quot;train_loss&quot;</span>, loss_train.item(), <span class="built_in">iter</span>)</span><br><span class="line"> </span><br><span class="line">            optim.zero_grad()</span><br><span class="line">            loss_train.backward()</span><br><span class="line">            optim.step()</span><br><span class="line">            <span class="built_in">iter</span> = <span class="built_in">iter</span> + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">iter</span> % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">                <span class="built_in">print</span>(</span><br><span class="line">                    <span class="string">&quot;Epoch: &#123;&#125; | Iteration: &#123;&#125; | lr: &#123;&#125; | loss: &#123;&#125; | np.mean(loss): &#123;&#125; &quot;</span></span><br><span class="line">                        .<span class="built_in">format</span>(epoch, <span class="built_in">iter</span>, optim.param_groups[<span class="number">0</span>][<span class="string">&#x27;lr&#x27;</span>], loss_train.item(),</span><br><span class="line">                                np.mean(loss)))</span><br><span class="line">        <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">            writer.add_scalar(<span class="string">&quot;lr&quot;</span>, optim.param_groups[<span class="number">0</span>][<span class="string">&#x27;lr&#x27;</span>], epoch)</span><br><span class="line">        scheduler.step(np.mean(loss))</span><br><span class="line">        t2 = time.time()</span><br><span class="line">        h = (t2 - t1) // <span class="number">3600</span></span><br><span class="line">        m = ((t2 - t1) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line">        s = ((t2 - t1) % <span class="number">3600</span>) % <span class="number">60</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;epoch &#123;&#125; is finished, and time is &#123;&#125;h&#123;&#125;m&#123;&#125;s&quot;</span>.<span class="built_in">format</span>(epoch, <span class="built_in">int</span>(h), <span class="built_in">int</span>(m), <span class="built_in">int</span>(s)))</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> epoch % <span class="number">1</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Save state, iter: &#123;&#125; &quot;</span>.<span class="built_in">format</span>(epoch))</span><br><span class="line">            torch.save(model.state_dict(), <span class="string">&quot;&#123;&#125;/AlexNet_&#123;&#125;.pth&quot;</span>.<span class="built_in">format</span>(args.checkpoint, epoch))</span><br><span class="line"> </span><br><span class="line">    torch.save(model.state_dict(), <span class="string">&quot;&#123;&#125;/AlexNet.pth&quot;</span>.<span class="built_in">format</span>(args.checkpoint))</span><br><span class="line">    t3 = time.time()</span><br><span class="line">    h_t = (t3 - t0) // <span class="number">3600</span></span><br><span class="line">    m_t = ((t3 - t0) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line">    s_t = ((t3 - t0) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;The finished time is &#123;&#125;h&#123;&#125;m&#123;&#125;s&quot;</span>.<span class="built_in">format</span>(<span class="built_in">int</span>(h_t), <span class="built_in">int</span>(m_t), <span class="built_in">int</span>(s_t)))</span><br><span class="line">    <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">        writer.close()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    local_size = torch.cuda.device_count()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;local_size: &quot;</span>.<span class="built_in">format</span>(local_size))</span><br><span class="line">    train()</span><br></pre></td></tr></table></figure>
+<p>测试部分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">import</span> torch.distributed <span class="keyword">as</span> dist</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torchvision.transforms <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> alexnet <span class="keyword">import</span> alexnet</span><br><span class="line"><span class="comment"># from torchvision.models.alexnet import alexnet</span></span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="comment"># eval</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">parse_args</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;CV Evaluation&#x27;</span>)</span><br><span class="line">    parser.add_mutually_exclusive_group()</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--rank&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">0</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--world_size&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">1</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--master_addr&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;127.0.0.1&quot;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--master_port&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;12355&quot;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--dataset&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;CIFAR10&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;CIFAR10&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--dataset_root&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../data&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;Dataset root directory path&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--img_size&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">227</span>, <span class="built_in">help</span>=<span class="string">&#x27;image size&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--batch_size&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">64</span>, <span class="built_in">help</span>=<span class="string">&#x27;batch size&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--checkpoint&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../checkpoint&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;Save .pth fold&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> parser.parse_args()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">args = parse_args()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">eval</span>():</span><br><span class="line">    dist.init_process_group(<span class="string">&quot;gloo&quot;</span>, init_method=<span class="string">&quot;tcp://&#123;&#125;:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(args.master_addr, args.master_port),</span><br><span class="line">                            rank=args.rank,</span><br><span class="line">                            world_size=args.world_size)</span><br><span class="line">    <span class="comment"># 1.Create model</span></span><br><span class="line">    model = alexnet()</span><br><span class="line">    model = torch.nn.parallel.DistributedDataParallel(model)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 2.Ready Dataset</span></span><br><span class="line">    <span class="keyword">if</span> args.dataset == <span class="string">&#x27;CIFAR10&#x27;</span>:</span><br><span class="line">        test_dataset = torchvision.datasets.CIFAR10(root=args.dataset_root, train=<span class="literal">False</span>,</span><br><span class="line">                                                    transform=transforms.Compose(</span><br><span class="line">                                                        [transforms.Resize(args.img_size),</span><br><span class="line">                                                         transforms.ToTensor()]),</span><br><span class="line">                                                    download=<span class="literal">True</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Dataset is not CIFAR10&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 3.Length</span></span><br><span class="line">    test_dataset_size = <span class="built_in">len</span>(test_dataset)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;the test dataset size is &#123;&#125;&quot;</span>.<span class="built_in">format</span>(test_dataset_size))</span><br><span class="line">    test_sampler = torch.utils.data.distributed.DistributedSampler(test_dataset)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 4.DataLoader</span></span><br><span class="line">    test_dataloader = DataLoader(dataset=test_dataset, sampler=test_sampler, batch_size=args.batch_size,</span><br><span class="line">                                 num_workers=<span class="number">2</span>,</span><br><span class="line">                                 pin_memory=<span class="literal">True</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 5. Set some parameters for testing the network</span></span><br><span class="line">    total_accuracy = <span class="number">0</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment"># test</span></span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">        <span class="keyword">for</span> data <span class="keyword">in</span> test_dataloader:</span><br><span class="line">            imgs, targets = data</span><br><span class="line">            device = torch.device(<span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line">            imgs, targets = imgs.to(device), targets.to(device)</span><br><span class="line">            model_load = torch.load(<span class="string">&quot;&#123;&#125;/AlexNet.pth&quot;</span>.<span class="built_in">format</span>(args.checkpoint), map_location=device)</span><br><span class="line">            model.load_state_dict(model_load)</span><br><span class="line">            outputs = model(imgs)</span><br><span class="line">            outputs = outputs.to(device)</span><br><span class="line">            accuracy = (outputs.argmax(<span class="number">1</span>) == targets).<span class="built_in">sum</span>()</span><br><span class="line">            total_accuracy = total_accuracy + accuracy</span><br><span class="line">            accuracy = total_accuracy / test_dataset_size</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;the total accuracy is &#123;&#125;&quot;</span>.<span class="built_in">format</span>(accuracy))</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    local_size = torch.cuda.device_count()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;local_size: &quot;</span>.<span class="built_in">format</span>(local_size))</span><br><span class="line">    <span class="built_in">eval</span>()</span><br></pre></td></tr></table></figure>
+<h4 id="autocast-and-gradscaler-1">autocast and GradScaler</h4>
+<p>训练部分</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> alexnet <span class="keyword">import</span> alexnet</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.distributed <span class="keyword">as</span> dist</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> autocast <span class="keyword">as</span> autocast</span><br><span class="line"><span class="keyword">from</span> torch.cuda.amp <span class="keyword">import</span> GradScaler <span class="keyword">as</span> GradScaler</span><br><span class="line"><span class="keyword">from</span> torch.utils.tensorboard <span class="keyword">import</span> SummaryWriter</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">parse_args</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;CV Train&#x27;</span>)</span><br><span class="line">    parser.add_mutually_exclusive_group()</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--rank&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">0</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--world_size&quot;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">1</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--master_addr&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;127.0.0.1&quot;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;--master_port&quot;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&quot;12355&quot;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--dataset&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;CIFAR10&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;CIFAR10&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--dataset_root&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../data&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;Dataset root directory path&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--img_size&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">227</span>, <span class="built_in">help</span>=<span class="string">&#x27;image size&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--tensorboard&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;Use tensorboard for loss visualization&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--tensorboard_log&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../tensorboard&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;tensorboard folder&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--cuda&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;if is cuda available&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--batch_size&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">64</span>, <span class="built_in">help</span>=<span class="string">&#x27;batch size&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--lr&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">float</span>, default=<span class="number">1e-4</span>, <span class="built_in">help</span>=<span class="string">&#x27;learning rate&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--epochs&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">int</span>, default=<span class="number">20</span>, <span class="built_in">help</span>=<span class="string">&#x27;Number of epochs to train.&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--checkpoint&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, default=<span class="string">&#x27;../checkpoint&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;Save .pth fold&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> parser.parse_args()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">args = parse_args()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>():</span><br><span class="line">    dist.init_process_group(<span class="string">&quot;gloo&quot;</span>, init_method=<span class="string">&quot;tcp://&#123;&#125;:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(args.master_addr, args.master_port),</span><br><span class="line">                            rank=args.rank,</span><br><span class="line">                            world_size=args.world_size)</span><br><span class="line">    <span class="comment"># 1.Create SummaryWriter</span></span><br><span class="line">    <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">        writer = SummaryWriter(args.tensorboard_log)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 2.Ready dataset</span></span><br><span class="line">    <span class="keyword">if</span> args.dataset == <span class="string">&#x27;CIFAR10&#x27;</span>:</span><br><span class="line">        train_dataset = torchvision.datasets.CIFAR10(root=args.dataset_root, train=<span class="literal">True</span>, transform=transforms.Compose(</span><br><span class="line">            [transforms.Resize(args.img_size), transforms.ToTensor()]), download=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Dataset is not CIFAR10&quot;</span>)</span><br><span class="line"> </span><br><span class="line">    cuda = torch.cuda.is_available()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;CUDA available: &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(cuda))</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 3.Length</span></span><br><span class="line">    train_dataset_size = <span class="built_in">len</span>(train_dataset)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;the train dataset size is &#123;&#125;&quot;</span>.<span class="built_in">format</span>(train_dataset_size))</span><br><span class="line"> </span><br><span class="line">    train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)</span><br><span class="line">    <span class="comment"># 4.DataLoader</span></span><br><span class="line">    train_dataloader = DataLoader(dataset=train_dataset, batch_size=args.batch_size, sampler=train_sampler,</span><br><span class="line">                                  num_workers=<span class="number">2</span>,</span><br><span class="line">                                  pin_memory=<span class="literal">True</span>)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 5.Create model</span></span><br><span class="line">    model = alexnet()</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> args.cuda == cuda:</span><br><span class="line">        model = model.cuda()</span><br><span class="line">        model = torch.nn.parallel.DistributedDataParallel(model).cuda()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        model = torch.nn.parallel.DistributedDataParallel(model)</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 6.Create loss</span></span><br><span class="line">    cross_entropy_loss = nn.CrossEntropyLoss()</span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 7.Optimizer</span></span><br><span class="line">    optim = torch.optim.AdamW(model.parameters(), lr=args.lr)</span><br><span class="line">    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optim, patience=<span class="number">3</span>, verbose=<span class="literal">True</span>)</span><br><span class="line">    scaler = GradScaler()</span><br><span class="line">    <span class="comment"># 8. Set some parameters to control loop</span></span><br><span class="line">    <span class="comment"># epoch</span></span><br><span class="line">    <span class="built_in">iter</span> = <span class="number">0</span></span><br><span class="line">    t0 = time.time()</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(args.epochs):</span><br><span class="line">        t1 = time.time()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot; -----------------the &#123;&#125; number of training epoch --------------&quot;</span>.<span class="built_in">format</span>(epoch))</span><br><span class="line">        model.train()</span><br><span class="line">        <span class="keyword">for</span> data <span class="keyword">in</span> train_dataloader:</span><br><span class="line">            loss = <span class="number">0</span></span><br><span class="line">            imgs, targets = data</span><br><span class="line">            optim.zero_grad()</span><br><span class="line">            <span class="keyword">if</span> args.cuda == cuda:</span><br><span class="line">                cross_entropy_loss = cross_entropy_loss.cuda()</span><br><span class="line">                imgs, targets = imgs.cuda(), targets.cuda()</span><br><span class="line">            <span class="keyword">with</span> autocast():</span><br><span class="line">                outputs = model(imgs)</span><br><span class="line">                loss_train = cross_entropy_loss(outputs, targets)</span><br><span class="line">                loss = loss_train.item() + loss</span><br><span class="line">            <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">                writer.add_scalar(<span class="string">&quot;train_loss&quot;</span>, loss_train.item(), <span class="built_in">iter</span>)</span><br><span class="line"> </span><br><span class="line">            scaler.scale(loss_train).backward()</span><br><span class="line">            scaler.step(optim)</span><br><span class="line">            scaler.update()</span><br><span class="line"> </span><br><span class="line">            <span class="built_in">iter</span> = <span class="built_in">iter</span> + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">iter</span> % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">                <span class="built_in">print</span>(</span><br><span class="line">                    <span class="string">&quot;Epoch: &#123;&#125; | Iteration: &#123;&#125; | lr: &#123;&#125; | loss: &#123;&#125; | np.mean(loss): &#123;&#125; &quot;</span></span><br><span class="line">                        .<span class="built_in">format</span>(epoch, <span class="built_in">iter</span>, optim.param_groups[<span class="number">0</span>][<span class="string">&#x27;lr&#x27;</span>], loss_train.item(),</span><br><span class="line">                                np.mean(loss)))</span><br><span class="line">        <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">            writer.add_scalar(<span class="string">&quot;lr&quot;</span>, optim.param_groups[<span class="number">0</span>][<span class="string">&#x27;lr&#x27;</span>], epoch)</span><br><span class="line">        scheduler.step(np.mean(loss))</span><br><span class="line">        t2 = time.time()</span><br><span class="line">        h = (t2 - t1) // <span class="number">3600</span></span><br><span class="line">        m = ((t2 - t1) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line">        s = ((t2 - t1) % <span class="number">3600</span>) % <span class="number">60</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;epoch &#123;&#125; is finished, and time is &#123;&#125;h&#123;&#125;m&#123;&#125;s&quot;</span>.<span class="built_in">format</span>(epoch, <span class="built_in">int</span>(h), <span class="built_in">int</span>(m), <span class="built_in">int</span>(s)))</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> epoch % <span class="number">1</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Save state, iter: &#123;&#125; &quot;</span>.<span class="built_in">format</span>(epoch))</span><br><span class="line">            torch.save(model.state_dict(), <span class="string">&quot;&#123;&#125;/AlexNet_&#123;&#125;.pth&quot;</span>.<span class="built_in">format</span>(args.checkpoint, epoch))</span><br><span class="line"> </span><br><span class="line">    torch.save(model.state_dict(), <span class="string">&quot;&#123;&#125;/AlexNet.pth&quot;</span>.<span class="built_in">format</span>(args.checkpoint))</span><br><span class="line">    t3 = time.time()</span><br><span class="line">    h_t = (t3 - t0) // <span class="number">3600</span></span><br><span class="line">    m_t = ((t3 - t0) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line">    s_t = ((t3 - t0) % <span class="number">3600</span>) // <span class="number">60</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;The finished time is &#123;&#125;h&#123;&#125;m&#123;&#125;s&quot;</span>.<span class="built_in">format</span>(<span class="built_in">int</span>(h_t), <span class="built_in">int</span>(m_t), <span class="built_in">int</span>(s_t)))</span><br><span class="line">    <span class="keyword">if</span> args.tensorboard:</span><br><span class="line">        writer.close()</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    local_size = torch.cuda.device_count()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;local_size: &quot;</span>.<span class="built_in">format</span>(local_size))</span><br><span class="line">    train()</span><br></pre></td></tr></table></figure>
+<p>测试部分与仅使用 autocast 一致</p>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/461811359/answer/2492822726">深度学习训练模型时，GPU显存不够怎么办？</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/150725231">训练提速60%！只需5行代码</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/ytusdc/article/details/122152244">Pytorch自动混合精度(AMP)训练</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/358974461">PyTorch分布式训练基础–DDP使用</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-12/Pytorch_AMP.html" title="『Pytorch』混合精度运算">https://meteordream.github.io/编程基础/2022-12/Pytorch_AMP.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+              <a href="/tags/Pytorch/" rel="tag"><i class="fa fa-tag"></i> Pytorch</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Paper/2022-12/ASR_Norm.html" rel="prev" title="『论文笔记』Adversarially Adaptive Normalization for Single Domain Generalization">
+      <i class="fa fa-chevron-left"></i> 『论文笔记』Adversarially Adaptive Normalization for Single Domain Generalization
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-12/1812_%E5%88%A4%E6%96%AD%E5%9B%BD%E9%99%85%E8%B1%A1%E6%A3%8B%E6%A3%8B%E7%9B%98%E4%B8%AD%E4%B8%80%E4%B8%AA%E6%A0%BC%E5%AD%90%E7%9A%84%E9%A2%9C%E8%89%B2(%E7%AE%80%E5%8D%95).html" rel="next" title="『LeetCode』1812 判断国际象棋棋盘中一个格子的颜色">
+      『LeetCode』1812 判断国际象棋棋盘中一个格子的颜色 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#amp%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">AMP简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#amp%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">AMP使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%ACamp"><span class="nav-number">3.1.</span> <span class="nav-text">基本AMP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#autocast"><span class="nav-number">3.1.1.</span> <span class="nav-text">autocast</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#autocast-and-gradscaler"><span class="nav-number">3.1.2.</span> <span class="nav-text">autocast and GradScaler</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8Fdp%E4%B8%8Eamp"><span class="nav-number">3.2.</span> <span class="nav-text">分布式DP与AMP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="nav-number">3.2.1.</span> <span class="nav-text">基本流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81%E5%8F%82%E8%80%83"><span class="nav-number">3.2.2.</span> <span class="nav-text">完整代码参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8Fddp%E4%B8%8Eamp"><span class="nav-number">3.3.</span> <span class="nav-text">分布式DDP与AMP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#autocast-1"><span class="nav-number">3.3.1.</span> <span class="nav-text">autocast</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#autocast-and-gradscaler-1"><span class="nav-number">3.3.2.</span> <span class="nav-text">autocast and GradScaler</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

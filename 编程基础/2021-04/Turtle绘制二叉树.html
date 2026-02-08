@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言    二叉树是一种常见且用途极广的数据结构，但在使用过程中，二叉树的建立及具体结构却不太好考察，于是乎我试着使用 python 中一个基础的绘画库 —— Turtle 来将二叉树绘画到画板上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『Python』Turtle绘制二叉树">
+<meta property="og:url" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle%E7%BB%98%E5%88%B6%E4%BA%8C%E5%8F%89%E6%A0%91.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="前言    二叉树是一种常见且用途极广的数据结构，但在使用过程中，二叉树的建立及具体结构却不太好考察，于是乎我试着使用 python 中一个基础的绘画库 —— Turtle 来将二叉树绘画到画板上。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle绘制二叉树/test1.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle绘制二叉树/test2.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle绘制二叉树/test3.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle绘制二叉树/test4.png">
+<meta property="article:published_time" content="2021-04-13T07:35:28.000Z">
+<meta property="article:modified_time" content="2021-05-11T20:42:12.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="二叉树">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle绘制二叉树/test1.png">
+
+<link rel="canonical" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle%E7%BB%98%E5%88%B6%E4%BA%8C%E5%8F%89%E6%A0%91.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『Python』Turtle绘制二叉树 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle%E7%BB%98%E5%88%B6%E4%BA%8C%E5%8F%89%E6%A0%91.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『Python』Turtle绘制二叉树
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-13 15:35:28" itemprop="dateCreated datePublished" datetime="2021-04-13T15:35:28+08:00">2021-04-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-12 04:42:12" itemprop="dateModified" datetime="2021-05-12T04:42:12+08:00">2021-05-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">编程基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle%E7%BB%98%E5%88%B6%E4%BA%8C%E5%8F%89%E6%A0%91.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle%E7%BB%98%E5%88%B6%E4%BA%8C%E5%8F%89%E6%A0%91.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="前言">前言</h2>
+<p><span class="math inline">   </span>二叉树是一种常见且用途极广的数据结构，但在使用过程中，二叉树的建立及具体结构却不太好考察，于是乎我试着使用
+<span class="math inline"><em>p</em><em>y</em><em>t</em><em>h</em><em>o</em><em>n</em></span>
+中一个基础的绘画库 —— <span class="math inline"><em>T</em><em>u</em><em>r</em><em>t</em><em>l</em><em>e</em></span>
+来将二叉树绘画到画板上。</p>
+<span id="more"></span>
+<hr>
+<h3 id="绘制二叉树的实现">绘制二叉树的实现</h3>
+<h4 id="step-1-导入库">Step 1 导入库</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time, math, sys, os</span><br><span class="line"><span class="keyword">import</span> turtle</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br></pre></td></tr></table></figure>
+<p>其中,</p>
+<ul>
+<li>turtle —— python自带的基础绘图库，用于绘制二叉树</li>
+<li>math —— 使用三角、反三角函数计算角度值</li>
+<li>(可选)PIL.Image —— 用于将转换保存的 <span class="math inline"><em>e</em><em>p</em><em>s</em></span> 文件为 <span class="math inline"><em>p</em><em>n</em><em>g</em></span> 文件</li>
+<li>其余的都是辅助，视个人需要导入</li>
+</ul>
+<h4 id="step-2-二叉树结点的定义">Step 2 二叉树结点的定义</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TreeNode</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, val = <span class="number">0</span>, left = <span class="literal">None</span>, right = <span class="literal">None</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.val = val</span><br><span class="line">        <span class="variable language_">self</span>.left = left</span><br><span class="line">        <span class="variable language_">self</span>.right = right</span><br></pre></td></tr></table></figure>
+<p><span class="math inline">   </span>二叉树结点定义为具有结点值(<span class="math inline"><em>v</em><em>a</em><em>l</em><em>u</em><em>e</em></span>)、指向左孩子的指针(<span class="math inline"><em>l</em><em>e</em><em>f</em><em>t</em></span>)、指向右孩子的指针(<span class="math inline"><em>r</em><em>i</em><em>g</em><em>h</em><em>t</em></span>)成员的类，其中结点初始值默认设为0，左右孩子指针均为空。</p>
+<h4 id="step-3-二叉树的建立">Step 3 二叉树的建立</h4>
+<p><span class="math inline">   </span>二叉树结点定义好以后，就可以开始建立一棵二叉树啦~<br>
+<span class="math inline">   </span>这里我并不直接使用二叉树结点建立二叉树，而是采用一种类似层序遍历的方式来建立一棵二叉树。</p>
+<ul>
+<li>首先，建立 <span class="math inline"><em>T</em><em>r</em><em>e</em><em>e</em></span>
+类，用于保存建立的二叉树，其初始化参数为一个结点值的列表，关于这个列表稍后会结合二叉树的建立说明列表值与二叉树结点的对应关系。</li>
+<li>对于一个 <span class="math inline"><em>T</em><em>r</em><em>e</em><em>e</em></span>
+类，其成员属性有三个，分别是: 根节点(<span class="math inline"><em>r</em><em>o</em><em>o</em><em>t</em></span>)、高度(<span class="math inline"><em>h</em><em>e</em><em>i</em><em>g</em><em>h</em><em>t</em></span>)、遍历指针(<span class="math inline"><em>P</em><em>r</em><em>i</em><em>n</em><em>t</em><em>P</em><em>o</em><em>i</em><em>n</em><em>t</em></span>),
+其中遍历指针并不是必须的, 这里设置遍历指针是因为后面我采用了<span class="math inline"><em>M</em><em>o</em><em>r</em><em>r</em><em>i</em><em>s</em></span>遍历的迭代器，所以需要保存一个遍历指针。</li>
+<li>最后，如果传入的列表非空，则使用传入的列表初始化二叉树。</li>
+</ul>
+<h5 id="根据列表初始化二叉树">根据列表初始化二叉树</h5>
+<p><span class="math inline">   </span>在常规的遍历方式中，一般需要两种方式的遍历结果才能唯一的确定一棵二叉树(前提是树中结点值不重复)，例如前序遍历+中序遍历、中序遍历+后序遍历、前序遍历+层序遍历等等、注意前序+后序的组合也无法完全确定二叉树，其根本原因是没法确定子树的根节点。<br>
+<span class="math inline">   </span>那么如何能根据遍历的列表就确定二叉树呢？一个可行的办法是列表中的二叉树是按完全二叉树的规则存储的，但这种办法的缺点是很可能会有大量的空间没有储存结点造成空间的浪费和输入的困难。</p>
+<p><span class="math inline">   </span>先看看层序遍历，接下来就能了解如何使用层序遍历的方法简化完全二叉树列表。</p>
+<ol type="1">
+<li>建立队列<span class="math inline"><em>Q</em><em>u</em><em>e</em><em>u</em><em>e</em></span>,
+并将根节点入队;</li>
+<li>队头结点出队，执行输出操作;</li>
+<li>检查出队结点是否有孩子结点，若有，则依次将左、右孩子结点入队;</li>
+<li>重复执行步骤2~3直到队列为空。</li>
+</ol>
+<p><span class="math inline">   </span>接下来再看看根据列表建立二叉树的步骤：</p>
+<ol type="1">
+<li>取列表首个元素作为二叉树的根节点的值(这里说的”<em>取</em>”均指删除并返回，若不希望改动列表也可以设置遍历指针并用指针后移操作代替删除);</li>
+<li>建立队列<span class="math inline"><em>Q</em><em>u</em><em>e</em><em>u</em><em>e</em></span>,
+并将根节点入队;</li>
+<li>队头结点出队，取列表中前两个元素作为该节点的左右孩子的值;</li>
+<li>若取出值为<span class="math inline"><em>N</em><em>o</em><em>n</em><em>e</em></span>，说明该节点没有左/右孩子结点;</li>
+<li>将新建的孩子结点入队，重复执行2~5直到列表值取完(或遍历指针移动到列表末)。</li>
+</ol>
+<p><span class="math inline">   </span>可以看出，建立二叉树的方法与层序遍历是非常相似的，理解了层序遍历的操作以后很容易就能理解这种依据列表建立二叉树的方法。我们改变了完全二叉树存储方式中下标对应位置的规则，设置队列以层序遍历的方式来确定结点所在位置，从而避免了存储大量空结点，但需注意的是，列表的存储规则是按照层序遍历的结果存储，但对于度为1(即只有一个孩子的结点)的结点，必须添加<span class="math inline"><em>N</em><em>o</em><em>n</em><em>e</em></span>占位符在另一个孩子的位置，对于度为2,
+0的结点则按照层序遍历结果确定位置。<br> <span class="math inline">   </span>换而言之，就是对于一个二叉树中的那些只有一个孩子的结点，需要补上一个”值为<span class="math inline"><em>N</em><em>o</em><em>n</em><em>e</em></span>“的结点使得树中所有结点都是度为2的结点或叶结点，再使用层序遍历得到列表，以此列表即可建立一棵唯一的二叉树。</p>
+<p><span class="math inline">   </span>这种方法虽然列表中也存在一些空的”<span class="math inline"><em>N</em><em>o</em><em>n</em><em>e</em></span>“结点，但度为1的结点在二叉树中最多不超过一半，所以这些冗余是可以接受的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Tree</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, nums=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.root = <span class="literal">None</span></span><br><span class="line">        <span class="variable language_">self</span>.height = <span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> nums:</span><br><span class="line">            <span class="variable language_">self</span>.SetTree(nums)</span><br><span class="line">        <span class="variable language_">self</span>.PrintPoint = <span class="variable language_">self</span>.root</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">SetTree</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>):</span><br><span class="line">        <span class="comment"># 使用层序遍历的部分插入结点</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> nums:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        Queue = <span class="built_in">list</span>()</span><br><span class="line">        <span class="variable language_">self</span>.root = TreeNode(nums.pop(<span class="number">0</span>))</span><br><span class="line">        Queue.append(<span class="variable language_">self</span>.root)</span><br><span class="line">        <span class="keyword">while</span> nums:</span><br><span class="line">            n = Queue.pop(<span class="number">0</span>)</span><br><span class="line">            nd = nums.pop(<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">if</span> nd:</span><br><span class="line">                n.left = TreeNode(nd)</span><br><span class="line">                Queue.append(n.left)</span><br><span class="line">            <span class="keyword">if</span> nums:</span><br><span class="line">                nd = nums.pop(<span class="number">0</span>)</span><br><span class="line">                <span class="keyword">if</span> nd:</span><br><span class="line">                    n.right = TreeNode(nd)</span><br><span class="line">                    Queue.append(n.right)</span><br><span class="line">        <span class="comment"># 计算二叉树高度并记录</span></span><br><span class="line">        <span class="variable language_">self</span>.height = <span class="variable language_">self</span>.FindHeight(<span class="variable language_">self</span>.root)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">FindHeight</span>(<span class="params">self, root: TreeNode</span>):</span><br><span class="line">        <span class="comment"># 递归计算二叉树高度</span></span><br><span class="line">        <span class="keyword">if</span> root:</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">max</span>(<span class="variable language_">self</span>.FindHeight(root.left), <span class="variable language_">self</span>.FindHeight(root.right)) + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p><span class="math inline">   </span>最后，使用递归方法计算树的高度，这个是二叉树基本操作，就不赘述了~<br>
+<span class="math inline">   </span>也可以在建树的过程中设置标记域标记层数，在绘图过程中就使用了这种方法~</p>
+<h4 id="step-4-二叉树的绘制">Step 4 二叉树的绘制</h4>
+<p><span class="math inline"><em>T</em><em>u</em><em>r</em><em>t</em><em>l</em><em>e</em></span>库的详细说明可以参考<a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/library/turtle.html">官方文档</a>。</p>
+<p>绘制过程主要有以下几个关键点:</p>
+<ul>
+<li>绘制树结点
+<ul>
+<li><span class="math inline"><em>T</em><em>u</em><em>r</em><em>t</em><em>l</em><em>e</em></span>有绘制圆的方法<span class="math inline"><em>t</em><em>u</em><em>r</em><em>t</em><em>l</em><em>e</em>.<em>c</em><em>i</em><em>r</em><em>c</em><em>l</em><em>e</em>(<em>r</em><em>a</em><em>d</em><em>i</em><em>u</em><em>s</em>, <em>e</em><em>x</em><em>t</em><em>e</em><em>n</em><em>t</em>, <em>s</em><em>t</em><em>e</em><em>p</em><em>s</em>)</span>
+<ul>
+<li>radius -&gt; 半径<br>
+</li>
+<li>extend -&gt; 角度(默认整个圆即360)<br>
+</li>
+<li>step -&gt; 步长,
+其实圆是由正多边形画出的，所谓步长即正多边形边数</li>
+</ul></li>
+<li>使用goto函数到对应点然后绘制即可</li>
+<li>圆的半径可以考虑随深度减小，但会使代码逻辑复杂，故没有使用</li>
+<li><span class="math inline"><em>T</em><em>u</em><em>r</em><em>t</em><em>l</em><em>e</em></span>有输出文字的方法<span class="math inline"><em>u</em><em>r</em><em>t</em><em>l</em><em>e</em>.<em>w</em><em>r</em><em>i</em><em>t</em><em>e</em>()</span>
+<ul>
+<li>考虑到圆的大小固定，文字大小位置会随文字的内容多少浮动，详细见代码</li>
+</ul></li>
+</ul></li>
+<li>连接两个结点
+<ul>
+<li>难点在于确定绘画直线的角度</li>
+<li>只需确定两个结点的坐标即可调用<span class="math inline"><em>m</em><em>a</em><em>t</em><em>h</em></span>中的反三角函数得到角度值</li>
+<li>需要注意的是<span class="math inline"><em>a</em><em>r</em><em>c</em><em>t</em><em>a</em><em>n</em>(<em>x</em>)</span>的取值范围是<span class="math inline">(−90, 90)</span>, 对于<span class="math inline">±90</span>即x坐标相同的情况需要单独处理</li>
+<li>对于两结点坐标顺序确定反三角函数不在取值范围的可以通过交换两结点坐标解决</li>
+<li>最后需要注意的就是结点的圆内不需要绘制连线</li>
+</ul></li>
+<li>确定结点所在坐标
+<ul>
+<li>首先，根结点肯定位于画布中间偏上的位置
+<ul>
+<li>综合考虑画布大小确定一个合适的值</li>
+</ul></li>
+<li>其次，一个结点的两个孩子之间的距离是随着树越深逐渐减小的
+<ul>
+<li>设置偏移值<span class="math inline"><em>d</em><em>x</em>, <em>d</em><em>y</em></span>代表孩子结点与父母结点的偏移值</li>
+<li>其中孩子结点的<span class="math inline"><em>y</em></span>坐标统一减少<span class="math inline"><em>d</em><em>y</em></span>, <span class="math inline"><em>d</em><em>y</em></span>不随深度变化</li>
+<li>两个孩子结点的<span class="math inline"><em>x</em></span>轴坐标为父母结点的<span class="math inline"><em>x</em></span>轴坐标<span class="math inline">±<em>d</em><em>x</em></span>, <span class="math inline"><em>d</em><em>x</em></span>的值随深度增加而减少</li>
+<li>我并没有考虑在较深的一些层中只有较少的结点的情况，在这方面尚不完善</li>
+</ul></li>
+<li>最后，根据结点坐标层序的绘制出二叉树
+<ul>
+<li>设置队列<span class="math inline"><em>Q</em><em>u</em><em>e</em><em>u</em><em>e</em></span>，根结点入队</li>
+<li>队头结点出队，绘制队头结点</li>
+<li>检查队头结点，若有左孩子，则计算左孩子坐标，将左孩子入队，并绘制与左孩子的连线，右孩子同理</li>
+<li>重复前两步直到队列空</li>
+</ul></li>
+</ul></li>
+<li>最后的最后，将绘制好的画布保存为图片
+<ul>
+<li>调用<span class="math inline"><em>T</em><em>u</em><em>r</em><em>t</em><em>l</em><em>e</em></span>库函数可以将画布保存为<span class="math inline"><em>e</em><em>p</em><em>s</em></span>文件(矢量图,可以用PS、AI打开)</li>
+<li>调用<span class="math inline"><em>P</em><em>I</em><em>L</em></span>库函数将<span class="math inline"><em>e</em><em>p</em><em>s</em></span>文件转为<span class="math inline"><em>p</em><em>n</em><em>g</em></span>文件(不建议这么做，因为需要安装一个Ghoshscript的东西，并且转出来图片线条的锯齿非常明显)</li>
+<li>可以使用其他软件转换，如PS、AI等</li>
+<li>我使用的是<span class="math inline"><em>i</em><em>r</em><em>f</em><em>a</em><em>n</em><em>V</em><em>i</em><em>e</em><em>w</em></span>,
+效果较调用<span class="math inline"><em>P</em><em>I</em><em>L</em></span>库函数平滑得多</li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">DrawTree</span>(<span class="params">self, save = <span class="literal">False</span></span>):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 函数: 在指定位置绘制结点(传入结点及圆心坐标、结点深度)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">drawnode</span>(<span class="params">node: TreeNode, x: <span class="built_in">int</span>, y: <span class="built_in">int</span></span>):</span><br><span class="line">        <span class="comment"># 抬笔、到圆心下方、调整方向、绘制圆、抬笔、打印结点值</span></span><br><span class="line">        turtle.penup()</span><br><span class="line">        turtle.goto(x, y - radius)</span><br><span class="line">        turtle.seth(<span class="number">0</span>)</span><br><span class="line">        turtle.pendown()</span><br><span class="line">        turtle.circle(radius, steps=<span class="number">1024</span>)</span><br><span class="line">        turtle.penup()</span><br><span class="line">        <span class="comment"># 打印结点值、字体大小和位置随结点值字符长度浮动，但不小于临界值</span></span><br><span class="line">        s = <span class="built_in">str</span>(node.val)</span><br><span class="line">        turtle.goto(x, y - radius + <span class="built_in">min</span>(radius // <span class="number">3</span> + <span class="built_in">len</span>(s), <span class="number">25</span>))</span><br><span class="line">        turtle.write(s, align=<span class="string">&quot;center&quot;</span>, font=(<span class="string">&quot;Arial&quot;</span>, <span class="built_in">max</span>(<span class="number">25</span> - <span class="built_in">len</span>(s) * <span class="number">2</span>, <span class="number">8</span>), <span class="string">&quot;normal&quot;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 函数: 绘制两个结点之间的连线(传入两结点的圆心坐标)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">drawlinknode</span>(<span class="params">x1: <span class="built_in">int</span>, y1: <span class="built_in">int</span>, x2: <span class="built_in">int</span>, y2: <span class="built_in">int</span></span>):</span><br><span class="line">        <span class="comment"># arctan的取值范围是(-90,90)所以需将起始结点在结束结点右边的情况进行两结点的交换</span></span><br><span class="line">        <span class="keyword">if</span> x1 &gt; x2:</span><br><span class="line">            x1, y1, x2, y2 = x2, y2, x1, y1</span><br><span class="line">        <span class="comment"># 计算需要绘制连线的长度</span></span><br><span class="line">        dis = <span class="built_in">max</span>(((y2 - y1) ** <span class="number">2</span> + (x2 - x1) ** <span class="number">2</span>) ** <span class="number">0.5</span> - <span class="number">2</span> * radius, <span class="number">0</span>)</span><br><span class="line">        turtle.penup()</span><br><span class="line">        turtle.goto(x1, y1)</span><br><span class="line">        <span class="comment"># 单独处理两结点在垂直方向相同的情况(即arctan为无穷, 会产生除0错)</span></span><br><span class="line">        <span class="keyword">if</span> x1 == x2 <span class="keyword">and</span> y1 &lt; y2:</span><br><span class="line">            turtle.setheading(<span class="number">90</span>)</span><br><span class="line">        <span class="keyword">elif</span> x1 == x2 <span class="keyword">and</span> y1 &gt; y2:</span><br><span class="line">            turtle.setheading(-<span class="number">90</span>)</span><br><span class="line">        <span class="keyword">else</span>: <span class="comment"># 其他情况调用math库函数计算绘制直线的方向</span></span><br><span class="line">            turtle.setheading(math.degrees(math.atan((y2 - y1) / (x2 - x1))))</span><br><span class="line">        <span class="comment"># 先出了所在圆，到边界再开始绘制</span></span><br><span class="line">        turtle.fd(radius)</span><br><span class="line">        turtle.pendown()</span><br><span class="line">        turtle.fd(dis)</span><br><span class="line">        turtle.penup()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 设置二叉树结点大小、每层高度</span></span><br><span class="line">    radius = <span class="number">30</span></span><br><span class="line">    levelheight = <span class="number">80</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 设置窗口大小、颜色、标题</span></span><br><span class="line">    turtle.setup(<span class="number">0.8</span>, <span class="number">0.8</span>)</span><br><span class="line">    width = <span class="number">2</span> ** <span class="variable language_">self</span>.height * levelheight * <span class="number">0.65</span> + <span class="number">200</span></span><br><span class="line">    height = levelheight * <span class="variable language_">self</span>.height + <span class="number">200</span></span><br><span class="line">    <span class="comment"># print(width, height)</span></span><br><span class="line">    turtle.screensize(width, height)</span><br><span class="line">    turtle.clear()</span><br><span class="line">    turtle.title(<span class="string">&quot;Draw Tree&quot;</span>)</span><br><span class="line">    <span class="comment"># turtle.st()</span></span><br><span class="line">    turtle.ht()</span><br><span class="line">    turtle.tracer(<span class="literal">False</span>)<span class="comment"># 不显示绘画过程</span></span><br><span class="line">    turtle.colormode(<span class="number">255</span>)</span><br><span class="line">    turtle.pencolor(<span class="string">&quot;black&quot;</span>)</span><br><span class="line">    turtle.pensize(<span class="number">3</span>)</span><br><span class="line">    turtle.speed(<span class="number">0</span>)</span><br><span class="line">    turtle.shape(<span class="string">&quot;classic&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># parent 和 children 之间的偏移量</span></span><br><span class="line">    dx, dy = (width - <span class="number">200</span>) / <span class="number">4</span>, levelheight</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 按照层序遍历的方法绘制二叉树</span></span><br><span class="line">    <span class="comment"># 队列中元素为: (结点, 横、纵坐标, 是否是该层最后一个结点)</span></span><br><span class="line">    Queue = <span class="built_in">list</span>()</span><br><span class="line">    x, y = <span class="number">0</span>, height // <span class="number">2</span> - <span class="number">200</span></span><br><span class="line">    <span class="keyword">if</span> <span class="variable language_">self</span>.root:</span><br><span class="line">        Queue.append([<span class="variable language_">self</span>.root, x, y, <span class="literal">True</span>])</span><br><span class="line">    <span class="keyword">while</span> Queue:</span><br><span class="line">        cur = Queue.pop(<span class="number">0</span>)</span><br><span class="line">        drawnode(cur[<span class="number">0</span>], cur[<span class="number">1</span>], cur[<span class="number">2</span>])</span><br><span class="line">        <span class="keyword">if</span> cur[<span class="number">0</span>].left:</span><br><span class="line">            i, j = cur[<span class="number">1</span>] - dx, cur[<span class="number">2</span>] - dy</span><br><span class="line">            Queue.append([cur[<span class="number">0</span>].left, i, j, <span class="literal">False</span>])</span><br><span class="line">            drawlinknode(cur[<span class="number">1</span>], cur[<span class="number">2</span>], i, j)</span><br><span class="line">        <span class="keyword">if</span> cur[<span class="number">0</span>].right:</span><br><span class="line">            i, j = cur[<span class="number">1</span>] + dx, cur[<span class="number">2</span>] - dy</span><br><span class="line">            Queue.append([cur[<span class="number">0</span>].right, i, j, <span class="literal">False</span>])</span><br><span class="line">            drawlinknode(cur[<span class="number">1</span>], cur[<span class="number">2</span>], i, j)</span><br><span class="line">        <span class="keyword">if</span> Queue <span class="keyword">and</span> cur[<span class="number">3</span>]:</span><br><span class="line">            Queue[-<span class="number">1</span>][<span class="number">3</span>] = <span class="literal">True</span></span><br><span class="line">            dx = <span class="built_in">max</span>(dx / <span class="number">2</span>, radius * <span class="number">2</span> + <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> save:</span><br><span class="line">        <span class="comment"># 存为.eps矢量图</span></span><br><span class="line">        turtle.getcanvas().postscript(file=<span class="string">&quot;Tree.eps&quot;</span>, x= -width / <span class="number">2</span>, y= -height / <span class="number">2</span>, height=height, width=width)</span><br><span class="line">        <span class="comment"># 借助PIL转换为.png (效果不好, 边缘锯齿严重, 远不如我用irfanView转换的效果好)</span></span><br><span class="line">        <span class="comment"># with open(&quot;Tree.eps&quot;, &quot;rb&quot;) as fp:</span></span><br><span class="line">        <span class="comment">#     im = Image.open(fp)</span></span><br><span class="line">        <span class="comment">#     im.save(&quot;Tree.png&quot;)</span></span><br><span class="line">        <span class="comment"># with open(&quot;Tree.png&quot;, &quot;rb&quot;) as fp:</span></span><br><span class="line">        <span class="comment">#     im = Image.open(fp)</span></span><br><span class="line">        <span class="comment">#     width, height = im.size</span></span><br><span class="line">        <span class="comment">#     im = im.resize((width * 2, height * 2))</span></span><br><span class="line">        <span class="comment">#     im.save(&quot;Tree.png&quot;)</span></span><br><span class="line">        <span class="comment"># 删除.eps文件(不建议删除，建议保留文件再使用工具转换)</span></span><br><span class="line">        <span class="comment"># os.remove(&quot;Tree.eps&quot;)</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        turtle.done()</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="输出示例">输出示例</h3>
+<p>示例1:<br>
+输入: list(range(127))</p>
+<p>输出:</p>
+<figure>
+<img data-src="Turtle绘制二叉树/test1.png" alt="示例1-完全二叉树">
+<figcaption aria-hidden="true">示例1-完全二叉树</figcaption>
+</figure>
+<p>示例2:<br>
+输入: [1, 2, 3, 4, None, 5, 6, None, None, None, 8]</p>
+<p>输出:</p>
+<figure>
+<img data-src="Turtle绘制二叉树/test2.png" alt="示例2-普通二叉树">
+<figcaption aria-hidden="true">示例2-普通二叉树</figcaption>
+</figure>
+<p>示例3:<br>
+输入: [1, 2, None, None, 3, 4, None, None, 5]</p>
+<p>输出:</p>
+<figure>
+<img data-src="Turtle绘制二叉树/test3.png" alt="示例3-单枝二叉树">
+<figcaption aria-hidden="true">示例3-单枝二叉树</figcaption>
+</figure>
+<p>示例4:<br>
+输入: [1, 2, None, None, 3, 4, None, None, 5, None, 6, None, 7, 8]</p>
+<p>输出:</p>
+<figure>
+<img data-src="Turtle绘制二叉树/test4.png" alt="示例4-深单枝二叉树">
+<figcaption aria-hidden="true">示例4-深单枝二叉树</figcaption>
+</figure>
+<hr>
+<h3 id="完整代码">完整代码</h3>
+<p><span class="math inline">   <em>T</em><em>r</em><em>e</em><em>e</em></span>类中还添加了前序、中序、后序、层序遍历的实现，用于检测二叉树的情况，其中中序是使用<span class="math inline"><em>M</em><em>o</em><em>r</em><em>r</em><em>i</em><em>s</em></span>的方法实现的，前面也有提到过，具体二叉树的遍历方法可以看<a href="https://meteordream.github.io/Data-Structures/2021-05/05114406.html">这篇文章</a></p>
+<p>2021.04.16更新：<br> <span class="math inline">   <em>T</em><em>r</em><em>e</em><em>e</em></span>类中添加参数filecount，用于计算输出的文件数量，解决了在多次执行DrawTree时保存的图片会覆盖的问题。<br>
+<span class="math inline">   </span>另外要注意的是传入类中的List会被修改，如果不希望传入List被修改，请使用Tree(List[:])的方法或提前复制。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># Time    : 2021/04/12 19:16:16</span></span><br><span class="line"><span class="comment"># Author  : 小鲸鱼</span></span><br><span class="line"><span class="comment"># File    : Draw_Tree.py</span></span><br><span class="line"><span class="comment"># language: python</span></span><br><span class="line"><span class="comment"># Software: Visual Studio Code</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> time, math, sys, os</span><br><span class="line"><span class="keyword">import</span> turtle</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TreeNode</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, val = <span class="number">0</span>, left = <span class="literal">None</span>, right = <span class="literal">None</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.val = val</span><br><span class="line">        <span class="variable language_">self</span>.left = left</span><br><span class="line">        <span class="variable language_">self</span>.right = right</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Tree</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, nums=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.root = <span class="literal">None</span></span><br><span class="line">        <span class="variable language_">self</span>.height = <span class="number">0</span></span><br><span class="line">        <span class="variable language_">self</span>.filecount = <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> nums:</span><br><span class="line">            <span class="variable language_">self</span>.SetTree(nums)</span><br><span class="line">        <span class="variable language_">self</span>.PrintPoint = <span class="variable language_">self</span>.root</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">SetTree</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>):</span><br><span class="line">        <span class="comment"># 使用层序遍历的部分插入结点</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> nums:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        Queue = <span class="built_in">list</span>()</span><br><span class="line">        <span class="variable language_">self</span>.root = TreeNode(nums.pop(<span class="number">0</span>))</span><br><span class="line">        Queue.append(<span class="variable language_">self</span>.root)</span><br><span class="line">        <span class="keyword">while</span> nums:</span><br><span class="line">            n = Queue.pop(<span class="number">0</span>)</span><br><span class="line">            nd = nums.pop(<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">if</span> nd:</span><br><span class="line">                n.left = TreeNode(nd)</span><br><span class="line">                Queue.append(n.left)</span><br><span class="line">            <span class="keyword">if</span> nums:</span><br><span class="line">                nd = nums.pop(<span class="number">0</span>)</span><br><span class="line">                <span class="keyword">if</span> nd:</span><br><span class="line">                    n.right = TreeNode(nd)</span><br><span class="line">                    Queue.append(n.right)</span><br><span class="line">        <span class="comment"># 计算二叉树高度并记录</span></span><br><span class="line">        <span class="variable language_">self</span>.height = <span class="variable language_">self</span>.FindHeight(<span class="variable language_">self</span>.root)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">FindHeight</span>(<span class="params">self, root: TreeNode</span>):</span><br><span class="line">        <span class="comment"># 递归计算二叉树高度</span></span><br><span class="line">        <span class="keyword">if</span> root:</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">max</span>(<span class="variable language_">self</span>.FindHeight(root.left), <span class="variable language_">self</span>.FindHeight(root.right)) + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">DrawTree</span>(<span class="params">self, save = <span class="literal">True</span></span>):</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 函数: 在指定位置绘制结点(传入结点及圆心坐标、结点深度)</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">drawnode</span>(<span class="params">node: TreeNode, x: <span class="built_in">int</span>, y: <span class="built_in">int</span></span>):</span><br><span class="line">            <span class="comment"># 抬笔、到圆心下方、调整方向、绘制圆、抬笔、打印结点值</span></span><br><span class="line">            turtle.penup()</span><br><span class="line">            turtle.goto(x, y - radius)</span><br><span class="line">            turtle.seth(<span class="number">0</span>)</span><br><span class="line">            turtle.pendown()</span><br><span class="line">            turtle.circle(radius, steps=<span class="number">1024</span>)</span><br><span class="line">            turtle.penup()</span><br><span class="line">            <span class="comment"># 打印结点值、字体大小和位置随结点值字符长度浮动，但不小于临界值</span></span><br><span class="line">            s = <span class="built_in">str</span>(node.val)</span><br><span class="line">            turtle.goto(x, y - radius + <span class="built_in">min</span>(radius // <span class="number">3</span> + <span class="built_in">len</span>(s), <span class="number">25</span>))</span><br><span class="line">            turtle.write(s, align=<span class="string">&quot;center&quot;</span>, font=(<span class="string">&quot;Arial&quot;</span>, <span class="built_in">max</span>(<span class="number">25</span> - <span class="built_in">len</span>(s) * <span class="number">2</span>, <span class="number">8</span>), <span class="string">&quot;normal&quot;</span>))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 函数: 绘制两个结点之间的连线(传入两结点的圆心坐标)</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">drawlinknode</span>(<span class="params">x1: <span class="built_in">int</span>, y1: <span class="built_in">int</span>, x2: <span class="built_in">int</span>, y2: <span class="built_in">int</span></span>):</span><br><span class="line">            <span class="comment"># arctan的取值范围是(-90,90)所以需将起始结点在结束结点右边的情况进行两结点的交换</span></span><br><span class="line">            <span class="keyword">if</span> x1 &gt; x2:</span><br><span class="line">                x1, y1, x2, y2 = x2, y2, x1, y1</span><br><span class="line">            <span class="comment"># 计算需要绘制连线的长度</span></span><br><span class="line">            dis = <span class="built_in">max</span>(((y2 - y1) ** <span class="number">2</span> + (x2 - x1) ** <span class="number">2</span>) ** <span class="number">0.5</span> - <span class="number">2</span> * radius, <span class="number">0</span>)</span><br><span class="line">            turtle.penup()</span><br><span class="line">            turtle.goto(x1, y1)</span><br><span class="line">            <span class="comment"># 单独处理两结点在垂直方向相同的情况(即arctan为无穷, 会产生除0错)</span></span><br><span class="line">            <span class="keyword">if</span> x1 == x2 <span class="keyword">and</span> y1 &lt; y2:</span><br><span class="line">                turtle.setheading(<span class="number">90</span>)</span><br><span class="line">            <span class="keyword">elif</span> x1 == x2 <span class="keyword">and</span> y1 &gt; y2:</span><br><span class="line">                turtle.setheading(-<span class="number">90</span>)</span><br><span class="line">            <span class="keyword">else</span>: <span class="comment"># 其他情况调用math库函数计算绘制直线的方向</span></span><br><span class="line">                turtle.setheading(math.degrees(math.atan((y2 - y1) / (x2 - x1))))</span><br><span class="line">            <span class="comment"># 先出了所在圆，到边界再开始绘制</span></span><br><span class="line">            turtle.fd(radius)</span><br><span class="line">            turtle.pendown()</span><br><span class="line">            turtle.fd(dis)</span><br><span class="line">            turtle.penup()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置二叉树结点大小、每层高度</span></span><br><span class="line">        radius = <span class="number">30</span></span><br><span class="line">        levelheight = <span class="number">80</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 设置窗口大小、颜色、标题</span></span><br><span class="line">        turtle.setup(<span class="number">0.8</span>, <span class="number">0.8</span>)</span><br><span class="line">        width = <span class="number">2</span> ** <span class="variable language_">self</span>.height * levelheight * <span class="number">0.65</span> + <span class="number">200</span></span><br><span class="line">        height = levelheight * <span class="variable language_">self</span>.height + <span class="number">200</span></span><br><span class="line">        <span class="comment"># print(width, height)</span></span><br><span class="line">        turtle.screensize(width, height)</span><br><span class="line">        turtle.clear()</span><br><span class="line">        turtle.title(<span class="string">&quot;Draw Tree&quot;</span>)</span><br><span class="line">        <span class="comment"># turtle.st()</span></span><br><span class="line">        turtle.ht()</span><br><span class="line">        turtle.tracer(<span class="literal">False</span>)</span><br><span class="line">        turtle.colormode(<span class="number">255</span>)</span><br><span class="line">        turtle.pencolor(<span class="string">&quot;black&quot;</span>)</span><br><span class="line">        turtle.pensize(<span class="number">3</span>)</span><br><span class="line">        turtle.speed(<span class="number">0</span>)</span><br><span class="line">        turtle.shape(<span class="string">&quot;classic&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># parent 和 children 之间的偏移量</span></span><br><span class="line">        dx, dy = (width - <span class="number">200</span>) / <span class="number">4</span>, levelheight</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 按照层序遍历的方法绘制二叉树</span></span><br><span class="line">        <span class="comment"># 队列中元素为: (结点, 横、纵坐标, 是否是该层最后一个结点)</span></span><br><span class="line">        Queue = <span class="built_in">list</span>()</span><br><span class="line">        x, y = <span class="number">0</span>, height // <span class="number">2</span> - <span class="number">100</span></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.root:</span><br><span class="line">            Queue.append([<span class="variable language_">self</span>.root, x, y, <span class="literal">True</span>])</span><br><span class="line">        <span class="keyword">while</span> Queue:</span><br><span class="line">            cur = Queue.pop(<span class="number">0</span>)</span><br><span class="line">            drawnode(cur[<span class="number">0</span>], cur[<span class="number">1</span>], cur[<span class="number">2</span>])</span><br><span class="line">            <span class="keyword">if</span> cur[<span class="number">0</span>].left:</span><br><span class="line">                i, j = cur[<span class="number">1</span>] - dx, cur[<span class="number">2</span>] - dy</span><br><span class="line">                Queue.append([cur[<span class="number">0</span>].left, i, j, <span class="literal">False</span>])</span><br><span class="line">                drawlinknode(cur[<span class="number">1</span>], cur[<span class="number">2</span>], i, j)</span><br><span class="line">            <span class="keyword">if</span> cur[<span class="number">0</span>].right:</span><br><span class="line">                i, j = cur[<span class="number">1</span>] + dx, cur[<span class="number">2</span>] - dy</span><br><span class="line">                Queue.append([cur[<span class="number">0</span>].right, i, j, <span class="literal">False</span>])</span><br><span class="line">                drawlinknode(cur[<span class="number">1</span>], cur[<span class="number">2</span>], i, j)</span><br><span class="line">            <span class="keyword">if</span> Queue <span class="keyword">and</span> cur[<span class="number">3</span>]:</span><br><span class="line">                Queue[-<span class="number">1</span>][<span class="number">3</span>] = <span class="literal">True</span></span><br><span class="line">                dx = <span class="built_in">max</span>(dx / <span class="number">2</span>, radius * <span class="number">2</span> + <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> save:</span><br><span class="line">            <span class="comment"># 存为.eps矢量图</span></span><br><span class="line">            turtle.getcanvas().postscript(file=<span class="string">&quot;Tree&quot;</span> + <span class="built_in">str</span>(<span class="variable language_">self</span>.filecount) + <span class="string">&quot;.eps&quot;</span>, x= -width / <span class="number">2</span>, y= -height / <span class="number">2</span>, height=height, width=width)</span><br><span class="line">            <span class="variable language_">self</span>.filecount += <span class="number">1</span></span><br><span class="line">            <span class="comment"># 借助PIL转换为.png (效果不好边缘锯齿严重，远不如我用irfanView转换的效果好)</span></span><br><span class="line">            <span class="comment"># with open(&quot;Tree.eps&quot;, &quot;rb&quot;) as fp:</span></span><br><span class="line">            <span class="comment">#     im = Image.open(fp)</span></span><br><span class="line">            <span class="comment">#     im.save(&quot;Tree.png&quot;)</span></span><br><span class="line">            <span class="comment"># with open(&quot;Tree.png&quot;, &quot;rb&quot;) as fp:</span></span><br><span class="line">            <span class="comment">#     im = Image.open(fp)</span></span><br><span class="line">            <span class="comment">#     width, height = im.size</span></span><br><span class="line">            <span class="comment">#     im = im.resize((width * 2, height * 2))</span></span><br><span class="line">            <span class="comment">#     im.save(&quot;Tree.png&quot;)</span></span><br><span class="line">            <span class="comment"># 删除.eps文件(不建议删除，建议保留文件再使用工具转换)</span></span><br><span class="line">            <span class="comment"># os.remove(&quot;Tree.eps&quot;)</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            turtle.done()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">nextnode</span>(<span class="params">self</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="comment"># 扁平化二叉搜索树迭代器，中序输出树节点</span></span><br><span class="line">        <span class="keyword">while</span> <span class="variable language_">self</span>.PrintPoint:</span><br><span class="line">            <span class="comment"># 存在左子树，则左子树的最右节点存放指向该节点的线索(指针)</span></span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.PrintPoint.left:</span><br><span class="line">                mostright = <span class="variable language_">self</span>.PrintPoint.left</span><br><span class="line">                <span class="comment"># 查找左子树最右节点</span></span><br><span class="line">                <span class="keyword">while</span> mostright.right <span class="keyword">and</span> <span class="keyword">not</span> mostright.right == <span class="variable language_">self</span>.PrintPoint:</span><br><span class="line">                    mostright = mostright.right</span><br><span class="line">                <span class="comment"># 若查找结果不为空(回到根节点)，说明左子树最右节点已经存放了线索并且左子树已经遍历过，抹去该线索</span></span><br><span class="line">                <span class="keyword">if</span> mostright.right:</span><br><span class="line">                    mostright.right = <span class="literal">None</span></span><br><span class="line">                <span class="comment"># 若结果为空，存入线索，根节点左移(root = root-&gt;left)，重复查找</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    mostright.right = <span class="variable language_">self</span>.PrintPoint</span><br><span class="line">                    <span class="variable language_">self</span>.PrintPoint = <span class="variable language_">self</span>.PrintPoint.left</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">            <span class="comment"># 根节点不存在左子树或左子树已经遍历过，输出该节点，再将根节点右移(root = root-&gt;right)</span></span><br><span class="line">            ans = <span class="variable language_">self</span>.PrintPoint.val</span><br><span class="line">            <span class="variable language_">self</span>.PrintPoint = <span class="variable language_">self</span>.PrintPoint.right</span><br><span class="line">            <span class="keyword">return</span> ans</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">PrintMidTree</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 利用线索在O(1)空间中序遍历二叉树(不改动树本身)</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;中序遍历: &quot;</span>, end=<span class="string">&quot;&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.PrintPoint = <span class="variable language_">self</span>.root</span><br><span class="line">        <span class="keyword">while</span> <span class="variable language_">self</span>.PrintPoint:</span><br><span class="line">            <span class="built_in">print</span>(<span class="variable language_">self</span>.nextnode(), end=<span class="string">&quot; &quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">PrintPreTree</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 递归前序遍历二叉树</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">PreVisit</span>(<span class="params">root: TreeNode</span>):</span><br><span class="line">            <span class="keyword">if</span> root:</span><br><span class="line">                <span class="built_in">print</span>(root.val, end= <span class="string">&quot; &quot;</span>)</span><br><span class="line">                PreVisit(root.left)</span><br><span class="line">                PreVisit(root.right)</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;前序遍历: &quot;</span>, end=<span class="string">&quot;&quot;</span>)</span><br><span class="line">        PreVisit(<span class="variable language_">self</span>.root)</span><br><span class="line">        <span class="built_in">print</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">PrintPostTree</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 递归后序遍历二叉树</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">PostVisit</span>(<span class="params">root: TreeNode</span>):</span><br><span class="line">            <span class="keyword">if</span> root:</span><br><span class="line">                PostVisit(root.left)</span><br><span class="line">                PostVisit(root.right)</span><br><span class="line">                <span class="built_in">print</span>(root.val, end= <span class="string">&quot; &quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;后序遍历: &quot;</span>, end=<span class="string">&quot;&quot;</span>)</span><br><span class="line">        PostVisit(<span class="variable language_">self</span>.root)</span><br><span class="line">        <span class="built_in">print</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">PrintLevelTree</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 层序遍历二叉树</span></span><br><span class="line">        Queue = <span class="built_in">list</span>()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;层序遍历: &quot;</span>, end=<span class="string">&quot;&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.root:</span><br><span class="line">            Queue.append(<span class="variable language_">self</span>.root)</span><br><span class="line">        <span class="keyword">while</span> Queue:</span><br><span class="line">            cur = Queue.pop(<span class="number">0</span>)</span><br><span class="line">            <span class="built_in">print</span>(cur.val, end=<span class="string">&quot; &quot;</span>)</span><br><span class="line">            <span class="keyword">if</span> cur.left:</span><br><span class="line">                Queue.append(cur.left)</span><br><span class="line">            <span class="keyword">if</span> cur.right:</span><br><span class="line">                Queue.append(cur.right)</span><br><span class="line">        <span class="built_in">print</span>()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    start = time.perf_counter()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 测试1: 完全二叉树</span></span><br><span class="line">    <span class="comment"># T = Tree(list(range(127)))</span></span><br><span class="line">    <span class="comment"># T.DrawTree(1)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 测试2</span></span><br><span class="line">    <span class="comment"># T = Tree([1, 2, 3, 4, None, 5, 6, None, None, None, 8])</span></span><br><span class="line">    <span class="comment"># T.PrintPreTree()</span></span><br><span class="line">    <span class="comment"># T.PrintMidTree()</span></span><br><span class="line">    <span class="comment"># T.PrintPostTree()</span></span><br><span class="line">    <span class="comment"># T.PrintLevelTree()</span></span><br><span class="line">    <span class="comment"># print(&quot;TreeHeight = &quot;, T.height)</span></span><br><span class="line">    <span class="comment"># T.DrawTree(1)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 测试3</span></span><br><span class="line">    <span class="comment"># T = Tree([1, 2, None, None, 3, 4, None, None, 5])</span></span><br><span class="line">    <span class="comment"># T.PrintPreTree()</span></span><br><span class="line">    <span class="comment"># T.PrintMidTree()</span></span><br><span class="line">    <span class="comment"># T.PrintPostTree()</span></span><br><span class="line">    <span class="comment"># T.PrintLevelTree()</span></span><br><span class="line">    <span class="comment"># print(&quot;TreeHeight = &quot;, T.height)</span></span><br><span class="line">    <span class="comment"># T.DrawTree(1)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 测试4</span></span><br><span class="line">    T = Tree([<span class="number">1</span>, <span class="number">2</span>, <span class="literal">None</span>, <span class="literal">None</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="literal">None</span>, <span class="literal">None</span>, <span class="number">5</span>, <span class="literal">None</span>, <span class="number">6</span>, <span class="literal">None</span>, <span class="number">7</span>, <span class="number">8</span>])</span><br><span class="line">    T.PrintPreTree()</span><br><span class="line">    T.PrintMidTree()</span><br><span class="line">    T.PrintPostTree()</span><br><span class="line">    T.PrintLevelTree()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;TreeHeight = &quot;</span>, T.height)</span><br><span class="line">    T.DrawTree(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    end = time.perf_counter()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Running Time: &#123;:,.2f&#125;μs&quot;</span>.<span class="built_in">format</span>((end - start) * <span class="number">10</span> ** <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/Turtle%E7%BB%98%E5%88%B6%E4%BA%8C%E5%8F%89%E6%A0%91.html" title="『Python』Turtle绘制二叉树">https://meteordream.github.io/编程基础/2021-04/Turtle绘制二叉树.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Binary-Tree/" rel="tag"><i class="fa fa-tag"></i> 二叉树</a>
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-04/python-heapq%E8%AF%A6%E8%A7%A3.html" rel="prev" title="『Python基础』heapq详解">
+      <i class="fa fa-chevron-left"></i> 『Python基础』heapq详解
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/ReadingNote/2021-04/%E7%A7%AF%E6%9E%81%E5%BF%83%E7%90%86%E5%AD%A6.html" rel="next" title="积极心理学">
+      积极心理学 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%98%E5%88%B6%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.</span> <span class="nav-text">绘制二叉树的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#step-1-%E5%AF%BC%E5%85%A5%E5%BA%93"><span class="nav-number">1.1.1.</span> <span class="nav-text">Step 1 导入库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-2-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%BB%93%E7%82%B9%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">Step 2 二叉树结点的定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-3-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%BB%BA%E7%AB%8B"><span class="nav-number">1.1.3.</span> <span class="nav-text">Step 3 二叉树的建立</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E5%88%97%E8%A1%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">根据列表初始化二叉树</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-4-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%98%E5%88%B6"><span class="nav-number">1.1.4.</span> <span class="nav-text">Step 4 二叉树的绘制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">输出示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.</span> <span class="nav-text">完整代码</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

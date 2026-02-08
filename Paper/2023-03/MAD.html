@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Modality-Agnostic Debiasing for Single Domain Generalization Author: Sanqing Qu, Yingwei Pan, Guang Chen, Ting Yao, Changjun Jiang, Tao Mei Institution: 同济大学 Year: 2023 Journal: CV">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Modality-Agnostic Debiasing for Single Domain Generalization">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2023-03/MAD.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Modality-Agnostic Debiasing for Single Domain Generalization Author: Sanqing Qu, Yingwei Pan, Guang Chen, Ting Yao, Changjun Jiang, Tao Mei Institution: 同济大学 Year: 2023 Journal: CV">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230318160515771.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230318171222682.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230318214748003.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319164338041.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319164413509.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319164511093.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319164607876.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319165043407.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319165212085.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319165308647.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319165633683.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319170037448.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230319172217615.png">
+<meta property="article:published_time" content="2023-03-18T05:35:36.000Z">
+<meta property="article:modified_time" content="2023-03-18T05:35:36.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="域迁移">
+<meta property="article:tag" content="CVPR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2023-03/MAD/image-20230318160515771.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2023-03/MAD.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Modality-Agnostic Debiasing for Single Domain Generalization | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2023-03/MAD.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Modality-Agnostic Debiasing for Single Domain Generalization
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-18 13:35:36" itemprop="dateCreated datePublished" datetime="2023-03-18T13:35:36+08:00">2023-03-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2023-03/MAD.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2023-03/MAD.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Modality-Agnostic Debiasing for Single
+Domain Generalization</li>
+<li><strong>Author</strong>: Sanqing Qu, Yingwei Pan, Guang Chen, Ting
+Yao, Changjun Jiang, Tao Mei</li>
+<li><strong>Institution</strong>: 同济大学</li>
+<li><strong>Year</strong>: 2023</li>
+<li><strong>Journal</strong>: CVPR</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2303.07123">Arxiv</a>, <a target="_blank" rel="noopener" href="https://sanqing.xyz/data/MAD_CVPR23.pdf">PDF</a></li>
+<li><strong>Cite</strong>: Sanqing Qu, Yingwei Pan, Guang Chen, Ting
+Yao, Changjun Jiang, Tao Mei, IEEE / CVF Computer Vision and Pattern
+Recognition Conference (CVPR), 2023</li>
+<li><strong>Idea</strong>:
+针对分类器设置了两个分支分布提取域特定特征以及域不变特征，该方法可以在各种模态下即插即用</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@article&#123;Qu2023ModalityAgnosticDF,</span><br><span class="line">  title=&#123;Modality-Agnostic Debiasing for Single Domain Generalization&#125;,</span><br><span class="line">  author=&#123;Sanqing Qu and Yingwei Pan and Guang Chen and Ting Yao and Changjun Jiang and Tao Mei&#125;,</span><br><span class="line">  journal=&#123;ArXiv&#125;,</span><br><span class="line">  year=&#123;2023&#125;,</span><br><span class="line">  volume=&#123;abs/2303.07123&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>现有的域泛化方法大多是基于特定模态的，作者提出了一种通用的模态不可知无偏（Modality-Agnostic
+Debiasing, <strong>MAD</strong>）框架用于单源域泛化。MAD
+引入了两个分支分类器：一个偏置分支提取域特定（表面）特征，一个泛化分支基于偏置分支捕获域泛化特征。MAD
+对大多单源域方法都能即插即用，并在实验中验证了有效性。</p>
+<h2 id="introduction">Introduction</h2>
+<p>有研究表面图像具有域特定特征的两个主要原因是纹理和风格，所以很多方法都致力于生成多样化的纹理和风格来使模型学习更广泛的特征，但这些方法通常是基于特点模态的，若是针对其他模态，例如三维点云，就无法迁移过去了，三维点云的域偏移被认为是三维结构信息的差异。</p>
+<figure>
+<img data-src="MAD/image-20230318160515771.png" alt="image-20230318160515771">
+<figcaption aria-hidden="true">image-20230318160515771</figcaption>
+</figure>
+<p>针对这一点，作者提出直接加强分类器识别域特定特征的能力，同时强化域泛化特征的学习，这种思路完全消除了特定模态数据增强的需求，因此是一种单源域泛化通用的模态不可知算法。具体的实现方法是作者设计的
+MAD
+框架，MAD将提取特征的backbone与双分支分类器进行集成，两个分支分别是：偏置分支使用多头协同分类器提取表面和域特定特征，泛化分支从偏置分支获取的知识来学习获取与泛化特征。</p>
+<p>作者在 1D 文本，2D 图像，3D 点云的任务上进行了实验，表明了 MAD
+方法的有效性。</p>
+<h2 id="method">Method</h2>
+<p>单源域泛化是在单个源域 <span class="math inline">𝒟<sub><em>S</em></sub></span>
+上进行训练能泛化到未见过的目标域 <span class="math inline">{𝒟<sub><em>T</em></sub><sup>1</sup>, 𝒟<sub><em>T</em></sub><sup>2</sup>, ⋯, 𝒟<sub><em>T</em></sub><sup><em>Z</em></sup>}</span>
+. 考虑 <span class="math inline"><em>K</em></span> 分类任务：<span class="math inline">𝒟<sub><em>S</em></sub> = {(<em>x</em><sub><em>i</em></sub>, <em>y</em><sub><em>i</em></sub>)}<sub><em>i</em> = 1</sub><sup><em>n</em></sup></span>
+，DNN网络结构用 <span class="math inline"><em>F</em> = <em>g</em> ∘ <em>f</em></span>, 其中
+<span class="math inline"><em>g</em></span> 是分类器，<span class="math inline"><em>f</em></span>
+是特征提取器。对于域泛化有这样的一般性假设：域 <span class="math inline">𝒟<sub><em>S</em></sub></span> 的域泛化特征 <span class="math inline"><em>e</em><sub><em>g</em></sub></span>
+在各个域上是一致的，域特定特征 <span class="math inline"><em>e</em><sub><em>s</em></sub></span>
+是不同域上是不同的。在这种假设下，基于域泛化特征的分类器是比基于域特定特征的分类器是要更好的。在这种假设下，直接在
+<span class="math inline">𝒟<sub><em>S</em></sub></span>
+上应用经验风险最小化(ERM)
+会导致次优的模型，无法泛化到未见过的域。因为特征提取器通常会倾向于提取更简单的特征也就是域特定特征而更加忽视域泛化的特征导致泛化性能的下降。</p>
+<p>作者认为使用数据增广来提高特征提取器提取域泛化特征的能力这种做法局限性太大，大多只能适用于图像模态，所以提出直接加强分类器识别域特定特征的能力，同时强调学习域泛化特征，以此缓解对数据增广的需要，作为一种通用的与模态无关的域泛化方法。</p>
+<figure>
+<img data-src="MAD/image-20230318171222682.png" alt="image-20230318171222682">
+<figcaption aria-hidden="true">image-20230318171222682</figcaption>
+</figure>
+<p>具体的实现方法是作者设计的 MAD
+框架，MAD将提取特征的backbone与双分支分类器进行集成，两个分支分别是：偏置分支使用多头协同分类器提取表面和域特定特征，泛化分支从偏置分支获取的知识来学习获取与泛化特征。</p>
+<p>作者认为，单一的简单分类器没法学习到所有域特定特征，例如对于图像，背景、纹理、高频模式都是属于域特定的特征，所以作者设计了一个多头协同的分类器
+<span class="math inline"><em>g</em><sub><em>b</em><em>i</em><em>a</em><em>s</em></sub> : ℝ<sup><em>D</em></sup> → ℝ<sup><em>K</em> × <em>M</em></sup></span>
+来学习更多的特征，使用协同交叉熵损失来学习这个分支： <span class="math display">$$
+\mathcal{L}_{C-C E}=\mathbb{E}_{x, y} \sum_{k=1}^{K}-\mathbb{1}_{[k=y]}
+\log \frac{\exp \left(\max \left(v_{k}(x)\right)\right)}{\sum_{j=1}^{K}
+\exp \left(\max \left(v_{j}(x)\right)\right)},
+$$</span> <span class="math inline"><em>v</em><sub><em>k</em></sub>(<em>x</em>)</span>
+表示 <span class="math inline"><em>x</em></span> 样本的第 <span class="math inline"><em>k</em></span> 个类的分类器结果，<span class="math inline"><em>M</em></span>
+表示分类头的数量。该模块并不要求所有分支的分类器都能准确预测分类结果，而是只需要一个分类器能准确预测就可以了，该模块更强调协同进行分类，另外，由于
+<span class="math inline">max </span> 函数不可微，所以在实现中作者使用
+<span class="math inline"><em>l</em><em>o</em><em>g</em>-<em>s</em><em>u</em><em>m</em>-<em>e</em><em>x</em><em>p</em></span>
+来近似。</p>
+<p>一般情况下 <span class="math inline"><em>M</em></span> 的值在 <span class="math inline">[1, <em>D</em>//<em>K</em> − 1]</span>
+是比较合适的，作者使用了交叉验证来选择合适的 <span class="math inline"><em>M</em></span> 的值。</p>
+<p>接下来要考虑如何抑制域相关的特征来学习到域无关的特征，对于这一点，作者提出了泛化分支分类器<span class="math inline"><em>g</em><sub><em>g</em><em>e</em><em>n</em></sub> : ℝ<sup><em>D</em></sup> → ℝ<sup><em>K</em></sup></span>
+来捕获域无关的特征。</p>
+<p>用 <span class="math inline"><em>W</em><sub><em>b</em><em>i</em><em>a</em><em>s</em></sub> ∈ ℝ<sup><em>K</em> × <em>M</em> × <em>D</em></sup></span>
+和 <span class="math inline"><em>W</em><sub><em>g</em><em>e</em><em>n</em></sub> ∈ ℝ<sup><em>K</em> × <em>D</em></sup></span>
+分布表示两个模块中分类器的权重，作者提出一种直观的方案是使 <span class="math inline"><em>W</em><sub><em>b</em><em>i</em><em>a</em><em>s</em></sub></span>
+和 <span class="math inline"><em>W</em><sub><em>g</em><em>e</em><em>n</em></sub></span>
+正交： <span class="math display">$$
+\mathcal{L}_{C E}=\mathbb{E}_{x, y} \sum_{k=1}^{K}-\mathbb{1}_{[k=y]}
+\log \frac{\exp \left(u_{k}(x)\right)}{\sum_{j=1}^{K} \exp
+\left(u_{j}(x)\right)}
+$$</span></p>
+<p><span class="math display">$$
+\mathcal{L}_{\text {Reg }}=\frac{1}{K} \sum_{k=1}^{K}\left\|W_{\text
+{bias }}[k,:] W_{\text {gen }}[k,:]^{T}\right\|_{F}^{2}
+$$</span></p>
+<p>其中 <span class="math inline"><em>u</em><sub><em>k</em></sub>(<em>x</em>)</span>
+表示 <span class="math inline"><em>x</em></span> 样本的第 <span class="math inline"><em>k</em></span>
+个类的分类器结果。但如果一开始就优化整个网络可能无法保证分类器 <span class="math inline"><em>g</em><sub><em>g</em><em>e</em><em>n</em></sub></span>
+关注到域无关的特征，为了解决这个问题，作者设计了一种两阶段的学习机制来实现两个分支之间的交互。在第一阶段，只使用
+<span class="math inline">ℒ<sub><em>C</em> − <em>C</em><em>E</em></sub></span>
+和 <span class="math inline">ℒ<sub><em>R</em><em>e</em><em>g</em></sub></span>
+来优化网络，鼓励偏置分支学习领域相关的特征，在第二阶段，再使用三个损失函数同时优化整个网络：
+<span class="math display">min<sub><em>f</em>, <em>g</em><sub><em>b</em><em>i</em><em>a</em><em>s</em></sub>, <em>g</em><sub><em>g</em><em>e</em><em>n</em></sub></sub>ℒ<sub><em>C</em> − <em>C</em><em>E</em></sub> + ℒ<sub><em>R</em><em>e</em><em>g</em></sub> + 𝟙<sub>[<em>p</em><em>r</em><em>o</em> ≥ <em>T</em>]</sub>ℒ<sub><em>C</em><em>E</em></sub></span>
+这里 <span class="math inline"><em>p</em><em>r</em><em>o</em></span>
+表示训练进度，达到一定进度才会加上最后一段损失函数。而 <span class="math inline"><em>T</em></span>
+的大小取决于训练集的大小和训练难度。作者的实验中，对识别任务设置为 <span class="math inline"><em>T</em> = 3</span>(共 50 epoch), 对于语义分割设置
+<span class="math inline"><em>T</em> = 6%</span> 的 epoch。</p>
+<figure>
+<img data-src="MAD/image-20230318214748003.png" alt="image-20230318214748003">
+<figcaption aria-hidden="true">image-20230318214748003</figcaption>
+</figure>
+<p>正在测试阶段只使用泛化分支的分类器，所以 MAD 不会增加计算成本。</p>
+<h2 id="experiment">Experiment</h2>
+<p>首先是图像泛化数据集 PACS 的测试</p>
+<figure>
+<img data-src="MAD/image-20230319164338041.png" alt="image-20230319164338041">
+<figcaption aria-hidden="true">image-20230319164338041</figcaption>
+</figure>
+<p>同样类型的 VLCS 数据集</p>
+<figure>
+<img data-src="MAD/image-20230319164413509.png" alt="image-20230319164413509">
+<figcaption aria-hidden="true">image-20230319164413509</figcaption>
+</figure>
+<p>三维点云在 PointDA-10 数据集的域泛化实验</p>
+<figure>
+<img data-src="MAD/image-20230319164511093.png" alt="image-20230319164511093">
+<figcaption aria-hidden="true">image-20230319164511093</figcaption>
+</figure>
+<p>文本分类任务的测试使用的是 Amazon-Review 数据集：</p>
+<figure>
+<img data-src="MAD/image-20230319164607876.png" alt="image-20230319164607876">
+<figcaption aria-hidden="true">image-20230319164607876</figcaption>
+</figure>
+<p>语义分割</p>
+<figure>
+<img data-src="MAD/image-20230319165043407.png" alt="image-20230319165043407">
+<figcaption aria-hidden="true">image-20230319165043407</figcaption>
+</figure>
+<p>消融实验：</p>
+<figure>
+<img data-src="MAD/image-20230319165212085.png" alt="image-20230319165212085">
+<figcaption aria-hidden="true">image-20230319165212085</figcaption>
+</figure>
+<p>表明两阶段训练和多头分类器都是有效的</p>
+<figure>
+<img data-src="MAD/image-20230319165308647.png" alt="image-20230319165308647">
+<figcaption aria-hidden="true">image-20230319165308647</figcaption>
+</figure>
+<p>多头分类器头的数量(<span class="math inline"><em>M</em></span>)
+和两阶段训练的转折时间点(<span class="math inline"><em>T</em></span>)</p>
+<figure>
+<img data-src="MAD/image-20230319165633683.png" alt="image-20230319165633683">
+<figcaption aria-hidden="true">image-20230319165633683</figcaption>
+</figure>
+<p>MAD对于低频成分能更有效提高，也证明了低频成分是更域泛化的特征。</p>
+<p>最后是两个可视化结果</p>
+<figure>
+<img data-src="MAD/image-20230319170037448.png" alt="image-20230319170037448">
+<figcaption aria-hidden="true">image-20230319170037448</figcaption>
+</figure>
+<p>一些附录的展示：</p>
+<figure>
+<img data-src="MAD/image-20230319172217615.png" alt="image-20230319172217615">
+<figcaption aria-hidden="true">image-20230319172217615</figcaption>
+</figure>
+<p>这幅图还是在说明前面的那个观点：低频特征泛化，高频特征是域特定特征，MAD中分类器更关注域泛化特征即低频特征。</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>这篇论文指出现有的域泛化方法大多是针对特定模态的，作者提出了一种模态通用的域泛化方法，在分类器方面一方面加强了对域特定特征的学习，另一方面利用已经学到的域特定特征来指导学习域泛化特征，这种方法可以和现有的方法结合并在多种模态任务中取得了良好的效果。</p>
+<hr>
+<p><strong>如有错漏，欢迎指正！如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2023-03/MAD.html" title="『论文笔记』Modality-Agnostic Debiasing for Single Domain Generalization">https://meteordream.github.io/Paper/2023-03/MAD.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/%E5%9F%9F%E8%BF%81%E7%A7%BB/" rel="tag"><i class="fa fa-tag"></i> 域迁移</a>
+              <a href="/tags/CVPR/" rel="tag"><i class="fa fa-tag"></i> CVPR</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2023-03/%E5%89%91%E6%8C%87%20Offer%2047_%E7%A4%BC%E7%89%A9%E7%9A%84%E6%9C%80%E5%A4%A7%E4%BB%B7%E5%80%BC(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』剑指 Offer 47 礼物的最大价值">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』剑指 Offer 47 礼物的最大价值
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Paper/2023-03/HFC.html" rel="next" title="『论文笔记』High Frequency Component Helps Explain the Generalization of Convolutional Neural Networks">
+      『论文笔记』High Frequency Component Helps Explain the Generalization of Convolutional Neural Networks <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

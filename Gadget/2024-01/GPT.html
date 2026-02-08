@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简介 关于如何使用 GPT 的一些流程及如何应用到学术写作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『GPT』如何使用 GPT">
+<meta property="og:url" content="https://meteordream.github.io/Gadget/2024-01/GPT.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="简介 关于如何使用 GPT 的一些流程及如何应用到学术写作。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Gadget/2024-01/GPT/image-20240106170743703.png">
+<meta property="og:image" content="https://meteordream.github.io/Gadget/2024-01/GPT/image-20240106170914214.png">
+<meta property="og:image" content="https://meteordream.github.io/Gadget/2024-01/GPT/image-20240106172308541.png">
+<meta property="article:published_time" content="2024-01-06T08:40:02.000Z">
+<meta property="article:modified_time" content="2024-01-06T08:40:02.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="GPT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Gadget/2024-01/GPT/image-20240106170743703.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Gadget/2024-01/GPT.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『GPT』如何使用 GPT | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Gadget/2024-01/GPT.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『GPT』如何使用 GPT
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-06 16:40:02" itemprop="dateCreated datePublished" datetime="2024-01-06T16:40:02+08:00">2024-01-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Gadget/" itemprop="url" rel="index"><span itemprop="name">小工具</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Gadget/2024-01/GPT.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Gadget/2024-01/GPT.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="简介">简介</h2>
+<p>关于如何使用 GPT 的一些流程及如何应用到学术写作。</p>
+<span id="more"></span>
+<h2 id="gpt">GPT</h2>
+<p>什么是 GPT，请看 GPT 自己给出的解释：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GPT stands for &quot;Generative Pre-trained Transformer.&quot; It&#x27;s an artificial intelligence model developed by OpenAI that uses deep learning techniques to generate human-like text. GPT models are based on a transformer architecture and are pre-trained on vast amounts of text data to understand patterns, language structure, and relationships between words.</span><br><span class="line"></span><br><span class="line">These models can perform a variety of natural language processing (NLP) tasks, such as language translation, text generation, summarization, question answering, and more. GPT models have gained attention for their ability to generate coherent and contextually relevant text, making them valuable for various applications across industries, including content creation, customer service, language understanding, and AI-driven assistance.</span><br></pre></td></tr></table></figure>
+<p>翻译成中文就是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GPT代表“生成式预训练转换器”。这是OpenAI开发的一种人工智能模型，利用深度学习技术生成类似人类的文本。GPT模型基于Transformer架构，经过大量文本数据的预训练，以理解模式、语言结构和单词之间的关系。</span><br><span class="line"></span><br><span class="line">这些模型可以执行各种自然语言处理（NLP）任务，如语言翻译、文本生成、摘要、问答等。GPT模型因其生成连贯且与上下文相关的文本能力而受到关注，因此在各个行业中有着广泛的应用，包括内容创作、客户服务、语言理解和人工智能驱动的辅助等方面。</span><br></pre></td></tr></table></figure>
+<p>简单来说就是一种可以对话的人工智能，可以用于帮助我们日常的一些工作包括写作、编程等。</p>
+<h3 id="如何使用">如何使用</h3>
+<p>网上有大量的教程，以及各种网站，但追溯其源头，最出名的还是 OpenAI 的
+ChatGPT 模型，国内的有百度的文心一言、阿里的通义千问等</p>
+<p>OpenAI
+限制大陆登陆，需要科学上网，注册也比较麻烦，具体可以自行上网搜索一下，我这边是使用了
+Google
+账号直接登录，目前注册似乎可以只需要邮箱不需要手机号验证，但若要获取 API
+key 仍然需要手机号验证。注册后可以使用 GPT3.5，GPT4.0
+需要付费升级后才能使用，想尝试的可以进入官网：<a target="_blank" rel="noopener" href="https://chat.openai.com/" class="uri">https://chat.openai.com/</a>.
+其他的一些包装网站就不介绍了，百度的文心一言也是注册账号就能使用，但
+plus 版仍然是需要付费的，可以前往 <a target="_blank" rel="noopener" href="https://yiyan.baidu.com/" class="uri">https://yiyan.baidu.com/</a> 体验。</p>
+<hr>
+<h2 id="学术写作">学术写作</h2>
+<p>主要使用了<a target="_blank" rel="noopener" href="https://github.com/binary-husky/gpt_academic">GPT
+学术优化 (GPT Academic)</a> 这个项目，项目的 readme 文件和 wiki
+有很详细介绍了，这里就不多赘述了，说说怎么配置。</p>
+<blockquote>
+<p>有个网页版的可以直接使用，可以点击前往：<a target="_blank" rel="noopener" href="https://academic.chatwithpaper.org/">学术版GPT
+网页非盈利版</a></p>
+</blockquote>
+<p>按照指引将 <code>config.py</code> 文件复制一份并命名为
+<code>config_private.py</code>，需要配置的只有两个：</p>
+<ul>
+<li>API key 用于访问 GPT</li>
+<li>配置代理以便访问，不过国内的模型不需要</li>
+</ul>
+<p>代理的配置项目中有教程了，这里也不用再重复了，我这边的话是改一下端口号即可。</p>
+<h3 id="api-key">API-KEY</h3>
+<p>对于 ChatGPT 的 API key 有点麻烦，需要手机号验证，进入 <a target="_blank" rel="noopener" href="https://platform.openai.com/api-keys" class="uri">https://platform.openai.com/api-keys</a>
+网站登录后验证手机号创建即可：</p>
+<figure>
+<img data-src="GPT/image-20240106170743703.png" alt="image-20240106170743703">
+<figcaption aria-hidden="true">image-20240106170743703</figcaption>
+</figure>
+<p>将 api key 填入到配置文件中即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">API_KEY = <span class="string">&quot;sk-123456789xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx123456789&quot;</span> </span><br></pre></td></tr></table></figure>
+<p><strong>方法二</strong>：因为要国外手机号有点麻烦，我这里使用的方法是借助一下第三方平台：<a target="_blank" rel="noopener" href="https://github.com/chatanywhere/GPT_API_free" class="uri">https://github.com/chatanywhere/GPT_API_free</a></p>
+<p>使用方法很简单，直接点击“<strong>申请领取内测免费API
+key</strong>”并使用 Github 账号授权即可</p>
+<figure>
+<img data-src="GPT/image-20240106170914214.png" alt="image-20240106170914214">
+<figcaption aria-hidden="true">image-20240106170914214</figcaption>
+</figure>
+<p>将 API key 复制并填入配置文件即可，但注意还需要<a target="_blank" rel="noopener" href="https://github.com/chatanywhere/GPT_API_free?tab=readme-ov-file#%E5%BC%80%E6%BA%90gpt_academic">配置
+URL 重定向</a>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">API_KEY = <span class="string">&quot;sk-123456789xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx123456789&quot;</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用了 https://github.com/chatanywhere/GPT_API_free 的 GPT_API</span></span><br><span class="line"><span class="comment"># 国内直链</span></span><br><span class="line">API_URL_REDIRECT = &#123;<span class="string">&quot;https://api.openai.com/v1/chat/completions&quot;</span>: <span class="string">&quot;https://api.chatanywhere.tech/v1/chat/completions&quot;</span>&#125;</span><br><span class="line"><span class="comment"># 需要全局代理</span></span><br><span class="line"><span class="comment"># API_URL_REDIRECT = &#123;&quot;https://api.openai.com/v1/chat/completions&quot;: &quot;https://api.chatanywhere.cn/v1/chat/completions&quot;&#125;</span></span><br></pre></td></tr></table></figure>
+<p>重定向的连接就是上图中的”<strong>转发
+host</strong>”，注意使用国内的需要将代理关掉不然可能反而使用不了。</p>
+<p>对于阿里通义千问的模型可以可以访问 <a target="_blank" rel="noopener" href="https://dashscope.console.aliyun.com/" class="uri">https://dashscope.console.aliyun.com/</a> （网站有获取 API
+key 的教程）获取并填入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 接入通义千问在线大模型 https://dashscope.console.aliyun.com/</span></span><br><span class="line">DASHSCOPE_API_KEY = <span class="string">&quot;sk-123**********************45&quot;</span> <span class="comment"># 阿里灵积云API_KEY</span></span><br></pre></td></tr></table></figure>
+<p>并将 <code>"qwen-turbo", "qwen-plus", "qwen-max"</code> 加入到
+<code>AVAIL_LLM_MODELS</code> 中即可，目前 <strong>通义千问-max</strong>
+是免费的，可以直接体验一下。</p>
+<p>最后界面是这样的：</p>
+<figure>
+<img data-src="GPT/image-20240106172308541.png" alt="image-20240106172308541">
+<figcaption aria-hidden="true">image-20240106172308541</figcaption>
+</figure>
+<p>使用方法点击左上角“<strong>帮助</strong>”查看即可，也可以到<a target="_blank" rel="noopener" href="https://github.com/binary-husky/gpt_academic">主页</a>查看教程。</p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://chat.openai.com/">ChatGPT</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/binary-husky/gpt_academic" class="uri">https://github.com/binary-husky/gpt_academic</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/chatanywhere/GPT_API_free" class="uri">https://github.com/chatanywhere/GPT_API_free</a></li>
+<li><a target="_blank" rel="noopener" href="https://academic.chatwithpaper.org/" class="uri">https://academic.chatwithpaper.org/</a></li>
+<li><a target="_blank" rel="noopener" href="https://academic.chatwithpaper.org/" class="uri">https://academic.chatwithpaper.org/</a></li>
+</ul>
+<h2 id="提示">提示</h2>
+<!-- config_private 有 API key, 我将其复制到该博客项目里面了哦~ -->
+<p>一则只有我自己看得到的提示啦啦啦~</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Gadget/2024-01/GPT.html" title="『GPT』如何使用 GPT">https://meteordream.github.io/Gadget/2024-01/GPT.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GPT/" rel="tag"><i class="fa fa-tag"></i> GPT</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2023-12/1276_%E4%B8%8D%E6%B5%AA%E8%B4%B9%E5%8E%9F%E6%96%99%E7%9A%84%E6%B1%89%E5%A0%A1%E5%88%B6%E4%BD%9C%E6%96%B9%E6%A1%88(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』1276 不浪费原料的汉堡制作方案">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』1276 不浪费原料的汉堡制作方案
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2024-01/100150_%E7%A7%BB%E9%99%A4%E5%90%8E%E9%9B%86%E5%90%88%E7%9A%84%E6%9C%80%E5%A4%9A%E5%85%83%E7%B4%A0%E6%95%B0(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』100150 移除后集合的最多元素数">
+      『LeetCode』100150 移除后集合的最多元素数 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gpt"><span class="nav-number">2.</span> <span class="nav-text">GPT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.</span> <span class="nav-text">如何使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E6%9C%AF%E5%86%99%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">学术写作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#api-key"><span class="nav-number">3.1.</span> <span class="nav-text">API-KEY</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA"><span class="nav-number">5.</span> <span class="nav-text">提示</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

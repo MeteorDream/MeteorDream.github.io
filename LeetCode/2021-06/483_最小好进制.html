@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="题目 483. 最小好进制 难度: 困难">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『LeetCode』483 最小好进制">
+<meta property="og:url" content="https://meteordream.github.io/LeetCode/2021-06/483_%E6%9C%80%E5%B0%8F%E5%A5%BD%E8%BF%9B%E5%88%B6.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="题目 483. 最小好进制 难度: 困难">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-18T08:54:52.000Z">
+<meta property="article:modified_time" content="2021-06-18T06:40:01.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="LeetCode">
+<meta property="article:tag" content="二分查找">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/LeetCode/2021-06/483_%E6%9C%80%E5%B0%8F%E5%A5%BD%E8%BF%9B%E5%88%B6.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『LeetCode』483 最小好进制 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/LeetCode/2021-06/483_%E6%9C%80%E5%B0%8F%E5%A5%BD%E8%BF%9B%E5%88%B6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『LeetCode』483 最小好进制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-18 16:54:52 / 修改时间：14:40:01" itemprop="dateCreated datePublished" datetime="2021-06-18T16:54:52+08:00">2021-06-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LeetCode/" itemprop="url" rel="index"><span itemprop="name">LeetCode</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/LeetCode/2021-06/483_%E6%9C%80%E5%B0%8F%E5%A5%BD%E8%BF%9B%E5%88%B6.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/LeetCode/2021-06/483_%E6%9C%80%E5%B0%8F%E5%A5%BD%E8%BF%9B%E5%88%B6.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目">题目</h2>
+<p><a href="%5B题目链接%5D(https://leetcode-cn.com/problems/smallest-good-base/)">483.
+最小好进制</a></p>
+<p>难度: 困难</p>
+<span id="more"></span>
+<p>对于给定的整数 n, 如果n的k（k&gt;=2）进制数的所有数位全为1，则称
+k（k&gt;=2）是 n 的一个<strong>好进制</strong>。</p>
+<p>以字符串的形式给出 n, 以字符串的形式返回 n 的最小好进制。</p>
+<p>示例 1：</p>
+<blockquote>
+<p><strong>输入：</strong>”13”<br>
+<strong>输出：</strong>”3”<br>
+<strong>解释：</strong>13 的 3 进制是 111。</p>
+</blockquote>
+<p>示例 2：</p>
+<blockquote>
+<p><strong>输入：</strong>”4681”<br>
+<strong>输出：</strong>”8”<br>
+<strong>解释：</strong>4681 的 8 进制是 11111。</p>
+</blockquote>
+<p>示例 3：</p>
+<blockquote>
+<p><strong>输入：</strong>”1000000000000000000”<br>
+<strong>输出：</strong>”999999999999999999”<br>
+<strong>解释：</strong>1000000000000000000 的 999999999999999999 进制是
+11。</p>
+</blockquote>
+<p>提示：</p>
+<ul>
+<li>n的取值范围是 <span class="math inline">[3, 10<sup>18</sup>]</span>。</li>
+<li>输入总是有效且没有前导 0。</li>
+</ul>
+<h2 id="解析">解析</h2>
+<p>由题意得：对于 <strong>好进制</strong> k 满足下面的关系：</p>
+<p><span class="math display"><em>k</em><sup>0</sup> + <em>k</em><sup>1</sup> + <em>k</em><sup>2</sup> + …… + <em>k</em><sup><em>s</em> − 1</sup> = <em>n</em></span></p>
+<p>式子左端是等比数列，求和方法是两边乘以公比再两式相减</p>
+<p><span class="math display">$$
+k^0 + k^1 + k^2 + \dots \dots + k^{s - 1} = n \\
+k^1 + k^2 + \dots \dots + k^{s - 1} + k^s = k n
+$$</span></p>
+<p>最后得到：</p>
+<p><span class="math display"><em>k</em><sup><em>s</em></sup> − 1 = (<em>k</em> − 1) × <em>n</em></span></p>
+<p>于是问题就转化为求满足上式的最小的k值</p>
+<p>由于式子中还有另外一个变量s，所以可以枚举其中一个变量再计算另外一个变量。其中
+k 表示 k 进制，而 s 表示 k进制下 值 <span class="math inline">11…11</span> 的长度</p>
+<p>考察两个变量的取值范围，其中</p>
+<ul>
+<li><span class="math inline">2 &lt;  = <em>k</em> &lt; <em>n</em> − 1 &lt; 10<sup>18</sup></span></li>
+<li><span class="math inline">2 &lt;  = <em>s</em> &lt; 63</span></li>
+</ul>
+<p>因为 <span class="math inline">2<sup>63</sup> = 9.22 × 10<sup>18</sup></span>
+，所以 k
+转化为二进制表示是不会超过63位的，而进制越大，对应值越小，所以二进制表示的值的长度是最大的</p>
+<p>为了使得 k 尽量小，就要使 s 尽量大，所以我们由大到小枚举
+s，再计算对应 k 的值</p>
+<h2 id="二分查找">二分查找</h2>
+<p>当确定了 s 以后，就能计算 k 的值了，但是方程</p>
+<p><span class="math display"><em>k</em><sup><em>s</em></sup> − 1 = (<em>k</em> − 1) × <em>n</em></span></p>
+<p>似乎很难解，不过没关系，由于 k
+是整数，即使我们没法直接通过数学计算获得方程的解，但却能采取
+<strong>“猜数字”</strong> 的方法来猜出 k 的值。</p>
+<p><strong>猜数字</strong>
+可以通过枚举所有取值的来猜出正确答案，但是这里k的取值范围太大了，时间不允许我们一个一个的枚举，又考虑到对于一个固定的数
+<span class="math inline">(11…11)<sub><em>k</em></sub></span>, 进制 k
+越大，其真实值越大(转换为十进制就很明显了)</p>
+<p><span class="math display">(11…11)<sub><em>k</em></sub> = (<em>k</em><sup>0</sup> + <em>k</em><sup>1</sup> + <em>k</em><sup>2</sup> + …… + <em>k</em><sup><em>s</em> − 1</sup>)<sub>10</sub></span></p>
+<p>所以可以采用二分查找的方法加快 <strong>“猜数字”</strong></p>
+<p>另外需要注意的是由于数字非常接近 long 类型的最大值，所以除了python
+这种不担心溢出的语言都要小心处理溢出(可以测试下”2251799813685247”,
+“16035713712910627”这两个用例，答案是”2”, “502”)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="comment"># 二分</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">smallestGoodBase</span>(<span class="params">self, n: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        num = <span class="built_in">int</span>(n)</span><br><span class="line">        <span class="comment"># 枚举 k进制 中 1 的个数，最多为 二进制 时的位数</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num.bit_length(), <span class="number">2</span>, -<span class="number">1</span>):</span><br><span class="line">            <span class="comment"># k^0 + k^1 + …… + k^(i-1) = n -- 通过二分法计算 k</span></span><br><span class="line">            <span class="comment"># kn - n = k^i - 1</span></span><br><span class="line">            left, right = <span class="number">2</span>, num - <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> left &lt;= right:</span><br><span class="line">                mid = (left + right) // <span class="number">2</span></span><br><span class="line">                s = mid * num - num - <span class="built_in">pow</span>(mid, i) + <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> s == <span class="number">0</span>:</span><br><span class="line">                    <span class="keyword">return</span> <span class="built_in">str</span>(mid)</span><br><span class="line">                <span class="keyword">elif</span> s &gt; <span class="number">0</span>:</span><br><span class="line">                    left = mid + <span class="number">1</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    right = mid - <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">str</span>(num - <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Java */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="comment">/* 二分 */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">smallestGoodBase</span><span class="params">(String n)</span> &#123;</span><br><span class="line">        <span class="type">long</span> <span class="variable">num</span> <span class="operator">=</span> Long.parseLong(n);</span><br><span class="line">        <span class="comment">// 枚举 k进制 中 1 的个数，最多为 二进制 时的位数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> (<span class="type">int</span>) (Math.log(num) / Math.log(<span class="number">2</span>) + <span class="number">1</span>); i &gt; <span class="number">2</span>; --i) &#123;</span><br><span class="line">            <span class="comment">// k^0 + k^1 + …… + k^(i-1) = n -- 通过二分法计算 k</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">2</span>, right = num - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">                <span class="type">long</span> <span class="variable">mid</span> <span class="operator">=</span> (left + right) / <span class="number">2</span>;</span><br><span class="line">                <span class="type">long</span> <span class="variable">s</span> <span class="operator">=</span> <span class="number">0</span>, MaxVal = num / mid + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; i; ++j)</span><br><span class="line">                    <span class="keyword">if</span> (s &lt; MaxVal)</span><br><span class="line">                        s = s * mid + <span class="number">1</span>;</span><br><span class="line">                    <span class="keyword">else</span> &#123;</span><br><span class="line">                        s = num + <span class="number">1</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                <span class="keyword">if</span> (s == num)</span><br><span class="line">                    <span class="keyword">return</span> Long.toString(mid);</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (s &gt; num)</span><br><span class="line">                    right = mid - <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    left = mid + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Long.toString(num - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C++ */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">smallestGoodBase</span><span class="params">(string n)</span> </span>&#123;</span><br><span class="line">        <span class="type">long</span> num = <span class="built_in">stol</span>(n);</span><br><span class="line">        <span class="comment">// 枚举 k进制 中 1 的个数，最多为 二进制 时的位数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = (<span class="type">int</span>)(<span class="built_in">log</span>(num) / <span class="built_in">log</span>(<span class="number">2</span>) + <span class="number">1</span>); i &gt; <span class="number">2</span>; --i) &#123;</span><br><span class="line">            <span class="comment">// k^0 + k^1 + …… + k^(i-1) = n -- 通过二分法计算 k</span></span><br><span class="line">            <span class="type">long</span> left = <span class="number">2</span>, right = num - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">                <span class="type">long</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">                <span class="comment">// MaxVal 用于反向溢出判断，一旦溢出，说明比num大，设为num+1即可</span></span><br><span class="line">                <span class="type">long</span> s = <span class="number">0</span>, MaxVal = num / mid + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; i; ++j) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (s &lt; MaxVal)</span><br><span class="line">                        s = s * mid + <span class="number">1</span>;</span><br><span class="line">                    <span class="keyword">else</span> &#123;</span><br><span class="line">                        s = num + <span class="number">1</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (s == num)</span><br><span class="line">                    <span class="keyword">return</span> <span class="built_in">to_string</span>(mid);</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (s &gt; num)</span><br><span class="line">                    right = mid - <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    left = mid + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">to_string</span>(num - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度(python)：<span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><sup>2</sup><em>n</em>)</span>,
+外层循环取决于n的二进制数长度 <span class="math inline"><em>l</em><em>o</em><em>g</em><em>n</em></span>,
+内层循环取决于二分搜索空间，复杂度是 <span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><em>n</em>)</span>,
+python最内层循环使用的pow() 函数一般认为复杂度是 <span class="math inline"><em>O</em>(1)</span></li>
+<li>时间复杂度(Java,C++)：<span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><sup>3</sup><em>n</em>)</span>,
+外层循环取决于n的二进制数长度 <span class="math inline"><em>l</em><em>o</em><em>g</em><em>n</em></span>,
+内层循环取决于二分搜索空间，复杂度是 <span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><em>n</em>)</span>,
+相较于python语言Java和C++为了避免溢出采用了秦九韶算法，第三层循环时间复杂度也是
+<span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><em>n</em>)</span></li>
+<li>空间复杂度：<span class="math inline"><em>O</em>(1)</span></li>
+</ul>
+<hr>
+<h2 id="数学方法">数学方法</h2>
+<p>实际上，上面提到的方程虽然难解，但我们利用二项式定理可以巧妙的得到方程的解，回到最初的定义</p>
+<p><span class="math display"><em>k</em><sup>0</sup> + <em>k</em><sup>1</sup> + <em>k</em><sup>2</sup> + …… + <em>k</em><sup><em>s</em></sup> = <em>n</em></span></p>
+<p>对上式进行放缩：</p>
+<p><span class="math display">$$
+k^{s} &lt; n &lt; \sum_{i=0}^s C^{i}_{n}k^i = (k + 1)^s
+$$</span></p>
+<p>即：</p>
+<p><span class="math display">$$
+k &lt; n^{\frac{1}{s}} &lt; k + 1
+$$</span></p>
+<p>由于我们所求的k是一个整数，所以只需对 <span class="math inline">$n^{\frac{1}{s}}$</span> 向下取整就能得到 k
+的值，但方程本身不一定有整数解，即我们取整后的结果可能是近似值，所以我们还需将k代回公式检验(这里python可以直接套求和公式，java等可以用<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%A7%A6%E4%B9%9D%E9%9F%B6%E7%AE%97%E6%B3%95">秦九韶算法</a>加快计算同时避免溢出)</p>
+<p>补充说明为什么 <span class="math inline">$n^{\frac{1}{s}}$</span>
+向下取整就能得到 k 的值：可以理解为 <span class="math inline">$n^{\frac{1}{s}}$</span> 是一个比 k 大，但是和 k
+的差值不超过 1 的数，如果 k 是正整数，那么 <span class="math inline">$n^{\frac{1}{s}}$</span> 向下取整就能得到
+k，但对于方程 <span class="math inline"><em>n</em> = <em>k</em><sup>0</sup> + …… + <em>k</em><sup><em>s</em></sup></span>,
+枚举 s 时 k 不一定有正整数解，所以需要校验 <span class="math inline">$n^{\frac{1}{s}}$</span> 向下取整得到的是不是
+k，方法就是带回原方程检验</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="comment"># 数学</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">smallestGoodBase</span>(<span class="params">self, n: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        num = <span class="built_in">int</span>(n)</span><br><span class="line">        <span class="comment"># 枚举 k进制 中 1 的个数，最多为 二进制 时的位数</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num.bit_length(), <span class="number">2</span>, -<span class="number">1</span>):</span><br><span class="line">            <span class="comment"># k^0 + k^1 + …… + k^(i-1) = n -- 解方程计算 k</span></span><br><span class="line">            <span class="comment"># k &lt; n^(1/(i - 1)) &lt; k +1</span></span><br><span class="line">            k = <span class="built_in">int</span>(<span class="built_in">pow</span>(num, <span class="number">1</span> / (i - <span class="number">1</span>)))</span><br><span class="line">            <span class="comment"># 检查 k 进制数 (11…11) (i个1)是否是n</span></span><br><span class="line">            <span class="keyword">if</span> num == (<span class="built_in">pow</span>(k, i) - <span class="number">1</span>) // (k - <span class="number">1</span>):</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">str</span>(k)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">str</span>(num - <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Java */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="comment">/* 数学方法 */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">smallestGoodBase</span><span class="params">(String n)</span> &#123;</span><br><span class="line">        <span class="type">long</span> <span class="variable">num</span> <span class="operator">=</span> Long.parseLong(n);</span><br><span class="line">        <span class="comment">// 枚举 k进制 中 1 的个数，最多为 二进制 时的位数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> (<span class="type">int</span>) (Math.log(num) / Math.log(<span class="number">2</span>) + <span class="number">1</span>); i &gt; <span class="number">2</span>; --i) &#123;</span><br><span class="line">            <span class="comment">// k^0 + k^1 + …… + k^(i-1) = n -- 解方程计算 k</span></span><br><span class="line">            <span class="comment">// k &lt; n^(1/(i - 1)) &lt; k +1</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">k</span> <span class="operator">=</span> (<span class="type">long</span>) Math.pow(num, <span class="number">1.0</span> / (i - <span class="number">1</span>));</span><br><span class="line">            <span class="comment">// 检查 k 进制数 (11…11) (i个1)是否是n</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; i; ++j)</span><br><span class="line">                res = res * k + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (res == num)</span><br><span class="line">                <span class="keyword">return</span> Long.toString(k);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Long.toString(num - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C++ */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">smallestGoodBase</span><span class="params">(string n)</span> </span>&#123;</span><br><span class="line">        <span class="type">long</span> num = <span class="built_in">stol</span>(n);</span><br><span class="line">        <span class="comment">// 枚举 k进制 中 1 的个数，最多为 二进制 时的位数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = (<span class="type">int</span>)(<span class="built_in">log</span>(num) / <span class="built_in">log</span>(<span class="number">2</span>) + <span class="number">1</span>); i &gt; <span class="number">2</span>; --i) &#123;</span><br><span class="line">            <span class="comment">// k^0 + k^1 + …… + k^(i-1) = n -- 数学方法解方程计算 k</span></span><br><span class="line">            <span class="type">long</span> k = <span class="built_in">powl</span>(num, <span class="number">1.0</span> / (i - <span class="number">1</span>));</span><br><span class="line">            <span class="comment">// 检查 k 进制数 (11…11) (i个1)是否是n</span></span><br><span class="line">            <span class="type">long</span> res = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; i; ++j)</span><br><span class="line">                res = res * k + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (res == num)</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">to_string</span>(k);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">to_string</span>(num - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度(python)：<span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><em>n</em>)</span></li>
+<li>时间复杂度(Java,C++)：<span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><sup>2</sup><em>n</em>)</span>,
+比python多了一层循环的复杂度</li>
+<li>空间复杂度：<span class="math inline"><em>O</em>(1)</span></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/LeetCode/2021-06/483_%E6%9C%80%E5%B0%8F%E5%A5%BD%E8%BF%9B%E5%88%B6.html" title="『LeetCode』483 最小好进制">https://meteordream.github.io/LeetCode/2021-06/483_最小好进制.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LeetCode/" rel="tag"><i class="fa fa-tag"></i> LeetCode</a>
+              <a href="/tags/BinarySearch/" rel="tag"><i class="fa fa-tag"></i> 二分查找</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2021-06/65_%E6%9C%89%E6%95%88%E6%95%B0%E5%AD%97.html" rel="prev" title="『LeetCode』65 有效数字">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』65 有效数字
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2021-06/590_N%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86.html" rel="next" title="『LeetCode』590 N叉树的后序遍历">
+      『LeetCode』590 N叉树的后序遍历 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE"><span class="nav-number">3.</span> <span class="nav-text">二分查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">数学方法</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="贪心 贪心算法的核心在于局部最优能推导到全局最优，很多题目寻求贪心解不难，但要证明贪心解为全局最优解是比较困难的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『洛谷』贪心">
+<meta property="og:url" content="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/%E8%B4%AA%E5%BF%83.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="贪心 贪心算法的核心在于局部最优能推导到全局最优，很多题目寻求贪心解不难，但要证明贪心解为全局最优解是比较困难的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/贪心/54.png">
+<meta property="og:image" content="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/贪心/55.png">
+<meta property="og:image" content="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/贪心/72286.png">
+<meta property="og:image" content="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/贪心/72287.png">
+<meta property="article:published_time" content="2022-10-03T09:07:18.000Z">
+<meta property="article:modified_time" content="2023-10-05T08:39:11.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Luogu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/贪心/54.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/%E8%B4%AA%E5%BF%83.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『洛谷』贪心 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/%E8%B4%AA%E5%BF%83.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『洛谷』贪心
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-10-03 17:07:18" itemprop="dateCreated datePublished" datetime="2022-10-03T17:07:18+08:00">2022-10-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-05 16:39:11" itemprop="dateModified" datetime="2023-10-05T16:39:11+08:00">2023-10-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Luogu/" itemprop="url" rel="index"><span itemprop="name">Luogu</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">基础算法</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/%E8%B4%AA%E5%BF%83.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/%E8%B4%AA%E5%BF%83.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="贪心">贪心</h2>
+<p>贪心算法的核心在于局部最优能推导到全局最优，很多题目寻求贪心解不难，但要证明贪心解为全局最优解是比较困难的。</p>
+<hr>
+<span id="more"></span>
+<h2 id="p1208-usaco1.3混合牛奶-mixing-milk">P1208 [USACO1.3]混合牛奶
+Mixing Milk</h2>
+<h3 id="题目描述">题目描述</h3>
+<p>由于乳制品产业利润很低，所以降低原材料（牛奶）价格就变得十分重要。帮助
+Marry 乳业找到最优的牛奶采购方案。</p>
+<p>Marry
+乳业从一些奶农手中采购牛奶，并且每一位奶农为乳制品加工企业提供的价格是不同的。此外，就像每头奶牛每天只能挤出固定数量的奶，每位奶农每天能提供的牛奶数量是一定的。每天
+Marry
+乳业可以从奶农手中采购到小于或者等于奶农最大产量的整数数量的牛奶。</p>
+<p>给出 Marry
+乳业每天对牛奶的需求量，还有每位奶农提供的牛奶单价和产量。计算采购足够数量的牛奶所需的最小花费。</p>
+<p>注：每天所有奶农的总产量大于 Marry 乳业的需求量。</p>
+<h3 id="输入格式">输入格式</h3>
+<p>第一行二个整数 <span class="math inline"><em>n</em>, <em>m</em></span>，表示需要牛奶的总量，和提供牛奶的农民个数。</p>
+<p>接下来 <span class="math inline"><em>m</em></span> 行，每行两个整数
+<span class="math inline"><em>p</em><sub><em>i</em></sub>, <em>a</em><sub><em>i</em></sub></span>，表示第
+<span class="math inline"><em>i</em></span> 个农民牛奶的单价，和农民
+<span class="math inline"><em>i</em></span> 一天最多能卖出的牛奶量。</p>
+<h3 id="输出格式">输出格式</h3>
+<p>单独的一行包含单独的一个整数，表示 Marry
+的牛奶制造公司拿到所需的牛奶所要的最小费用。</p>
+<h3 id="样例-1">样例 #1</h3>
+<h4 id="样例输入-1">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">100 5</span><br><span class="line">5 20</span><br><span class="line">9 40</span><br><span class="line">3 10</span><br><span class="line">8 80</span><br><span class="line">6 30</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">630</span><br></pre></td></tr></table></figure>
+<h3 id="提示">提示</h3>
+<p>【数据范围】<br>
+对于 <span class="math inline">100%</span> 的数据：<br>
+<span class="math inline">0 ≤ <em>n</em>, <em>a</em><sub><em>i</em></sub> ≤ 2 × 10<sup>6</sup></span>，<span class="math inline">0 ≤ <em>m</em> ≤ 5000</span>，<span class="math inline">0 ≤ <em>p</em><sub><em>i</em></sub> ≤ 1000</span></p>
+<p>题目翻译来自 NOCOW。</p>
+<p>USACO Training Section 1.3</p>
+<h3 id="解题思路">解题思路</h3>
+<p>这还不简单，先买便宜的牛奶，再买贵的，先排序然后顺序取值即可，或者整理成堆再逐个取也行。时间复杂度
+<span class="math inline"><em>O</em>(<em>n</em>log <em>n</em>)</span>.</p>
+<h3 id="解答代码">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> M = <span class="number">5007</span>;</span><br><span class="line"><span class="type">int</span> n, m;</span><br><span class="line"><span class="type">int</span> milk[M][<span class="number">2</span>], idx[M];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> milk[a][<span class="number">0</span>] &lt; milk[b][<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;n, &amp;m);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; ++i) <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;milk[i][<span class="number">0</span>], &amp;milk[i][<span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; ++i) idx[i] = i;</span><br><span class="line">    <span class="built_in">sort</span>(idx, idx + m, comp);</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> ans = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; n &gt; <span class="number">0</span>; ++i) &#123;</span><br><span class="line">        <span class="type">int</span> j = idx[i];</span><br><span class="line">        <span class="type">int</span> buy = milk[j][<span class="number">1</span>] &gt; n ? n : milk[j][<span class="number">1</span>];</span><br><span class="line">        n -= buy;</span><br><span class="line">        ans += buy * milk[j][<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%lld&quot;</span>, ans);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p4995跳跳">P4995跳跳！</h2>
+<h3 id="题目描述-1">题目描述</h3>
+<p>你是一只小跳蛙，你特别擅长在各种地方跳来跳去。</p>
+<p>这一天，你和朋友小 F
+一起出去玩耍的时候，遇到了一堆高矮不同的石头，其中第 <span class="math inline"><em>i</em></span> 块的石头高度为 <span class="math inline"><em>h</em><sub><em>i</em></sub></span>，地面的高度是
+<span class="math inline"><em>h</em><sub>0</sub> = 0</span>。你估计着，从第
+<span class="math inline"><em>i</em></span> 块石头跳到第 <span class="math inline"><em>j</em></span> 块石头上耗费的体力值为 <span class="math inline">(<em>h</em><sub><em>i</em></sub> − <em>h</em><sub><em>j</em></sub>)<sup>2</sup></span>，从地面跳到第
+<span class="math inline"><em>i</em></span> 块石头耗费的体力值是 <span class="math inline">(<em>h</em><sub><em>i</em></sub>)<sup>2</sup></span>。</p>
+<p>为了给小 F
+展现你超级跳的本领，你决定跳到每个石头上各一次，并最终停在任意一块石头上，并且小跳蛙想耗费<strong>尽可能多</strong>的体力值。</p>
+<p>当然，你只是一只小跳蛙，你只会跳，不知道怎么跳才能让本领更充分地展现。</p>
+<p>不过你有救啦！小 F 给你递来了一个写着 AK
+的电脑，你可以使用计算机程序帮你解决这个问题，万能的计算机会告诉你怎么跳。</p>
+<p>那就请你——会写代码的小跳蛙——写下这个程序，为你 NOIp AK
+踏出坚实的一步吧！</p>
+<h3 id="输入格式-1">输入格式</h3>
+<p>输入一行一个正整数 <span class="math inline"><em>n</em></span>，表示石头个数。</p>
+<p>输入第二行 <span class="math inline"><em>n</em></span>
+个正整数，表示第 <span class="math inline"><em>i</em></span>
+块石头的高度 <span class="math inline"><em>h</em><sub><em>i</em></sub></span>。</p>
+<h3 id="输出格式-1">输出格式</h3>
+<p>输出一行一个正整数，表示你可以耗费的体力值的最大值。</p>
+<h3 id="样例-1-1">样例 #1</h3>
+<h4 id="样例输入-1-1">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2</span><br><span class="line">2 1</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-1">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2">样例 #2</h3>
+<h4 id="样例输入-2">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">3</span><br><span class="line">6 3 5</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">49</span><br></pre></td></tr></table></figure>
+<h3 id="提示-1">提示</h3>
+<h4 id="样例解释">样例解释</h4>
+<p>两个样例按照输入给定的顺序依次跳上去就可以得到最优方案之一。</p>
+<h4 id="数据范围">数据范围</h4>
+<p>对于 <span class="math inline">1 ≤ <em>i</em> ≤ <em>n</em></span>，有
+<span class="math inline">0 &lt; <em>h</em><sub><em>i</em></sub> ≤ 10<sup>4</sup></span>，且保证
+<span class="math inline"><em>h</em><sub><em>i</em></sub></span>
+互不相同。</p>
+<p>对于 <span class="math inline">10%</span> 的数据，<span class="math inline"><em>n</em> ≤ 3</span>；</p>
+<p>对于 <span class="math inline">20%</span> 的数据，<span class="math inline"><em>n</em> ≤ 10</span>；</p>
+<p>对于 <span class="math inline">50%</span> 的数据，<span class="math inline"><em>n</em> ≤ 20</span>；</p>
+<p>对于 <span class="math inline">80%</span> 的数据，<span class="math inline"><em>n</em> ≤ 50</span>；</p>
+<p>对于 <span class="math inline">100%</span> 的数据，<span class="math inline"><em>n</em> ≤ 300</span>。</p>
+<h3 id="解题思路-1">解题思路</h3>
+<p>显而易见，双指针即可，先跳最高的，再到最低的，以此类推。</p>
+<h3 id="解答代码-1">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">307</span>;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line"><span class="type">int</span> h[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">pow2</span><span class="params">(<span class="type">int</span> a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a * a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;h[i]);</span><br><span class="line">    <span class="built_in">sort</span>(h, h + n);</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> ans = h[n - <span class="number">1</span>] * h[n - <span class="number">1</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> left = <span class="number">0</span>, right = n - <span class="number">1</span>, cnt = <span class="number">0</span>; left &lt; right; ++cnt) &#123;</span><br><span class="line">            ans += <span class="built_in">pow2</span>(h[right] - h[left]);</span><br><span class="line">        <span class="keyword">if</span> (cnt % <span class="number">2</span> == <span class="number">0</span>) --right; <span class="comment">// 从右跳到左</span></span><br><span class="line">        <span class="keyword">else</span> ++left;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%lld&quot;</span>, ans);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p1094-noip2007-普及组-纪念品分组">P1094 [NOIP2007 普及组]
+纪念品分组</h2>
+<h3 id="题目描述-2">题目描述</h3>
+<p>元旦快到了，校学生会让乐乐负责新年晚会的纪念品发放工作。为使得参加晚会的同学所获得
+的纪念品价值相对均衡，他要把购来的纪念品根据价格进行分组，但每组最多只能包括两件纪念品，
+并且每组纪念品的价格之和不能超过一个给定的整数。为了保证在尽量短的时间内发完所有纪念品，乐乐希望分组的数目最少。</p>
+<p>你的任务是写一个程序，找出所有分组方案中分组数最少的一种，输出最少的分组数目。</p>
+<h3 id="输入格式-2">输入格式</h3>
+<p>共 <span class="math inline"><em>n</em> + 2</span> 行：</p>
+<p>第一行包括一个整数 <span class="math inline"><em>w</em></span>，为每组纪念品价格之和的上限。</p>
+<p>第二行为一个整数 <span class="math inline"><em>n</em></span>，表示购来的纪念品的总件数 <span class="math inline"><em>G</em></span>。</p>
+<p>第 <span class="math inline">3 ∼ <em>n</em> + 2</span>
+行每行包含一个正整数 <span class="math inline"><em>P</em><sub><em>i</em></sub></span>
+表示所对应纪念品的价格。</p>
+<h3 id="输出格式-2">输出格式</h3>
+<p>一个整数，即最少的分组数目。</p>
+<h3 id="样例-1-2">样例 #1</h3>
+<h4 id="样例输入-1-2">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">100 </span><br><span class="line">9 </span><br><span class="line">90 </span><br><span class="line">20 </span><br><span class="line">20 </span><br><span class="line">30 </span><br><span class="line">50 </span><br><span class="line">60 </span><br><span class="line">70 </span><br><span class="line">80 </span><br><span class="line">90</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-2">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6</span><br></pre></td></tr></table></figure>
+<h3 id="提示-2">提示</h3>
+<p><span class="math inline">50%</span> 的数据满足：<span class="math inline">1 ≤ <em>n</em> ≤ 15</span>。</p>
+<p><span class="math inline">100%</span> 的数据满足：<span class="math inline">1 ≤ <em>n</em> ≤ 3 × 10<sup>4</sup></span>，<span class="math inline">80 ≤ <em>w</em> ≤ 200</span>，<span class="math inline">5 ≤ <em>P</em><sub><em>i</em></sub> ≤ <em>w</em></span>。</p>
+<h3 id="解题思路-2">解题思路</h3>
+<p>应该注意到每组最多只能包含两件，可以先对礼物进行排序，然后依次将最大最小的进行组合，若不能组合则将最大的单独打包。</p>
+<h3 id="解答代码-2">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> w, n;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">30007</span>;</span><br><span class="line"><span class="type">int</span> g[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 读数据</span></span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;w);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;g[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">sort</span>(g, g + n);</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> left = <span class="number">0</span>, right = n - <span class="number">1</span>, cnt = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">if</span> (left &lt; right &amp;&amp; g[left] + g[right] &lt;= w) ++left, --right;</span><br><span class="line">        <span class="keyword">else</span> --right;</span><br><span class="line">        ++cnt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>, cnt);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p1199-noip2010-普及组-三国游戏">P1199 [NOIP2010 普及组]
+三国游戏</h2>
+<h3 id="题目描述-3">题目描述</h3>
+<p>小涵很喜欢电脑游戏，这些天他正在玩一个叫做《三国》的游戏。</p>
+<p>在游戏中，小涵和计算机各执一方，组建各自的军队进行对战。游戏中共有
+<span class="math inline"><em>N</em></span> 位武将（<span class="math inline"><em>N</em></span>为偶数且不小于<span class="math inline">4</span>），任意两个武将之间有一个“默契值”，表示若此两位武将作为一对组合作战时，该组合的威力有多大。游戏开始前，所有武将都是自由的（称为自由武将，一旦某个自由武将被选中作为某方军队的一员，那么他就不再是自由武将了），换句话说，所谓的自由武将不属于任何一方。</p>
+<p>游戏开始，小涵和计算机要从自由武将中挑选武将组成自己的军队，规则如下：小涵先从自由武将中选出一个加入自己的军队，然后计算机也从自由武将中选出一个加入计算机方的军队。接下来一直按照“小涵→计算机→小涵→……”的顺序选择武将，直到所有的武将被双方均分完。然后，程序自动从双方军队中各挑出一对默契值最高的武将组合代表自己的军队进行二对二比武，拥有更高默契值的一对武将组合获胜，表示两军交战，拥有获胜武将组合的一方获胜。</p>
+<p>已知计算机一方选择武将的原则是尽量破坏对手下一步将形成的最强组合，它采取的具体策略如下：任何时刻，轮到计算机挑选时，它会尝试将对手军队中的每个武将与当前每个自由武将进行一一配对，找出所有配对中默契值最高的那对武将组合，并将该组合中的自由武将选入自己的军队。
+下面举例说明计算机的选将策略，例如，游戏中一共有<span class="math inline">6</span>个武将，他们相互之间的默契值如下表所示：</p>
+<p><img data-src="贪心/54.png"></p>
+<p>双方选将过程如下所示：</p>
+<p><img data-src="贪心/55.png"></p>
+<p>小涵想知道，如果计算机在一局游戏中始终坚持上面这个策略，那么自己有没有可能必胜？如果有，在所有可能的胜利结局中，自己那对用于比武的武将组合的默契值最大是多少？</p>
+<p>假设整个游戏过程中，对战双方任何时候均能看到自由武将队中的武将和对方军队的武将。为了简化问题，保证对于不同的武将组合，其默契值均不相同。</p>
+<h3 id="输入格式-3">输入格式</h3>
+<p>共 N 行。</p>
+<p>第一行为一个偶数 <span class="math inline"><em>N</em></span>，表示武将的个数。</p>
+<p>第 <span class="math inline">2</span> 行到第 <span class="math inline"><em>N</em></span> 行里，第 <span class="math inline"><em>i</em> + 1</span> 行有 <span class="math inline"><em>N</em><sub><em>i</em></sub></span>
+个非负整数，每两个数之间用一个空格隔开，表示 <span class="math inline"><em>i</em></span> 号武将和 <span class="math inline"><em>i</em> + 1, <em>i</em> + 2, …, <em>N</em></span>
+号武将之间的默契值（ <span class="math inline">0≤</span> 默契值 <span class="math inline"> ≤ 1, 000, 000, 000</span>）。</p>
+<h3 id="输出格式-3">输出格式</h3>
+<p>共 <span class="math inline">1</span> 或 <span class="math inline">2</span> 行。</p>
+<p>若对于给定的游戏输入，存在可以让小涵获胜的选将顺序，则输出 <span class="math inline">1</span>，并另起一行输出所有获胜的情况中，小涵最终选出的武将组合的最大默契值。如果不存在可以让小涵获胜的选将顺序，则输出
+<span class="math inline">0</span>。</p>
+<h3 id="样例-1-3">样例 #1</h3>
+<h4 id="样例输入-1-3">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">6 </span><br><span class="line">5 28 16 29 27 </span><br><span class="line">23 3 20 1 </span><br><span class="line">8 32 26 </span><br><span class="line">33 11 </span><br><span class="line">12</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-3">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">32</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2-1">样例 #2</h3>
+<h4 id="样例输入-2-1">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">8 </span><br><span class="line">42 24 10 29 27 12 58 </span><br><span class="line">31 8 16 26 80 6 </span><br><span class="line">25 3 36 11 5 </span><br><span class="line">33 20 17 13 </span><br><span class="line">15 77 9 </span><br><span class="line">4 50 </span><br><span class="line">19</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2-1">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">77</span><br></pre></td></tr></table></figure>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">7</th>
+<th style="text-align: center;">8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">42</td>
+<td style="text-align: center;">24</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">29</td>
+<td style="text-align: center;">27</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">58</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">42</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">24</td>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">36</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">33</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">13</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">29</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">33</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">77</td>
+<td style="text-align: center;">9</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">27</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">36</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">50</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">80</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">77</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">19</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">58</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">19</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="提示-3">提示</h3>
+<p>【数据范围】</p>
+<p>对于$ 40%$的数据有 <span class="math inline"><em>N</em> ≤ 10</span>。</p>
+<p>对于<span class="math inline">70%</span>的数据有$ N≤18$。</p>
+<p>对于 <span class="math inline">100%</span>的数据有 <span class="math inline"><em>N</em> ≤ 500</span>。</p>
+<h3 id="解题思路-3">解题思路</h3>
+<p>显然，这是一个博弈论游戏，我们先观察一下样例，小涵都赢了，而且输出都是第二大的值，有没有可能是小涵必赢且能拿的必定是第二大的值呢？这个猜想是对的，但很可能观察不出这个结论，没关系，后面可以继续分析。</p>
+<p>做这个问题的时候，我首先考虑了什么时候小涵必输，发现这个是个很难的问题，那么反过来，有没有可能利用计算机的贪心策略来想办法选到最大默契的武将呢，比如样例1中我们有没有可能选到默契为
+33 即武将 4 和 5
+呢？显然答案是否定的，选不到，因为小涵和电脑是交替选择的，无论你小涵先选
+4 还是先选 5 而4 和 5
+互为对方最大默契的武将所以根据电脑的策略都会将另外一个选掉破坏小涵的选择，所以小涵无法选到默契最大的武将。</p>
+<p>既然无法选到最大默契的武将，我们可以注意到样例1的输出是 32
+即第二大的武将，那么小涵能否退而求其次保证自己选到次大的武将并不让计算机选到最大的武将呢？对于样例1是可以做到的，因为第二大默契的是
+5 和 3，只要小涵先选 5，计算机必定要选 4 否则小涵就能选 4
+拿到最大默契的武将了，此时小涵只要再选 3
+就能轻松拿到第二大的武将且计算机没有拿到最大默契的武将组，从而保证了小涵必胜。</p>
+<p>但是上面的这种属于比较特殊的情况，最大和次大的组合分别为 <span class="math inline">(5, 4)</span> 和 <span class="math inline">(5, 3)</span>
+所以可以逼迫电脑陷入两难的境地，若是最大和次大的组合没有重叠呢？我们试着简单构造一个样例：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">\</td>
+<td style="text-align: center;">88</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">88</td>
+<td style="text-align: center;">\</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">\</td>
+<td style="text-align: center;">77</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">77</td>
+<td style="text-align: center;">\</td>
+</tr>
+</tbody>
+</table>
+<p>这个样例非常简单，最大的是 <span class="math inline">(1, 2)</span>
+次大的是 <span class="math inline">(3, 4)</span>，我们简单分析就能发现此时小涵并不能拿到次大的，这个示例其实规律很明显了，小涵能取得的最大的武将组合其实是所有行中的次大值的最大值，即
+4，然后我们可以破坏电脑选择的最大默契的武将。</p>
+<p>总结就是，我们先选在计算机策略下能选的最大的武将，然后按照计算机的策略破坏计算机能选的最大的，多出的第一步策略和先手优势，保证了小涵是必胜的。</p>
+<h3 id="解答代码-3">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">507</span>;</span><br><span class="line"><span class="type">int</span> f[N][N];</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">get_data</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i + <span class="number">1</span>; j &lt;= n; ++j) &#123;</span><br><span class="line">            <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;f[i][j]);</span><br><span class="line">            f[j][i] = f[i][j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_second</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 获取第 x 行次大的值</span></span><br><span class="line">    <span class="type">int</span> max_val = <span class="number">0</span>, second_val = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (f[x][i] &gt; second_val) &#123;</span><br><span class="line">            second_val = f[x][i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (second_val &gt; max_val) &#123;</span><br><span class="line">            <span class="built_in">swap</span>(second_val, max_val);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> second_val;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">get_data</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> ans = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; ++i) ans = <span class="built_in">max</span>(ans, <span class="built_in">get_second</span>(i));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n%d&quot;</span>, <span class="number">1</span>, ans);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p2672-noip2015-普及组-推销员">P2672 [NOIP2015 普及组]
+推销员</h2>
+<h3 id="题目背景">题目背景</h3>
+<p>NOIP2015 普及组 T4</p>
+<h3 id="题目描述-4">题目描述</h3>
+<p>阿明是一名推销员，他奉命到螺丝街推销他们公司的产品。螺丝街是一条死胡同，出口与入口是同一个，街道的一侧是围墙，另一侧是住户。螺丝街一共有<span class="math inline"><em>N</em></span>家住户，第<span class="math inline"><em>i</em></span>家住户到入口的距离为<span class="math inline"><em>S</em><sub><em>i</em></sub></span>米。由于同一栋房子里可以有多家住户，所以可能有多家住户与入口的距离相等。阿明会从入口进入，依次向螺丝街的<span class="math inline"><em>X</em></span>家住户推销产品，然后再原路走出去。</p>
+<p>阿明每走<span class="math inline">1</span>米就会积累<span class="math inline">1</span>点疲劳值，向第<span class="math inline"><em>i</em></span>家住户推销产品会积累<span class="math inline"><em>A</em><sub><em>i</em></sub></span>点疲劳值。阿明是工作狂，他想知道，对于不同的<span class="math inline"><em>X</em></span>，在不走多余的路的前提下，他最多可以积累多少点疲劳值。</p>
+<h3 id="输入格式-4">输入格式</h3>
+<p>第一行有一个正整数<span class="math inline"><em>N</em></span>，表示螺丝街住户的数量。</p>
+<p>接下来的一行有<span class="math inline"><em>N</em></span>个正整数，其中第<span class="math inline"><em>i</em></span>个整数<span class="math inline"><em>S</em><sub><em>i</em></sub></span>表示第<span class="math inline"><em>i</em></span>家住户到入口的距离。数据保证<span class="math inline"><em>S</em><sub>1</sub> ≤ <em>S</em><sub>2</sub> ≤ … ≤ <em>S</em><sub><em>n</em></sub> &lt; 10<sup>8</sup></span>。</p>
+<p>接下来的一行有<span class="math inline"><em>N</em></span>个正整数，其中第<span class="math inline"><em>i</em></span>个整数<span class="math inline"><em>A</em><sub><em>i</em></sub></span>表示向第<span class="math inline"><em>i</em></span>户住户推销产品会积累的疲劳值。数据保证<span class="math inline"><em>A</em><sub><em>i</em></sub> &lt; 1000</span>。</p>
+<h3 id="输出格式-4">输出格式</h3>
+<p>输出<span class="math inline"><em>N</em></span>行，每行一个正整数，第
+<span class="math inline"><em>i</em></span> 行整数表示当<span class="math inline"><em>X</em> = <em>i</em></span>时，阿明最多积累的疲劳值。</p>
+<h3 id="样例-1-4">样例 #1</h3>
+<h4 id="样例输入-1-4">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">5</span><br><span class="line">1 2 3 4 5</span><br><span class="line">1 2 3 4 5</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-4">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">15</span><br><span class="line">19</span><br><span class="line">22</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2-2">样例 #2</h3>
+<h4 id="样例输入-2-2">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">5</span><br><span class="line">1 2 2 4 5</span><br><span class="line">5 4 3 4 1</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2-2">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">12</span><br><span class="line">17</span><br><span class="line">21</span><br><span class="line">24</span><br><span class="line">27</span><br></pre></td></tr></table></figure>
+<h3 id="提示-4">提示</h3>
+<p>【输入输出样例1说明】</p>
+<p><span class="math inline"><em>X</em> = 1</span>:向住户<span class="math inline">5</span>推销，往返走路的疲劳值为<span class="math inline">5 + 5</span>，推销的疲劳值为<span class="math inline">5</span>，总疲劳值为<span class="math inline">15</span>。</p>
+<p><span class="math inline"><em>X</em> = 2</span>:向住户<span class="math inline">4, 5</span>推销，往返走路的疲劳值为<span class="math inline">5 + 5</span>，推销的疲劳值为<span class="math inline">4 + 5</span>，总疲劳值为<span class="math inline">5 + 5 + 4 + 5 = 19</span>。</p>
+<p><span class="math inline"><em>X</em> = 3</span>:向住户<span class="math inline">3, 4, 5</span>推销，往返走路的疲劳值为<span class="math inline">5 + 5</span>，推销的疲劳值<span class="math inline">3 + 4 + 5</span>，总疲劳值为<span class="math inline">5 + 5 + 3 + 4 + 5 = 22</span>。</p>
+<p><span class="math inline"><em>X</em> = 4</span>:向住户<span class="math inline">2, 3, 4, 5</span>推销，往返走路的疲劳值为<span class="math inline">5 + 5</span>，推销的疲劳值<span class="math inline">2 + 3 + 4 + 5</span>，总疲劳值<span class="math inline">5 + 5 + 2 + 3 + 4 + 5 = 24</span>。</p>
+<p><span class="math inline"><em>X</em> = 5</span>:向住户<span class="math inline">1, 2, 3, 4, 5</span>推销，往返走路的疲劳值为<span class="math inline">5 + 5</span>，推销的疲劳值<span class="math inline">1 + 2 + 3 + 4 + 5</span>，总疲劳值<span class="math inline">5 + 5 + 1 + 2 + 3 + 4 + 5 = 25</span>。</p>
+<p>【输入输出样例2说明】</p>
+<p><span class="math inline"><em>X</em> = 1</span>：向住户<span class="math inline">4</span>推销，往返走路的疲劳值为<span class="math inline">4 + 4</span>，推销的疲劳值为<span class="math inline">4</span>，总疲劳值<span class="math inline">4 + 4 + 4 = 12</span>。</p>
+<p><span class="math inline"><em>X</em> = 2</span>：向住户<span class="math inline">1, 4</span>推销，往返走路的疲劳值为<span class="math inline">4 + 4</span>，推销的疲劳值为<span class="math inline">5 + 4</span>，总疲劳值<span class="math inline">4 + 4 + 5 + 4 = 17</span>。</p>
+<p><span class="math inline"><em>X</em> = 3</span>：向住户<span class="math inline">1, 2, 4</span>推销，往返走路的疲劳值为<span class="math inline">4 + 4</span>，推销的疲劳值为<span class="math inline">5 + 4 + 4</span>，总疲劳值<span class="math inline">4 + 4 + 5 + 4 + 4 = 21</span>。</p>
+<p><span class="math inline"><em>X</em> = 4</span>：向住户<span class="math inline">1, 2, 3, 4</span>推销，往返走路的疲劳值为<span class="math inline">4 + 4</span>，推销的疲劳值为<span class="math inline">5 + 4 + 3 + 4</span>，总疲劳值<span class="math inline">4 + 4 + 5 + 4 + 3 + 4 = 24</span>。或者向住户<span class="math inline">1, 2, 4, 5</span>推销，往返走路的疲劳值为<span class="math inline">5 + 5</span>，推销的疲劳值为<span class="math inline">5 + 4 + 4 + 1</span>，总疲劳值<span class="math inline">5 + 5 + 5 + 4 + 4 + 1 = 24</span>。</p>
+<p><span class="math inline"><em>X</em> = 5</span>：向住户<span class="math inline">1, 2, 3, 4, 5</span>推销，往返走路的疲劳值为<span class="math inline">5 + 5</span>，推销的疲劳值为<span class="math inline">5 + 4 + 3 + 4 + 1</span>，总疲劳值<span class="math inline">5 + 5 + 5 + 4 + 3 + 4 + 1 = 27</span>。</p>
+<p>【数据说明】</p>
+<p>对于<span class="math inline">20%</span>的数据，<span class="math inline">1 ≤ <em>N</em> ≤ 20</span>；</p>
+<p>对于<span class="math inline">40%</span>的数据，<span class="math inline">1 ≤ <em>N</em> ≤ 100</span>；</p>
+<p>对于<span class="math inline">60%</span>的数据，<span class="math inline">1 ≤ <em>N</em> ≤ 1000</span>；</p>
+<p>对于<span class="math inline">100%</span>的数据，<span class="math inline">1 ≤ <em>N</em> ≤ 100000</span>。</p>
+<h3 id="解题思路-4">解题思路</h3>
+<p>不难发现，疲劳值分为两个部分，一个是走路的疲劳值，一个是推销的疲劳值，其中走路的疲劳值只与到达的最远的住户的距离有关，而推销的疲劳值与到访的住户有关。</p>
+<p>我们先考虑最简单的两种极端情况：</p>
+<ul>
+<li><span class="math inline"><em>X</em> = 1</span>
+时只推销一个住户，那么<code>疲劳值=住户距离*2 + 推销疲劳值</code>，我们只需按照这个指标找最大即可</li>
+<li><span class="math inline"><em>X</em> = <em>N</em></span>
+时推销所有住户，那么走路疲劳值就是固定的了，推销疲劳值等于所有住户疲劳值之和</li>
+</ul>
+<p>由于问题是求解所有 <span class="math inline"><em>X</em></span>
+的情况下的解，那么一个很关键的问题是不同的 <span class="math inline"><em>X</em></span> 下的解是否有递推关系，即我们能否从
+<span class="math inline"><em>X</em> = <em>k</em></span> 推导出 <span class="math inline"><em>X</em> = <em>k</em> + 1</span>
+，或者换一种说法前者是否是后者的一个子问题，答案是肯定的，但我不会证明，想证明可以去看洛谷的题解区</p>
+<p>那么问题就很简单了，假设推销的最远距离为 <span class="math inline"><em>k</em></span> 那么有两个选择，一个是选择小于
+<span class="math inline"><em>k</em></span>
+的住户进行推销，这部分并不会增加距离的疲劳值，另一个是选择大于 k
+的住户进行推销，这部分会带来额外的距离疲劳开销。</p>
+<p>其实仔细想想问题没那么复杂，每次推销只需要做出选择：是去更远的地方推销，还是去更增加疲劳值的地方推销</p>
+<h3 id="解答代码-4">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">100007</span>;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line"><span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> dist, p;</span><br><span class="line">&#125; people[N];</span><br><span class="line"><span class="type">long</span> <span class="type">long</span> h[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;people[i].dist);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;people[i].p);</span><br><span class="line">    <span class="built_in">sort</span>(people, people + n, [](<span class="type">const</span> <span class="keyword">auto</span> &amp;a, <span class="type">const</span> <span class="keyword">auto</span>&amp; b) &#123; <span class="keyword">return</span> a.p &gt; b.p; &#125;);</span><br><span class="line">    h[n] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = n - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i) h[i] = <span class="built_in">max</span>(h[i + <span class="number">1</span>], people[i].dist * <span class="number">2</span> + people[i].p);</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> dist = <span class="number">0</span>, p = <span class="number">0</span>, ans;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        ans = h[i] + p;     <span class="comment">// 去更远的地方推销</span></span><br><span class="line">        dist = <span class="built_in">max</span>(dist, people[i].dist);</span><br><span class="line">        p += people[i].p;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%lld\n&quot;</span>, <span class="built_in">max</span>(dist * <span class="number">2</span> + p, ans));   <span class="comment">// 选疲劳更大的还是更远的？</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p1080-noip2012-提高组-国王游戏">P1080 [NOIP2012 提高组]
+国王游戏</h2>
+<h3 id="题目描述-5">题目描述</h3>
+<p>恰逢 H 国国庆，国王邀请 <span class="math inline"><em>n</em></span>
+位大臣来玩一个有奖游戏。首先，他让每个大臣在左、右手上面分别写下一个整数，国王自己也在左、右手上各写一个整数。然后，让这
+<span class="math inline"><em>n</em></span>
+位大臣排成一排，国王站在队伍的最前面。排好队后，所有的大臣都会获得国王奖赏的若干金币，每位大臣获得的金币数分别是：排在该大臣前面的所有人的左手上的数的乘积除以他自己右手上的数，然后向下取整得到的结果。</p>
+<p>国王不希望某一个大臣获得特别多的奖赏，所以他想请你帮他重新安排一下队伍的顺序，使得获得奖赏最多的大臣，所获奖赏尽可能的少。注意，国王的位置始终在队伍的最前面。</p>
+<h3 id="输入格式-5">输入格式</h3>
+<p>第一行包含一个整数 <span class="math inline"><em>n</em></span>，表示大臣的人数。</p>
+<p>第二行包含两个整数 <span class="math inline"><em>a</em></span> 和
+<span class="math inline"><em>b</em></span>，之间用一个空格隔开，分别表示国王左手和右手上的整数。</p>
+<p>接下来 <span class="math inline"><em>n</em></span>
+行，每行包含两个整数 <span class="math inline"><em>a</em></span> 和
+<span class="math inline"><em>b</em></span>，之间用一个空格隔开，分别表示每个大臣左手和右手上的整数。</p>
+<h3 id="输出格式-5">输出格式</h3>
+<p>一个整数，表示重新排列后的队伍中获奖赏最多的大臣所获得的金币数。</p>
+<h3 id="样例-1-5">样例 #1</h3>
+<h4 id="样例输入-1-5">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">3 </span><br><span class="line">1 1 </span><br><span class="line">2 3 </span><br><span class="line">7 4 </span><br><span class="line">4 6</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-5">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2</span><br></pre></td></tr></table></figure>
+<h3 id="提示-5">提示</h3>
+<p>【输入输出样例说明】</p>
+<p>按 <span class="math inline">1</span>、<span class="math inline">2</span>、<span class="math inline">3</span>
+这样排列队伍，获得奖赏最多的大臣所获得金币数为 <span class="math inline">2</span>；</p>
+<p>按 <span class="math inline">1</span>、<span class="math inline">3</span>、<span class="math inline">2</span>
+这样排列队伍，获得奖赏最多的大臣所获得金币数为 <span class="math inline">2</span>；</p>
+<p>按 <span class="math inline">2</span>、<span class="math inline">1</span>、<span class="math inline">3</span>
+这样排列队伍，获得奖赏最多的大臣所获得金币数为 <span class="math inline">2</span>；</p>
+<p>按$ 2$、<span class="math inline">3</span>、$1
+$这样排列队伍，获得奖赏最多的大臣所获得金币数为 <span class="math inline">9</span>；</p>
+<p>按 <span class="math inline">3</span>、<span class="math inline">1</span>、$2
+$这样排列队伍，获得奖赏最多的大臣所获得金币数为 <span class="math inline">2</span>；</p>
+<p>按$ 3$、<span class="math inline">2</span>、<span class="math inline">1</span>
+这样排列队伍，获得奖赏最多的大臣所获得金币数为 <span class="math inline">9</span>。</p>
+<p>因此，奖赏最多的大臣最少获得 <span class="math inline">2</span>
+个金币，答案输出 <span class="math inline">2</span>。</p>
+<p>【数据范围】</p>
+<p>对于 <span class="math inline">20%</span> 的数据，有 <span class="math inline">1 ≤ <em>n</em> ≤ 10, 0 &lt; <em>a</em>, <em>b</em> &lt; 8</span>；</p>
+<p>对于 <span class="math inline">40%</span> 的数据，有$ 1≤ n≤20,0 &lt;
+a,b &lt; 8$；</p>
+<p>对于 <span class="math inline">60%</span> 的数据，有 <span class="math inline">1 ≤ <em>n</em> ≤ 100</span>；</p>
+<p>对于 <span class="math inline">60%</span> 的数据，保证答案不超过
+<span class="math inline">10<sup>9</sup></span>；</p>
+<p>对于 <span class="math inline">100%</span> 的数据，有 <span class="math inline">1 ≤ <em>n</em> ≤ 1, 000, 0 &lt; <em>a</em>, <em>b</em> &lt; 10000</span>。</p>
+<p>NOIP 2012 提高组 第一天 第二题</p>
+<h3 id="解题思路-5">解题思路</h3>
+<p>结果为 $ $，欲要使结果变小，那么有两个办法，增大分母或减小分子</p>
+<ul>
+<li><del>因为分子是累乘的，所以先考虑将大的分母放最后，小的分母放前面，即根据右手数字排序</del></li>
+</ul>
+<p>其实这个思路不太对，因为要同时考虑到分子和分母，可以从另一个角度考虑，相邻两个人互换对后面没有影响，因为累乘顺序不影响结果，那么我们考虑相邻的第
+<span class="math inline"><em>i</em>, <em>j</em></span>
+位置的两个人谁在前面，假设前 <span class="math inline"><em>i</em> − 1</span> 个人左手乘积为 <span class="math inline"><em>x</em></span> ，那么考虑两种情况：</p>
+<ul>
+<li><span class="math inline"><em>i</em>, <em>j</em></span>
+的顺序排列，和分布为为 <span class="math inline"><em>x</em>/<em>r</em><sub><em>i</em></sub>, <em>x</em><em>l</em><sub><em>i</em></sub>/<em>r</em><sub><em>j</em></sub></span></li>
+<li><span class="math inline"><em>j</em>, <em>i</em></span>
+的顺序排列，和为 <span class="math inline"><em>x</em>/<em>r</em><sub><em>j</em></sub>, <em>x</em><em>l</em><sub><em>j</em></sub>/<em>r</em><sub><em>i</em></sub></span></li>
+</ul>
+<p>要保证最大值最小，显然最大值肯定是 <span class="math inline"><em>x</em><em>l</em><sub><em>i</em></sub>/<em>r</em><sub><em>j</em></sub></span>
+和 <span class="math inline"><em>x</em><em>l</em><sub><em>j</em></sub>/<em>r</em><sub><em>i</em></sub></span>，若
+<span class="math inline">$\dfrac{xl_i}{r_j} &lt;
+\dfrac{xl_j}{r_i}$</span> 即 <span class="math inline"><em>l</em><sub><em>i</em></sub><em>r</em><sub><em>i</em></sub> &lt; <em>l</em><sub><em>j</em></sub><em>r</em><sub><em>j</em></sub></span>
+则 <span class="math inline"><em>i</em></span>
+在前面，以此类推，类似冒泡排序的方法，可以推出最好的结果为按照左右手的两个数的乘积进行排序</p>
+<p>由于部分数据过大，数据规模可能会达到<span class="math inline">100000<sup>1000</sup></span>
+，所以需要用到高精度乘除法，这里偷懒用 Python 吧</p>
+<h3 id="解答代码-5">解答代码</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">n = <span class="built_in">int</span>(<span class="built_in">input</span>())</span><br><span class="line">a, b = <span class="built_in">map</span>(<span class="built_in">int</span>, <span class="built_in">input</span>().split())</span><br><span class="line">st = [<span class="built_in">tuple</span>(<span class="built_in">map</span>(<span class="built_in">int</span>, <span class="built_in">input</span>().split())) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line"></span><br><span class="line">st.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>] * x[<span class="number">1</span>])</span><br><span class="line">ans = a // st[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line"><span class="keyword">for</span> x, y <span class="keyword">in</span> st:</span><br><span class="line">    ans = <span class="built_in">max</span>(ans, a // y)</span><br><span class="line">    a *= x</span><br><span class="line"><span class="built_in">print</span>(ans)</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p2123-皇后游戏">P2123 皇后游戏</h2>
+<h3 id="题目背景-1">题目背景</h3>
+<p>还记得 NOIP 2012 提高组 Day1
+的国王游戏吗？时光飞逝，光阴荏苒，两年过去了。国王游戏早已过时，如今已被皇后游戏取代，请你来解决类似于国王游戏的另一个问题。</p>
+<h3 id="题目描述-6">题目描述</h3>
+<p>皇后有 <span class="math inline"><em>n</em></span>
+位大臣，每位大臣的左右手上面分别写上了一个正整数。恰逢国庆节来临，皇后决定为
+<span class="math inline"><em>n</em></span> 位大臣颁发奖金，其中第 <span class="math inline"><em>i</em></span> 位大臣所获得的奖金数目为第 <span class="math inline"><em>i</em>－1</span> 位大臣所获得奖金数目与前 <span class="math inline"><em>i</em></span>
+位大臣左手上的数的和的较大值再加上第 <span class="math inline"><em>i</em></span> 位大臣右手上的数。</p>
+<p>形式化地讲：我们设第 <span class="math inline"><em>i</em></span>
+位大臣左手上的正整数为 <span class="math inline"><em>a</em><sub><em>i</em></sub></span>，右手上的正整数为
+<span class="math inline"><em>b</em><sub><em>i</em></sub></span>，则第
+<span class="math inline"><em>i</em></span> 位大臣获得的奖金数目为 <span class="math inline"><em>c</em><sub><em>i</em></sub></span>
+可以表达为：</p>
+<p><span class="math display">$$
+c_{i} = \begin{cases} a_{1}+b_{1}  &amp; ,i=1 \\ \displaystyle \max
+\left \{ c_{i-1},\sum_{j=1}^{i}a_{j} \right \} +b_{i} &amp; ,2\leq i
+\leq n \end{cases}
+$$</span></p>
+<p>当然，吝啬的皇后并不希望太多的奖金被发给大臣，所以她想请你来重新安排一下队伍的顺序，使得获得奖金最多的大臣，所获奖金数目尽可能的少。</p>
+<p>注意：重新安排队伍并不意味着一定要打乱顺序，我们允许不改变任何一位大臣的位置。</p>
+<h3 id="输入格式-6">输入格式</h3>
+<p>第一行包含一个正整数 <span class="math inline"><em>T</em></span>，表示测试数据的组数。</p>
+<p>接下来 <span class="math inline"><em>T</em></span>
+个部分，每个部分的第一行包含一个正整数 <span class="math inline"><em>n</em></span>，表示大臣的数目。</p>
+<p>每个部分接下来 <span class="math inline"><em>n</em></span>
+行中，每行两个正整数，分别为 <span class="math inline"><em>a</em><sub><em>i</em></sub></span> 和 <span class="math inline"><em>b</em><sub><em>i</em></sub></span>，含义如上文所述。</p>
+<h3 id="输出格式-6">输出格式</h3>
+<p>共 <span class="math inline"><em>T</em></span>
+行，每行包含一个整数，表示获得奖金最多的大臣所获得的奖金数目。</p>
+<h3 id="样例-1-6">样例 #1</h3>
+<h4 id="样例输入-1-6">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">3</span><br><span class="line">4 1</span><br><span class="line">2 2</span><br><span class="line">1 2</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-6">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">8</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2-3">样例 #2</h3>
+<h4 id="样例输入-2-3">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">2</span><br><span class="line">5</span><br><span class="line">85 100</span><br><span class="line">95 99</span><br><span class="line">76 87</span><br><span class="line">60 97</span><br><span class="line">79 85</span><br><span class="line">12</span><br><span class="line">9 68</span><br><span class="line">18 45</span><br><span class="line">52 61</span><br><span class="line">39 83</span><br><span class="line">63 67</span><br><span class="line">45 99</span><br><span class="line">52 54</span><br><span class="line">82 100</span><br><span class="line">23 54</span><br><span class="line">99 94</span><br><span class="line">63 100</span><br><span class="line">52 68</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2-3">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">528</span><br><span class="line">902</span><br></pre></td></tr></table></figure>
+<h3 id="提示-6">提示</h3>
+<p>按照 1、2、3 这样排列队伍，获得最多奖金的大臣获得奖金的数目为
+10；</p>
+<p>按照 1、3、2 这样排列队伍，获得最多奖金的大臣获得奖金的数目为 9；</p>
+<p>按照 2、1、3 这样排列队伍，获得最多奖金的大臣获得奖金的数目为 9；</p>
+<p>按照 2、3、1 这样排列队伍，获得最多奖金的大臣获得奖金的数目为 8；</p>
+<p>按照 3、1、2 这样排列队伍，获得最多奖金的大臣获得奖金的数目为 9；</p>
+<p>按照 3、2、1 这样排列队伍，获得最多奖金的大臣获得奖金的数目为 8。</p>
+<p>当按照 3、2、1 这样排列队伍时，三位大臣左右手的数分别为：</p>
+<p>(1, 2)、(2, 2)、(4, 1)</p>
+<p>第 1 位大臣获得的奖金为 1 + 2 = 3；</p>
+<p>第 2 位大臣获得的奖金为 max{3, 3} + 2 = 5；</p>
+<p>第 3 位大臣获得的奖金为 max{5, 7} + 1 = 8。</p>
+<p>对于全部测试数据满足：<span class="math inline"><em>T</em> ≤ 10</span>,<span class="math inline">1 ≤ <em>n</em> ≤ 20 000</span>,<span class="math inline">1 ≤ <em>a</em><sub><em>i</em></sub>, <em>b</em><sub><em>i</em></sub> ≤ 10<sup>9</sup></span>。</p>
+<h3 id="解题思路-6">解题思路</h3>
+<p>和上一题同理，我们考虑相邻的两个人的先后顺序，假设其左右手的数字分别为
+<span class="math inline"><em>l</em><sub><em>i</em></sub>, <em>r</em><sub><em>i</em></sub>, <em>l</em><sub><em>j</em></sub>, <em>r</em><sub><em>j</em></sub></span>，其中
+<span class="math inline"><em>j</em> = <em>i</em> + 1</span>，前 <span class="math inline"><em>i</em> − 1</span> 个人左手上的数和为 <span class="math inline"><em>s</em><sub><em>i</em></sub></span>，第 <span class="math inline"><em>i</em> − 1</span> 位获得的奖金为 <span class="math inline"><em>x</em></span>，那么：</p>
+<ul>
+<li>若 <span class="math inline"><em>i</em></span> 在 <span class="math inline"><em>j</em></span> 前，则 <span class="math inline"><em>i</em></span> 获得的奖金为 <span class="math inline"><em>c</em><sub><em>i</em></sub> = <em>m</em><em>a</em><em>x</em>(<em>x</em>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub>) + <em>r</em><sub><em>i</em></sub></span>,
+<span class="math inline"><em>j</em></span> 获得的奖金为 <span class="math inline"><em>c</em><sub><em>j</em></sub> = <em>m</em><em>a</em><em>x</em>(<em>c</em><sub><em>i</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub>) + <em>r</em><sub><em>j</em></sub></span></li>
+<li>若 <span class="math inline"><em>j</em></span> 在 <span class="math inline"><em>i</em></span> 前，则 <span class="math inline"><em>j</em></span> 获得的奖金为 <span class="math inline"><em>d</em><sub><em>j</em></sub> = <em>m</em><em>a</em><em>x</em>(<em>x</em>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub>) + <em>r</em><sub><em>j</em></sub></span>,
+<span class="math inline"><em>i</em></span> 获得的奖金为 <span class="math inline"><em>d</em><sub><em>i</em></sub> = <em>m</em><em>a</em><em>x</em>(<em>d</em><sub><em>j</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub>) + <em>r</em><sub><em>i</em></sub></span></li>
+</ul>
+<p>若 <span class="math inline"><em>i</em></span> 在前更优，则有：<span class="math inline">max (<em>c</em><sub><em>i</em></sub>, <em>c</em><sub><em>j</em></sub>) ≤ max (<em>d</em><sub><em>i</em></sub>, <em>d</em><sub><em>j</em></sub>)</span>，这个不等式似乎不好解，我们先试着能不能解析一下先把
+<span class="math inline">max </span> 去掉，其实不难看出，由于等式内的
+<span class="math inline">max </span>
+，奖金肯定是越往后的人越多，所以可以化简为 <span class="math inline"><em>c</em><sub><em>j</em></sub> &lt; <em>d</em><sub><em>i</em></sub></span>，将其展开有：
+<span class="math display"><em>m</em><em>a</em><em>x</em>(<em>m</em><em>a</em><em>x</em>(<em>x</em>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub>) + <em>r</em><sub><em>i</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub>) + <em>r</em><sub><em>j</em></sub> ≤ <em>m</em><em>a</em><em>x</em>(<em>m</em><em>a</em><em>x</em>(<em>x</em>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub>) + <em>r</em><sub><em>j</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub>) + <em>r</em><sub><em>i</em></sub></span>
+继续尝试消掉 <span class="math inline">max </span> ，即将内层 <span class="math inline">max </span> 展开并将外面的数字移到 <span class="math inline">max </span> 里面： <span class="math display"><em>m</em><em>a</em><em>x</em>(<em>x</em> + <em>r</em><sub><em>i</em></sub> + <em>r</em><sub><em>j</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>r</em><sub><em>i</em></sub> + <em>r</em><sub><em>j</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>j</em></sub>) ≤ <em>m</em><em>a</em><em>x</em>(<em>x</em> + <em>r</em><sub><em>j</em></sub> + <em>r</em><sub><em>i</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>j</em></sub> + <em>r</em><sub><em>i</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>i</em></sub>)</span>
+第一项是一样的，不影响结果可以消去 <span class="math display"><em>m</em><em>a</em><em>x</em>(<em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>r</em><sub><em>i</em></sub> + <em>r</em><sub><em>j</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>j</em></sub>) ≤ <em>m</em><em>a</em><em>x</em>(<em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>j</em></sub> + <em>r</em><sub><em>i</em></sub>, <em>s</em><sub><em>i</em></sub> + <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>i</em></sub>)</span>
+所有项中都有 <span class="math inline"><em>s</em><sub><em>i</em></sub></span>，同样消去对结果不影响
+<span class="math display"><em>m</em><em>a</em><em>x</em>(<em>l</em><sub><em>i</em></sub> + <em>r</em><sub><em>i</em></sub> + <em>r</em><sub><em>j</em></sub>, <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>j</em></sub>) ≤ <em>m</em><em>a</em><em>x</em>(<em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>j</em></sub> + <em>r</em><sub><em>i</em></sub>, <em>l</em><sub><em>i</em></sub> + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>i</em></sub>)</span>
+把相同的项可以提到外面 <span class="math display"><em>m</em><em>a</em><em>x</em>(<em>r</em><sub><em>i</em></sub>, <em>l</em><sub><em>j</em></sub>) + <em>l</em><sub><em>i</em></sub> + <em>r</em><sub><em>j</em></sub> ≤ <em>m</em><em>a</em><em>x</em>(<em>r</em><sub><em>j</em></sub>, <em>l</em><sub><em>i</em></sub>) + <em>l</em><sub><em>j</em></sub> + <em>r</em><sub><em>i</em></sub></span>
+移项处理下 <span class="math display"><em>m</em><em>a</em><em>x</em>(<em>r</em><sub><em>i</em></sub>, <em>l</em><sub><em>j</em></sub>) − <em>l</em><sub><em>j</em></sub> − <em>r</em><sub><em>i</em></sub> ≤ <em>m</em><em>a</em><em>x</em>(<em>r</em><sub><em>j</em></sub>, <em>l</em><sub><em>i</em></sub>) − <em>l</em><sub><em>i</em></sub> − <em>r</em><sub><em>j</em></sub></span>
+此时左右两边都是 <span class="math inline">max (<em>a</em>, <em>b</em>) − <em>a</em> − <em>b</em></span>
+的形式，若 <span class="math inline"><em>a</em> &gt; <em>b</em></span>
+有 <span class="math inline"><em>a</em> − <em>a</em> − <em>b</em></span>
+即 <span class="math inline">−<em>b</em></span>，反之为 <span class="math inline">−<em>a</em></span>，即两个数字中小的那个的相反数，所以上式化简为
+<span class="math display">min (<em>r</em><sub><em>j</em></sub>, <em>l</em><sub><em>i</em></sub>) ≤ min (<em>r</em><sub><em>i</em></sub>, <em>l</em><sub><em>j</em></sub>)</span>
+下面这部分有点复杂，我也是看了评论区题解学会的，具体证明可以去<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/solution/P2123">看看</a>，这里就写下结论：</p>
+<ul>
+<li>需要双关键字排序，第一关键字是 <span class="math inline">min (<em>r</em><sub><em>j</em></sub>, <em>l</em><sub><em>i</em></sub>), min (<em>r</em><sub><em>i</em></sub>, <em>l</em><sub><em>j</em></sub>)</span>
+降序, 当这两个关键字相等时按第二关键字 <span class="math inline"><em>l</em><sub><em>i</em></sub>, <em>l</em><sub><em>j</em></sub></span>
+升序（也可以按 <span class="math inline"><em>r</em><sub><em>i</em></sub>, <em>r</em><sub><em>j</em></sub></span>
+降序）</li>
+</ul>
+<h3 id="解答代码-6">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">20007</span>;</span><br><span class="line"><span class="type">int</span> T, n;</span><br><span class="line"><span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> a, b;</span><br><span class="line">&#125; p[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;T);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; T; ++i) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;n);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; n; ++j) <span class="built_in">scanf</span>(<span class="string">&quot;%d%d&quot;</span>, &amp;p[j].a, &amp;p[j].b);</span><br><span class="line">        <span class="comment">// 整道题的关键就是下面这个比较函数</span></span><br><span class="line">        <span class="built_in">sort</span>(p, p + n, [](<span class="type">const</span> <span class="keyword">auto</span> &amp;x, <span class="type">const</span> <span class="keyword">auto</span> &amp;y) &#123;</span><br><span class="line">            <span class="keyword">auto</span> u = <span class="built_in">min</span>(x.a, y.b), v = <span class="built_in">min</span>(y.a, x.b);</span><br><span class="line">            <span class="keyword">return</span> u == v ? x.a &lt; y.a : u &lt; v;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="type">long</span> <span class="type">long</span> cnt = <span class="number">0</span>, ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; n; ++j) &#123;</span><br><span class="line">            cnt += p[j].a;</span><br><span class="line">            ans = <span class="built_in">max</span>(ans, cnt) + p[j].b;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%lld\n&quot;</span>, ans);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="p5521-yloi2019-梅深不见冬">P5521 [yLOI2019] 梅深不见冬</h2>
+<h3 id="题目背景-2">题目背景</h3>
+<blockquote>
+<p>风，吹起梅岭的深冬；霜，如惊涛一样汹涌；<br>
+雪，飘落后把所有烧成空，像这场，捕捉不到的梦。
+醒来时已是多年之久，宫门铜环才长了铁锈，也开始生出离愁。</p>
+</blockquote>
+<p>——银临《梅深不见冬》</p>
+<h3 id="题目描述-7">题目描述</h3>
+<p>扶苏从深冬的梅岭走出，来到了一棵有 <span class="math inline"><em>n</em></span> 个节点的有根树上。</p>
+<p>如果你不知道什么是树，可以认为树是一个边数恰好比节点个数少一的简单无向连通图。</p>
+<p>如果我们规定 <span class="math inline"><em>x</em></span> 是树 <span class="math inline"><em>T</em></span> 的根，那么定义任意一个节点 <span class="math inline"><em>y</em></span> 到根的路径就是从 <span class="math inline"><em>y</em></span> 出发不重复经过节点到达 <span class="math inline"><em>x</em></span>
+所经过的所经过的点构成的点集。可以证明这样的点集有且仅有一个。</p>
+<p>定义一个节点 <span class="math inline"><em>u</em></span> 是节点 <span class="math inline"><em>v</em></span> 的孩子，当且仅当 <span class="math inline"><em>u</em></span> 与 <span class="math inline"><em>v</em></span> 相连且 <span class="math inline"><em>u</em></span> 不在 <span class="math inline"><em>v</em></span> 到根的路径中。如果 <span class="math inline"><em>u</em></span> 是 <span class="math inline"><em>v</em></span> 的孩子，那么定义 <span class="math inline"><em>v</em></span> 是 <span class="math inline"><em>u</em></span> 的家长节点。</p>
+<p>如果我是 @<a target="_blank" rel="noopener" href="https://www.luogu.org/space/show?uid=7868">_rqy</a>
+那种<del>毒瘤</del>神仙的话，可能会问你每个节点的孩子数不超过 <span class="math inline"><em>k</em></span> 的 <span class="math inline"><em>n</em></span>
+个节点的带标号无根树一共有多少个，可惜这个问题我也不会，所以我不会问你这么毒瘤的问题。</p>
+<p>扶苏从这棵 <span class="math inline"><em>n</em></span> 个节点的树的
+<span class="math inline">1</span>
+号节点出发，沿着树上的边行走。当然我们规定 <span class="math inline">1</span>
+号节点是这棵树的根。他所行走的规定是：当扶苏在节点 <span class="math inline"><em>u</em></span> 时，扶苏要么在 <span class="math inline"><em>u</em></span>
+的孩子中选择一个<strong>没有到达过</strong>的节点 <span class="math inline"><em>v</em></span> 并行走到 <span class="math inline"><em>v</em></span>，要么选择回到 <span class="math inline"><em>u</em></span> 的家长节点。</p>
+<p>现在给每个节点一个权值 <span class="math inline"><em>w</em></span>，其中 <span class="math inline"><em>i</em></span> 号节点的权值为 <span class="math inline"><em>w</em><sub><em>i</em></sub></span>。他想给这棵树的某个节点放上从梅岭带出的梅花。我们规定扶苏能在节点
+<span class="math inline"><em>u</em></span>
+放上梅花当且仅当满足如下条件：</p>
+<blockquote>
+<p>扶苏当前在节点 <span class="math inline"><em>u</em></span>。</p>
+<p>对于 <span class="math inline"><em>u</em></span> 的所有孩子 <span class="math inline"><em>v</em></span>，节点 <span class="math inline"><em>v</em></span> 被放上了 <span class="math inline"><em>w</em><sub><em>v</em></sub></span> 朵梅花。</p>
+</blockquote>
+<p>同时，扶苏可以在<strong>任意时刻</strong>收回<strong>任意节点</strong>上的梅花，在收回梅花时不需要走到对应节点。</p>
+<p>现在扶苏想问问你，对于每个节点，如果他想在 <span class="math inline"><em>i</em></span> 号节点上放 <span class="math inline"><em>w</em><sub><em>i</em></sub></span>
+朵梅花，那么他最少要从梅岭带出多少朵梅花。</p>
+<h3 id="输入格式-7">输入格式</h3>
+<p>每个输入文件中都有且仅有一组测试数据。</p>
+<p>数据的第一行是一个整数 <span class="math inline"><em>n</em></span>
+代表树的节点个数。</p>
+<p>第二行有 <span class="math inline"><em>n</em> − 1</span>
+个用空格隔开的整数，第 <span class="math inline"><em>i</em></span>
+个整数 <span class="math inline"><em>p</em><sub><em>i</em></sub></span>
+代表第 <span class="math inline"><em>i</em> + 1</span>
+号节点的家长节点编号。</p>
+<p>第三行有 <span class="math inline"><em>n</em></span>
+个用空格隔开的整数，第 <span class="math inline"><em>i</em></span>
+个整数代表 <span class="math inline"><em>w</em><sub><em>i</em></sub></span>。</p>
+<h3 id="输出格式-7">输出格式</h3>
+<p>输出一行 <span class="math inline"><em>n</em></span>
+个用空格隔开的整数，第 <span class="math inline"><em>i</em></span>
+个整数代表想在 <span class="math inline"><em>i</em></span> 号节点上放
+<span class="math inline"><em>w</em><sub><em>i</em></sub></span>
+朵梅花需要准备的梅花个数。</p>
+<h3 id="样例-1-7">样例 #1</h3>
+<h4 id="样例输入-1-7">样例输入 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">3 </span><br><span class="line">1 2 </span><br><span class="line">1 1 1</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-1-7">样例输出 #1</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 2 1</span><br></pre></td></tr></table></figure>
+<h3 id="样例-2-4">样例 #2</h3>
+<h4 id="样例输入-2-4">样例输入 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">3</span><br><span class="line">1 1</span><br><span class="line">1 1 1</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-2-4">样例输出 #2</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3 1 1</span><br></pre></td></tr></table></figure>
+<h3 id="样例-3">样例 #3</h3>
+<h4 id="样例输入-3">样例输入 #3</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">6</span><br><span class="line">1 1 2 3 4</span><br><span class="line">3 14 1 5 12 15</span><br></pre></td></tr></table></figure>
+<h4 id="样例输出-3">样例输出 #3</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">21 20 13 20 12 15</span><br></pre></td></tr></table></figure>
+<h3 id="提示-7">提示</h3>
+<h4 id="输入输出样例-1-解释">输入输出样例 1 解释</h4>
+<figure>
+<img data-src="贪心/72286.png" alt="qwq">
+<figcaption aria-hidden="true">qwq</figcaption>
+</figure>
+<p>样例 1 的输入如上图，每个节点都需要放 <span class="math inline">1</span> 一朵梅花。</p>
+<p>如果在 1 号节点放梅花，则从一号点运动到 2 号点，然后运动到 3 号点，在
+3 号点上放一朵梅花，返回 2 号点，在 2
+号点上放一朵梅花，同时收回三号点的梅花，然后返回 1 号点，将从 3
+号点收回的梅花放到 1 号点即可。一共需要两朵梅花。</p>
+<p>在 2、3 号节点放梅花的方案类似。</p>
+<h4 id="输入输出样例-3-解释">输入输出样例 3 解释</h4>
+<figure>
+<img data-src="贪心/72287.png" alt="qwq">
+<figcaption aria-hidden="true">qwq</figcaption>
+</figure>
+<p>样例 3 的输入如左图。</p>
+<p>先从 1 号节点运动至 3 号节点，再运动至 5 号节点，在 5 号节点上放置
+<span class="math inline">12</span> 朵梅花，然后返回 3 号节点，在 3
+号节点上放置 <span class="math inline">1</span> 朵梅花，收回五号节点的
+<span class="math inline">12</span> 朵梅花，返回 1 号节点。</p>
+<p>然后运动到 2 号节点，通过 4 号节点运动到 6 号节点，放下 <span class="math inline">15</span> 朵梅花，返回 4 号节点放下 <span class="math inline">5</span> 朵梅花，此时树上有的梅花数为 <span class="math inline">5 + 15 + 1 = 21</span>，分别在 4 号、6 号和 3
+号节点上。然后收回 6 号节点的梅花，返回 2 号节点，放下 <span class="math inline">14</span> 朵梅花，收回 4 号节点的，返回 1 号节点，在
+1 号节点上放置 <span class="math inline">3</span> 朵梅花，即可达到在 1
+号节点上放梅花的目的。</p>
+<p>可以验证最大花费为 <span class="math inline">21</span>。其他节点的答案同理。</p>
+<p>请注意，其他节点的答案不一定是按照该节点的运动路径行走得到的。</p>
+<hr>
+<h5 id="数据规模与约定">数据规模与约定</h5>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">测试点编号</th>
+<th style="text-align: center;">$n = $</th>
+<th style="text-align: center;">测试点编号</th>
+<th style="text-align: center;">$n = $</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">1</span></td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;"><span class="math inline">100003</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><span class="math inline">8</span></td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;"><span class="math inline">100003</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><span class="math inline">8</span></td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;"><span class="math inline">100003</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><span class="math inline">8</span></td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;"><span class="math inline">100003</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span class="math inline">8</span></td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;"><span class="math inline">100004</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;"><span class="math inline">100000</span></td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;"><span class="math inline">100004</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;"><span class="math inline">100000</span></td>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;"><span class="math inline">100004</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;"><span class="math inline">100002</span></td>
+<td style="text-align: center;">18</td>
+<td style="text-align: center;"><span class="math inline">100004</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;"><span class="math inline">100002</span></td>
+<td style="text-align: center;">19</td>
+<td style="text-align: center;"><span class="math inline">100004</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;"><span class="math inline">100002</span></td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;"><span class="math inline">100004</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>对于测试点 5、6，满足特殊性质：每个节点的孩子结点个数不超过 <span class="math inline">2</span>。</li>
+<li>对于测试点 8 到测试点 10，满足特殊性质：每个节点的孩子节点个数不超过
+<span class="math inline">5</span>。</li>
+<li>对于测试点 11 到测试点
+14，满足特殊性质：任意一个节点到根的路径上的点数不超过 <span class="math inline">3</span>，也即树高不超过 <span class="math inline">3</span>。</li>
+<li>对于 <span class="math inline">100%</span> 的数据，保证 <span class="math inline">1 ≤ <em>n</em> ≤ 10<sup>5</sup> + 4, 1 ≤ <em>p</em><sub><em>i</em></sub> ≤ <em>i</em>, 1 ≤ <em>w</em><sub><em>i</em></sub> ≤ 1000</span>。</li>
+</ul>
+<hr>
+<h5 id="提示-8">提示</h5>
+<ul>
+<li><span class="math inline"><em>n</em></span>
+的末位数字可以帮助你快速的判断测试点所具有的的特殊性质。</li>
+</ul>
+<h3 id="解题思路-7">解题思路</h3>
+<p>显然需要遍历整棵树，自底向上放梅花，运动路径倒是无关紧要，要在某个结点放梅花的条件是其孩子结点都放了梅花，所以对于某个结点要放梅花的最少梅花数量为：在每个孩子结点放梅花所需梅花的最小数量的最大值，与每个孩子及自身所需梅花的和，两者取最小值。</p>
+<p>但上述思路对于示例二的根节点并不对，因为我们忽略了一个问题，即梅花是顺序堆放的，例如对于示例二的结点1，我们在结点2放好梅花以后必须在不撤掉2结点的梅花情况下把节点3的梅花放上，所以此时所需的梅花会更多，所以在子节点放梅花的顺序也很重要，<del>不难想到按照子结点所需梅花的递增顺序进行放梅花是最合理的，我们重新总结思路如下：</del></p>
+<p><del>每个结点的子节点全部放满梅花的最小数量是根据所需梅花数量从小到大在子结点放梅花</del>，梅花数量=<span class="math inline">$\max{\sum_{0}^{i - 1}w_j + a_i}$</span> 其中 <span class="math inline"><em>a</em><sub><em>i</em></sub></span> 表示在第
+<span class="math inline"><em>i</em></span>
+个结点放满梅花所需最小梅花数</p>
+<p>提交后发现上面这个策略还是不对，问题出在：对于某个子结点，子节点只需要
+855 梅花，而在子结点放梅花需要 3296
+梅花，这个数量远远大于其他子节点所需梅花甚至自身所需梅花，所以我们在子节点放梅花的顺序怎么样呢？有以下推测：</p>
+<ul>
+<li><del>按照子结点需要的梅花数量由小到大放</del>（已被反例推翻）</li>
+<li><del>按照子结点需要的梅花数量由大到小放</del>（考虑高度为 2
+的树就能发现显然是不对的）</li>
+<li><del>按照在子节点放梅花所需的梅花数量由小到大</del>（前面的反例拿过来也能推翻）</li>
+<li><del>按照在子节点放梅花所需的梅花数量由大到小</del>（同样会被高度为
+2 的树推翻）</li>
+</ul>
+<p>那么问题就比较困难了，仔细思考，有两种结点优先级比较高：需要梅花少的，结余梅花（即放好以后收回子节点梅花）比较多的；两者相较后者优先级又比较高一些，所以我们试着按结余梅花数量进行排序，相同的需要梅花少的在前，成功通过！题解区有用数学归纳法的证明，我就不证明了。</p>
+<p>显然，我们需要建树，由于需要对子结点进行排序，所以使用邻接表来存树是比较合适的，而后续计算使用递归会很简单。</p>
+<h3 id="解答代码-7">解答代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> VI = vector&lt;<span class="type">int</span>&gt;;</span><br><span class="line"><span class="keyword">using</span> VII = vector&lt;VI&gt;;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">100007</span>;</span><br><span class="line"><span class="type">int</span> n, ans[N], w[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">comp</span><span class="params">(<span class="type">const</span> <span class="type">int</span> &amp;a, <span class="type">const</span> <span class="type">int</span> &amp;b)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> x = ans[a] - w[a], y = ans[b] - w[b];</span><br><span class="line">    <span class="keyword">return</span> x != y ? x &gt; y : w[a] &lt; w[b];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(VII &amp;g, <span class="type">int</span> cur)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 在 cur 结点放满梅花所需的最小梅花数</span></span><br><span class="line">    <span class="keyword">auto</span>&amp; nxt = g[cur];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i: nxt) <span class="built_in">dfs</span>(g, i);</span><br><span class="line">    <span class="built_in">sort</span>(nxt.<span class="built_in">begin</span>(), nxt.<span class="built_in">end</span>(), comp);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> val = <span class="number">0</span>, m = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i: nxt) &#123;</span><br><span class="line">        <span class="comment">// 若当前拥有的梅花数量不足够，则需补充</span></span><br><span class="line">        <span class="keyword">if</span> (m &lt; ans[i]) &#123;</span><br><span class="line">            val += ans[i] - m;</span><br><span class="line">            m = ans[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 在当前结点放下梅花</span></span><br><span class="line">        m = m - w[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如剩余梅花不足，则需补充</span></span><br><span class="line">    <span class="keyword">if</span> (m &lt; w[cur]) val += w[cur] - m;</span><br><span class="line">    ans[cur] = val;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="function">VII <span class="title">g</span><span class="params">(n)</span></span>;</span><br><span class="line">    <span class="type">int</span> nxt;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        cin &gt;&gt; nxt;</span><br><span class="line">        g[nxt - <span class="number">1</span>].<span class="built_in">emplace_back</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        cin &gt;&gt; w[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">dfs</span>(g, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        cout &lt;&lt; ans[i] &lt;&lt; <span class="string">&#x27; &#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Luogu/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/2022-10/%E8%B4%AA%E5%BF%83.html" title="『洛谷』贪心">https://meteordream.github.io/Luogu/基础算法/2022-10/贪心.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Luogu/" rel="tag"><i class="fa fa-tag"></i> Luogu</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-10/1784_%E6%A3%80%E6%9F%A5%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AD%97%E6%AE%B5(%E7%AE%80%E5%8D%95).html" rel="prev" title="『LeetCode』1784 检查二进制字符串字段">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』1784 检查二进制字符串字段
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-10/921_%E4%BD%BF%E6%8B%AC%E5%8F%B7%E6%9C%89%E6%95%88%E7%9A%84%E6%9C%80%E5%B0%91%E6%B7%BB%E5%8A%A0(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』921 使括号有效的最少添加">
+      『LeetCode』921 使括号有效的最少添加 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%AA%E5%BF%83"><span class="nav-number">1.</span> <span class="nav-text">贪心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p1208-usaco1.3%E6%B7%B7%E5%90%88%E7%89%9B%E5%A5%B6-mixing-milk"><span class="nav-number">2.</span> <span class="nav-text">P1208 [USACO1.3]混合牛奶
+Mixing Milk</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1"><span class="nav-number">2.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1"><span class="nav-number">2.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA"><span class="nav-number">2.5.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-number">2.6.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81"><span class="nav-number">2.7.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p4995%E8%B7%B3%E8%B7%B3"><span class="nav-number">3.</span> <span class="nav-text">P4995跳跳！</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-1"><span class="nav-number">3.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">3.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-1"><span class="nav-number">3.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-1"><span class="nav-number">3.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-1"><span class="nav-number">3.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-1"><span class="nav-number">3.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2"><span class="nav-number">3.5.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2"><span class="nav-number">3.5.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2"><span class="nav-number">3.5.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-1"><span class="nav-number">3.6.</span> <span class="nav-text">提示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%A7%A3%E9%87%8A"><span class="nav-number">3.6.1.</span> <span class="nav-text">样例解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4"><span class="nav-number">3.6.2.</span> <span class="nav-text">数据范围</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-1"><span class="nav-number">3.7.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-1"><span class="nav-number">3.8.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p1094-noip2007-%E6%99%AE%E5%8F%8A%E7%BB%84-%E7%BA%AA%E5%BF%B5%E5%93%81%E5%88%86%E7%BB%84"><span class="nav-number">4.</span> <span class="nav-text">P1094 [NOIP2007 普及组]
+纪念品分组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-2"><span class="nav-number">4.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-2"><span class="nav-number">4.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-2"><span class="nav-number">4.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-2"><span class="nav-number">4.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-2"><span class="nav-number">4.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-2"><span class="nav-number">4.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-2"><span class="nav-number">4.5.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-2"><span class="nav-number">4.6.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-2"><span class="nav-number">4.7.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p1199-noip2010-%E6%99%AE%E5%8F%8A%E7%BB%84-%E4%B8%89%E5%9B%BD%E6%B8%B8%E6%88%8F"><span class="nav-number">5.</span> <span class="nav-text">P1199 [NOIP2010 普及组]
+三国游戏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-3"><span class="nav-number">5.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-3"><span class="nav-number">5.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-3"><span class="nav-number">5.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-3"><span class="nav-number">5.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-3"><span class="nav-number">5.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-3"><span class="nav-number">5.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2-1"><span class="nav-number">5.5.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2-1"><span class="nav-number">5.5.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2-1"><span class="nav-number">5.5.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-3"><span class="nav-number">5.6.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-3"><span class="nav-number">5.7.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-3"><span class="nav-number">5.8.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p2672-noip2015-%E6%99%AE%E5%8F%8A%E7%BB%84-%E6%8E%A8%E9%94%80%E5%91%98"><span class="nav-number">6.</span> <span class="nav-text">P2672 [NOIP2015 普及组]
+推销员</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="nav-number">6.1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-4"><span class="nav-number">6.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-4"><span class="nav-number">6.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-4"><span class="nav-number">6.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-4"><span class="nav-number">6.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-4"><span class="nav-number">6.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-4"><span class="nav-number">6.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2-2"><span class="nav-number">6.6.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2-2"><span class="nav-number">6.6.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2-2"><span class="nav-number">6.6.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-4"><span class="nav-number">6.7.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-4"><span class="nav-number">6.8.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-4"><span class="nav-number">6.9.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p1080-noip2012-%E6%8F%90%E9%AB%98%E7%BB%84-%E5%9B%BD%E7%8E%8B%E6%B8%B8%E6%88%8F"><span class="nav-number">7.</span> <span class="nav-text">P1080 [NOIP2012 提高组]
+国王游戏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-5"><span class="nav-number">7.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-5"><span class="nav-number">7.2.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-5"><span class="nav-number">7.3.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-5"><span class="nav-number">7.4.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-5"><span class="nav-number">7.4.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-5"><span class="nav-number">7.4.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-5"><span class="nav-number">7.5.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-5"><span class="nav-number">7.6.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-5"><span class="nav-number">7.7.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p2123-%E7%9A%87%E5%90%8E%E6%B8%B8%E6%88%8F"><span class="nav-number">8.</span> <span class="nav-text">P2123 皇后游戏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF-1"><span class="nav-number">8.1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-6"><span class="nav-number">8.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-6"><span class="nav-number">8.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-6"><span class="nav-number">8.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-6"><span class="nav-number">8.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-6"><span class="nav-number">8.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-6"><span class="nav-number">8.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2-3"><span class="nav-number">8.6.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2-3"><span class="nav-number">8.6.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2-3"><span class="nav-number">8.6.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-6"><span class="nav-number">8.7.</span> <span class="nav-text">提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-6"><span class="nav-number">8.8.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-6"><span class="nav-number">8.9.</span> <span class="nav-text">解答代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#p5521-yloi2019-%E6%A2%85%E6%B7%B1%E4%B8%8D%E8%A7%81%E5%86%AC"><span class="nav-number">9.</span> <span class="nav-text">P5521 [yLOI2019] 梅深不见冬</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF-2"><span class="nav-number">9.1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0-7"><span class="nav-number">9.2.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F-7"><span class="nav-number">9.3.</span> <span class="nav-text">输入格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F-7"><span class="nav-number">9.4.</span> <span class="nav-text">输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-1-7"><span class="nav-number">9.5.</span> <span class="nav-text">样例 #1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1-7"><span class="nav-number">9.5.1.</span> <span class="nav-text">样例输入 #1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1-7"><span class="nav-number">9.5.2.</span> <span class="nav-text">样例输出 #1</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-2-4"><span class="nav-number">9.6.</span> <span class="nav-text">样例 #2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-2-4"><span class="nav-number">9.6.1.</span> <span class="nav-text">样例输入 #2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-2-4"><span class="nav-number">9.6.2.</span> <span class="nav-text">样例输出 #2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B-3"><span class="nav-number">9.7.</span> <span class="nav-text">样例 #3</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-3"><span class="nav-number">9.7.1.</span> <span class="nav-text">样例输入 #3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-3"><span class="nav-number">9.7.2.</span> <span class="nav-text">样例输出 #3</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-7"><span class="nav-number">9.8.</span> <span class="nav-text">提示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%A0%B7%E4%BE%8B-1-%E8%A7%A3%E9%87%8A"><span class="nav-number">9.8.1.</span> <span class="nav-text">输入输出样例 1 解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%A0%B7%E4%BE%8B-3-%E8%A7%A3%E9%87%8A"><span class="nav-number">9.8.2.</span> <span class="nav-text">输入输出样例 3 解释</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A7%84%E6%A8%A1%E4%B8%8E%E7%BA%A6%E5%AE%9A"><span class="nav-number">9.8.2.1.</span> <span class="nav-text">数据规模与约定</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA-8"><span class="nav-number">9.8.2.2.</span> <span class="nav-text">提示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-7"><span class="nav-number">9.9.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E4%BB%A3%E7%A0%81-7"><span class="nav-number">9.10.</span> <span class="nav-text">解答代码</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

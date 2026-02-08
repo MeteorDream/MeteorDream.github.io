@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Orthogonal Transformer: An Efficient Vision Transformer Backbone with Token Orthogonalization Author: 黄怀波, 周晓强 , 赫然 Institution: 中国科学院自动化研究所，中国科学院大学，中国科学技术大学 Year: 2022 Journal: Ne">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Orthogonal Transformer - An Efficient Vision Transformer Backbone with Token Orthogonalization">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-12/OrthogonalTransformer.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Orthogonal Transformer: An Efficient Vision Transformer Backbone with Token Orthogonalization Author: 黄怀波, 周晓强 , 赫然 Institution: 中国科学院自动化研究所，中国科学院大学，中国科学技术大学 Year: 2022 Journal: Ne">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-12/OrthogonalTransformer/image-20221209214001449.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-12/OrthogonalTransformer/image-20221210202703912.png">
+<meta property="article:published_time" content="2022-12-09T06:46:27.000Z">
+<meta property="article:modified_time" content="2022-12-09T06:46:27.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="NIPS">
+<meta property="article:tag" content="Transformer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-12/OrthogonalTransformer/image-20221209214001449.png">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-12/OrthogonalTransformer.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Orthogonal Transformer - An Efficient Vision Transformer Backbone with Token Orthogonalization | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-12/OrthogonalTransformer.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Orthogonal Transformer - An Efficient Vision Transformer Backbone with Token Orthogonalization
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-12-09 14:46:27" itemprop="dateCreated datePublished" datetime="2022-12-09T14:46:27+08:00">2022-12-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-12/OrthogonalTransformer.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-12/OrthogonalTransformer.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Orthogonal Transformer: An Efficient Vision
+Transformer Backbone with Token Orthogonalization</li>
+<li><strong>Author</strong>: 黄怀波, 周晓强 , 赫然</li>
+<li><strong>Institution</strong>:
+中国科学院自动化研究所，中国科学院大学，中国科学技术大学</li>
+<li><strong>Year</strong>: 2022</li>
+<li><strong>Journal</strong>: NeurIPS</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://openreview.net/pdf?id=GGtH47T31ZC">PDF</a>, <a target="_blank" rel="noopener" href="https://github.com/hhb072/OrthogonalTransformer">Offical Code</a>
+(截至本文完成还是空的), <a target="_blank" rel="noopener" href="https://openreview.net/forum?id=GGtH47T31ZC">openreview</a></li>
+<li><strong>Cite</strong>: Huang H, Zhou X, He R. Orthogonal
+Transformer: An Efficient Vision Transformer Backbone with Token
+Orthogonalization[C]//Advances in Neural Information Processing
+Systems.</li>
+<li><strong>Idea</strong>: 提出了正交 transformer，设计得很巧妙</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@inproceedings&#123;huang2022Orthogonal,</span><br><span class="line">  title=&#123;Orthogonal Transformer: An Efficient Vision Transformer Backbone with Token Orthogonalization&#125;,</span><br><span class="line">  author=&#123;Huang, Huaibo and Zhou, Xiaoqiang and He, Ran&#125;,</span><br><span class="line">  booktitle=&#123;Advances in Neural Information Processing Systems&#125;,  </span><br><span class="line">  year=&#123;2022&#125;,</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>这篇文章提出了一种通用视觉Transformer骨干网络称为正交
+Transformer，针对局部自注意力和全局自注意力进行建模，提出了一种正交自注意力机制(orthogonal
+self-attention,
+<strong>OSA</strong>)，即在一个正交子空间中进行注意力的计算，并且该空间可以逆映射回空域.</p>
+<blockquote>
+<p>在本文中，我们提出了一种正交自注意力机制，通过将视觉令牌特征变换到低分辨率的正交空间再进行自注意力计算，每一个正交令牌都可以感知到所有的视觉令牌，从而有效建模局部特征相关性和全局特征依赖关系。我们提出了一种内生的正交变换矩阵来保证令牌特征的正交性，该正交变换矩阵可以直接作为网络参数优化更新而无需引入额外的正交约束监督。此外，我们还提出了一种基于位置编码的多层感知机并搭建了一个层次化的主干网络，称为正交Transformer网络。正交Transformer在图像分类、物体检测、实例分割和语义分割领域均取得了超越SOTA方法的性能，其中在ImageNet图像分类数据集上，在不引入额外训练数据的情况下，正交Transformer达到了85.4%的分类精度。</p>
+</blockquote>
+<h2 id="introduction">Introduction</h2>
+<blockquote>
+<p>视觉Transformer中的自注意力机制，可以有效建模图像中的全局依赖关系，但对于检测、分割等密集预测任务，往往面临计算开销大的问题。目前对自注意力机制的改进工作，如降采样自注意力计算、局部自注意力计算、以及空洞自注意力计算等，虽然可以通过降低令牌数量来减少计算量，建模全局信息，但是缺乏对局部特征的处理，难以同时兼顾局部特征相关性和全局依赖建模。</p>
+</blockquote>
+<figure>
+<img data-src="OrthogonalTransformer/image-20221209214001449.png" alt="image-20221209214001449">
+<figcaption aria-hidden="true">image-20221209214001449</figcaption>
+</figure>
+<p>这篇文章提出的正交注意力能补充全局依赖并且也不会损失低层次的细节信息。</p>
+<h2 id="method">Method</h2>
+<blockquote>
+<p><strong>【内生正交变换】</strong></p>
+<p>在本文中，我们首先提出将特征投影到正交空间再进行自注意力计算。这样做包含以下四点优势：1）正交空间的特征分辨率更低，计算复杂度也就更小。2）正交变换矩阵的逆矩阵即为转置矩阵，可以在不丢失信息的情况下，便捷地实现原始特征空间和正交特征空间的可逆变换。3）正交变换可以将令牌特征变换为若干组线性无关的特征组，有助于自注意力机制发掘特征表示中的不同属性。4）正交变换显式建模了相邻特征依赖和局部特征相关性。</p>
+<p>我们基于以下定理，来利用Householder变换 (<span class="math inline"><em>H</em> = <em>I</em> − 2<em>u</em><em>u</em><sup><em>T</em></sup></span>
+)来构建内生正交变换矩阵。</p>
+<p>定理1：任意实值<span class="math inline"><em>n</em> × <em>n</em></span>正交矩阵，可以表示为至多
+<span class="math inline"><em>n</em></span>
+个实值Householder变换矩阵的乘积。定理证明过程请见论文附录。</p>
+<p>因此，对于<span class="math inline"><em>n</em></span>个令牌特征，内生正交变换矩阵可以表示为：
+<span class="math display">$$
+\mathbf{A}=\mathbf{H}_{0} \mathbf{H}_{1} \cdots
+\mathbf{H}_{n-1}=\left(\mathbf{I}-2 \frac{\mathbf{v}_{0}
+\mathbf{v}_{0}^{\top}}{\left\|\mathbf{v}_{0}\right\|^{2}}\right)\left(\mathbf{I}-2
+\frac{\mathbf{v}_{1}
+\mathbf{v}_{1}^{\top}}{\left\|\mathbf{v}_{1}\right\|^{2}}\right)
+\cdots\left(\mathbf{I}-2 \frac{\mathbf{v}_{n-1}
+\mathbf{v}_{n-1}^{\top}}{\left\|\mathbf{v}_{n-1}\right\|^{2}}\right) .
+$$</span> 其中<span class="math inline"><em>v</em><sub><em>i</em></sub></span>为可学习的<span class="math inline"><em>n</em></span>维向量。这种构建正交变换矩阵的方式具有以下有点：1）表达能力强。根据定理1，矩阵<span class="math inline"><em>A</em></span>
+可以被优化表示为任意的正交变换矩阵。2）便于优化。因为是内生式的构建方式，不需要隐入额外的正交监督约束，就可以保证该变换矩阵的正交性。</p>
+<p><strong>【正交自注意力机制】</strong></p>
+<p>如图1所示，基于上述提出的正交变换构建过程，我们提出了正交自注意力机制。具体计算过程如下：1）首先利用正交变换，将输入的令牌特征由原始视觉空间变换到正交空间。2）在正交空间里，首先将特征重排为线性独立的若干组特征，然后利用自注意力机制，分组计算全局特征依赖关系。3）利用正交变换矩阵的转置矩阵，将正交特征投影回原始视觉空间，进行下一步的计算。值得注意的是，正交自注意力计算模块在可以有效同时建模全局信息和局部细节的同时，能够将全局自注意力机制的计算复杂度由
+<span class="math inline"><em>O</em>((<em>h</em><em>w</em>)<sup>2</sup>)</span>
+减少为<span class="math inline"><em>O</em>((<em>h</em><em>w</em>)<sup>2</sup>/<em>m</em><sup>2</sup>)</span>，其中
+<span class="math inline"><em>m</em></span>表示正交变换的窗口大小。</p>
+<p><strong>【正交Transformer】</strong></p>
+<p>如图2所示，基于上述提出的正交自注意力机制，我们设计了一个高效视觉Transformer主干网络,称为正交Transformer。该网络1）采用层次化设计，共包含4个阶段，用于提取不同空间分辨率的图像特征。2）对输入采用卷积特征编码器，以获取更好的特征表示。3）在网络的中间部分，采用由正交自注意力机制构建的正交Transformer
+Block(OTB)。4）在前馈网络（FFN）中，采用了深度可分离卷积来融合位置信息。同时在每个阶段的最后一个OTB的前馈网络中，在残差连接层加入了步长为2的卷积，这样不仅可以避免额外引入块融合（Patch
+Merging）层，同时在实验中也被验证可以取得更好的效果。</p>
+</blockquote>
+<figure>
+<img data-src="OrthogonalTransformer/image-20221210202703912.png" alt="image-20221210202703912">
+<figcaption aria-hidden="true">image-20221210202703912</figcaption>
+</figure>
+<h2 id="experiment">Experiment</h2>
+<blockquote>
+<p>本文在图像分类、目标检测、语义分割和实例分割等任务上，与现有方法进行对比。图3展示了不同方法在ImageNet数据集上的分类精度，本文所提出的正交Transformer在所有任务上均取得了优异性能。轻量模型Ortho-T仅用0.7GFLOPs的计算量，就达到了74.0%的Top-1分类准确度，比现有工作提高2%以上。小模型Ortho-S仅使用CrossFormer-B的49%的GFLOPs计算量，便达到了和CrossFormer-B相同的分类准确率。在384分辨率的测试集上，大模型Ortho-L达到了85.4%的Top-1分类准确率，比Swin-B提高了1.2%，并且比CaiT-s48的计算量减少了约26%。其他任务上的更多实验结果请参看论文。</p>
+</blockquote>
+<h2 id="conclusion">Conclusion</h2>
+<blockquote>
+<p>本文提出了一种新的高效视觉Transformer网络，称为正交Transformer。本文提出了正交自注意力机制，来同时建模全局特征依赖和局部特征相关性。同时，正交变换的过程是一种内生的、易于优化的变换形式，而无需引入额外的正则项约束。在图像分类、目标检测、实例分割和语义分割任务上，正交Transformer都取得了优异的性能。在未来的工作中，我们将进一步研究高效自注意力机制的其他设计方式，同时期待将正交Transformer应用到更多的计算机视觉任务中去。</p>
+</blockquote>
+<h2 id="others">Others</h2>
+<p>论文复现，一些想法、推论等等</p>
+<h2 id="references">References</h2>
+<hr>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+<div id="footnotes">
+<hr>
+<div id="footnotelist">
+<ol style="list-style: none; padding-left: 0; margin-left: 40px">
+<li id="fn:1">
+<span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ZoUf28TMxGabDXRiq_OOaQ">【速览】NeurIPS
+2022 | 正交视觉Transformer网络设计</a><a href="#fnref:1" rev="footnote">
+↩︎</a></span>
+</li>
+</ol>
+</div>
+</div>
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-12/OrthogonalTransformer.html" title="『论文笔记』Orthogonal Transformer - An Efficient Vision Transformer Backbone with Token Orthogonalization">https://meteordream.github.io/Paper/2022-12/OrthogonalTransformer.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/NIPS/" rel="tag"><i class="fa fa-tag"></i> NIPS</a>
+              <a href="/tags/Transformer/" rel="tag"><i class="fa fa-tag"></i> Transformer</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-12/1780_%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E6%95%B0%E5%AD%97%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E8%A1%A8%E7%A4%BA%E6%88%90%E4%B8%89%E7%9A%84%E5%B9%82%E7%9A%84%E5%92%8C(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』1780 判断一个数字是否可以表示成三的幂的和">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』1780 判断一个数字是否可以表示成三的幂的和
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Paper/2022-12/MeteNorm.html" rel="next" title="『论文笔记』MeteNorm - Learning to Normalize Few-Shot Batches Across Domains">
+      『论文笔记』MeteNorm - Learning to Normalize Few-Shot Batches Across Domains <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">5.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">7.</span> <span class="nav-text">Others</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">8.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

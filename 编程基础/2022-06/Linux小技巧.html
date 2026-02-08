@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="快捷键  自动补全：Tab 键 清空屏幕：ctrl + l 键">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux小技巧">
+<meta property="og:url" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Linux%E5%B0%8F%E6%8A%80%E5%B7%A7.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="快捷键  自动补全：Tab 键 清空屏幕：ctrl + l 键">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Linux小技巧/20220803165531.png">
+<meta property="article:published_time" content="2022-06-21T11:27:46.000Z">
+<meta property="article:modified_time" content="2022-12-14T02:19:08.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Linux小技巧/20220803165531.png">
+
+<link rel="canonical" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Linux%E5%B0%8F%E6%8A%80%E5%B7%A7.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux小技巧 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Linux%E5%B0%8F%E6%8A%80%E5%B7%A7.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux小技巧
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-21 19:27:46" itemprop="dateCreated datePublished" datetime="2022-06-21T19:27:46+08:00">2022-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-12-14 10:19:08" itemprop="dateModified" datetime="2022-12-14T10:19:08+08:00">2022-12-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">编程基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Linux%E5%B0%8F%E6%8A%80%E5%B7%A7.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Linux%E5%B0%8F%E6%8A%80%E5%B7%A7.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="快捷键">快捷键</h2>
+<ul>
+<li>自动补全：<code>Tab</code> 键</li>
+<li>清空屏幕：<code>ctrl</code> + <code>l</code> 键</li>
+</ul>
+<span id="more"></span>
+<h2 id="系统">系统</h2>
+<ul>
+<li>关机：<code>shutdown -h now</code></li>
+<li>重启：<code>reboot</code></li>
+</ul>
+<h2 id="cpu相关">CPU相关</h2>
+<p>总核数 = 物理CPU个数 X 每颗物理CPU的核数</p>
+<p>总逻辑CPU数 = 物理CPU个数 X 每颗物理CPU的核数 X 超线程数</p>
+<ul>
+<li>查看物理CPU个数:
+<code>cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l</code></li>
+<li>查看每个物理CPU中core的个数(即核数):
+<code>cat /proc/cpuinfo| grep "cpu cores"| uniq</code></li>
+<li>查看逻辑CPU的个数:
+<code>cat /proc/cpuinfo| grep "processor"| wc -l</code></li>
+</ul>
+<h2 id="gpu相关">GPU相关</h2>
+<p>查看显卡状态</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
+<p>动态查看显卡状态</p>
+<p>添加 watch</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">watch nvidia-smi</span><br></pre></td></tr></table></figure>
+<h3 id="gpustat">gpustat</h3>
+<p><strong><a target="_blank" rel="noopener" href="https://github.com/wookayin/gpustat">gpustat</a></strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpustat --color -u -c -p -i # 需要 pip install gpustat 或 apt-get install gpustat</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>--color</code> : Force colored output (even when stdout is not
+a tty)</li>
+<li><code>--no-color</code> : Suppress colored output</li>
+<li><code>-u</code>, <code>--show-user</code> : Display username of the
+process owner</li>
+<li><code>-c</code>, <code>--show-cmd</code> : Display the process
+name</li>
+<li><code>-f</code>, <code>--show-full-cmd</code> : Display full command
+and cpu stats of running process</li>
+<li><code>-p</code>, <code>--show-pid</code> : Display PID of the
+process</li>
+<li><code>-F</code>, <code>--show-fan</code> : Display GPU fan
+speed</li>
+<li><code>-e</code>, <code>--show-codec</code> : Display encoder and/or
+decoder utilization</li>
+<li><code>-P</code>, <code>--show-power</code> : Display GPU power usage
+and/or limit (<code>draw</code> or <code>draw,limit</code>)</li>
+<li><code>-a</code>, <code>--show-all</code> : Display all gpu
+properties above</li>
+<li><code>--watch</code>, <code>-i</code>, <code>--interval</code> : Run
+in watch mode (equivalent to <code>watch gpustat</code>) if given.
+Denotes interval between updates</li>
+<li><code>--json</code> : JSON Output</li>
+</ul>
+<p>指定程序可见显卡</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CUDA_VISIBLE_DEVICES=0</span><br></pre></td></tr></table></figure>
+<p>更高端一些的：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nvtop</span><br><span class="line">htop</span><br></pre></td></tr></table></figure>
+<h3 id="nvtop">nvtop</h3>
+<p>nvtop（NVIDIA TOP）是一个为 NVIDIA GPU 打造的、类 htop
+的任务监视器，和 nvidia-smi 功能类似，但有着比 nvidia-smi
+更漂亮的外观，也弥补了 nvidia-smi 不能查看一定时间段内 GPU
+变化情况的缺陷。</p>
+<p>如果是 Ubuntu 19.04，那很简单，一条命令即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install nvtop</span><br></pre></td></tr></table></figure>
+<p>如果是 Ubuntu 18.04，则运行下面的命令</p>
+<p>新方法：运行 <code>snap install nvtop</code> 即可</p>
+<blockquote>
+<p>注意需要退出 conda 环境，并且会在所在路径生成一个 nvtop
+文件夹包含编译的文件</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install cmake libncurses5-dev libncursesw5-dev git</span><br><span class="line">git clone https://github.com/Syllo/nvtop.git</span><br><span class="line">mkdir -p nvtop/build &amp;&amp; cd nvtop/build</span><br><span class="line">cmake ..</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">如果报错：<span class="string">&quot;Could NOT find NVML (missing: NVML_INCLUDE_DIRS)&quot;</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">那么请使用下面的命令</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">cmake .. -DNVML_RETRIEVE_HEADER_ONLINE=True</span></span><br><span class="line"></span><br><span class="line">make</span><br><span class="line">make install # 需要 root 权限，如果报权限错误请加上 sudo</span><br></pre></td></tr></table></figure>
+<p><strong>使用方法</strong>：</p>
+<p>输入 <code>nvtop</code> 即可运行</p>
+<p>具体参数可以使用 <code>--help</code> 查看</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">nvtop --<span class="built_in">help</span></span></span><br><span class="line">nvtop version 1.0.0</span><br><span class="line">Available options:</span><br><span class="line">  -d --delay        : Select the refresh rate (1 == 0.1s)</span><br><span class="line">  -v --version      : Print the version and exit</span><br><span class="line">  -s --gpu-select   : Colon separated list of GPU IDs to monitor</span><br><span class="line">  -i --gpu-ignore   : Colon separated list of GPU IDs to ignore</span><br><span class="line">  -p --no-plot      : Disable bar plot</span><br><span class="line">  -r --reverse-abs  : Reverse abscissa: plot the recent data left and older on the right</span><br><span class="line">  -C --no-color     : No colors</span><br><span class="line">  -N --no-cache     : Always query the system for user names and command line information</span><br><span class="line">  -f --freedom-unit : Use fahrenheit</span><br><span class="line">  -E --encode-hide  : Set encode/decode auto hide time in seconds (default 30s, negative = always on screen)</span><br><span class="line">  -h --help         : Print help and exit</span><br></pre></td></tr></table></figure>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/309619792">Ubuntu 18.04 安装
+nvtop：一个高颜值的 nvidia-smi</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Syllo/nvtop" class="uri">https://github.com/Syllo/nvtop</a></li>
+</ul>
+<h3 id="清理">清理</h3>
+<p>有时候将进程 <code>kill</code> 掉但还有残留进程占用者显存不释放，而
+<code>nvtop</code> 或 <code>gpustat</code>
+都看不到真正的进程号，这个时候：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fuser -v /dev/nvidia*</span><br></pre></td></tr></table></figure>
+<p>查看所有 GPU 的进程，然后使用 PID 号和 <code>kill</code>
+命令清除程序, 也可以查看单独某块 GPU 的进程, 即将上面的命令中的
+<code>*</code> 改为 gpu 的 id</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fuser -v /dev/nvidia0</span><br></pre></td></tr></table></figure>
+<p>多个 id 可以用正则匹配</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fuser -v /dev/nvidia[012]</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="终端复用">终端复用</h2>
+<h3 id="screen">Screen</h3>
+<p>screen 可以创建一个可离线运行的窗口</p>
+<p>新建工作窗口</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen -S screen_name</span><br></pre></td></tr></table></figure>
+<p>查看所有窗口</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen -ls</span><br></pre></td></tr></table></figure>
+<p>进入窗口（注意在一个窗口时不要直接进入窗口，否则前一个窗口会一直被占用，需要使用后面的方法强行进入）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen -r screen_name</span><br></pre></td></tr></table></figure>
+<p>退出当前窗口</p>
+<p><kbd>ctrl</kbd>+<kbd>A</kbd>+<kbd>D</kbd>.</p>
+<p>删除窗口</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">screen -X -S screen_name quit</span><br><span class="line">screen kill ID/screen_name</span><br></pre></td></tr></table></figure>
+<p>或在窗口内 <kbd>ctrl</kbd>+<kbd>D</kbd></p>
+<p>把占用者踢掉强行进入</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">screen -d -r screen_name</span><br></pre></td></tr></table></figure>
+<p>开启拷贝模式（可以鼠标滚动）:<kbd>ctrl</kbd>+<kbd>a</kbd>+<kbd>[</kbd>.</p>
+<hr>
+<h3 id="tmux">Tmux</h3>
+<ul>
+<li>启动: <code>tmux</code></li>
+<li>退出: <code>exit</code> 或 <kbd>ctrl</kbd>+<kbd>D</kbd></li>
+<li>前缀键: 先按前缀键 <kbd>ctrl</kbd>+<kbd>b</kbd>
+才能唤起快捷键，注意下面的快捷键都是先按
+<kbd>ctrl</kbd>+<kbd>b</kbd>，放开后再按其他按键(忽略大小写)</li>
+<li>帮助(看不懂…): <kbd>ctrl</kbd>+<kbd>b</kbd>+<kbd>?</kbd>, 按
+<kbd>q</kbd> 或 <kbd>Esc</kbd> 退出</li>
+<li>会话部分
+<ul>
+<li>新建会话: <code>tmux new -s &lt;session name&gt;</code> 编号默认从 0
+开始</li>
+<li>分离会话: <code>tmux detach</code> 或
+<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>D</kbd></li>
+<li>查看所有会话: <code>tmux ls</code> 或
+<code>tmux list-session</code></li>
+<li>重新接入会话: <code>tmux a -t &lt;session-id/name&gt;</code> 或
+<code>tmux attach -t &lt;session-id/name&gt;</code></li>
+<li>删除会话:
+<code>tmux kill-session -t &lt;session-id/name&gt;</code></li>
+<li>切换会话: <code>tmux switch -t &lt;session-id/name&gt;</code></li>
+<li>重命名会话:
+<code>tmux rename-session -t &lt;session-id/name&gt; &lt;new name&gt;</code>
+或 <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>$</kbd></li>
+<li>查看所有会话and切换: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>S</kbd></li>
+</ul></li>
+<li>窗口部分(会话session下可以由多个窗口)
+<ul>
+<li>新建窗口: <code>tmux new-window -n &lt;window name&gt;</code> 或
+<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>C</kbd> (默认名称是
+<code>bash</code>)</li>
+<li>切换窗口:
+<code>tmux select-window -t &lt;window-id/name&gt;</code></li>
+<li>重命名窗口: <code>tmux rename-window &lt;new name&gt;</code> 或
+<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>,</kbd></li>
+<li>切换窗口: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>window-id</kbd> 或
+<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>w</kbd>(可以切到其他会话的窗口)</li>
+</ul></li>
+<li>窗格部分(窗口下可以划分多个窗格panes)
+<ul>
+<li>划分窗格: (上下) <code>tmux split-window</code> 或
+<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>“</kbd> (左右)
+<code>tmux split-window -h</code> 或
+<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>%</kbd></li>
+<li>移动光标: <code>tmux select-pane</code> +
+(上<code>-U</code>下<code>-D</code>左<code>-L</code>右<code>-R</code>)
+或 <kbd>ctrl</kbd>+<kbd>B</kbd> +
+(<kbd>↑</kbd>/<kbd>↓</kbd>/<kbd>←</kbd>/<kbd>→</kbd>)</li>
+<li>显示窗格编号: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>q</kbd></li>
+<li>移动窗格:
+<ul>
+<li>上移: <code>tmux swap-pane -U</code></li>
+<li>下移: <code>tmux swap-pane -D</code></li>
+<li>与上一个交换: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>{</kbd></li>
+<li>与下一个交换: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>}</kbd></li>
+<li>循环前移:
+<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>ctrl</kbd>+<kbd>o</kbd></li>
+<li>循环后移:
+<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>alt</kbd>+<kbd>o</kbd></li>
+</ul></li>
+<li>关闭窗格: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>x</kbd></li>
+<li>窗格全屏/恢复: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>z</kbd></li>
+<li>调整大小:
+<kbd>ctrl</kbd>+<kbd>B</kbd>+(<kbd>ctrl</kbd>/<kbd>alt</kbd>)+(<kbd>↑</kbd>/<kbd>↓</kbd>/<kbd>←</kbd>/<kbd>→</kbd>)</li>
+<li>将窗格升级成窗口: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>!</kbd></li>
+<li>切换预置布局: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>Space</kbd></li>
+</ul></li>
+<li>复制模式
+<ul>
+<li>进入复制模式: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>[</kbd></li>
+<li>开始拷贝: <kbd>space</kbd>(空格键)</li>
+<li>结束拷贝: <kbd>enter</kbd>(回车键)</li>
+<li>黏贴: <kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>]</kbd></li>
+<li>退出复制模式: <kbd>q</kbd> 或 <kbd>esc</kbd></li>
+<li>按住 <kbd>shift</kbd> 可以使用鼠标复制黏贴</li>
+<li>鼠标模式：<kbd>ctrl</kbd>+<kbd>B</kbd>+<kbd>:</kbd> 后输入
+<code>set mouse on</code> 关闭的话输入 <code>set mouse off</code></li>
+</ul></li>
+</ul>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2019/10/tmux.html">Tmux
+使用教程 - 阮一峰的网络日志</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kevingrace/p/6496899.html">Linux终端复用神器-Tmux使用梳理</a></li>
+</ul>
+<h3 id="zellij">zellij</h3>
+<p>或许是一个比 tmux 更好的选项？</p>
+<hr>
+<h2 id="用户相关">用户相关</h2>
+<p>创建新用户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建新用户的步骤</span></span><br><span class="line">sudo useradd -d /home/user -m user</span><br><span class="line">sudo usermod -s /bin/bash user</span><br><span class="line">sudo passwd user</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">设置权限</span></span><br><span class="line">sudo chmod u+w /etc/sudoers</span><br><span class="line">sudo vi /etc/sudoers</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">在root下面添加一行</span></span><br><span class="line">user    ALL=(ALL:ALL) ALL</span><br><span class="line">sudo chmod u-w /etc/sudoers</span><br></pre></td></tr></table></figure>
+<p>删除用户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo userdel -r username</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="进程相关">进程相关</h2>
+<ul>
+<li><code>ctrl+z</code> 挂起进程放入后台</li>
+<li><code>jobs</code> 显示暂停的进程</li>
+<li><code>fg %n</code> 恢复第 n 个进程在前台运行</li>
+<li><code>bg %n</code> 恢复第 n 个进程在后台运行（无法再挂起）</li>
+<li><code>fg, bg</code> 不带参数默认恢复最后一个</li>
+<li><code>ctrl+c</code> ( kill foreground process ) 发送 SIGINT
+信号给前台进程组中的所有进程，强制终止程序的执行</li>
+<li><code>ctrl+d</code> ( Terminate input, or exit shell )
+一个特殊的二进制值，表示 EOF，作用相当于在终端中输入exit后回车</li>
+</ul>
+<p>查看用户所有进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -u User_name</span><br></pre></td></tr></table></figure>
+<p>杀进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -9 PID</span><br></pre></td></tr></table></figure>
+<p>杀死多进程的方法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill $(ps aux | grep &quot;train.py&quot; | grep -v grep | awk &#x27;&#123;print $2&#125;&#x27;)</span><br></pre></td></tr></table></figure>
+<p>查看系统信号机制</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -l</span><br><span class="line"><span class="comment"># 输出为</span></span><br><span class="line"> 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP</span><br><span class="line"> 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1</span><br><span class="line">11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM</span><br><span class="line">16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP</span><br><span class="line">21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ</span><br><span class="line">26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR</span><br><span class="line">31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3</span><br><span class="line">38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8</span><br><span class="line">43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13</span><br><span class="line">48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12</span><br><span class="line">53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7</span><br><span class="line">58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2</span><br><span class="line">63) SIGRTMAX-1  64) SIGRTMAX</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在系统中，(9)SIGKILL和(19)SIGSTOP两种信号，进程是无法捕获的，收到后会立即退出</li>
+<li><code>ctrl</code> + <code>C</code> 是发送 (2) SIGINT
+信号来终止程序</li>
+<li><code>kill</code> 命令默认使用 (15) SIGTERM 信号</li>
+</ul>
+<hr>
+<h2 id="文件管理">文件管理</h2>
+<ul>
+<li>ls（英文全拼：list files）: 列出目录及文件名</li>
+<li>cd（英文全拼：change directory）：切换目录</li>
+<li>pwd（英文全拼：print work directory）：显示目前的目录</li>
+<li>mkdir（英文全拼：make directory）：创建一个新的目录</li>
+<li>rmdir（英文全拼：remove directory）：删除一个空的目录</li>
+<li>cp（英文全拼：copy file）: 复制文件或目录，<code>-r</code> 递归</li>
+<li>rm（英文全拼：remove）: 删除文件或目录</li>
+<li>mv（英文全拼：move file）:
+移动文件与目录，或修改文件与目录的名称</li>
+<li>rename: 重命名，支持正则匹配</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sudo 前缀，使用管理者权限</span><br><span class="line">sudo apt-get install/remove application  安装/卸载软件，文件名自动搜索或安装包路径</span><br><span class="line">rm -rf path  不做权限提醒直接删除文件/文件夹</span><br><span class="line">ifconfig -a 显示网卡信息</span><br><span class="line">cp/mv path1 path2   复制/移动文件</span><br><span class="line">sudo reboot 重启</span><br><span class="line">sudo shutdown -h now 立刻关机</span><br><span class="line">sudo shutdown -t time 多久后关机</span><br><span class="line">xrandr --fb 1360x768  修改分辨率</span><br><span class="line">man xrandr 查看文档信息</span><br><span class="line">info xrandr </span><br></pre></td></tr></table></figure>
+<h3 id="修改权限">修改权限</h3>
+<p>基本的权限标志共 10 位，分别是：</p>
+<ul>
+<li>第 1 位标志：标志是文件属性，<code>-</code> 是文件，<code>d</code>
+是文件夹</li>
+<li>后面 9 为每 3
+位一组，分别是文件所有者（Owner）、用户组（Group）、其它用户（Other
+Users）</li>
+<li>每组三位分别表示三种权限：读(read), 写(write), 执行(execute)</li>
+</ul>
+<p>修改权限(<code>chmod</code>)</p>
+<ul>
+<li>数字表示模式</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 file</span><br></pre></td></tr></table></figure>
+<p>即每个数字表示一组权限(二进制表示，7 的二进制为 111 即三种权限都为
+1)</p>
+<ul>
+<li>符号模式</li>
+</ul>
+<p>用 u, g, o, a 分别不是所有者，用户组，其他用户，所有</p>
+<p>用 r, w, x 分别表示读写执行权限</p>
+<p>使用 <code>+</code>, <code>-</code>, <code>=</code>
+对权限进行增加，减少，修改</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod u+x file</span><br></pre></td></tr></table></figure>
+<ul>
+<li>递归修改</li>
+</ul>
+<p>将对应文件夹及其所有子文件的权限都进行修改加上 <code>-R</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 -R file</span><br></pre></td></tr></table></figure>
+<h3 id="符号链接">符号链接</h3>
+<p>符号链接类似与 windows 中的快捷方式，创建方法如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s &lt;path to the file/folder to be linked&gt; &lt;the path of the link to be created&gt;</span><br></pre></td></tr></table></figure>
+<p><code>ln</code> 是链接命令，<code>-s</code>
+指定此链接为软链接，<code>-s</code> 也可以写为
+<code>-symbolic</code>。</p>
+<p><code>ln</code>
+命令默认会创建硬链接。<code>path to the file (or folder)</code>
+声明了链接目标，即想要为其创建快捷方式的文件或目录。</p>
+<p><code>path to link</code> 即链接（快捷方式）名称。</p>
+<p>使用 <code>ls</code> 可以看到符号链接和目标，其第一个字母是
+<code>l</code></p>
+<p>确认符号链接：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l &lt;path-to-assumed-symlink&gt;</span><br></pre></td></tr></table></figure>
+<p>删除符号链接：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unlink &lt;path-to-symlink&gt;</span><br></pre></td></tr></table></figure>
+<p>或者暴力的 <code>rm</code>
+也可以删除，符号链接的本质其实也还是一个文件</p>
+<h3 id="压缩和解压">压缩和解压</h3>
+<h4 id="tar打包和解包">tar打包和解包</h4>
+<p>tar打包（注：tar 只是将文件进行打包，不压缩，压缩一般使用 gzip 得到
+<code>*.tar.gz</code> 文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar [-op] 源文件</span><br></pre></td></tr></table></figure>
+<p>可用参数</p>
+<ul>
+<li>打包参数
+<ul>
+<li><code>-c</code>: 将多个文件或目录进行打包</li>
+<li><code>-A</code>: 追加 tar 文件到归档文件</li>
+<li><code>-f 包名</code>:
+指定包的文件名。包的扩展名是用来给管理员识别格式的，所以一定要正确指定扩展名</li>
+<li><code>-v</code>: 显示打包文件过程</li>
+</ul></li>
+<li>解包参数
+<ul>
+<li><code>-x</code>: 对 tar 包做解打包操作</li>
+<li><code>-f</code>: 指定要解压的 tar 包的包名</li>
+<li><code>-t</code>: 只查看 tar 包中有哪些文件或目录，不对 tar
+包做解打包操作</li>
+<li><code>-C 目录</code>: 指定解打包位置</li>
+<li><code>-v</code>: 显示解打包的具体过程</li>
+</ul></li>
+<li>打包并压缩/解压并解包
+<ul>
+<li><code>-z</code>: 自动识别，例如：
+<ul>
+<li>打包并压缩：<code>tar -zcvf tmp.tar.gz /tmp/</code></li>
+<li>解压并解包：<code>tar -zxvf tmp.tar.gz</code></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>使用参数可以不加 <code>-</code>
+例如：<code>tar cvf example.tar example.cfg</code> 或
+<code>tar -xvf example.tar</code>.</p>
+<h4 id="gzip-压缩和解压">gzip 压缩和解压</h4>
+<p><code>gzip</code>
+命令只能用来压缩文件，不能压缩目录，即便指定了目录，也只能压缩目录内的所有文件，所以一般先用
+tar 打包再进行压缩，其次，默认会删掉源文件！</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gzip [-op] 源文件</span><br></pre></td></tr></table></figure>
+<p>可用选项</p>
+<table>
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">选项</th>
+<th style="text-align: left;">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">-c</td>
+<td style="text-align: left;">将压缩数据输出到标准输出中，并保留源文件</td>
+</tr>
+<tr>
+<td style="text-align: center;">-d</td>
+<td style="text-align: left;">对压缩文件进行解压缩</td>
+</tr>
+<tr>
+<td style="text-align: center;">-r</td>
+<td style="text-align: left;">递归压缩指定目录下以及子目录下的所有文件</td>
+</tr>
+<tr>
+<td style="text-align: center;">-v</td>
+<td style="text-align: left;">对于每个压缩和解压缩的文件，显示相应的文件名和压缩比</td>
+</tr>
+<tr>
+<td style="text-align: center;">-l</td>
+<td style="text-align: left;">对每一个压缩文件，显示以下字段：压缩文件的大小；未压缩文件的大小；压缩比；未压缩文件的名称</td>
+</tr>
+<tr>
+<td style="text-align: center;">-数字</td>
+<td style="text-align: left;">用于指定压缩等级，-1
+压缩等级最低，压缩比最差；-9 压缩比最高。默认压缩比是 -6</td>
+</tr>
+</tbody>
+</table>
+<h4 id="zip-压缩和解压">zip 压缩和解压</h4>
+<p>压缩命令</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip [-op] 压缩包名 源文件或源目录列表</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<table>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 87%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">选项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">-r</td>
+<td>递归压缩目录，及将制定目录下的所有文件以及子目录全部压缩</td>
+</tr>
+<tr>
+<td style="text-align: center;">-m</td>
+<td>将文件压缩之后，删除原始文件，相当于把文件移到压缩文件中</td>
+</tr>
+<tr>
+<td style="text-align: center;">-v</td>
+<td>显示详细的压缩过程信息</td>
+</tr>
+<tr>
+<td style="text-align: center;">-q</td>
+<td>在压缩的时候不显示命令的执行过程</td>
+</tr>
+<tr>
+<td style="text-align: center;">-压缩级别</td>
+<td>压缩级别是从 1~9 的数字，-1 代表压缩速度更快，-9
+代表压缩效果更好</td>
+</tr>
+<tr>
+<td style="text-align: center;">-u</td>
+<td>更新压缩文件，即往压缩文件中添加新文件</td>
+</tr>
+</tbody>
+</table>
+<p>解压命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unzip [-op] 压缩包名</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<table>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 89%">
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">选项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">-d 目录名</td>
+<td>将压缩文件解压到指定目录下。</td>
+</tr>
+<tr>
+<td style="text-align: center;">-n</td>
+<td>解压时并不覆盖已经存在的文件。</td>
+</tr>
+<tr>
+<td style="text-align: center;">-o</td>
+<td>解压时覆盖已经存在的文件，并且无需用户确认。</td>
+</tr>
+<tr>
+<td style="text-align: center;">-v</td>
+<td>查看压缩文件的详细信息，包括压缩文件中包含的文件大小、文件名以及压缩比等，但并不做解压操作。</td>
+</tr>
+<tr>
+<td style="text-align: center;">-t</td>
+<td>测试压缩文件有无损坏，但并不解压。</td>
+</tr>
+<tr>
+<td style="text-align: center;">-x 文件列表</td>
+<td>解压文件，但不包含文件列表中指定的文件。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="参考资料">参考资料</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-comm-chmod.html" class="uri">https://www.runoob.com/linux/linux-comm-chmod.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/3976.html">Linux
+tar打包命令详解</a></li>
+</ul>
+<hr>
+<h2 id="文件传输">文件传输</h2>
+<p>使用 SCP 命令进行跨服务器文件传输</p>
+<p>基本命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp [可选参数] file_source file_target </span><br></pre></td></tr></table></figure>
+<p>常用参数：</p>
+<ul>
+<li><code>-p</code>: 保留原文件的修改时间，访问时间和访问权限。</li>
+<li><code>-P</code>: 端口号</li>
+<li><code>-r</code>: 递归复制目录</li>
+<li><code>-i</code>: 秘钥文件</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">scp local_file remote_username@remote_ip:remote_folder </span><br><span class="line">scp local_file remote_username@remote_ip:remote_file </span><br><span class="line">scp local_file remote_ip:remote_folder </span><br><span class="line">scp local_file remote_ip:remote_file </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">如果是远程文件复制到本地则将后两个参数互换即可</span></span><br></pre></td></tr></table></figure>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-comm-scp.html">Linux
+scp命令</a></li>
+</ul>
+<hr>
+<h2 id="vim">Vim</h2>
+<figure>
+<img data-src="Linux小技巧/20220803165531.png" title="Vim" alt="Vim">
+<figcaption aria-hidden="true">Vim</figcaption>
+</figure>
+<p>Vim 包括三种模式：命令模式（Command mode），输入模式（Insert
+mode）和底线命令模式（Last line mode）</p>
+<h3 id="基本用法">基本用法</h3>
+<ul>
+<li>命令模式
+<ul>
+<li>i 切换到输入模式</li>
+<li>: 切换到底线模式</li>
+</ul></li>
+<li>输入模式
+<ul>
+<li>esc 切换到命令模式</li>
+</ul></li>
+<li>底线命令模式
+<ul>
+<li>w 保存文件</li>
+<li>q 退出 Vim</li>
+</ul></li>
+</ul>
+<h3 id="参考资料-1">参考资料</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-vim.html" class="uri">https://www.runoob.com/linux/linux-vim.html</a></li>
+</ul>
+<hr>
+<h2 id="输出问题">输出问题</h2>
+<p>常规将控制台输出输出到文件通过重定向即可，如:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python test.py &gt; out.txt</span><br></pre></td></tr></table></figure>
+<p>注意：<code>&gt;</code> 是覆写模式，<code>&gt;&gt;</code>
+是追加模式</p>
+<h3 id="script">script</h3>
+<p><code>script</code>
+有点类似一个记录器，命令，按键，输出全部可以记录到文件，使用方法为：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">script -a -f out.txt</span><br></pre></td></tr></table></figure>
+<p>就会将shell中的所有内容详细记录到文件中，其中 <code>-a</code>
+表示追加模式，<code>-f</code> 表示不缓存实时输出，可以使用
+<code>-h</code> 查看更多帮助。最后可以输入</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exit</span><br></pre></td></tr></table></figure>
+<p>就可以终止记录了，显示：<code>Script done, file is out.txt</code></p>
+<hr>
+<h3 id="tee">tee</h3>
+<p>tee指令会从标准输入设备读取数据，将其内容输出到标准输出设备，同时保存成文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python test.py | tee -a out.log</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="常用命令">常用命令</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-command-manual.html">Linux
+命令大全 - 菜鸟教程</a></li>
+<li><a target="_blank" rel="noopener" href="https://siye1982.github.io/2016/02/25/linux-list/" class="uri">https://siye1982.github.io/2016/02/25/linux-list/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2022-06/Linux%E5%B0%8F%E6%8A%80%E5%B7%A7.html" title="Linux小技巧">https://meteordream.github.io/编程基础/2022-06/Linux小技巧.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-06/508_%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E6%9C%80%E5%A4%9A%E7%9A%84%E5%AD%90%E6%A0%91%E5%85%83%E7%B4%A0%E5%92%8C(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』508 出现次数最多的子树元素和">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』508 出现次数最多的子树元素和
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-06/513_%E6%89%BE%E6%A0%91%E5%B7%A6%E4%B8%8B%E8%A7%92%E7%9A%84%E5%80%BC(%E4%B8%AD%E7%AD%89).html" rel="next" title="『LeetCode』513 找树左下角的值">
+      『LeetCode』513 找树左下角的值 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">1.</span> <span class="nav-text">快捷键</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.</span> <span class="nav-text">系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu%E7%9B%B8%E5%85%B3"><span class="nav-number">3.</span> <span class="nav-text">CPU相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gpu%E7%9B%B8%E5%85%B3"><span class="nav-number">4.</span> <span class="nav-text">GPU相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gpustat"><span class="nav-number">4.1.</span> <span class="nav-text">gpustat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nvtop"><span class="nav-number">4.2.</span> <span class="nav-text">nvtop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E7%90%86"><span class="nav-number">4.3.</span> <span class="nav-text">清理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%88%E7%AB%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">终端复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#screen"><span class="nav-number">5.1.</span> <span class="nav-text">Screen</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tmux"><span class="nav-number">5.2.</span> <span class="nav-text">Tmux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zellij"><span class="nav-number">5.3.</span> <span class="nav-text">zellij</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%9B%B8%E5%85%B3"><span class="nav-number">6.</span> <span class="nav-text">用户相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3"><span class="nav-number">7.</span> <span class="nav-text">进程相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86"><span class="nav-number">8.</span> <span class="nav-text">文件管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%9D%83%E9%99%90"><span class="nav-number">8.1.</span> <span class="nav-text">修改权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5"><span class="nav-number">8.2.</span> <span class="nav-text">符号链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E5%92%8C%E8%A7%A3%E5%8E%8B"><span class="nav-number">8.3.</span> <span class="nav-text">压缩和解压</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tar%E6%89%93%E5%8C%85%E5%92%8C%E8%A7%A3%E5%8C%85"><span class="nav-number">8.3.1.</span> <span class="nav-text">tar打包和解包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gzip-%E5%8E%8B%E7%BC%A9%E5%92%8C%E8%A7%A3%E5%8E%8B"><span class="nav-number">8.3.2.</span> <span class="nav-text">gzip 压缩和解压</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zip-%E5%8E%8B%E7%BC%A9%E5%92%8C%E8%A7%A3%E5%8E%8B"><span class="nav-number">8.3.3.</span> <span class="nav-text">zip 压缩和解压</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">8.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93"><span class="nav-number">9.</span> <span class="nav-text">文件传输</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vim"><span class="nav-number">10.</span> <span class="nav-text">Vim</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-number">10.1.</span> <span class="nav-text">基本用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99-1"><span class="nav-number">10.2.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E9%97%AE%E9%A2%98"><span class="nav-number">11.</span> <span class="nav-text">输出问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#script"><span class="nav-number">11.1.</span> <span class="nav-text">script</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tee"><span class="nav-number">11.2.</span> <span class="nav-text">tee</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">12.</span> <span class="nav-text">常用命令</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

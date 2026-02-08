@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简介 关于如何使用 Git 的使用说明与学习记录。来源是一个很有意思的 Git 可视化教程：https:&#x2F;&#x2F;learngitbranching.js.org&#x2F;?locale&#x3D;zh_CN (Github 入口) 教程有很清晰的可视化界面可以看到各种命令的执行变化，推荐初学者跟着做一遍哦~  git 文档：https:&#x2F;&#x2F;git-scm.com&#x2F;doc 也可以在命令行输入 git --help 查看帮">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git 学习记录">
+<meta property="og:url" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="简介 关于如何使用 Git 的使用说明与学习记录。来源是一个很有意思的 Git 可视化教程：https:&#x2F;&#x2F;learngitbranching.js.org&#x2F;?locale&#x3D;zh_CN (Github 入口) 教程有很清晰的可视化界面可以看到各种命令的执行变化，推荐初学者跟着做一遍哦~  git 文档：https:&#x2F;&#x2F;git-scm.com&#x2F;doc 也可以在命令行输入 git --help 查看帮">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git/merge.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git/rebase-1.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git/reset.png">
+<meta property="og:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git/revert.png">
+<meta property="article:published_time" content="2024-05-08T11:59:45.000Z">
+<meta property="article:modified_time" content="2024-05-08T11:59:45.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Github">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git/merge.png">
+
+<link rel="canonical" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Git 学习记录 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git 学习记录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-08 19:59:45" itemprop="dateCreated datePublished" datetime="2024-05-08T19:59:45+08:00">2024-05-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">编程基础</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="简介">简介</h2>
+<p>关于如何使用 Git 的使用说明与学习记录。来源是一个很有意思的 Git
+可视化教程：<a target="_blank" rel="noopener" href="https://learngitbranching.js.org/?locale=zh_CN" class="uri">https://learngitbranching.js.org/?locale=zh_CN</a> (<a target="_blank" rel="noopener" href="https://github.com/pcottle/learnGitBranching">Github 入口</a>)</p>
+<p>教程有很清晰的可视化界面可以看到各种命令的执行变化，推荐初学者跟着做一遍哦~</p>
+<ul>
+<li>git 文档：<a target="_blank" rel="noopener" href="https://git-scm.com/doc" class="uri">https://git-scm.com/doc</a></li>
+<li>也可以在命令行输入 <code>git --help</code> 查看帮助信息</li>
+</ul>
+<span id="more"></span>
+<blockquote>
+<p>工作中使用 git
+进行协作是很常见的操作，由于学校中可能很少接触多人合作，所以关于 git
+的使用可能不太熟悉，也为此导致代码中出现了不少 bug，又恰巧遇到一个很棒的
+git 可视化教程，于是认真学习一遍以避免 git 的使用中导致的 bug.</p>
+</blockquote>
+<h2 id="基础篇">基础篇</h2>
+<h3 id="commit">Commit</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">提交代码</span></span><br><span class="line">git commit</span><br></pre></td></tr></table></figure>
+<p>Git
+仓库中的提交记录保存的是你的目录下所有文件的快照，就像是把整个目录复制，然后再粘贴一样，但比复制粘贴优雅许多！</p>
+<p>Git
+希望提交记录尽可能地轻量，因此在你每次进行提交时，它并不会盲目地复制整个目录。条件允许的情况下，它会将当前版本与仓库中的上一个版本进行对比，并把所有的差异打包到一起作为一个提交记录。</p>
+<p>Git 还保存了提交的历史记录。这也是为什么大多数提交记录的上面都有
+parent 节点的原因 ——
+我们会在图示中用箭头来表示这种关系。对于项目组的成员来说，维护提交历史对大家都有好处。</p>
+<h3 id="branch">Branch</h3>
+<p>Branch 即分支，分支允许开发者在主线（master 或 main
+分支）之外独立开发新功能或修复错误，而不会干扰主线的稳定性和完整性。每个分支都有自己的提交历史，这使得多个开发者可以并行工作，而不会相互干扰。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建一个新的分支</span></span><br><span class="line">git branch &lt;new_branch_name&gt;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">切换分支</span></span><br><span class="line">git checkout &lt;branch_name&gt;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">切换分支的另一种实现 (git version &gt;= 2.23)</span></span><br><span class="line">git switch &lt;branch_name&gt;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建一个新的分支同时切换到新建分支</span></span><br><span class="line">git checkout -b &lt;new_branch_name&gt;</span><br></pre></td></tr></table></figure>
+<p>Git 的分支也非常轻量。它们只是简单地指向某个提交纪录 ——
+仅此而已。</p>
+<p>即使创建再多的分支也不会造成储存或内存上的开销，并且按逻辑分解工作到不同的分支要比维护那些特别臃肿的分支简单多了。</p>
+<p>在将分支和提交记录结合起来后，我们会看到两者如何协作。现在只要记住使用分支其实就相当于在说：“我想基于这个提交以及它所有的
+parent 提交进行新的工作。”</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">合并分支</span></span><br><span class="line">git merge &lt;branch_name&gt;</span><br></pre></td></tr></table></figure>
+<p>在 Git 中合并两个分支时会产生一个特殊的提交记录，它有两个 parent
+节点。翻译成自然语言相当于：“我要把这两个 parent
+节点本身及它们所有的祖先都包含进来。”</p>
+<figure>
+<img data-src="Git/merge.png" alt="merge">
+<figcaption aria-hidden="true">merge</figcaption>
+</figure>
+<p>如图，<code>merge</code> 将 <code>bugFix</code> 合并到
+<code>main</code>, 会产生一个新的提交记录，包含两个分支的提交记录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">合并分支</span></span><br><span class="line">git rebase &lt;branch_name&gt;</span><br></pre></td></tr></table></figure>
+<p>第二种合并分支的方法是 <code>git rebase</code>。<code>Rebase</code>
+实际上就是取出一系列的提交记录，“复制”它们，然后在另外一个地方逐个的放下去。</p>
+<p>Rebase
+的优势就是可以创造更线性的提交历史，这听上去有些难以理解。如果只允许使用
+Rebase 的话，代码库的提交历史将会变得异常清晰。</p>
+<figure>
+<img data-src="Git/rebase-1.png" alt="rebase-1">
+<figcaption aria-hidden="true">rebase-1</figcaption>
+</figure>
+<p>如图，<code>rebase</code> 将 <code>main</code> 合并到
+<code>bugFix</code>, (当前分支是
+<code>bugFix</code>)，<code>bugFix</code> 的记录被复制到
+<code>main</code> 的后面。</p>
+<hr>
+<h2 id="高级篇">高级篇</h2>
+<h3 id="head">HEAD</h3>
+<p>HEAD 是一个对当前所在分支的符号引用 ——
+也就是指向你正在其基础上进行工作的提交记录。</p>
+<p>HEAD 总是指向当前分支上最近一次提交记录。大多数修改提交树的 Git
+命令都是从改变 HEAD 的指向开始的。</p>
+<p>HEAD 通常情况下是指向分支名的（如 bugFix）。在你提交时，改变了 bugFix
+的状态，这一变化通过 HEAD 变得可见。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 HEAD 指向</span></span><br><span class="line">cat .git/HEAD</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">HEAD 是引用，也可以这样</span></span><br><span class="line">git symbolic-ref HEAD</span><br></pre></td></tr></table></figure>
+<p>分离的 HEAD 就是让其指向了某个具体的提交记录而不是分支名。 HEAD
+指向分支时：<code>HEAD -&gt; main -&gt; C1</code>, <code>main</code>
+是分支而 <code>C1</code> 是提交记录。 分离的 HEAD 即使用
+<code>git checkout C1</code> 使其指向 <code>C1</code>, 此时 HEAD
+不是引用。</p>
+<h3 id="相对引用">相对引用</h3>
+<p>过指定提交记录哈希值的方式在 Git
+中移动不太方便。在实际应用时，并没有像本程序中这么漂亮的可视化提交树供你参考，所以你就不得不用
+git log 来查查看提交记录的哈希值。</p>
+<p>并且哈希值在真实的 Git 世界中也会更长（译者注：基于 SHA-1，共 40
+位）。例如 <code>fed2da64c0efc5293610bdd892f82a58e8cbc5d8</code>。</p>
+<p>比较令人欣慰的是，Git
+对哈希的处理很智能。你只需要提供能够唯一标识提交记录的前几个字符即可。因此可以仅输入
+<code>fed2</code> 而不是上面的一长串字符。</p>
+<p>相对引用可以理解为查询节点的父节点或祖先节点，有两个简单用法：</p>
+<ul>
+<li>使用 <code>^</code> 向上移动 1 个提交记录，可以叠加，如
+<code>HEAD^</code> 和 <code>HEAD^^</code></li>
+<li>使用 <code>~&lt;num&gt;</code> 向上移动多个提交记录，如
+<code>~3</code></li>
+<li>上述两种可以混合使用及链式使用，如 <code>HEAD^^~2^</code></li>
+</ul>
+<p>我使用相对引用最多的就是移动分支。可以直接使用 <code>-f</code>
+选项让分支指向另一个提交。例如:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -f main HEAD~3</span><br></pre></td></tr></table></figure>
+<p>上面的命令会将 main 分支强制指向 HEAD 的第 3 级 parent 提交。</p>
+<h3 id="撤销变更">撤销变更</h3>
+<p>在 Git
+里撤销变更的方法很多。和提交一样，撤销变更由底层部分（暂存区的独立文件或者片段）和上层部分（变更到底是通过哪种方式被撤销的）组成。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">撤销方式 1</span></span><br><span class="line">git reset HEAD~1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">撤销方式 2</span></span><br><span class="line">git revert HEAD</span><br></pre></td></tr></table></figure>
+<p><code>git reset</code>
+通过把分支记录回退几个提交记录来实现撤销改动。你可以将这想象成“改写历史”。git
+reset 向上移动分支，原来指向的提交记录就跟从来没有提交过一样。</p>
+<figure>
+<img data-src="Git/reset.png" alt="reset">
+<figcaption aria-hidden="true">reset</figcaption>
+</figure>
+<p>虽然在你的本地分支中使用 <code>git reset</code>
+很方便，但是这种“改写历史”的方法对大家一起使用的远程分支是无效的哦！为了撤销更改并分享给别人，我们需要使用
+<code>git revert</code>。</p>
+<figure>
+<img data-src="Git/revert.png" alt="revert">
+<figcaption aria-hidden="true">revert</figcaption>
+</figure>
+<hr>
+<h2 id="整理提交记录">整理提交记录</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将一些提交记录复制到 HEAD 下</span></span><br><span class="line">git cherry-pick &lt;commit_id&gt;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">交互式的 rebase, 可以修改顺序，合并提交</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-i 即 --interactive</span></span><br><span class="line">git rebase -i HEAD~4</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">合并分支 -&gt; c2 提交复制到 c1 下面</span></span><br><span class="line">git rebase c1 c2</span><br></pre></td></tr></table></figure>
+<p>选择 parent 提交记录: 操作符 <code>^</code> 与 <code>~</code>
+符一样，后面也可以跟一个数字。</p>
+<p>但是该操作符后面的数字与 <code>~</code>
+后面的不同，并不是用来指定向上返回几代，而是指定合并提交记录的某个
+parent 提交。还记得前面提到过的一个合并提交有两个 parent
+提交吧，所以遇到这样的节点时该选择哪条路径就不是很清晰了。</p>
+<p>Git 默认选择合并提交的“第一个” parent 提交，在操作符 <code>^</code>
+后跟一个数字可以改变这一默认行为。(感觉这个有点不是很好区分第几个，可能用哈希值的方式会好些)</p>
+<h3 id="标签">标签</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在 c1 提交记录上创建一个名为 v1 的标签</span></span><br><span class="line">git tag v1 c1</span><br></pre></td></tr></table></figure>
+<p>Git 的 tag 就是干这个用的啊，它们可以（在某种程度上 ——
+因为标签可以被删除后重新在另外一个位置创建同名的标签）永久地将某个特定的提交命名为里程碑，然后就可以像分支一样引用了。</p>
+<p>更难得的是，它们并不会随着新的提交而移动。你也不能切换到某个标签上面进行修改提交，它就像是提交树上的一个锚点，标识了某个特定的位置。</p>
+<p>由于标签在代码库中起着“锚点”的作用，Git
+还为此专门设计了一个命令用来描述离你最近的锚点（也就是标签），它就是
+<code>git describe</code>！</p>
+<p>Git Describe 能帮你在提交历史中移动了多次以后找到方向；当你用
+<code>git bisect</code>（一个查找产生 Bug
+的提交记录的指令）找到某个提交记录时，或者是当你坐在你那刚刚度假回来的同事的电脑前时，
+可能会用到这个命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git describe &lt;ref&gt;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;ref&gt;</code> 可以是任何能被 Git
+识别成提交记录的引用，如果你没有指定的话，Git
+会使用你目前所在的位置（HEAD）</p>
+<p>输出结果：<code>&lt;tag&gt;_&lt;numCommits&gt;_g&lt;hash&gt;</code></p>
+<p><code>tag</code> 表示的是离 <code>ref</code> 最近的标签，
+<code>numCommits</code> 是表示这个 <code>ref</code> 与 <code>tag</code>
+相差有多少个提交记录， <code>hash</code> 表示的是你所给定的
+<code>ref</code> 所表示的提交记录哈希值的前几位。当 <code>ref</code>
+提交记录上有某个标签时，则只输出标签名称。</p>
+<hr>
+<h2 id="远程仓库">远程仓库</h2>
+<p>首先，远程仓库就是一个托管在服务器上的本地仓库的拷贝。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">拷贝远程仓库到本地</span></span><br><span class="line">git clone &lt;remote_url&gt;</span><br></pre></td></tr></table></figure>
+<p>拷贝后，本地仓库多了一个名为 <code>origin/main</code> 的分支,
+这种类型的分支就叫<strong>远程分支</strong>。由于远程分支的特性导致其拥有一些特殊属性。</p>
+<p>远程分支反映了远程仓库(在你上次和它通信时)的状态。这会有助于你理解本地的工作与公共工作的差别
+—— 这是你与别人分享工作成果前至关重要的一步.</p>
+<p>远程分支有一个特别的属性，在你切换到远程分支时，自动进入分离 HEAD
+状态。Git 这么做是出于不能直接在这些分支上进行操作的原因,
+你必须在别的地方完成你的工作,
+（更新了远程分支之后）再用远程分享你的工作成果。</p>
+<p>Git
+远程仓库相当的操作实际可以归纳为两点：向远程仓库传输数据以及从远程仓库获取数据。既然我们能与远程仓库同步，那么就可以分享任何能被
+Git 管理的更新（因此可以分享代码、文件、想法、情书等等）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">拉取远程更新(但不更新本地分支)</span></span><br><span class="line">git fetch</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">拉取远程更新并更新本地分支(等价与 fetch + merge)</span></span><br><span class="line">git pull</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">拉取远程更新并通过 rebase 的方式更新本地分支</span></span><br><span class="line">git pull --rebase</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">推送本地更新到远程仓库</span></span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
+<p><code>git fetch</code> 完成了仅有的但是很重要的两步:</p>
+<ul>
+<li>从远程仓库下载本地仓库中缺失的提交记录</li>
+<li>更新远程分支指针(如 origin/main)</li>
+</ul>
+<p>git fetch
+实际上将本地仓库中的远程分支更新成了远程仓库相应分支最新的状态，但并不会改变你本地仓库的状态。它不会更新你的
+main 分支，也不会修改你磁盘上的文件。所以, 你可以将
+<code>git fetch</code> 的理解为单纯的下载操作。</p>
+<p>在开发社区里，有许多关于 merge 与 rebase 的讨论。以下是关于 rebase
+的优缺点：</p>
+<ul>
+<li>优点:Rebase 使你的提交树变得很干净, 所有的提交都在一条线上</li>
+<li>缺点:Rebase 修改了提交树的历史</li>
+</ul>
+<p>比如, 提交 C1 可以被 rebase 到 C3 之后。这看起来 C1 中的工作是在 C3
+之后进行的，但实际上是在 C3 之前。
+一些开发人员喜欢保留提交历史，因此更偏爱
+merge。而其他人（比如我自己）可能更喜欢干净的提交树，于是偏爱
+rebase。仁者见仁，智者见智。</p>
+<hr>
+<h2 id="小技巧">小技巧</h2>
+<p>一些日常学习与工作中用到的 git 小技巧</p>
+<h3 id="屏蔽追踪">屏蔽追踪</h3>
+<p>要求：本地仓库与远程仓库中都有一个 config 文件，现在希望本地仓库中对
+config 的修改不被同步到远程仓库，且保持远程仓库的 config 文件不变。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1. 标记 config 文件为</span></span><br><span class="line">git update-index --assume-unchanged config</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2. 可以使用以下命令来验证 config 文件是否被标记为“assume-unchanged”</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">   被标记的文件前缀为 h, 例如 h config</span></span><br><span class="line">git ls-files -v | grep &#x27;^h&#x27; | grep config</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3. 取消 “assume-unchanged” 标记</span></span><br><span class="line">git update-index --no-assume-unchanged config</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2024-05/Git.html" title="Git 学习记录">https://meteordream.github.io/编程基础/2024-05/Git.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Github/" rel="tag"><i class="fa fa-tag"></i> Github</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2024-01/100150_%E7%A7%BB%E9%99%A4%E5%90%8E%E9%9B%86%E5%90%88%E7%9A%84%E6%9C%80%E5%A4%9A%E5%85%83%E7%B4%A0%E6%95%B0(%E4%B8%AD%E7%AD%89).html" rel="prev" title="『LeetCode』100150 移除后集合的最多元素数">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』100150 移除后集合的最多元素数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Note/2024-08/%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86.html" rel="next" title="时间管理">
+      时间管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">基础篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#commit"><span class="nav-number">2.1.</span> <span class="nav-text">Commit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#branch"><span class="nav-number">2.2.</span> <span class="nav-text">Branch</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">高级篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#head"><span class="nav-number">3.1.</span> <span class="nav-text">HEAD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E5%BC%95%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">相对引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E5%8F%98%E6%9B%B4"><span class="nav-number">3.3.</span> <span class="nav-text">撤销变更</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E7%90%86%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">4.</span> <span class="nav-text">整理提交记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E7%AD%BE"><span class="nav-number">4.1.</span> <span class="nav-text">标签</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="nav-number">5.</span> <span class="nav-text">远程仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="nav-number">6.</span> <span class="nav-text">小技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%8F%E8%94%BD%E8%BF%BD%E8%B8%AA"><span class="nav-number">6.1.</span> <span class="nav-text">屏蔽追踪</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

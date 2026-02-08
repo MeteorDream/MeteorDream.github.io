@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="题目 1744. 你能在你最喜欢的那天吃到你最喜欢的糖果吗？ 难度: 中等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『LeetCode』1744 你能在你最喜欢的那天吃到你最喜欢的糖果吗">
+<meta property="og:url" content="https://meteordream.github.io/LeetCode/2021-06/1744_%E4%BD%A0%E8%83%BD%E5%9C%A8%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E9%82%A3%E5%A4%A9%E5%90%83%E5%88%B0%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E7%B3%96%E6%9E%9C%E5%90%97.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="题目 1744. 你能在你最喜欢的那天吃到你最喜欢的糖果吗？ 难度: 中等">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-01T09:07:31.000Z">
+<meta property="article:modified_time" content="2021-06-14T01:13:56.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="LeetCode">
+<meta property="article:tag" content="前缀和">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/LeetCode/2021-06/1744_%E4%BD%A0%E8%83%BD%E5%9C%A8%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E9%82%A3%E5%A4%A9%E5%90%83%E5%88%B0%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E7%B3%96%E6%9E%9C%E5%90%97.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『LeetCode』1744 你能在你最喜欢的那天吃到你最喜欢的糖果吗 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/LeetCode/2021-06/1744_%E4%BD%A0%E8%83%BD%E5%9C%A8%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E9%82%A3%E5%A4%A9%E5%90%83%E5%88%B0%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E7%B3%96%E6%9E%9C%E5%90%97.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『LeetCode』1744 你能在你最喜欢的那天吃到你最喜欢的糖果吗
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-01 17:07:31" itemprop="dateCreated datePublished" datetime="2021-06-01T17:07:31+08:00">2021-06-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-14 09:13:56" itemprop="dateModified" datetime="2021-06-14T09:13:56+08:00">2021-06-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LeetCode/" itemprop="url" rel="index"><span itemprop="name">LeetCode</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/LeetCode/2021-06/1744_%E4%BD%A0%E8%83%BD%E5%9C%A8%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E9%82%A3%E5%A4%A9%E5%90%83%E5%88%B0%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E7%B3%96%E6%9E%9C%E5%90%97.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/LeetCode/2021-06/1744_%E4%BD%A0%E8%83%BD%E5%9C%A8%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E9%82%A3%E5%A4%A9%E5%90%83%E5%88%B0%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E7%B3%96%E6%9E%9C%E5%90%97.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目">题目</h2>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/can-you-eat-your-favorite-candy-on-your-favorite-day/">1744.
+你能在你最喜欢的那天吃到你最喜欢的糖果吗？</a></p>
+<p>难度: 中等</p>
+<span id="more"></span>
+<p>给你一个下标从 <strong>0</strong> 开始的正整数数组 <span class="math inline"><em>c</em><em>a</em><em>n</em><em>d</em><em>i</em><em>e</em><em>s</em><em>C</em><em>o</em><em>u</em><em>n</em><em>t</em></span> ，其中 <span class="math inline"><em>c</em><em>a</em><em>n</em><em>d</em><em>i</em><em>e</em><em>s</em><em>C</em><em>o</em><em>u</em><em>n</em><em>t</em>[<em>i</em>]</span> 表示你拥有的第 <span class="math inline"><em>i</em></span> 类糖果的数目。同时给你一个二维数组 <span class="math inline"><em>q</em><em>u</em><em>e</em><em>r</em><em>i</em><em>e</em><em>s</em></span> ，其中 <span class="math inline"><em>q</em><em>u</em><em>e</em><em>r</em><em>i</em><em>e</em><em>s</em>[<em>i</em>] = [<em>f</em><em>a</em><em>v</em><em>o</em><em>r</em><em>i</em><em>t</em><em>e</em><em>T</em><em>y</em><em>p</em><em>e</em><em>i</em>, <em>f</em><em>a</em><em>v</em><em>o</em><em>r</em><em>i</em><em>t</em><em>e</em><em>D</em><em>a</em><em>y</em><em>i</em>, <em>d</em><em>a</em><em>i</em><em>l</em><em>y</em><em>C</em><em>a</em><em>p</em><em>i</em>]</span> 。</p>
+<p>你按照如下规则进行一场游戏：</p>
+<ul>
+<li>你从第 <strong>0</strong> 天开始吃糖果。</li>
+<li>你在吃完 <strong>所有</strong> 第 <span class="math inline"><em>i</em> − 1</span> 类糖果之前，<strong>不能</strong> 吃任何一颗第
+<span class="math inline"><em>i</em></span> 类糖果。</li>
+<li>在吃完所有糖果之前，你必须每天 <span class="math inline"><em>至</em><em>少</em></span> 吃 <span class="math inline"><em>一</em><em>颗</em></span> 糖果。</li>
+</ul>
+<p>请你构建一个布尔型数组 <span class="math inline"><em>a</em><em>n</em><em>s</em><em>w</em><em>e</em><em>r</em></span> ，满足 <span class="math inline"><em>a</em><em>n</em><em>s</em><em>w</em><em>e</em><em>r</em>.<em>l</em><em>e</em><em>n</em><em>g</em><em>t</em><em>h</em> =  = <em>q</em><em>u</em><em>e</em><em>r</em><em>i</em><em>e</em><em>s</em>.<em>l</em><em>e</em><em>n</em><em>g</em><em>t</em><em>h</em></span>
+。<span class="math inline"><em>a</em><em>n</em><em>s</em><em>w</em><em>e</em><em>r</em>[<em>i</em>]</span> 为 <span class="math inline"><em>t</em><em>r</em><em>u</em><em>e</em></span> 的条件是：在每天吃
+<strong>不超过</strong> <span class="math inline"><em>d</em><em>a</em><em>i</em><em>l</em><em>y</em><em>C</em><em>a</em><em>p</em><em>i</em></span> 颗糖果的前提下，你可以在第 <span class="math inline"><em>f</em><em>a</em><em>v</em><em>o</em><em>r</em><em>i</em><em>t</em><em>e</em><em>D</em><em>a</em><em>y</em><em>i</em></span> 天吃到第 <span class="math inline"><em>f</em><em>a</em><em>v</em><em>o</em><em>r</em><em>i</em><em>t</em><em>e</em><em>T</em><em>y</em><em>p</em><em>e</em><em>i</em></span> 类糖果；否则
+<span class="math inline"><em>a</em><em>n</em><em>s</em><em>w</em><em>e</em><em>r</em>[<em>i</em>]</span> 为
+<span class="math inline"><em>f</em><em>a</em><em>l</em><em>s</em><em>e</em></span> 。注意，只要满足上面
+3 条规则中的第二条规则，你就可以在同一天吃不同类型的糖果。</p>
+<p>请你返回得到的数组 <span class="math inline"><em>a</em><em>n</em><em>s</em><em>w</em><em>e</em><em>r</em></span> 。</p>
+<p><span class="math inline">/<em>q</em><em>u</em><em>a</em><em>d</em></span></p>
+<p>示例 1：</p>
+<blockquote>
+<p><strong>输入：</strong>candiesCount = [7,4,5,3,8], queries =
+[[0,2,2],[4,2,4],[2,13,1000000000]]<br>
+<strong>输出：</strong>[true,false,true]<br>
+<strong>提示：</strong><br>
+1- 在第 0 天吃 2 颗糖果(类型 0），第 1 天吃 2 颗糖果（类型 0），第 2
+天你可以吃到类型 0 的糖果。<br>
+2- 每天你最多吃 4 颗糖果。即使第 0 天吃 4 颗糖果（类型 0），第 1 天吃 4
+颗糖果（类型 0 和类型 1），你也没办法在第 2 天吃到类型 4
+的糖果。换言之，你没法在每天吃 4 颗糖果的限制下在第 2 天吃到第 4
+类糖果。<br>
+3- 如果你每天吃 1 颗糖果，你可以在第 13 天吃到类型 2 的糖果。</p>
+</blockquote>
+<p>示例 2：</p>
+<blockquote>
+<p><strong>输入：</strong>candiesCount = [5,2,6,4,1], queries =
+[[3,1,2],[4,10,3],[3,10,100],[4,100,30],[1,3,1]]<br>
+<strong>输出：</strong>[false,true,true,false,false]</p>
+</blockquote>
+<p>提示：</p>
+<ul>
+<li><span class="math inline">1 &lt;  = <em>c</em><em>a</em><em>n</em><em>d</em><em>i</em><em>e</em><em>s</em><em>C</em><em>o</em><em>u</em><em>n</em><em>t</em>.<em>l</em><em>e</em><em>n</em><em>g</em><em>t</em><em>h</em> &lt;  = 10<sup>5</sup></span></li>
+<li><span class="math inline">1 &lt;  = <em>c</em><em>a</em><em>n</em><em>d</em><em>i</em><em>e</em><em>s</em><em>C</em><em>o</em><em>u</em><em>n</em><em>t</em>[<em>i</em>] &lt;  = 10<sup>5</sup></span></li>
+<li><span class="math inline">1 &lt;  = <em>q</em><em>u</em><em>e</em><em>r</em><em>i</em><em>e</em><em>s</em>.<em>l</em><em>e</em><em>n</em><em>g</em><em>t</em><em>h</em> &lt;  = 10<sup>5</sup></span></li>
+<li><span class="math inline"><em>q</em><em>u</em><em>e</em><em>r</em><em>i</em><em>e</em><em>s</em>[<em>i</em>].<em>l</em><em>e</em><em>n</em><em>g</em><em>t</em><em>h</em> =  = 3</span></li>
+<li><span class="math inline">0 &lt;  = <em>f</em><em>a</em><em>v</em><em>o</em><em>r</em><em>i</em><em>t</em><em>e</em><em>T</em><em>y</em><em>p</em><em>e</em><em>i</em> &lt; <em>c</em><em>a</em><em>n</em><em>d</em><em>i</em><em>e</em><em>s</em><em>C</em><em>o</em><em>u</em><em>n</em><em>t</em>.<em>l</em><em>e</em><em>n</em><em>g</em><em>t</em><em>h</em></span></li>
+<li><span class="math inline">0 &lt;  = <em>f</em><em>a</em><em>v</em><em>o</em><em>r</em><em>i</em><em>t</em><em>e</em><em>D</em><em>a</em><em>y</em><em>i</em> &lt;  = 10<sup>9</sup></span></li>
+<li><span class="math inline">1 &lt;  = <em>d</em><em>a</em><em>i</em><em>l</em><em>y</em><em>C</em><em>a</em><em>p</em><em>i</em> &lt;  = 10<sup>9</sup></span></li>
+</ul>
+<h2 id="解析">解析</h2>
+<p>大家儿童节快乐呀~</p>
+<p>今天你吃了甜甜的糖果🍭吗?</p>
+<p>题目有点长，先梳理清楚题意：</p>
+<p>在一排格子中，每个格子放了一些糖果，格子中糖果的数量记录在
+candiesCount
+中，现在我们必须按顺序吃掉格子中的糖果，在当前格子的糖果没吃完之前不能吃下一个格子中的糖果，现在请回答一个问题：</p>
+<ul>
+<li>假设每天最多吃 z 颗糖果, 最少也要吃 1 颗糖果，第 y
+天是我的生日了，请问我能不能在生日那天吃到放在第 x
+个格子中的我最喜欢吃的糖果呢？</li>
+</ul>
+<p>但是除了我以外，我的朋友们也想在生日那天吃到他们喜欢的糖果，所以请对上述问题给出一个通用的解决方案，对于每个人对应的
+(x,y,z) 值放在了二维数组参数 queries 中</p>
+<h3 id="前缀和">前缀和</h3>
+<p>不难看出，想要吃到第 i 个格子中的糖果，就必须吃光前 i - 1
+个格子中的糖果，所以我们得先计算出前 i - 1 个格子中的糖果总数 s[i],
+但是呢也不能在 y 天之前就把第 i 个格子的糖果吃完了，所以要求前 y
+天吃掉的糖果总数在 <span class="math inline">(<em>s</em>[<em>i</em>], <em>s</em>[<em>i</em> + 1]]</span>
+区间范围内我们才能在喜欢的日子吃掉喜欢的糖果</p>
+<p>另一方面，我们考察我们到第 y
+天能吃多少颗糖果，按照要求每天最少吃一颗糖果，最多吃 z 颗糖果，所以第 y
+天能吃糖果的数量范围为 <span class="math inline">[<em>y</em> + 1, <em>z</em> * (<em>y</em> + 1)]</span>
+(注意天数是从0开始的)</p>
+<p>显然，只要上述的两个区间有交集那么我们就能在喜欢的日子吃掉喜欢的糖果啦~</p>
+<p>为了避免在多次查询时重复计算前 n 个格子中糖果总数，我们使用前缀和数组
+<span class="math inline"><em>s</em></span> 记录 前 i
+个格子中糖果的总数，<span class="math inline"><em>s</em>[<em>i</em>]</span> 表示前 i-1
+类糖果的数量和, 这样我们就能在 <span class="math inline"><em>O</em>(1)</span> 时间查询到前 i
+个格子中糖果的总数</p>
+<p>再提一句，如果两区间 A,B 有交集，那么必定有 <span class="math inline">$A\\_left &lt; B\\_right \\&amp;\\&amp; A\\_right
+&gt; B\\_left$</span>, 或者考察对立事件 A,B 没有交集，有 <span class="math inline">$A\\_left &gt; B\\_right || A\\_right &lt;
+B\\_left$</span></p>
+<h4 id="复杂度">复杂度</h4>
+<ul>
+<li>时间复杂度: <span class="math inline"><em>O</em>(<em>n</em> + <em>m</em>)</span>,
+计算前缀和数组 <span class="math inline"><em>O</em>(<em>n</em>)</span>,
+<span class="math inline"><em>q</em><em>u</em><em>e</em><em>r</em><em>i</em><em>e</em><em>s</em></span>
+中 <span class="math inline"><em>m</em></span> 个查询每次都是 <span class="math inline"><em>O</em>(1)</span></li>
+<li>空间复杂度: <span class="math inline"><em>O</em>(<em>n</em>)</span>,
+前缀和数组的空间</li>
+</ul>
+<h4 id="代码">代码</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canEat</span>(<span class="params">self, candiesCount: <span class="type">List</span>[<span class="built_in">int</span>], queries: <span class="type">List</span>[<span class="type">List</span>[<span class="built_in">int</span>]]</span>) -&gt; <span class="type">List</span>[<span class="built_in">bool</span>]:</span><br><span class="line">        <span class="comment"># candiesCount[i] 表示你拥有的第 i 类糖果的数目</span></span><br><span class="line">        <span class="comment"># queries[i] = [favoriteTypei, favoriteDayi, dailyCapi]</span></span><br><span class="line">        <span class="comment"># 即 喜欢的糖果下标， 喜欢的天数， 每天最多吃糖</span></span><br><span class="line">        <span class="comment"># 在每天吃 不超过 dailyCapi 颗糖果的前提下, 你可以在第 favoriteDayi 天吃到第 favoriteTypei 类糖果</span></span><br><span class="line">        n, m = <span class="built_in">len</span>(candiesCount), <span class="built_in">len</span>(queries)</span><br><span class="line">        <span class="comment"># s[i] 表示前 i-1 类糖果的数量和</span></span><br><span class="line">        s = [<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n + <span class="number">1</span>)]</span><br><span class="line">        ans = [<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(m)]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">            s[i + <span class="number">1</span>] = s[i] + candiesCount[i]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">            <span class="comment"># min, max 表示喜欢那天最少要吃的糖果数量和最多能吃的糖果数量</span></span><br><span class="line">            <span class="built_in">min</span>, <span class="built_in">max</span> = queries[i][<span class="number">1</span>], queries[i][<span class="number">2</span>] * (queries[i][<span class="number">1</span>] + <span class="number">1</span>)</span><br><span class="line">            <span class="comment"># 只要(s[q], s[q + 1])与(min, max)区间有交集，即可在喜欢那天吃到喜欢的糖果</span></span><br><span class="line">            ans[i] = (<span class="built_in">min</span> &lt; s[queries[i][<span class="number">0</span>] + <span class="number">1</span>]) <span class="keyword">and</span> (<span class="built_in">max</span> &gt; s[queries[i][<span class="number">0</span>]])</span><br><span class="line">        <span class="keyword">return</span> ans</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C++ */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">bool</span>&gt; <span class="title">canEat</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; candiesCount, vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; queries)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// candiesCount[i] 表示你拥有的第 i 类糖果的数目</span></span><br><span class="line">        <span class="comment">// queries[i] = [favoriteTypei, favoriteDayi, dailyCapi]</span></span><br><span class="line">        <span class="comment">// 即 喜欢的糖果下标， 喜欢的天数， 每天最多吃糖</span></span><br><span class="line">        <span class="comment">// 在每天吃 不超过 dailyCapi 颗糖果的前提下 你可以在第 favoriteDayi 天吃到第 favoriteTypei 类糖果</span></span><br><span class="line">        <span class="type">int</span> n = candiesCount.<span class="built_in">size</span>(), m = queries.<span class="built_in">size</span>();</span><br><span class="line">        <span class="comment">// s[i] 表示前 i-1 类糖果的数量和</span></span><br><span class="line">        <span class="function">vector&lt;<span class="type">long</span>&gt; <span class="title">s</span><span class="params">(n + <span class="number">1</span>)</span></span>;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">bool</span>&gt; <span class="title">ans</span><span class="params">(m)</span></span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; ++i)</span><br><span class="line">            s[i + <span class="number">1</span>] = s[i] + candiesCount[i];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; ++i) &#123;</span><br><span class="line">            <span class="comment">// min, max 表示喜欢那天最少要吃的糖果数量和最多能吃的糖果数量</span></span><br><span class="line">            <span class="type">long</span> min = queries[i][<span class="number">1</span>], max = (<span class="type">long</span>)queries[i][<span class="number">2</span>] * (queries[i][<span class="number">1</span>] + <span class="number">1</span>);</span><br><span class="line">            <span class="comment">// 只要(s[q], s[q + 1])与(min, max)区间有交集，即可在喜欢那天吃到喜欢的糖果</span></span><br><span class="line">            ans[i] = (min &lt; s[queries[i][<span class="number">0</span>] + <span class="number">1</span>]) &amp;&amp; (max &gt; s[queries[i][<span class="number">0</span>]]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Java */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span>[] canEat(<span class="type">int</span>[] candiesCount, <span class="type">int</span>[][] queries) &#123;</span><br><span class="line">        <span class="comment">// candiesCount[i] 表示你拥有的第 i 类糖果的数目</span></span><br><span class="line">        <span class="comment">// queries[i] = [favoriteTypei, favoriteDayi, dailyCapi]</span></span><br><span class="line">        <span class="comment">// 即 喜欢的糖果下标， 喜欢的天数， 每天最多吃糖</span></span><br><span class="line">        <span class="comment">// 在每天吃 不超过 dailyCapi 颗糖果的前提下, 你可以在第 favoriteDayi 天吃到第 favoriteTypei 类糖果</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> candiesCount.length, m = queries.length;</span><br><span class="line">        <span class="comment">// s[i] 表示前 i-1 类糖果的数量和</span></span><br><span class="line">        <span class="type">long</span>[] s = <span class="keyword">new</span> <span class="title class_">long</span>[n + <span class="number">1</span>];</span><br><span class="line">        <span class="type">boolean</span>[] ans = <span class="keyword">new</span> <span class="title class_">boolean</span>[m];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; ++i)</span><br><span class="line">            s[i + <span class="number">1</span>] = s[i] + candiesCount[i];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; m; ++i) &#123;</span><br><span class="line">            <span class="comment">// min, max 表示喜欢那天最少要吃的糖果数量和最多能吃的糖果数量</span></span><br><span class="line">            <span class="type">long</span> <span class="variable">min</span> <span class="operator">=</span> queries[i][<span class="number">1</span>], max = (<span class="type">long</span>) queries[i][<span class="number">2</span>] * (queries[i][<span class="number">1</span>] + <span class="number">1</span>);</span><br><span class="line">            <span class="comment">// 只要(s[q], s[q + 1])与(min, max)区间有交集，即可在喜欢那天吃到喜欢的糖果</span></span><br><span class="line">            ans[i] = (min &lt; s[queries[i][<span class="number">0</span>] + <span class="number">1</span>]) &amp;&amp; (max &gt; s[queries[i][<span class="number">0</span>]]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>小鲸鱼
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/LeetCode/2021-06/1744_%E4%BD%A0%E8%83%BD%E5%9C%A8%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E9%82%A3%E5%A4%A9%E5%90%83%E5%88%B0%E4%BD%A0%E6%9C%80%E5%96%9C%E6%AC%A2%E7%9A%84%E7%B3%96%E6%9E%9C%E5%90%97.html" title="『LeetCode』1744 你能在你最喜欢的那天吃到你最喜欢的糖果吗">https://meteordream.github.io/LeetCode/2021-06/1744_你能在你最喜欢的那天吃到你最喜欢的糖果吗.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LeetCode/" rel="tag"><i class="fa fa-tag"></i> LeetCode</a>
+              <a href="/tags/Prefix/" rel="tag"><i class="fa fa-tag"></i> 前缀和</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2021-05/CppSTL%E6%80%BB%E7%BB%93.html" rel="prev" title="C++ STL总结">
+      <i class="fa fa-chevron-left"></i> C++ STL总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2021-06/852_%E5%B1%B1%E8%84%89%E6%95%B0%E7%BB%84%E7%9A%84%E5%B3%B0%E9%A1%B6%E7%B4%A2%E5%BC%95.html" rel="next" title="『LeetCode』852 山脉数组的峰顶索引">
+      『LeetCode』852 山脉数组的峰顶索引 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BC%80%E5%92%8C"><span class="nav-number">2.1.</span> <span class="nav-text">前缀和</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">2.1.1.</span> <span class="nav-text">复杂度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">2.1.2.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="题目 162. 寻找峰值 难度: 中等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『LeetCode』162 寻找峰值">
+<meta property="og:url" content="https://meteordream.github.io/LeetCode/2021-06/162_%E5%AF%BB%E6%89%BE%E5%B3%B0%E5%80%BC.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="题目 162. 寻找峰值 难度: 中等">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-16T03:23:11.000Z">
+<meta property="article:modified_time" content="2023-12-17T21:29:01.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="LeetCode">
+<meta property="article:tag" content="二分查找">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://meteordream.github.io/LeetCode/2021-06/162_%E5%AF%BB%E6%89%BE%E5%B3%B0%E5%80%BC.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『LeetCode』162 寻找峰值 | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/LeetCode/2021-06/162_%E5%AF%BB%E6%89%BE%E5%B3%B0%E5%80%BC.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『LeetCode』162 寻找峰值
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-16 11:23:11" itemprop="dateCreated datePublished" datetime="2021-06-16T11:23:11+08:00">2021-06-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-18 05:29:01" itemprop="dateModified" datetime="2023-12-18T05:29:01+08:00">2023-12-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LeetCode/" itemprop="url" rel="index"><span itemprop="name">LeetCode</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/LeetCode/2021-06/162_%E5%AF%BB%E6%89%BE%E5%B3%B0%E5%80%BC.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/LeetCode/2021-06/162_%E5%AF%BB%E6%89%BE%E5%B3%B0%E5%80%BC.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="题目">题目</h2>
+<p><a href="%5B题目链接%5D(https://leetcode-cn.com/problems/find-peak-element/)">162.
+寻找峰值</a></p>
+<p>难度: 中等</p>
+<span id="more"></span>
+<p>峰值元素是指其值大于左右相邻值的元素。</p>
+<p>给你一个输入数组 <code>nums</code>，找到峰值元素并返回其索引。数组可能包含多个峰值，在这种情况下，返回
+<strong>任何一个峰值</strong> 所在位置即可。</p>
+<p>你可以假设 <code>nums[-1] = nums[n] = -∞</code> 。</p>
+<p><span class="math inline">  </span></p>
+<p>示例 1：</p>
+<blockquote>
+<p><strong>输入：</strong>nums = [1,2,3,1]<br>
+<strong>输出：</strong>2<br>
+<strong>解释：</strong>3 是峰值元素，你的函数应该返回其索引 2。</p>
+</blockquote>
+<p>示例 2：</p>
+<blockquote>
+<p><strong>输入：</strong>nums = [1,2,1,3,5,6,4]<br>
+<strong>输出：</strong>1 或 5<br>
+<strong>解释：</strong>你的函数可以返回索引 1，其峰值元素为 2；<br>
+<span class="math inline">     </span> 或者返回索引 5， 其峰值元素为
+6。</p>
+</blockquote>
+<p><span class="math inline">  </span></p>
+<p>提示：</p>
+<ul>
+<li><span class="math inline">1 &lt;  = <em>n</em><em>u</em><em>m</em><em>s</em>.<em>l</em><em>e</em><em>n</em><em>g</em><em>t</em><em>h</em> &lt;  = 1000</span></li>
+<li><span class="math inline">−2<sup>31</sup> &lt;  = <em>n</em><em>u</em><em>m</em><em>s</em>[<em>i</em>] &lt;  = 2<sup>31</sup> − 1</span></li>
+<li>对于所有有效的 <code>i</code> 都有 <span class="math inline"><em>n</em><em>u</em><em>m</em><em>s</em>[<em>i</em>]! = <em>n</em><em>u</em><em>m</em><em>s</em>[<em>i</em> + 1]</span></li>
+</ul>
+<p><strong>进阶：</strong>你可以实现时间复杂度为 <span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><em>N</em>)</span>
+的解决方案吗？</p>
+<h2 id="标签">标签</h2>
+<p>数组，二分查找</p>
+<hr>
+<h2 id="题解">题解</h2>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/find-peak-element/solutions/830613/xun-zhao-feng-zhi-shun-xu-er-fen-zhuan-h-cyn9/">【寻找峰值】顺序&amp;二分-转化为山脉数组问题求解</a></p>
+<h2 id="解析">解析</h2>
+<p>这题其实是 <a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/peak-index-in-a-mountain-array/">852.
+山脉数组的峰顶索引</a>的进阶版，主要有两点不同之处</p>
+<ol type="1">
+<li>是不再是山脉数组，简而言之山脉数组就是可以划分为先单调递增再单调递减的两段。而本题的数组却不是规律的只有两段的数组，但本题却还是能按照山脉数组的方法进行二分处理，后面会详细证明</li>
+<li>是数组左右两端被认为是 <span class="math inline">−∞</span>，这挺有意思的，可以由两种理解方式
+<ul>
+<li>数组首尾可以认为是单调递增和单调递减的</li>
+<li>若第二个元素小于第一个元素，那么第一个元素就可以认为是峰值，尾元素同理</li>
+<li>这也正好对应了边界条件处理的两种方法，基于语言特性，后面的代码示例中，Python使用了第一种方法处理(Python
+中索引 -1
+表示list中最后一个元素，所以只需在末尾添加一个负无穷即可兼顾首尾两侧的边界情况)
+而 C++ 和 Java
+使用了第二种方法处理(而数组若要在首元素位置插入元素需要整体后移一位，相较而言还是单独处理边界较好)</li>
+</ul></li>
+</ol>
+<hr>
+<h2 id="方法一顺序搜索">方法一、顺序搜索</h2>
+<p>最简单的方法自然是遍历数组顺序搜索，逐一判断每个位置是否是峰值，加上本题数据量很小，数组长度最大仅为
+<span class="math inline">1<em>e</em>4</span> ，如果不管进阶的要求的话
+<span class="math inline"><em>O</em>(<em>n</em>)</span> 与 <span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><em>n</em>)</span>
+的效率其实相差不大</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">findPeakElement</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="comment"># 简单顺序搜索</span></span><br><span class="line">        nums.append(-<span class="built_in">float</span>(<span class="string">&quot;inf&quot;</span>))</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(nums)):</span><br><span class="line">            <span class="keyword">if</span> nums[i - <span class="number">1</span>] &lt; nums[i] &gt; nums[i + <span class="number">1</span>]:</span><br><span class="line">                <span class="keyword">return</span> i</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Java */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">findPeakElement</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> nums.length;</span><br><span class="line">        <span class="keyword">if</span> (n == <span class="number">1</span> || nums[<span class="number">0</span>] &gt; nums[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt; n - <span class="number">1</span>; ++i)</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; nums[i - <span class="number">1</span>] &amp;&amp; nums[i] &gt; nums[i + <span class="number">1</span>])</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">        <span class="keyword">return</span> n - <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C++ */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">findPeakElement</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> n = nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">if</span> (n &lt;= <span class="number">1</span> || nums[<span class="number">0</span>] &gt; nums[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; n - <span class="number">1</span>; ++i)</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; nums[i + <span class="number">1</span>] &amp;&amp; nums[i] &gt; nums[i - <span class="number">1</span>])</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">        <span class="keyword">return</span> n - <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Go*/</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">findPeakElement</span><span class="params">(nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    n := <span class="built_in">len</span>(nums)</span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">1</span> || nums[<span class="number">0</span>] &gt; nums[<span class="number">1</span>] &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[n - <span class="number">1</span>] &gt; nums[n - <span class="number">2</span>]) &#123;</span><br><span class="line">        <span class="keyword">return</span> n - <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">1</span>; i &lt; n - <span class="number">1</span>; i++ &#123;</span><br><span class="line">        <span class="keyword">if</span> nums[i] &gt; nums[i - <span class="number">1</span>] &amp;&amp; nums[i] &gt; nums[i + <span class="number">1</span>] &#123;</span><br><span class="line">            <span class="keyword">return</span> i</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度: <span class="math inline"><em>O</em>(<em>n</em>)</span></li>
+<li>空间复杂度: <span class="math inline"><em>O</em>(1)</span></li>
+</ul>
+<hr>
+<h2 id="方法二二分搜索">方法二、二分搜索</h2>
+<p>进阶要求时间复杂度 <span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><em>n</em>)</span>，可以考虑使用二分搜索，我们假设你已经学会了<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/peak-index-in-a-mountain-array/solution/852-shan-mai-shu-zu-de-feng-ding-suo-shu-f91g/">山脉数组的二分方式</a>。</p>
+<p>但问题来了：这题的数组并不是有序的，甚至也不是山脉数组的局部有序，要如何使用二分求解呢？</p>
+<p>注意到，题目有两个小小的隐藏提示</p>
+<ol type="1">
+<li>数组两端认为是负无穷，而数组的值是确定的整型数，必然不会是正无穷，这说明数组中必定能找到一个峰值
+<ul>
+<li>证明很简单：左右两端都是负无穷，而数组中的数都大于负无穷，那么左端到数组是单调递增的，数组到右端是单调递减的，所以峰值必然存在</li>
+</ul></li>
+<li>若峰值不止一个，我们随意找到一个就行，由此我们想到，因为数组中相邻两个数必然不同，我们可以将数组划分为若干个“山脉数组”，只有找到其中一个“山脉数组”的峰值即可，我们证明这种想法的可行性
+<ul>
+<li>换而言之，这种方法不会在有解的情况下查找不到解，先回顾“山脉数组”的二分解法：
+<ul>
+<li>若中点递增，说明极值点在右方</li>
+<li>若中点递减，说明极值点在左方</li>
+</ul></li>
+<li>考虑本题数组
+<ul>
+<li>若中点递增，则中点与右端点都小于中点的下一个数，与1中证明同理，可以得出右半段必然存在峰值</li>
+<li>若中点递减，则左端点与中点都小于中点的前一个数，与1中证明同理，可以得出左半段必然存在峰值</li>
+</ul></li>
+</ul></li>
+</ol>
+<p>总的来说，我们可以认为，数组中有且只有一个极大值，那么这题就转换为了<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/peak-index-in-a-mountain-array/solution/852-shan-mai-shu-zu-de-feng-ding-suo-shu-f91g/">山脉数组的二分方式</a>，只需再加上边界的处理，就能得到本题的二分解法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Code language: Python</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">findPeakElement</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="comment"># 二分查找</span></span><br><span class="line">        nums.append(-<span class="built_in">float</span>(<span class="string">&quot;inf&quot;</span>))</span><br><span class="line">        lo, hi = <span class="number">0</span>, <span class="built_in">len</span>(nums) - <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> lo &lt; hi:</span><br><span class="line">            mid = (lo + hi) // <span class="number">2</span></span><br><span class="line">            <span class="keyword">if</span> nums[mid] &lt; nums[mid + <span class="number">1</span>]:</span><br><span class="line">                lo = mid + <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                hi = mid</span><br><span class="line">        <span class="keyword">return</span> lo</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Java */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">findPeakElement</span><span class="params">(<span class="type">int</span>[] nums)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> nums.length;</span><br><span class="line">        <span class="keyword">if</span> (n == <span class="number">1</span> || nums[<span class="number">0</span>] &gt; nums[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[n - <span class="number">1</span>] &gt; nums[n - <span class="number">2</span>])</span><br><span class="line">            <span class="keyword">return</span> n - <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">left</span> <span class="operator">=</span> <span class="number">1</span>, right = n - <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">mid</span> <span class="operator">=</span> left + (right - left) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (nums[mid] &gt; nums[mid + <span class="number">1</span>])</span><br><span class="line">                right = mid;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> left;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: C++ */</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">findPeakElement</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="type">int</span> n = nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">if</span> (n &lt;= <span class="number">1</span> || nums[<span class="number">0</span>] &gt; nums[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[n - <span class="number">1</span>] &gt; nums[n - <span class="number">2</span>])</span><br><span class="line">            <span class="keyword">return</span> n - <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> lo = <span class="number">1</span>, hi = n - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (lo &lt; hi) &#123;</span><br><span class="line">            <span class="type">int</span> mid = lo + (hi - lo &gt;&gt; <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> (nums[mid] &gt; nums[mid + <span class="number">1</span>])</span><br><span class="line">                hi = mid;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                lo = mid + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> lo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Code language: Go*/</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">findPeakElement</span><span class="params">(nums []<span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    left, right := <span class="number">0</span>, <span class="built_in">len</span>(nums)<span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt; right &#123;</span><br><span class="line">        mid := (left + right) &gt;&gt; <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> mid == <span class="built_in">len</span>(nums)<span class="number">-1</span> || nums[mid] &lt; nums[mid+<span class="number">1</span>] &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            right = mid</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度: <span class="math inline"><em>O</em>(<em>l</em><em>o</em><em>g</em><em>n</em>)</span></li>
+<li>空间复杂度: <span class="math inline"><em>O</em>(1)</span></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/LeetCode/2021-06/162_%E5%AF%BB%E6%89%BE%E5%B3%B0%E5%80%BC.html" title="『LeetCode』162 寻找峰值">https://meteordream.github.io/LeetCode/2021-06/162_寻找峰值.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LeetCode/" rel="tag"><i class="fa fa-tag"></i> LeetCode</a>
+              <a href="/tags/BinarySearch/" rel="tag"><i class="fa fa-tag"></i> 二分查找</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2021-06/852_%E5%B1%B1%E8%84%89%E6%95%B0%E7%BB%84%E7%9A%84%E5%B3%B0%E9%A1%B6%E7%B4%A2%E5%BC%95.html" rel="prev" title="『LeetCode』852 山脉数组的峰顶索引">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』852 山脉数组的峰顶索引
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2021-06/65_%E6%9C%89%E6%95%88%E6%95%B0%E5%AD%97.html" rel="next" title="『LeetCode』65 有效数字">
+      『LeetCode』65 有效数字 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E7%AD%BE"><span class="nav-number">2.</span> <span class="nav-text">标签</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">题解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%E9%A1%BA%E5%BA%8F%E6%90%9C%E7%B4%A2"><span class="nav-number">5.</span> <span class="nav-text">方法一、顺序搜索</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%E4%BA%8C%E5%88%86%E6%90%9C%E7%B4%A2"><span class="nav-number">6.</span> <span class="nav-text">方法二、二分搜索</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>

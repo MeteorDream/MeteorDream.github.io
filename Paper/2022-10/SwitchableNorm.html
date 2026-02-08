@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/Whale-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Whale-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Whale-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="-3vYeYUI32tNnZYynn6m9TEd8b35o91ejIEgj9md_1o">
+  <meta name="msvalidate.01" content="52EA62B6D6E7019FD9854082F76A21EA">
+  <meta name="baidu-site-verification" content="code-AlOkWF1yk4">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"meteordream.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Information  Title: Differentiable Learning-to-Normalize via Switchable Normalization Author: Ping Luo and Jiamin Ren and Zhanglin Peng and Ruimao Zhang and Jingyu Li Institution: 香港中文大学（CUHK）多媒体实验室和商">
+<meta property="og:type" content="article">
+<meta property="og:title" content="『论文笔记』Switchable Normalization">
+<meta property="og:url" content="https://meteordream.github.io/Paper/2022-10/SwitchableNorm.html">
+<meta property="og:site_name" content="小鲸鱼的梦境">
+<meta property="og:description" content="Information  Title: Differentiable Learning-to-Normalize via Switchable Normalization Author: Ping Luo and Jiamin Ren and Zhanglin Peng and Ruimao Zhang and Jingyu Li Institution: 香港中文大学（CUHK）多媒体实验室和商">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-10/SwitchableNorm/hist_task_v3.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-10/SwitchableNorm/image-20221011111258659.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-10/SwitchableNorm/geometry.svg">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-10/SwitchableNorm/image-20221011115233865.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-10/SwitchableNorm/image-20221011115249716.png">
+<meta property="og:image" content="https://meteordream.github.io/Paper/2022-10/SwitchableNorm/image-20221011115302978.png">
+<meta property="article:published_time" content="2022-10-10T07:52:16.000Z">
+<meta property="article:modified_time" content="2022-10-12T02:09:30.000Z">
+<meta property="article:author" content="小鲸鱼">
+<meta property="article:tag" content="Normalization">
+<meta property="article:tag" content="论文">
+<meta property="article:tag" content="ICLR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://meteordream.github.io/Paper/2022-10/SwitchableNorm/hist_task_v3.svg">
+
+<link rel="canonical" href="https://meteordream.github.io/Paper/2022-10/SwitchableNorm.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>『论文笔记』Switchable Normalization | 小鲸鱼的梦境</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小鲸鱼的梦境</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://meteordream.github.io/Paper/2022-10/SwitchableNorm.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shizuku.png">
+      <meta itemprop="name" content="小鲸鱼">
+      <meta itemprop="description" content="小鲸鱼只有七秒钟的记忆">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鲸鱼的梦境">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          『论文笔记』Switchable Normalization
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-10-10 15:52:16" itemprop="dateCreated datePublished" datetime="2022-10-10T15:52:16+08:00">2022-10-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-12 10:09:30" itemprop="dateModified" datetime="2022-10-12T10:09:30+08:00">2022-10-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Paper/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Paper/2022-10/SwitchableNorm.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Paper/2022-10/SwitchableNorm.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="information">Information</h2>
+<ul>
+<li><strong>Title</strong>: Differentiable Learning-to-Normalize via
+Switchable Normalization</li>
+<li><strong>Author</strong>: Ping Luo and Jiamin Ren and Zhanglin Peng
+and Ruimao Zhang and Jingyu Li</li>
+<li><strong>Institution</strong>:
+香港中文大学（CUHK）多媒体实验室和商汤科技研究院（SenseTime
+Research）</li>
+<li><strong>Year</strong>: 2019</li>
+<li><strong>Journal</strong>: ICLR</li>
+<li><strong>Source</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1806.10779v5">arxiv</a>, <a target="_blank" rel="noopener" href="https://github.com/switchablenorms/Switchable-Normalization">Code</a>,
+<a target="_blank" rel="noopener" href="http://htmlpreview.github.io/?https://github.com/switchablenorms/Switchable-Normalization/blob/master/blog_cn/blog_cn.html">作者的中文解析</a>(在
+Github 上)</li>
+<li><strong>Idea</strong>: 核心观点就是同时使用 BN, IN, LN
+并对其添加一个自适应的权重来适配不同的网络</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@article&#123;luo2018differentiable,</span><br><span class="line">  title=&#123;Differentiable Learning-to-Normalize via Switchable Normalization&#125;,</span><br><span class="line">  author=&#123;Ping Luo and Jiamin Ren and Zhanglin Peng and Ruimao Zhang and Jingyu Li&#125;,</span><br><span class="line">  journal=&#123;International Conference on Learning Representation (ICLR)&#125;,</span><br><span class="line">  year=&#123;2019&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="abstract">Abstract</h2>
+<p>Switchable Normalization (SN) 从 channel, layer, minibatch
+三个维度计算统计量，并使用端到端的方法获得权重。SN 有三个优点：</p>
+<ol type="1">
+<li>自适应多种网络结构和任务</li>
+<li>对相当大范围的 batch size 有鲁棒性</li>
+<li>没有超参数</li>
+</ol>
+<hr>
+<h2 id="introduction">Introduction</h2>
+<p>SN 可以自适应的选择 BN, IN, LN
+的的权重，所以在很多任务中都能比较好的发挥作用。</p>
+<figure>
+<img data-src="SwitchableNorm/hist_task_v3.svg" alt="hist_task_v3">
+<figcaption aria-hidden="true">hist_task_v3</figcaption>
+</figure>
+<p>文章的贡献有：</p>
+<ol type="1">
+<li>提出了 SN，在很多机器学习的任务中都有用</li>
+<li>可解释</li>
+<li>让各种 Norm 方法在深度网络中都能发挥作用</li>
+</ol>
+<h2 id="method">Method</h2>
+<p>BN, IN, LN
+基本思路是一致的，只是操作对象（具体说是目标样本的维度）不同，就不多解释了。</p>
+<p>SN 的公式可以写作： <span class="math display">$$
+\hat{h}_{ncij}=\gamma\frac{h_{ncij}-\Sigma_{k\in\Omega} w_k\mu_k}
+{\sqrt{\Sigma_{k\in\Omega}w_k^\prime\sigma_k^2+\epsilon}}+\beta
+$$</span> 其实也和 BN, IN, LN
+是类似的，只不过目标对象是三种方法的加权和，三种对象拆解开就是： <span class="math display">$$
+\begin{eqnarray}
+\mu_{\mathrm{in}}&amp;=&amp;\frac{1}{HW}\sum_{i,j}^{H,W}h_{ncij},
+~~~~~~\sigma^2_{\mathrm{in}}=\frac{1}{HW}\sum_{i,j}^{H,W}(h_{ncij}-\mu_{\mathrm{in}})^2,\nonumber\\
+\mu_{\mathrm{ln}}&amp;=&amp;\frac{1}{C}\sum_{c=1}^C\mu_{\mathrm{in}},~~~~~~\sigma^2_{\mathrm{ln}}=
+\frac{1}{C}\sum_{c=1}^C(\sigma^2_{\mathrm{in}}+\mu_{\mathrm{in}}^2)-\mu_{\mathrm{ln}}^2,\nonumber\\
+\mu_{\mathrm{bn}}&amp;=&amp;\frac{1}{N}\sum_{n=1}^N\mu_{\mathrm{in}},~~~~~~\sigma^2_{\mathrm{bn}}=
+\frac{1}{N}\sum_{n=1}^N(\sigma^2_{\mathrm{in}}+\mu_{\mathrm{in}}^2)-\mu_{\mathrm{bn}}^2,
+\end{eqnarray}
+$$</span> 上面这个公式其实很清晰的表达了三种Normalization
+的操作对象了，另一方面，LN 和 BN 可以基于 IN
+计算，这样做可以减少计算量。算起来总共有 6
+个权重参数需要计算，并且均值和方差的权重和严格为 1，可以通过 softmax
+保证这一点： <span class="math display">$$
+w_k=\frac{e^{\lambda_k}}{\Sigma_{z\in\{\mathrm{in},\mathrm{ln},\mathrm{bn}\}}e^{\lambda_z}}~
+~\mathrm{and}~~k\in\{\mathrm{in},\mathrm{ln},\mathrm{bn}\}.
+$$</span></p>
+<p>和其他方法的比较</p>
+<figure>
+<img data-src="SwitchableNorm/image-20221011111258659.png" alt="image-20221011111258659">
+<figcaption aria-hidden="true">image-20221011111258659</figcaption>
+</figure>
+<h2 id="detail">Detail</h2>
+<p>作者通过使用 WN (Weight Normalization) 来将 SN 和 BN, IN, LN
+进行比较</p>
+<blockquote>
+<p>这个我有点迷惑，为什么又涉及到 WN 了？</p>
+<p>依据后文和我个人的理解，是将对特征的规范投射到权重即
+WN，然后将两个不同的权重 <span class="math inline"><strong>w</strong><sub>1</sub>, <strong>w</strong><sub>2</sub></span>
+做比较</p>
+<p>作者的另外一篇文章：Towards understanding regularization in batch
+normalization(2019, ICLR) 有指出 WN 是 BN 的一种特殊形式</p>
+</blockquote>
+<p>改写为：</p>
+<p><span class="math display">$$
+\hat{h}_{\mathrm{in}}=\gamma\frac{\mathbf{w}_i^T\mathbf{x}}{\|\mathbf{w}_i\|_2}+\beta
+\\
+\hat{h}_{\mathrm{bn}}=\gamma\frac{\mathbf{w}_i^T\mathbf{x}}{\|\mathbf{w}_i\|_2}+\beta,~\mathrm{s.t.}~\gamma\leq
+v \\
+\hat{h}_{\mathrm{ln}}=\gamma\frac{\mathbf{w}_i^T\mathbf{x}}{\|\mathbf{w}_i\|_2+\sum_{j\neq
+i}^C\|\mathbf{w}_j\|_2}+\beta
+$$</span></p>
+<p>SN 表示为：</p>
+<p><span class="math display">$$
+\hat{h}_{\mathrm{sn}}=w_{\mathrm{in}}\hat{h}_{\mathrm{in}}+w_{\mathrm{bn}}\hat{h}_{\mathrm{bn}}+w_{\mathrm{ln}}\hat{h}_{\mathrm{ln}}=\gamma\frac{\mathbf{w}_i^T\mathbf{x}}{\|\mathbf{w}_i\|_2+w_{\mathrm{ln}}\sum_{j\neq
+i}^C\|\mathbf{w}_j\|_2}+\beta,~\mathrm{s.t.}~w_{\mathrm{bn}}\gamma\leq v
+$$</span></p>
+<p>下图是与 WN 的几何图，作者说明的是：IN 和 WN 很像，都是将范数规范到 1
+然后缩放到 <span class="math inline"><em>γ</em></span>, 而 BN
+要小一些同时会使角度变大，并使 <span class="math inline"><strong>w</strong><sub>1</sub>, <strong>w</strong><sub>2</sub></span>
+同步。LN 约束比较弱，可以有 <span class="math inline"><em>γ</em> &gt; <em>v</em></span>, 而 SN
+继承了所有方法能达到一个平衡。</p>
+<figure>
+<img data-src="SwitchableNorm/geometry.svg" alt="geometry">
+<figcaption aria-hidden="true">geometry</figcaption>
+</figure>
+<blockquote>
+<p>这里讲得有点迷惑，不是特别清晰，这个结论怎么来的？</p>
+</blockquote>
+<h3 id="一些变体">一些变体</h3>
+<ul>
+<li><strong>Sparsity SN</strong>: 通过 softmax 选择其中一种 SN</li>
+<li><strong>Group SN</strong>： 通道分组，每组选择 SN，不过是不是 稀疏SN
+文章没说</li>
+</ul>
+<p>具体实现中有一个比较值得注意的点是 BN 的移动平均。</p>
+<h2 id="experiment">Experiment</h2>
+<p>做了很多实验，看 Introduction 的那个图就知道了，主要针对的还是小
+batch size 多 GPU 的一些实验，就不多赘述了，看图</p>
+<figure>
+<img data-src="SwitchableNorm/image-20221011115233865.png" alt="image-20221011115233865">
+<figcaption aria-hidden="true">image-20221011115233865</figcaption>
+</figure>
+<figure>
+<img data-src="SwitchableNorm/image-20221011115249716.png" alt="image-20221011115249716">
+<figcaption aria-hidden="true">image-20221011115249716</figcaption>
+</figure>
+<figure>
+<img data-src="SwitchableNorm/image-20221011115302978.png" alt="image-20221011115302978">
+<figcaption aria-hidden="true">image-20221011115302978</figcaption>
+</figure>
+<h2 id="conclusion">Conclusion</h2>
+<p>SN 在不同的 Normalization
+层可以由不同的操作（权重），其应用广泛。后续研究表明 SN
+可以平衡学习与泛化。</p>
+<p>总的来说，SN是一种任务与数据驱动的归一化方法。它对各种归一化技术对训练所产生的影响进行激励或者抑制，从而取得最优性能。本文作者的团队通过对各种归一化方法进行深入的分析，发现SN学习得到的权重系数能够准确的反映各种归一化技术在不同训练条件下的理论性质。相信随着这一研究的不断深入，这些数学性质将会被更清楚的描述出来。</p>
+<h2 id="others">Others</h2>
+<p>代码部分，可以开箱即用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SwitchNorm1d</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_features, eps=<span class="number">1e-5</span>, momentum=<span class="number">0.997</span>, using_moving_average=<span class="literal">True</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(SwitchNorm1d, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.eps = eps</span><br><span class="line">        <span class="variable language_">self</span>.momentum = momentum</span><br><span class="line">        <span class="variable language_">self</span>.using_moving_average = using_moving_average</span><br><span class="line">        <span class="variable language_">self</span>.weight = nn.Parameter(torch.ones(<span class="number">1</span>, num_features))</span><br><span class="line">        <span class="variable language_">self</span>.bias = nn.Parameter(torch.zeros(<span class="number">1</span>, num_features))</span><br><span class="line">        <span class="variable language_">self</span>.mean_weight = nn.Parameter(torch.ones(<span class="number">2</span>))</span><br><span class="line">        <span class="variable language_">self</span>.var_weight = nn.Parameter(torch.ones(<span class="number">2</span>))</span><br><span class="line">        <span class="variable language_">self</span>.register_buffer(<span class="string">&#x27;running_mean&#x27;</span>, torch.zeros(<span class="number">1</span>, num_features))</span><br><span class="line">        <span class="variable language_">self</span>.register_buffer(<span class="string">&#x27;running_var&#x27;</span>, torch.zeros(<span class="number">1</span>, num_features))</span><br><span class="line">        <span class="variable language_">self</span>.reset_parameters()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reset_parameters</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.running_mean.zero_()</span><br><span class="line">        <span class="variable language_">self</span>.running_var.zero_()</span><br><span class="line">        <span class="variable language_">self</span>.weight.data.fill_(<span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.bias.data.zero_()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_check_input_dim</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">input</span>.dim() != <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;expected 2D input (got &#123;&#125;D input)&#x27;</span></span><br><span class="line">                             .<span class="built_in">format</span>(<span class="built_in">input</span>.dim()))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="variable language_">self</span>._check_input_dim(x)</span><br><span class="line">        mean_ln = x.mean(<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        var_ln = x.var(<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.training:</span><br><span class="line">            mean_bn = x.mean(<span class="number">0</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">            var_bn = x.var(<span class="number">0</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.using_moving_average:</span><br><span class="line">                <span class="variable language_">self</span>.running_mean.mul_(<span class="variable language_">self</span>.momentum)</span><br><span class="line">                <span class="variable language_">self</span>.running_mean.add_((<span class="number">1</span> - <span class="variable language_">self</span>.momentum) * mean_bn.data)</span><br><span class="line">                <span class="variable language_">self</span>.running_var.mul_(<span class="variable language_">self</span>.momentum)</span><br><span class="line">                <span class="variable language_">self</span>.running_var.add_((<span class="number">1</span> - <span class="variable language_">self</span>.momentum) * var_bn.data)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="variable language_">self</span>.running_mean.add_(mean_bn.data)</span><br><span class="line">                <span class="variable language_">self</span>.running_var.add_(mean_bn.data ** <span class="number">2</span> + var_bn.data)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            mean_bn = torch.autograd.Variable(<span class="variable language_">self</span>.running_mean)</span><br><span class="line">            var_bn = torch.autograd.Variable(<span class="variable language_">self</span>.running_var)</span><br><span class="line"></span><br><span class="line">        softmax = nn.Softmax(<span class="number">0</span>)</span><br><span class="line">        mean_weight = softmax(<span class="variable language_">self</span>.mean_weight)</span><br><span class="line">        var_weight = softmax(<span class="variable language_">self</span>.var_weight)</span><br><span class="line"></span><br><span class="line">        mean = mean_weight[<span class="number">0</span>] * mean_ln + mean_weight[<span class="number">1</span>] * mean_bn</span><br><span class="line">        var = var_weight[<span class="number">0</span>] * var_ln + var_weight[<span class="number">1</span>] * var_bn</span><br><span class="line"></span><br><span class="line">        x = (x - mean) / (var + <span class="variable language_">self</span>.eps).sqrt()</span><br><span class="line">        <span class="keyword">return</span> x * <span class="variable language_">self</span>.weight + <span class="variable language_">self</span>.bias</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SwitchNorm2d</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_features, eps=<span class="number">1e-5</span>, momentum=<span class="number">0.9</span>, using_moving_average=<span class="literal">True</span>, using_bn=<span class="literal">True</span>,</span></span><br><span class="line"><span class="params">                 last_gamma=<span class="literal">False</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(SwitchNorm2d, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.eps = eps</span><br><span class="line">        <span class="variable language_">self</span>.momentum = momentum</span><br><span class="line">        <span class="variable language_">self</span>.using_moving_average = using_moving_average</span><br><span class="line">        <span class="variable language_">self</span>.using_bn = using_bn</span><br><span class="line">        <span class="variable language_">self</span>.last_gamma = last_gamma</span><br><span class="line">        <span class="variable language_">self</span>.weight = nn.Parameter(torch.ones(<span class="number">1</span>, num_features, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="variable language_">self</span>.bias = nn.Parameter(torch.zeros(<span class="number">1</span>, num_features, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            <span class="variable language_">self</span>.mean_weight = nn.Parameter(torch.ones(<span class="number">3</span>))</span><br><span class="line">            <span class="variable language_">self</span>.var_weight = nn.Parameter(torch.ones(<span class="number">3</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="variable language_">self</span>.mean_weight = nn.Parameter(torch.ones(<span class="number">2</span>))</span><br><span class="line">            <span class="variable language_">self</span>.var_weight = nn.Parameter(torch.ones(<span class="number">2</span>))</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            <span class="variable language_">self</span>.register_buffer(<span class="string">&#x27;running_mean&#x27;</span>, torch.zeros(<span class="number">1</span>, num_features, <span class="number">1</span>))</span><br><span class="line">            <span class="variable language_">self</span>.register_buffer(<span class="string">&#x27;running_var&#x27;</span>, torch.zeros(<span class="number">1</span>, num_features, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.reset_parameters()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reset_parameters</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            <span class="variable language_">self</span>.running_mean.zero_()</span><br><span class="line">            <span class="variable language_">self</span>.running_var.zero_()</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.last_gamma:</span><br><span class="line">            <span class="variable language_">self</span>.weight.data.fill_(<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="variable language_">self</span>.weight.data.fill_(<span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.bias.data.zero_()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_check_input_dim</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">input</span>.dim() != <span class="number">4</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;expected 4D input (got &#123;&#125;D input)&#x27;</span></span><br><span class="line">                             .<span class="built_in">format</span>(<span class="built_in">input</span>.dim()))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="variable language_">self</span>._check_input_dim(x)</span><br><span class="line">        N, C, H, W = x.size()</span><br><span class="line">        x = x.view(N, C, -<span class="number">1</span>)</span><br><span class="line">        mean_in = x.mean(-<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        var_in = x.var(-<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">        mean_ln = mean_in.mean(<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        temp = var_in + mean_in ** <span class="number">2</span></span><br><span class="line">        var_ln = temp.mean(<span class="number">1</span>, keepdim=<span class="literal">True</span>) - mean_ln ** <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.training:</span><br><span class="line">                mean_bn = mean_in.mean(<span class="number">0</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">                var_bn = temp.mean(<span class="number">0</span>, keepdim=<span class="literal">True</span>) - mean_bn ** <span class="number">2</span></span><br><span class="line">                <span class="keyword">if</span> <span class="variable language_">self</span>.using_moving_average:</span><br><span class="line">                    <span class="variable language_">self</span>.running_mean.mul_(<span class="variable language_">self</span>.momentum)</span><br><span class="line">                    <span class="variable language_">self</span>.running_mean.add_((<span class="number">1</span> - <span class="variable language_">self</span>.momentum) * mean_bn.data)</span><br><span class="line">                    <span class="variable language_">self</span>.running_var.mul_(<span class="variable language_">self</span>.momentum)</span><br><span class="line">                    <span class="variable language_">self</span>.running_var.add_((<span class="number">1</span> - <span class="variable language_">self</span>.momentum) * var_bn.data)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="variable language_">self</span>.running_mean.add_(mean_bn.data)</span><br><span class="line">                    <span class="variable language_">self</span>.running_var.add_(mean_bn.data ** <span class="number">2</span> + var_bn.data)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                mean_bn = torch.autograd.Variable(<span class="variable language_">self</span>.running_mean)</span><br><span class="line">                var_bn = torch.autograd.Variable(<span class="variable language_">self</span>.running_var)</span><br><span class="line"></span><br><span class="line">        softmax = nn.Softmax(<span class="number">0</span>)</span><br><span class="line">        mean_weight = softmax(<span class="variable language_">self</span>.mean_weight)</span><br><span class="line">        var_weight = softmax(<span class="variable language_">self</span>.var_weight)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            mean = mean_weight[<span class="number">0</span>] * mean_in + mean_weight[<span class="number">1</span>] * mean_ln + mean_weight[<span class="number">2</span>] * mean_bn</span><br><span class="line">            var = var_weight[<span class="number">0</span>] * var_in + var_weight[<span class="number">1</span>] * var_ln + var_weight[<span class="number">2</span>] * var_bn</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            mean = mean_weight[<span class="number">0</span>] * mean_in + mean_weight[<span class="number">1</span>] * mean_ln</span><br><span class="line">            var = var_weight[<span class="number">0</span>] * var_in + var_weight[<span class="number">1</span>] * var_ln</span><br><span class="line"></span><br><span class="line">        x = (x-mean) / (var+<span class="variable language_">self</span>.eps).sqrt()</span><br><span class="line">        x = x.view(N, C, H, W)</span><br><span class="line">        <span class="keyword">return</span> x * <span class="variable language_">self</span>.weight + <span class="variable language_">self</span>.bias</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SwitchNorm3d</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_features, eps=<span class="number">1e-5</span>, momentum=<span class="number">0.997</span>, using_moving_average=<span class="literal">True</span>, using_bn=<span class="literal">True</span>,</span></span><br><span class="line"><span class="params">                 last_gamma=<span class="literal">False</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(SwitchNorm3d, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.eps = eps</span><br><span class="line">        <span class="variable language_">self</span>.momentum = momentum</span><br><span class="line">        <span class="variable language_">self</span>.using_moving_average = using_moving_average</span><br><span class="line">        <span class="variable language_">self</span>.using_bn = using_bn</span><br><span class="line">        <span class="variable language_">self</span>.last_gamma = last_gamma</span><br><span class="line">        <span class="variable language_">self</span>.weight = nn.Parameter(torch.ones(<span class="number">1</span>, num_features, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="variable language_">self</span>.bias = nn.Parameter(torch.zeros(<span class="number">1</span>, num_features, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            <span class="variable language_">self</span>.mean_weight = nn.Parameter(torch.ones(<span class="number">3</span>))</span><br><span class="line">            <span class="variable language_">self</span>.var_weight = nn.Parameter(torch.ones(<span class="number">3</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="variable language_">self</span>.mean_weight = nn.Parameter(torch.ones(<span class="number">2</span>))</span><br><span class="line">            <span class="variable language_">self</span>.var_weight = nn.Parameter(torch.ones(<span class="number">2</span>))</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            <span class="variable language_">self</span>.register_buffer(<span class="string">&#x27;running_mean&#x27;</span>, torch.zeros(<span class="number">1</span>, num_features, <span class="number">1</span>))</span><br><span class="line">            <span class="variable language_">self</span>.register_buffer(<span class="string">&#x27;running_var&#x27;</span>, torch.zeros(<span class="number">1</span>, num_features, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.reset_parameters()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reset_parameters</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            <span class="variable language_">self</span>.running_mean.zero_()</span><br><span class="line">            <span class="variable language_">self</span>.running_var.zero_()</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.last_gamma:</span><br><span class="line">            <span class="variable language_">self</span>.weight.data.fill_(<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="variable language_">self</span>.weight.data.fill_(<span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.bias.data.zero_()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_check_input_dim</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">input</span>.dim() != <span class="number">5</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;expected 5D input (got &#123;&#125;D input)&#x27;</span></span><br><span class="line">                             .<span class="built_in">format</span>(<span class="built_in">input</span>.dim()))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="variable language_">self</span>._check_input_dim(x)</span><br><span class="line">        N, C, D, H, W = x.size()</span><br><span class="line">        x = x.view(N, C, -<span class="number">1</span>)</span><br><span class="line">        mean_in = x.mean(-<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        var_in = x.var(-<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">        mean_ln = mean_in.mean(<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        temp = var_in + mean_in ** <span class="number">2</span></span><br><span class="line">        var_ln = temp.mean(<span class="number">1</span>, keepdim=<span class="literal">True</span>) - mean_ln ** <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.training:</span><br><span class="line">                mean_bn = mean_in.mean(<span class="number">0</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">                var_bn = temp.mean(<span class="number">0</span>, keepdim=<span class="literal">True</span>) - mean_bn ** <span class="number">2</span></span><br><span class="line">                <span class="keyword">if</span> <span class="variable language_">self</span>.using_moving_average:</span><br><span class="line">                    <span class="variable language_">self</span>.running_mean.mul_(<span class="variable language_">self</span>.momentum)</span><br><span class="line">                    <span class="variable language_">self</span>.running_mean.add_((<span class="number">1</span> - <span class="variable language_">self</span>.momentum) * mean_bn.data)</span><br><span class="line">                    <span class="variable language_">self</span>.running_var.mul_(<span class="variable language_">self</span>.momentum)</span><br><span class="line">                    <span class="variable language_">self</span>.running_var.add_((<span class="number">1</span> - <span class="variable language_">self</span>.momentum) * var_bn.data)</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="variable language_">self</span>.running_mean.add_(mean_bn.data)</span><br><span class="line">                    <span class="variable language_">self</span>.running_var.add_(mean_bn.data ** <span class="number">2</span> + var_bn.data)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                mean_bn = torch.autograd.Variable(<span class="variable language_">self</span>.running_mean)</span><br><span class="line">                var_bn = torch.autograd.Variable(<span class="variable language_">self</span>.running_var)</span><br><span class="line"></span><br><span class="line">        softmax = nn.Softmax(<span class="number">0</span>)</span><br><span class="line">        mean_weight = softmax(<span class="variable language_">self</span>.mean_weight)</span><br><span class="line">        var_weight = softmax(<span class="variable language_">self</span>.var_weight)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.using_bn:</span><br><span class="line">            mean = mean_weight[<span class="number">0</span>] * mean_in + mean_weight[<span class="number">1</span>] * mean_ln + mean_weight[<span class="number">2</span>] * mean_bn</span><br><span class="line">            var = var_weight[<span class="number">0</span>] * var_in + var_weight[<span class="number">1</span>] * var_ln + var_weight[<span class="number">2</span>] * var_bn</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            mean = mean_weight[<span class="number">0</span>] * mean_in + mean_weight[<span class="number">1</span>] * mean_ln</span><br><span class="line">            var = var_weight[<span class="number">0</span>] * var_in + var_weight[<span class="number">1</span>] * var_ln</span><br><span class="line"></span><br><span class="line">        x = (x - mean) / (var + <span class="variable language_">self</span>.eps).sqrt()</span><br><span class="line">        x = x.view(N, C, D, H, W)</span><br><span class="line">        <span class="keyword">return</span> x * <span class="variable language_">self</span>.weight + <span class="variable language_">self</span>.bias</span><br></pre></td></tr></table></figure>
+<h2 id="references">References</h2>
+<p><strong>如果对你有帮助的话，请给我点个赞吧</strong>~</p>
+<p>欢迎前往 <a href="https://meteordream.github.io/categories">我的博客</a>
+查看更多笔记</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>MeteorDream
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://meteordream.github.io/Paper/2022-10/SwitchableNorm.html" title="『论文笔记』Switchable Normalization">https://meteordream.github.io/Paper/2022-10/SwitchableNorm.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <div>
+        
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">--- ♥ end ♥ ---</div>
+    
+</div>
+        
+      </div>
+        
+
+  <div class="followme">
+    <p>欢迎关注我呀~</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat_channel.jpg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://github.com/MeteorDream">
+            <span class="icon">
+              <i class="fab fa-github"></i>
+            </span>
+
+            <span class="label">GitHub</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://leetcode-cn.com/u/meteordream/">
+            <span class="icon">
+              <i class="fab fa-envira"></i>
+            </span>
+
+            <span class="label">LeetCode</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Normalization/" rel="tag"><i class="fa fa-tag"></i> Normalization</a>
+              <a href="/tags/Paper/" rel="tag"><i class="fa fa-tag"></i> 论文</a>
+              <a href="/tags/ICLR/" rel="tag"><i class="fa fa-tag"></i> ICLR</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-10/801_%E4%BD%BF%E5%BA%8F%E5%88%97%E9%80%92%E5%A2%9E%E7%9A%84%E6%9C%80%E5%B0%8F%E4%BA%A4%E6%8D%A2%E6%AC%A1%E6%95%B0(%E5%9B%B0%E9%9A%BE).html" rel="prev" title="『LeetCode』801 使序列递增的最小交换次数">
+      <i class="fa fa-chevron-left"></i> 『LeetCode』801 使序列递增的最小交换次数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/LeetCode/2022-10/1790_%E4%BB%85%E6%89%A7%E8%A1%8C%E4%B8%80%E6%AC%A1%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%BA%A4%E6%8D%A2%E8%83%BD%E5%90%A6%E4%BD%BF%E4%B8%A4%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E7%AD%89(%E7%AE%80%E5%8D%95).html" rel="next" title="『LeetCode』1790 仅执行一次字符串交换能否使两个字符串相等">
+      『LeetCode』1790 仅执行一次字符串交换能否使两个字符串相等 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          梦境概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#information"><span class="nav-number">1.</span> <span class="nav-text">Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">2.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">3.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">4.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#detail"><span class="nav-number">5.</span> <span class="nav-text">Detail</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%8F%98%E4%BD%93"><span class="nav-number">5.1.</span> <span class="nav-text">一些变体</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment"><span class="nav-number">6.</span> <span class="nav-text">Experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">7.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#others"><span class="nav-number">8.</span> <span class="nav-text">Others</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">9.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="小鲸鱼"
+      src="/images/shizuku.png">
+  <p class="site-author-name" itemprop="name">小鲸鱼</p>
+  <div class="site-description" itemprop="description">小鲸鱼只有七秒钟的记忆</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">235</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/MeteorDream" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MeteorDream" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:hy1368068258@163.com" title="E-Mail → mailto:hy1368068258@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://meteordream.github.io/" title="感谢 → https:&#x2F;&#x2F;meteordream.github.io"><i class="fa fa-kiss-wink-heart fa-fw"></i>感谢</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://leetcode.cn/u/meteordream/" title="LeetCode → https:&#x2F;&#x2F;leetcode.cn&#x2F;u&#x2F;meteordream&#x2F;" rel="noopener" target="_blank"><i class="fab fa-envira fa-fw"></i>LeetCode</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-04 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小鲸鱼</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">19:46</span>
+</div><script color="0,0,255" opacity="0.6" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js">
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.bootcdn.net/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'n9rYOoqPd5IsOQpuSgyY7ci3-gzGzoHsz',
+      appKey     : '0BuiiqBGewzAwktQnJ9vXQMB',
+      placeholder: "想和小鲸鱼说些什么吗~ (评论区支持MarkDown语法哦~)",
+      avatar     : 'mp',
+      meta       : guest,
+      pageSize   : '20' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":200,"height":400,"position":"right","hOffset":30,"vOffset":-30},"mobile":{"show":true,"opacity":0.5,"scale":0.3},"react":{"opacity":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>
